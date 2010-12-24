@@ -41,6 +41,8 @@ stated in doc/LICENSE.  Auto is free but copyrighted software
 released under the terms of the GNU General Public License,
 version 2.
 
+Dependencies: gettext
+
 It is very simple to install Auto, simply download the install
 script from http://xelhua.org. To get the link, check out
 http://starcoder.info and find the post about the latest Auto
