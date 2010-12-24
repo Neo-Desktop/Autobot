@@ -1,0 +1,3 @@
+#!/bin/bash
+
+msgfmt -o en.mo en.po
