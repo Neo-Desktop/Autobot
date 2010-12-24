@@ -31,6 +31,7 @@ of people who contribute their time and knowledge to the
 maintenance of Auto, and other projects.
 
 + Elijah Perrault &lt;elijah@starcoder.info&gt;
++ Matthew Barksdale
 
 
 ## 3. HOW TO INSTALL
