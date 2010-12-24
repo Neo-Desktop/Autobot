@@ -11,8 +11,9 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 # Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
-# Copyright (C) 2009-2011 Xelhua Development Team (doc/CREDITS)
+# Copyright (C) 2010 Xelhua Development Team (doc/CREDITS)
 # This program is free software; rights to this code are stated in doc/LICENSE.
+
 # French language file.
 
 # ID: perm_denied - Autorisation refusée
