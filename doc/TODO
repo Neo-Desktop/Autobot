@@ -15,6 +15,7 @@ Legend:
      [ ] Implement foreign language support in command help
      [ ] Add English strings
      [ ] Add Spanish strings
+     [ ] Add French strings
 
  [ ] API
      [ ] Create basic modular functions
