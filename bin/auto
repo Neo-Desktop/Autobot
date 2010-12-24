@@ -1,10 +1,11 @@
-#!/usr/bin/env perl -w
+#!/usr/bin/env perl
 
 # Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
 # Copyright (C) 2009-2011 Xelhua Development Team (doc/CREDITS)
 # This program is free software; rights to this code are stated in doc/LICENSE.
 package Auto;
 use strict;
+use warnings;
 use IO::Socket;
 use FindBin qw($Bin);
 our $Bin = $Bin;
