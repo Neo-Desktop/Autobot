@@ -16,7 +16,8 @@ msgstr ""
 
 # French language file.
 
-# ID: perm_denied - Autorisation refusée
+
+# ID: perm_denied - Permission denied
 
 msgid "perm_denied"
 msgstr "Autorisation refuse."
