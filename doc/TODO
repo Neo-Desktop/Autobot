@@ -1,0 +1,48 @@
+Auto To-Do List
+----------------------------------------------------------------
+
+Legend:
+    X = Done.
+    ! = In development.
+    O = Cancelled.
+    ? = Being questioned.
+    + = Planned for Auto v3.1.
+
+
+ [ ] Language
+     [ ] Create gettxt()
+     [ ] Implement GNU gettext
+     [ ] Implement foreign language support in command help
+     [ ] Add English strings
+     [ ] Add Spanish strings
+
+ [ ] API
+     [ ] Create basic modular functions
+     [ ] Create command creation functions
+     [ ] Create user permissions (levels)
+
+ [ ] IRC
+     [ ] Create IRC parser
+     [ ] Implement IRC protocol parser
+
+ [ ] DB
+     [ ] Create Auto-Flatfile database format
+     [ ] Implement Auto-Flatfile as the main format
+     [ ] Add MySQL support
+
+ [ ] Sys
+     [ ] Create system file for UNIX (or: Linux, BSD, etc.)
+     [?+] Create system file for Microsoft Windows (currently unsupported)
+
+ [ ] Features
+     [ ] Weather module
+     [ ] Google Calculator module
+     [ ] YouTube Search module
+     [ ] Twitter module
+     [ ] Advanced Topics module
+     [ ] Custom Triggers module
+     [ ] Shorten URL (bit.ly?) module
+     [?] Bot Talk module
+     [?] Minecraft<->IRC module
+     [?] 8-Ball module
+         
