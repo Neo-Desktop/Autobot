@@ -1,4 +1,3 @@
-
 Auto IRC Bot 3.0
 ============================================================
 ------------------------------------------------------------
@@ -29,7 +28,7 @@ contributed modules. There is a chance that it will be accepted.
 
 Auto IRC Bot is developed by Xelhua Development Group, a team
 of people who contribute their time and knowledge to the
-advancement of Auto, and other projects.
+maintenance of Auto, and other projects.
 
 + Elijah Perrault &lt;elijah@starcoder.info&gt;
 
