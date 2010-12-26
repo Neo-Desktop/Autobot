@@ -1,14 +1,15 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2010-12-25 23:45-0500\n"
+"Project-Id-Version: Auto Version 3\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
 "Last-Translator: Matthew Barksdale <mattwb65@gmail.com>\n"
-"Language-Team: French\n"
-"Language: fr\n"
+"Language-Team: Xelhua Development Team\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-Language: French\n"
 
 # Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
 # Copyright (C) 2010 Xelhua Development Team (doc/CREDITS)
@@ -16,16 +17,17 @@ msgstr ""
 # French language file.
 # ID: perm_denied - Permission denied
 msgid "perm_denied"
-msgstr "Autorisation refuse."
+msgstr "Autorisation refusée."
 
 # ID: acc_denied - Access denied
 msgid "acc_denied"
-msgstr "Accs refus."
+msgstr "Accès refusé."
 
 # ID: insuff_params - Not enough parameters.
 msgid "insuff_params"
-msgstr "Paramtres insuffisants."
+msgstr "Paramètres insuffisants."
 
 # ID: unknown_cmd - Unknown command.
 msgid "unknown_cmd"
 msgstr "Commande inconnue."
+
