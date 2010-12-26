@@ -9,3 +9,15 @@
 msgid "perm_denied"
 msgstr "Autorisation refusée."
 
+# ID: acc_denied - Access denied
+msgid "acc_denied"
+msgstr "Accès refusé."
+
+# ID: insuff_params - Not enough parameters.
+msgid "insuff_params"
+msgstr "Paramètres insuffisants."
+
+# ID: unknown_cmd - Unknown command.
+msgid "unknown_cmd"
+msgstr "Commande inconnue."
+

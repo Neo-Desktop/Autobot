@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2010-12-24 00:45-0500\n"
+"PO-Revision-Date: 2010-12-25 23:45-0500\n"
 "Last-Translator: Matthew Barksdale <mattwb65@gmail.com>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -13,11 +13,19 @@ msgstr ""
 # Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
 # Copyright (C) 2010 Xelhua Development Team (doc/CREDITS)
 # This program is free software; rights to this code are stated in doc/LICENSE.
-
 # French language file.
-
-
 # ID: perm_denied - Permission denied
-
 msgid "perm_denied"
 msgstr "Autorisation refuse."
+
+# ID: acc_denied - Access denied
+msgid "acc_denied"
+msgstr "Accs refus."
+
+# ID: insuff_params - Not enough parameters.
+msgid "insuff_params"
+msgstr "Paramtres insuffisants."
+
+# ID: unknown_cmd - Unknown command.
+msgid "unknown_cmd"
+msgstr "Commande inconnue."
