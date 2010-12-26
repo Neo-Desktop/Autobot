@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2010-12-23 22:54-0700\n"
+"PO-Revision-Date: 2010-12-25 21:29-0700\n"
 "Last-Translator: Elijah Perrault <elijah@starcoder.info>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -20,3 +20,15 @@ msgstr ""
 # ID: perm_denied - Permission denied
 msgid "perm_denied"
 msgstr "Permission denied."
+
+# ID: acc_denied - Access denied
+msgid "acc_denied"
+msgstr "Access denied."
+
+# ID: insuff_params - Not enough parameters.
+msgid "insuff_params"
+msgstr "Not enough parameters."
+
+# ID: unknown_cmd - Unknown command.
+msgid "unknown_cmd"
+msgstr "Unknown command."

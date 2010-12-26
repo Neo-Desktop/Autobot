@@ -8,3 +8,15 @@
 # ID: perm_denied - Permission denied
 msgid "perm_denied"
 msgstr "Permission denied."
+
+# ID: acc_denied - Access denied
+msgid "acc_denied"
+msgstr "Access denied."
+
+# ID: insuff_params - Not enough parameters.
+msgid "insuff_params"
+msgstr "Not enough parameters."
+
+# ID: unknown_cmd - Unknown command.
+msgid "unknown_cmd"
+msgstr "Unknown command."
