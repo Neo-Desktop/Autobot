@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2010-12-20 21:35-0700\n"
+"PO-Revision-Date: 2010-12-23 22:54-0700\n"
 "Last-Translator: Elijah Perrault <elijah@starcoder.info>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 # Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
-# Copyright (C) 2009-2011 Xelhua Development Team (doc/CREDITS)
+# Copyright (C) 2010 Xelhua Development Team (doc/CREDITS)
 # This program is free software; rights to this code are stated in doc/LICENSE.
 
 # English language file.
