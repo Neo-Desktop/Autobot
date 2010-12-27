@@ -6,6 +6,7 @@
 package Auto;
 use strict;
 use warnings;
+use POSIX;
 use IO::Socket;
 use FindBin qw($Bin);
 our $Bin = $Bin;
