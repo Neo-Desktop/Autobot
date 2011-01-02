@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
-# Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
-# Copyright (C) 2010 Xelhua Development Team (doc/CREDITS)
+# Auto IRC Bot. An advanced, lightweight anthd powerful IRC bot.
+# Copyright (C) 2010-2011 Xelhua Development Team (doc/CREDITS)
 # This program is free software; rights to this code are stated in doc/LICENSE.
 package Auto;
 use strict;
@@ -26,3 +26,4 @@ use constant {
 	REV    => 0,
 	RSTAGE => 'd'
 }
+
