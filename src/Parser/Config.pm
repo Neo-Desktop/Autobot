@@ -5,20 +5,24 @@ package Parser::Config;
 use strict;
 use warnings;
 
+# Create a new instance.
 sub new 
 {
     my $class = shift;
     my ($file) = @_;
     my $self = bless {}, $class;
 
+	# Check to see if the configuration file exists.
 	if (!-e "$Auto::Bin/../etc/$file") {
 		return 0;
 	}
 	
+	# Open, read and close the config.
 	open CONF, "<$Auto::Bin/../etc/$file" or return 0;
 	my @cosfl = <CONF> or return 0;
 	close CONF or return 0;
 	
+	# Save it to self variable.
 	$self->{'config'}->{'path'} = "$Auto::Bin/../etc/$file";
 
     return $self;
@@ -62,34 +66,48 @@ sub parse
 						my $param = $ebuf[1];
 						$param =~ s/"//g;
 						my @param = ($param);
-							
-						unless ($blk eq 0) {
+						
+						unless (!$blk) {
+							# We're inside a block.
 							if ($blk =~ m/@@@/) {
+								# We're inside a block with a parameter.
 								my @sblk = split('@@@', $blk);
 								
+								# Check to see if this config option already exists.
 								if (defined $rs{c}{$sblk[0]}{$sblk[1]}{$ebuf[0]}) {
+									# It does, so merely push this second one to the existing array.
 									push(@{ $rs{c}{$sblk[0]}{$sblk[1]}{$ebuf[0]} }, $param);
 								}
 								else {
+									# It doesn't, create it as an array.
 									@{ $rs{c}{$sblk[0]}{$sblk[1]}{$ebuf[0]} } = @param;
 								}
 							}
 							else {
+								# We're inside a block with no parameter.
 								$rs{c}{$blk}{$ebuf[0]} = $ebuf[1];
 								
+								# Check to see if this config option already exists.
 								if (defined $rs{c}{$blk}{$ebuf[0]}) {
+									# It does, so merely push this second one to the existing array.
 									push(@{ $rs{c}{$blk}{$ebuf[0]} }, $param);
 								}
 								else {
+									# It doesn't, create it as an array.
 									@{ $rs{c}{$blk}{$ebuf[0]} } = @param;
 								}
 							}
 						}
 						else {
+							# We're not inside a block.
+							
+							# Check to see if this config option already exists.
 							if (defined $rs{c}{$ebuf[0]}) {
+								# It does, so merely push this second one to the existing array.
 								push(@{ $rs{c}{$ebuf[0]} }, $param);
 							}
 							else {
+								# It doesn't, create it as an array.
 								@{ $rs{c}{$ebuf[0]} } = @param;
 							}
 						}	
@@ -97,6 +115,7 @@ sub parse
 				}
 			}
 			else {
+				# No semicolon space buffer.
 				my @ebuf = split(' ', $buff);
 				
 				if (!defined $ebuf[0]) {
@@ -119,11 +138,14 @@ sub parse
 					}
 				}
 				if ($ebuf[0] eq '}') {
+					# This is the end of a block.
 					$blk = 0;
 				}
 			}
 		}
 	}	
+	
+	# Return the configuration data.
 	return %rs;				
 }
 
