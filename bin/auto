@@ -8,13 +8,14 @@ use strict;
 use warnings;
 use POSIX;
 use IO::Socket;
+use Data::Dumper;
 use FindBin qw($Bin);
 our $Bin = $Bin;
 unshift(@INC, "$Bin/../src");
 #require Lang::Gettext;
 #require API::Standard;
 #require DB::Flatfile;
-#require Parser::Config;
+require Parser::Config;
 #require Parser::IRC;
 #require IRC::Standard;
 #require Sys::Full;
@@ -25,5 +26,7 @@ use constant {
 	SVER   => 0,
 	REV    => 0,
 	RSTAGE => 'd'
-}
+};
 
+our $CONF = Parser::Config->new("auto.conf") or print "Failed to open configuration file.\n" and exit;
+our %SETTINGS = $CONF->parse;
