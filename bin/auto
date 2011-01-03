@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Auto IRC Bot. An advanced, lightweight anthd powerful IRC bot.
+# Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
 # Copyright (C) 2010-2011 Xelhua Development Team (doc/CREDITS)
 # This program is free software; rights to this code are stated in doc/LICENSE.
 package Auto;
@@ -13,7 +13,7 @@ use FindBin qw($Bin);
 our $Bin = $Bin;
 unshift(@INC, "$Bin/../src");
 #require Lang::Gettext;
-#require API::Standard;
+require API::Standard;
 #require DB::Flatfile;
 require Parser::Config;
 #require Parser::IRC;
@@ -30,3 +30,5 @@ use constant {
 
 our $CONF = Parser::Config->new("auto.conf") or print "Failed to open configuration file.\n" and exit;
 our %SETTINGS = $CONF->parse;
+
+print Dumper(API::conf_get('server'))."\n";
