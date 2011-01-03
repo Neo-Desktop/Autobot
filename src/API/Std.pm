@@ -28,13 +28,13 @@ sub conf_get
 	
 	# Return the requested configuration value(s).
 	if ($count == 1) {
-		return $Auto::SETTINGS{c}{$val[0]};
+		return $Auto::SETTINGS{$val[0]};
 	}
 	elsif ($count == 2) {
-		return $Auto::SETTINGS{c}{$val[0]}{$val[1]};
+		return $Auto::SETTINGS{$val[0]}{$val[1]};
 	}
 	elsif ($count == 3) {
-		return $Auto::SETTINGS{c}{$val[0]}{$val[1]}{$val[2]};
+		return $Auto::SETTINGS{$val[0]}{$val[1]}{$val[2]};
 	}
 	else {
 		return 0;

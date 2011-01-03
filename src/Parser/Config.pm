@@ -76,27 +76,27 @@ sub parse
 								my @sblk = split('@@@', $blk);
 								
 								# Check to see if this config option already exists.
-								if (defined $rs{c}{$sblk[0]}{$sblk[1]}{$ebuf[0]}) {
+								if (defined $rs{$sblk[0]}{$sblk[1]}{$ebuf[0]}) {
 									# It does, so merely push this second one to the existing array.
-									push(@{ $rs{c}{$sblk[0]}{$sblk[1]}{$ebuf[0]} }, $param);
+									push(@{ $rs{$sblk[0]}{$sblk[1]}{$ebuf[0]} }, $param);
 								}
 								else {
 									# It doesn't, create it as an array.
-									@{ $rs{c}{$sblk[0]}{$sblk[1]}{$ebuf[0]} } = @param;
+									@{ $rs{$sblk[0]}{$sblk[1]}{$ebuf[0]} } = @param;
 								}
 							}
 							else {
 								# We're inside a block with no parameter.
-								$rs{c}{$blk}{$ebuf[0]} = $ebuf[1];
+								$rs{$blk}{$ebuf[0]} = $ebuf[1];
 								
 								# Check to see if this config option already exists.
-								if (defined $rs{c}{$blk}{$ebuf[0]}) {
+								if (defined $rs{$blk}{$ebuf[0]}) {
 									# It does, so merely push this second one to the existing array.
-									push(@{ $rs{c}{$blk}{$ebuf[0]} }, $param);
+									push(@{ $rs{$blk}{$ebuf[0]} }, $param);
 								}
 								else {
 									# It doesn't, create it as an array.
-									@{ $rs{c}{$blk}{$ebuf[0]} } = @param;
+									@{ $rs{$blk}{$ebuf[0]} } = @param;
 								}
 							}
 						}
@@ -104,13 +104,13 @@ sub parse
 							# We're not inside a block.
 							
 							# Check to see if this config option already exists.
-							if (defined $rs{c}{$ebuf[0]}) {
+							if (defined $rs{$ebuf[0]}) {
 								# It does, so merely push this second one to the existing array.
-								push(@{ $rs{c}{$ebuf[0]} }, $param);
+								push(@{ $rs{$ebuf[0]} }, $param);
 							}
 							else {
 								# It doesn't, create it as an array.
-								@{ $rs{c}{$ebuf[0]} } = @param;
+								@{ $rs{$ebuf[0]} } = @param;
 							}
 						}	
 					}
