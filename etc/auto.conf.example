@@ -50,6 +50,9 @@ user "starcoder" {
     privs "owner";
 }
 
+# Language.
+language "en";
+
 # Module autoload.
 module "m_weather";
 module "m_gcalc";
