@@ -50,8 +50,8 @@ user "starcoder" {
     privs "owner";
 }
 
-# Language.
-language "en";
+# Locale.
+locale "en_US";
 
 # Module autoload.
 module "m_weather";
