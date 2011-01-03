@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 # Standard API subroutines.
-package API;
+package API::Std;
 
 # Configuration value getter.
 sub conf_get
