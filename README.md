@@ -32,7 +32,6 @@ maintenance of Auto, and other projects.
 
 + Elijah Perrault &lt;elijah@starcoder.info&gt;
 + Matthew Barksdale &lt;mattwb65@gmail.com&gt;
-+ Russell Bradford &lt;russell@surgehost.net&gt;
 
 
 ## 3. HOW TO INSTALL
