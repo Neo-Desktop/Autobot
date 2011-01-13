@@ -40,15 +40,7 @@ stated in doc/LICENSE.  Auto is free but copyrighted software
 released under the terms of the GNU General Public License,
 version 2.
 
-Dependencies: gettext
-
-It is very simple to install Auto, simply download the install
-script from http://xelhua.org. To get the link, check out
-http://starcoder.info and find the post about the latest Auto
-release, a link to download the install script will be included.
-
-You can also manually install Auto, but this is pointless
-unless you wish to use the Indev release from Git.
+Dependencies: Perl 5.10.0 or greater, gettext
 
 Enjoy and thanks for choosing Auto.
 
@@ -60,13 +52,12 @@ Reserved. Currently there is no method of upgrading version.
 
 5. HELP, BUGS, SUGGESTIONS
 
-If you need help, please join our IRC support chatroom at
-irc.xelhua.org #xelhua.  And in the case that you find a bug,
-we recommend bringing it up in #xelhua to ensure it is a bug
-and whether or not it is known, then report it on our BT at
-http://bugs.xelhua.org. Thanks!
+For help with Auto, you can ask on the forums at
+http://forums.xelhua.org or in our IRC chatroom at irc.xelhua.org
+#xelhua.
 
-Feature suggestions are also welcome, again please let us
-know them in our support chatroom. If you've already created
-the feature, please be sure to tell us that if you want to
-make a contribution.
+To report a bug, please see http://rm.xelhua.org/projects/auto/issues
+Thanks for contributing by reporting issues!
+
+To suggest a feature, it's best to post it on the above link,
+but you can also let us know in our IRC chatroom.
