@@ -32,7 +32,7 @@ maintenance of Auto, and other projects.
 
 + Elijah Perrault &lt;elijah@starcoder.info&gt;
 + Matthew Barksdale &lt;mattwb65@gmail.com&gt;
-
++ Russell Bradford &lt;russell@surgehost.net&gt;
 
 ## 3. HOW TO INSTALL
 
@@ -41,7 +41,7 @@ stated in doc/LICENSE.  Auto is free but copyrighted software
 released under the terms of the GNU General Public License,
 version 2.
 
-Dependencies: Perl 5.10.0 or greater, gettext
+Dependencies: Perl 5.10.0 or later, gettext
 
 Enjoy and thanks for choosing Auto.
 
