@@ -15,7 +15,7 @@ use FindBin qw($Bin);
 our $Bin = $Bin;
 unshift(@INC, "$Bin/../src");
 require API::Std;
-require DB::Flatfile;
+#require DB::Flatfile;
 require Parser::Config;
 #require Parser::IRC;
 #require IRC::Standard;
@@ -34,10 +34,3 @@ our %SETTINGS = $CONF->parse;
 
 setlocale(LC_CTYPE, API::Std::conf_get('locale'));
 require API::Text;
-
-DB::load() or exit;
-
-my $k = DB::get("LOL") or print ".\n" and exit;
-print Dumper($k);
-
-print @{ $k }->[0]->[0]."\n";
