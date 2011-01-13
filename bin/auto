@@ -4,16 +4,18 @@
 # Copyright (C) 2010-2011 Xelhua Development Team (doc/CREDITS)
 # This program is free software; rights to this code are stated in doc/LICENSE.
 package Auto;
+require 5.10.0;
 use strict;
 use warnings;
 use POSIX;
+use locale;
 use IO::Socket;
+use Data::Dumper;
 use FindBin qw($Bin);
 our $Bin = $Bin;
 unshift(@INC, "$Bin/../src");
-#require Lang::Gettext;
 require API::Std;
-#require DB::Flatfile;
+require DB::Flatfile;
 require Parser::Config;
 #require Parser::IRC;
 #require IRC::Standard;
@@ -29,3 +31,13 @@ use constant {
 
 our $CONF = Parser::Config->new("auto.conf") or print "Failed to open configuration file.\n" and exit;
 our %SETTINGS = $CONF->parse;
+
+setlocale(LC_CTYPE, API::Std::conf_get('locale'));
+require API::Text;
+
+DB::load() or exit;
+
+my $k = DB::get("LOL") or print ".\n" and exit;
+print Dumper($k);
+
+print @{ $k }->[0]->[0]."\n";
