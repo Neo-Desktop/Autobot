@@ -3,9 +3,14 @@
 # This program is free software; rights to this code are stated in doc/LICENSE.
 use strict;
 use warnings;
+use Exporter;
 
 # Standard API subroutines.
 package API::Std;
+
+our @ISA = qw(Exporter);
+our @EXPORT_OK = qw(conf_get trans);
+
 
 # Configuration value getter.
 sub conf_get
@@ -39,6 +44,12 @@ sub conf_get
 	else {
 		return 0;
 	}	
+}
+
+# Translation subroutine.
+sub trans
+{
+	
 }
 
 1;
