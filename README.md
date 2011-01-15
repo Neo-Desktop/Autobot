@@ -43,7 +43,7 @@ stated in doc/LICENSE.  Auto is free but copyrighted software
 released under the terms of the GNU General Public License,
 version 2.
 
-Dependencies: Perl 5.10.0 or later, gettext
+Dependencies: Perl 5.10.0 or later
 
 Enjoy and thanks for choosing Auto.
 

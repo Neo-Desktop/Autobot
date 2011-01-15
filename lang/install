@@ -1,4 +1,0 @@
-#!/bin/bash
-
-msgfmt -o en.mo en.po
-msgfmt -o fr.mo fr.po
