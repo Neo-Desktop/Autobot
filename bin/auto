@@ -14,7 +14,6 @@ use Data::Dumper;
 use FindBin qw($Bin);
 our $Bin = $Bin;
 unshift(@INC, "$Bin/../src");
-require API::Std;
 #require DB::Flatfile;
 require Parser::Config;
 #require Parser::IRC;
@@ -31,6 +30,3 @@ use constant {
 
 our $CONF = Parser::Config->new("auto.conf") or print "Failed to open configuration file.\n" and exit;
 our %SETTINGS = $CONF->parse;
-
-setlocale(LC_CTYPE, API::Std::conf_get('locale'));
-require API::Text;
