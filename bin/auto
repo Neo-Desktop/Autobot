@@ -19,8 +19,7 @@ require API::Std;
 require Parser::Config;
 require Parser::Lang;
 #require Parser::IRC;
-#require IRC::Standard;
-#require Sys::Full;
+#require Sys;
 
 use constant {
 	NAME   => 'Auto IRC Bot',
