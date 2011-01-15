@@ -14,6 +14,30 @@ our @EXPORT_OK = qw(conf_get trans);
 my %LANGE;
 
 
+# Initialize a module.
+sub mod_init
+{
+	
+}
+
+# Void a module.
+sub mod_void
+{
+	
+}
+
+# Add a command to Auto.
+sub cmd_add
+{
+	
+}
+
+# Delete a command from Auto.
+sub cmd_del
+{
+	
+}
+
 # Configuration value getter.
 sub conf_get
 {
