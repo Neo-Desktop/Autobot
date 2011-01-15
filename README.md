@@ -30,10 +30,15 @@ Auto IRC Bot is developed by Xelhua Development Group, a team
 of people who contribute their time and knowledge to the
 maintenance of Auto, and other projects.
 
-+ Elijah Perrault &lt;elijah@starcoder.info&gt;
++ Elijah "starcoder" Perrault &lt;elijah@starcoder.info&gt;
 + Matthew Barksdale &lt;mattwb65@gmail.com&gt;
 + Russell Bradford &lt;russell@surgehost.net&gt;
-+ Timothy Estes &lt;tim@xarsys.cz.cc&gt;
++ Timothy "Tim-7967" Estes &lt;tim@xarsys.cz.cc&gt;
+
+Contributors - Non-developers who contribute to the project
+greatly.
+
++ Chazz "Alexandria" Wolcott &lt;alyx@woomoo.org&gt;
 
 
 ## 3. HOW TO INSTALL
