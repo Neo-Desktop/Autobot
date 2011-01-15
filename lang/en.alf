@@ -1,0 +1,18 @@
+# Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
+# Copyright (C) 2010-2011 Xelhua Development Team (doc/CREDITS)
+# This program is free software; rights to this code are stated in doc/LICENSE.
+
+# English translation file.
+
+
+# Permission denied - Permission denied
+msge "Permission_denied" "Permission denied"
+
+# Access denied - Access denied
+msge "Access_denied" "Access denied"
+
+# Not enough parameters - Not enough parameters
+msge "Not_enough_parameters" "Not enough parameters"
+
+# Unknown command - Unknown command
+msge "Unknown_command" "Unknown command"

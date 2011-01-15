@@ -11,6 +11,8 @@ package API::Std;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(conf_get trans);
 
+my %LANGE;
+
 
 # Configuration value getter.
 sub conf_get
@@ -49,7 +51,16 @@ sub conf_get
 # Translation subroutine.
 sub trans
 {
+	my ($id) = @_;
+	$id =~ s/ /_/g;
 	
+	if (defined $API::Std::LANGE{$id}) {
+		return $API::Std::LANGE{$id};
+	}
+	else {
+		$id =~ s/_/ /g;
+		return $id;
+	}
 }
 
 1;
