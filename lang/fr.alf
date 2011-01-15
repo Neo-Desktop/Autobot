@@ -1,0 +1,18 @@
+uto IRC Bot. An advanced, lightweight and powerful IRC bot.
+# Copyright (C) 2010-2011 Xelhua Development Team (doc/CREDITS)
+# This program is free software; rights to this code are stated in doc/LICENSE.
+
+# French translation file.
+
+
+# Permission denied - Autorisation refusée
+msge "Permission_denied" "Autorisation refusée"
+
+# Access denied - Accès refusé
+msge "Access_denied" "Accès refusé"
+
+# Not enough parameters - Paramètres insuffisants
+msge "Not_enough_parameters" "Paramètres insuffisants"
+
+# Unknown command - Commande iconnue
+msge "Unknown_command" "Commande inconnue"
