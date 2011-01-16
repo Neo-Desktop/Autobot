@@ -38,4 +38,4 @@ if (!defined $violations[0])
 print "Violations:\n";
 my $count = 0;
 print "$_\n" and $count++ foreach (@violations);
-print "Errors: $count\n";
+print "Total Violations: $count\n";
