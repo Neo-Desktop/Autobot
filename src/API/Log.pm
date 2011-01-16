@@ -3,6 +3,7 @@
 # This program is free software; rights to this code are stated in doc/LICENSE.
 use strict;
 use warnings;
+use POSIX qw(strftime);
 use Exporter;
 use API::Std qw(conf_get);
 
@@ -46,7 +47,11 @@ sub dbug
 # Log to file.
 sub alog
 {
+	my ($lmsg) = @_;
 	
+	my @celog = conf_get("expire_logs");
+	
+	return 1;
 }
 
 
