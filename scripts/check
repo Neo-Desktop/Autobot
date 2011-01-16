@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# Copyright 2010 Ethrik development team #
+# Copyright 2010-2011 Ethrik development team #
 use strict;
 use warnings;
 use Perl::Critic;
