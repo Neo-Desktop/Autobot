@@ -35,6 +35,6 @@ our %SETTINGS = $CONF->parse;
 my @lclv = API::Std::conf_get("locale");
 our $LOCALE = $lclv[0][0];
 my @lang = split('_', $LOCALE);
-Parser::Lang::parse($lang[0]) or print ".\n" and exit;
+Parser::Lang::parse($lang[0]);
 undef @lang;
 undef @lclv;
