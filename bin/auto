@@ -15,6 +15,7 @@ use FindBin qw($Bin);
 our $Bin = $Bin;
 unshift(@INC, "$Bin/../src");
 require API::Std;
+require API::Log;
 #require DB::Flatfile;
 require Parser::Config;
 require Parser::Lang;
