@@ -78,4 +78,4 @@ alog "Auto successfully started.";
 API::Log::expire_logs();
 
 # Create sockets.
-my @cservers = conf_get("server");
+my %cservers = conf_get("server");
