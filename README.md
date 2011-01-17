@@ -62,7 +62,7 @@ Reserved. Currently there is no method of upgrading version.
 
 For help with Auto, you can ask on the forums at
 http://forums.xelhua.org or in our IRC chatroom at irc.xelhua.org
-#xelhua.
+&#35;xelhua.
 
 To report a bug, please see http://rm.xelhua.org/projects/auto/issues
 Thanks for contributing by reporting issues!
