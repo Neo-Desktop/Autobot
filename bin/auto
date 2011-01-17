@@ -15,7 +15,7 @@ use Async;
 use FindBin qw($Bin);
 our $Bin = $Bin;
 BEGIN { unshift(@INC, "$Bin/../src"); }
-use API::Std;
+use API::Std qw(err conf_get);
 use API::Log qw(println alog);
 #use DB::Flatfile;
 use Parser::Config;
@@ -32,6 +32,10 @@ use constant {
 	RSTAGE => 'd'
 };
 
+# Print startup message.
+println "* ".NAME." (version ".VER.".".SVER.".".REV.RSTAGE.") is starting up...";
+alog NAME." (version ".VER.".".SVER.".".REV.RSTAGE.") is starting up...";
+
 # Check for debug mode.
 our $DEBUG = 0;
 if (defined $ARGV[0]) {
@@ -41,16 +45,31 @@ if (defined $ARGV[0]) {
 }
 
 # Parse configuration file.
-our $CONF = Parser::Config->new("auto.conf") or print "Failed to open configuration file.\n" and exit;
-our %SETTINGS = $CONF->parse;
+println "* Parsing configuration file auto.conf...";
+our $CONF = Parser::Config->new("auto.conf") or errc(2, "Failed to parse configuration file!", 1);
+our %SETTINGS = $CONF->parse or errc(2, "Failed to parse configuration file!", 1);
+println "Success";
+
+# Check for required configuration values.
+my @REQCVALS = qw(locale);
+foreach my $REQCVAL (@REQCVALS) {
+	if (!conf_get($REQCVAL)) {
+		errc(2, "Missing required configuration value: $REQCVAL", 1);
+	}
+}
+undef @REQCVALS;
 
 # Parse translations.
-my @lclv = API::Std::conf_get("locale");
-our $LOCALE = $lclv[0][0];
+println "* Parsing translation files...";
+our $LOCALE = (conf_get("locale"))[0][0];
 my @lang = split('_', $LOCALE);
-Parser::Lang::parse($lang[0]);
+Parser::Lang::parse($lang[0]) or err(2, "Failed to parse translation files!", 1);
 undef @lang;
-undef @lclv;
+println "Success";
+
+our $STARTTIME = time;
+println "* Auto successfully started at ".POSIX::strftime("%Y-%m-%d %I:%M:%S %p", localtime).".";
+alog "Auto successfully started.";
 
 # Expire old logs.
 API::Log::expire_logs();
