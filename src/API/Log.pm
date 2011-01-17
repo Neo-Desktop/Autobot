@@ -50,16 +50,23 @@ sub alog
 {
 	my ($lmsg) = @_;
 	
+	# Expire old logs first.
+	expire_logs();
+	
+	# Get date and time in the desired format.
 	my $date = POSIX::strftime("%Y%m%d", localtime);
 	my $time = POSIX::strftime("%Y-%m-%d %I:%M:%S %p", localtime);
 	
+	# Create var/ if it doesn't exist.
 	unless (-d "$Auto::Bin/../var") {
 		`mkdir $Auto::Bin/../var`;
 	}
+	# Create var/DATE.log if it doesn't exist.
 	unless (-e "$Auto::Bin/../var/$date.log") {
 		`touch $Auto::Bin/../var/$date.log`;
 	}
 	
+	# Open the logfile, print the log message to it and close it.
 	open LOG, ">>$Auto::Bin/../var/$date.log" or return 0;
 	print LOG "[$time] $lmsg\n" or return 0;
 	close LOG or return 0;
