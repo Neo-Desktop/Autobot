@@ -1,6 +1,35 @@
 Auto IRC Bot 3.0: Change Log
---------------------------------------------------------
+------------------------------------------------------------------
 
 3.0 Indev
-========================================================
+==================================================================
+    * Added API function alog()
+    * Added API::Log::expire_logs()
+    * Added API function println()
+    * Use Mouse.
+    * Added contributor; Chazz "Alexandria" Wolcott.
+    * Gettext is no longer used.
+    * German translations. Contributed by Chazz "Alexandria" Wolcott.
+    * Converted English and French files to new format.
+    * Created a new method of translation.
+    * Use Exporter for the API functions.
+    * Added developer; Timothy Estes.
+    * Added developer; Russell Bradford.
+    * Require Perl 5.10.0 or higher.
+    * Removed developer; Russell Bradford.
+    * Renamed config value language to locale.
+    * Added an example config file.
+    * Added API function conf_get()
+    * Renamed API::Standard to API::Std
+    * Created a configuration file parser.
+    * New developer; Russell Bradford.
+    * Import the POSIX module.
+    * Fixed accent marks in French translation files.
+    * French translations.
+    * Added gettext compile script.
+    * Gettext English language files.
+    * New developer; Matthew Barksdale.
+    * Added documentation for the future Auto-Flatfile database 
+      format.
+    * Added a basic launcher.
     * Finished standard documentation.
