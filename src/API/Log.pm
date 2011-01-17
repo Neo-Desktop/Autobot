@@ -42,7 +42,12 @@ sub println
 # Print only if in debug mode.
 sub dbug
 {
+	my ($out) = @_;
 	
+	if ($Auto::DEBUG) {
+		# We're in debug mode; print it out.
+		println $out;
+	}
 }
 
 # Log to file.
