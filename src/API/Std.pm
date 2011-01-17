@@ -9,7 +9,7 @@ use Exporter;
 package API::Std;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(conf_get trans);
+our @EXPORT_OK = qw(conf_get trans err);
 
 my %LANGE;
 
@@ -101,11 +101,11 @@ sub err
 	}
 	
 	# Level 1: Print to screen.
-	if ($lvl => 1) {
+	if ($lvl >= 1) {
 		API::Log::println("ERROR: $msg");
 	}
 	# Level 2: Log to file.
-	if ($lvl => 2) {
+	if ($lvl >= 2) {
 		API::Log::alog("ERROR: $msg");
 	}
 	
