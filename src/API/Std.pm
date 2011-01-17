@@ -90,10 +90,13 @@ sub trans
 # Error subroutine.
 sub err
 {
-	my ($lvl, $msg) = @_;
+	my ($lvl, $msg, $fatal) = @_;
 	
 	# Check for an invalid level.
 	if ($lvl =~ m/[^0-9]/) {
+		return 0;
+	}
+	if ($fatal =~ m/(^0|1)/) {
 		return 0;
 	}
 	
@@ -104,6 +107,11 @@ sub err
 	# Level 2: Log to file.
 	if ($lvl => 2) {
 		API::Log::alog("ERROR: $msg");
+	}
+	
+	# If it's a fatal error, exit the program.
+	if ($fatal) {
+		exit;
 	}
 }
 
