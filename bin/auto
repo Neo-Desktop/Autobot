@@ -11,16 +11,17 @@ use POSIX;
 use locale;
 use Mouse;
 use IO::Socket;
+use Async;
 use FindBin qw($Bin);
 our $Bin = $Bin;
-unshift(@INC, "$Bin/../src");
-require API::Std;
-require API::Log;
-#require DB::Flatfile;
-require Parser::Config;
-require Parser::Lang;
-#require Parser::IRC;
-#require Sys;
+BEGIN { unshift(@INC, "$Bin/../src"); }
+use API::Std;
+use API::Log qw(println alog);
+#use DB::Flatfile;
+use Parser::Config;
+use Parser::Lang;
+#use Parser::IRC;
+#use Sys;
 
 use constant {
 	NAME   => 'Auto IRC Bot',
@@ -39,3 +40,5 @@ my @lang = split('_', $LOCALE);
 Parser::Lang::parse($lang[0]);
 undef @lang;
 undef @lclv;
+
+API::Log::expire_logs();
