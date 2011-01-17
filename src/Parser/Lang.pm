@@ -6,6 +6,7 @@ use warnings;
 
 # Language file parser.
 package Parser::Lang;
+use API::Log qw(dbug alog);
 
 
 # Parser.
@@ -15,7 +16,10 @@ sub parse
 	
 	# Check that the language file exists.
 	unless (-e "$Auto::Bin/../lang/$lang.alf") {
-		return 0;
+		# Otherwise, use English.
+		dbug "Language '$lang' not found. Using English.";
+		alog "Language '$lang' not found. Using English.";
+		$lang = "en";
 	}
 	
 	# Open, read and close the file.
