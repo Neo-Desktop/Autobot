@@ -1,14 +1,15 @@
 # Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
 # Copyright (C) 2010-2011 Xelhua Development Team (doc/CREDITS)
 # This program is free software; rights to this code are stated in doc/LICENSE.
-use strict;
-use warnings;
-use POSIX qw(strftime);
-use Exporter;
-use API::Std qw(conf_get);
 
 # API logging subroutines.
 package API::Log;
+use strict;
+use warnings;
+use POSIX;
+use Time::Local;
+use Exporter;
+use API::Std qw(conf_get);
 
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(println dbug alog);
@@ -49,10 +50,43 @@ sub alog
 {
 	my ($lmsg) = @_;
 	
-	my @celog = conf_get("expire_logs");
+	my $date = POSIX::strftime("%Y%m%d", time);
+	
 	
 	return 1;
 }
 
+# Expire old logs.
+sub expire_logs
+{
+	# Get configuration value.
+	my $celog = (conf_get("expire_logs"))[0][0] or return 0;
+	
+	# Check for invalid values.
+	if ($celog =~ m/[^0-9]/) {
+		# Must be numbers only.
+		return;
+	}
+	elsif (!$celog) {
+		# No expire.
+		return;
+	}
+	
+	# Iterate through each logfile.
+	foreach my $file (<$Auto::Bin/../var/*>) {
+		my (undef, $file) = split('bin/../var/', $file);
+		
+		# Convert filename to UNIX time.
+		my $yyyy = substr($file, 0, 4);
+		my $mm = substr($file, 4, 2);
+		my $dd = substr($file, 6, 2);
+		my $epoch = timelocal(0, 0, 0, $dd, $mm, $yyyy);
+		
+		# If it's older than <config_value> days, delete it.
+		if (time - $epoch > 86400 * $celog) {
+			`rm $Auto::Bin/../var/$file`;
+		}
+	}
+}
 
 1;
