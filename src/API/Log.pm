@@ -20,6 +20,10 @@ sub println
 {
 	my ($out) = @_;
 	
+	if (!defined $out) {
+		return;
+	}
+	
 	my ($nl);
 	if ($^O =~ /dos/i or $^O =~ /win/i or $^O =~ /netware/i) {
 		$nl = "\r\n";
