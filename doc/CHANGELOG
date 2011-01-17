@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added a debug mode.
+    * Old logs can now expire if set to do so in config.
     * Added API function alog()
     * Added API::Log::expire_logs()
     * Added API function println()
