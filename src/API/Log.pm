@@ -50,8 +50,19 @@ sub alog
 {
 	my ($lmsg) = @_;
 	
-	my $date = POSIX::strftime("%Y%m%d", time);
+	my $date = POSIX::strftime("%Y%m%d", localtime);
+	my $time = POSIX::strftime("%Y-%m-%d %I:%M:%S %p", localtime);
 	
+	unless (-d "$Auto::Bin/../var") {
+		`mkdir $Auto::Bin/../var`;
+	}
+	unless (-e "$Auto::Bin/../var/$date.log") {
+		`touch $Auto::Bin/../var/$date.log`;
+	}
+	
+	open LOG, ">>$Auto::Bin/../var/$date.log" or return 0;
+	print LOG "[$time] $lmsg\n" or return 0;
+	close LOG or return 0;
 	
 	return 1;
 }
