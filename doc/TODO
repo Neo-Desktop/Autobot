@@ -10,15 +10,16 @@ Legend:
 
 
  [ ] Language
-     [ ] Create gettxt()
-     [ ] Implement GNU gettext
+     [X] Create method of translation.
+     [X] Create API functions for translations.
      [ ] Implement foreign language support in command help
-     [!] Add English strings
+     [X] Add English strings
      [ ] Add Spanish strings
-     [!] Add French strings
+     [X] Add French strings
 
- [ ] API
+ [!] API
      [ ] Create basic modular functions
+     [!] Create logging functions
      [ ] Create command creation functions
      [ ] Create user permissions (levels)
 
@@ -31,7 +32,7 @@ Legend:
      [ ] Implement Auto-Flatfile as the main format
      [ ] Add MySQL support
 
- [ ] Sys
+ [!] Sys
      [ ] Create system file for UNIX (or: Linux, BSD, etc.)
      [?+] Create system file for Microsoft Windows (currently unsupported)
 
@@ -44,6 +45,6 @@ Legend:
      [ ] Custom Triggers module
      [ ] Shorten URL (bit.ly?) module
      [?] Bot Talk module
-     [?] Minecraft<->IRC module
+     [O] Minecraft<->IRC module
      [?] 8-Ball module
          
