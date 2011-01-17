@@ -15,7 +15,7 @@ use Async;
 use FindBin qw($Bin);
 our $Bin = $Bin;
 BEGIN { unshift(@INC, "$Bin/../src"); }
-use API::Std qw(err conf_get);
+use API::Std qw(conf_get err);
 use API::Log qw(println alog);
 #use DB::Flatfile;
 use Parser::Config;
@@ -34,7 +34,6 @@ use constant {
 
 # Print startup message.
 println "* ".NAME." (version ".VER.".".SVER.".".REV.RSTAGE.") is starting up...";
-alog NAME." (version ".VER.".".SVER.".".REV.RSTAGE.") is starting up...";
 
 # Check for debug mode.
 our $DEBUG = 0;
@@ -46,12 +45,12 @@ if (defined $ARGV[0]) {
 
 # Parse configuration file.
 println "* Parsing configuration file auto.conf...";
-our $CONF = Parser::Config->new("auto.conf") or err(2, "Failed to parse configuration file!", 1);
-our %SETTINGS = $CONF->parse or err(2, "Failed to parse configuration file!", 1);
+our $CONF = Parser::Config->new("auto.conf") or err(1, "Failed to parse configuration file!", 1);
+our %SETTINGS = $CONF->parse or err(1, "Failed to parse configuration file!", 1);
 println "Success";
 
 # Check for required configuration values.
-my @REQCVALS = qw(locale);
+my @REQCVALS = qw(locale expire_logs);
 foreach my $REQCVAL (@REQCVALS) {
 	if (!conf_get($REQCVAL)) {
 		err(2, "Missing required configuration value: $REQCVAL", 1);
