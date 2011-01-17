@@ -50,10 +50,14 @@ our %SETTINGS = $CONF->parse or err(1, "Failed to parse configuration file!", 1)
 println "Success";
 
 # Check for required configuration values.
-my @REQCVALS = qw(locale expire_logs);
+my @REQCVALS = qw(locale expire_logs servers);
 foreach my $REQCVAL (@REQCVALS) {
 	if (!conf_get($REQCVAL)) {
-		err(2, "Missing required configuration value: $REQCVAL", 1);
+		my $err = 2;
+		if ($REQCVAL eq "expire_logs") {
+			$err = 1;
+		}
+		err($err, "Missing required configuration value: $REQCVAL", 1);
 	}
 }
 undef @REQCVALS;
@@ -73,3 +77,5 @@ alog "Auto successfully started.";
 # Expire old logs.
 API::Log::expire_logs();
 
+# Create sockets.
+my @cservers = conf_get("server");
