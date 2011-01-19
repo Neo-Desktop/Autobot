@@ -20,7 +20,7 @@ use API::Log qw(println alog dbug);
 #use DB::Flatfile;
 use Parser::Config;
 use Parser::Lang;
-#use Parser::IRC;
+use Parser::IRC;
 #use Sys;
 
 # Set version information.
