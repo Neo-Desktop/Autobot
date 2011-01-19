@@ -114,6 +114,9 @@ foreach my $cskey (keys %cservers) {
 			chomp $data;
 			# Debug.
 			dbug "$cskey -> You: $data";
+			
+			# Parse data.
+			Parser::IRC::_parse($cskey, $data);
 		}
 	}) or err(2, "Failed to create process for ".$cskey, 0) and next;
 	# Success!
