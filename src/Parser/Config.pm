@@ -8,6 +8,7 @@ use warnings;
 package Parser::Config;
 
 # Create a new instance.
+# Funny how we still haven't taken advantage of Mouse/Moose yet.
 sub new 
 {
     my $class = shift;
@@ -76,6 +77,7 @@ sub parse
 								my @sblk = split('@@@', $blk);
 								
 								# Check to see if this config option already exists.
+								# Whose great idea was it to tab over this far? It screws with vim. :/
 								if (defined $rs{$sblk[0]}{$sblk[1]}{$ebuf[0]}) {
 									# It does, so merely push this second one to the existing array.
 									push(@{ $rs{$sblk[0]}{$sblk[1]}{$ebuf[0]} }, $param);
