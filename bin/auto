@@ -47,7 +47,7 @@ if (defined $ARGV[0]) {
 println "* Parsing configuration file auto.conf...";
 our $CONF = Parser::Config->new("auto.conf") or err(1, "Failed to parse configuration file!", 1);
 our %SETTINGS = $CONF->parse or err(1, "Failed to parse configuration file!", 1);
-println "Great Success!";
+println " Success";
 
 # Check for required configuration values.
 my @REQCVALS = qw(locale expire_logs servers);
@@ -68,7 +68,7 @@ our $LOCALE = (conf_get("locale"))[0][0];
 my @lang = split('_', $LOCALE);
 Parser::Lang::parse($lang[0]) or err(2, "Failed to parse translation files!", 1);
 undef @lang;
-println "Great Success!";
+println " Success";
 
 our $STARTTIME = time;
 println "* Auto successfully started at ".POSIX::strftime("%Y-%m-%d %I:%M:%S %p", localtime).".";
@@ -83,6 +83,7 @@ println "* Connecting to servers...";
 my %cservers = conf_get("server");
 # Set the hashes and processes hashes.
 my (%SOCKET, %SOCKPROC);
+my $it = 0;
 # Iterate through each configured server.
 foreach my $cskey (keys %cservers) {
 	# Create the socket.
@@ -93,8 +94,12 @@ foreach my $cskey (keys %cservers) {
 		PeerPort  => $cservers{$cskey}{'port'}[0]
 	) or err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) and next; # Or error.
 	# Send USER and NICK.
-	socksnd($cskey, "USER ".$cservers{$cskey}{'ident'}[0]." * * :".$cservers{$cskey}{'realname'}[0]);
-	socksnd($cskey, "NICK ".$cservers{$cskey}{'nick'}[0]);
+	socksnd($cskey, "USER ".$cservers{$cskey}{'ident'}[0]." * * :".$cservers{$cskey}{'realname'}[0]) or
+		err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) 
+		and next;
+	socksnd($cskey, "NICK ".$cservers{$cskey}{'nick'}[0]) or
+		err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) 
+		and next;
 	# Create the process.
 	$SOCKPROC{$cskey} = Async->new(sub {
 		# Infinite loop.
@@ -110,8 +115,20 @@ foreach my $cskey (keys %cservers) {
 			# Debug.
 			dbug "$cskey -> You: $data";
 		}
-	});
+	}) or err(2, "Failed to create process for ".$cskey, 0) and next;
+	# Success!
+	println "  Successfully connected to server: ".$cskey;
+	$it = 1;
 }
+
+# Success!
+if ($it) {
+	println " Success: Connected to server(s).";
+}
+else {
+	err(2, "No server connections.", 1);
+}
+undef $it;
 
 # Keep Auto alive.
 while (1) { sleep 1; }
