@@ -53,6 +53,9 @@ user "starcoder" {
 # Locale.
 locale "en_US";
 
+# Expire logs in days. 0 disables.
+expire_logs 15;
+
 # Module autoload.
 module "m_weather";
 module "m_gcalc";
