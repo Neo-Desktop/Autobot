@@ -16,7 +16,7 @@ use FindBin qw($Bin);
 our $Bin = $Bin;
 BEGIN { unshift(@INC, "$Bin/../src"); }
 use API::Std qw(conf_get err);
-use API::Log qw(println alog);
+use API::Log qw(println alog dbug);
 #use DB::Flatfile;
 use Parser::Config;
 use Parser::Lang;
@@ -77,8 +77,60 @@ alog "Auto successfully started.";
 # Expire old logs.
 API::Log::expire_logs();
 
-# Create sockets.
+## Create sockets.
 println "* Connecting to servers...";
+# Get servers from config.
 my %cservers = conf_get("server");
-# Aww... we ran out of steam. :/
+# Set the hashes and processes hashes.
+my (%SOCKET, %SOCKPROC);
+# Iterate through each configured server.
+foreach my $cskey (keys %cservers) {
+	# Create the socket.
+	$SOCKET{$cskey} = IO::Socket::INET->new(
+		Proto => "tcp",
+		LocalAddr => $cservers{$cskey}{'bind'}[0],
+		PeerAddr  => $cservers{$cskey}{'host'}[0],
+		PeerPort  => $cservers{$cskey}{'port'}[0]
+	) or err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) and next; # Or error.
+	# Send USER and NICK.
+	socksnd($cskey, "USER ".$cservers{$cskey}{'ident'}[0]." * * :".$cservers{$cskey}{'realname'}[0]);
+	socksnd($cskey, "NICK ".$cservers{$cskey}{'nick'}[0]);
+	# Create the process.
+	$SOCKPROC{$cskey} = Async->new(sub {
+		# Infinite loop.
+		while (1) {
+			# Read data from socket.
+			my $data = readline($SOCKET{$cskey});
+			# Lost connection: kill process.
+			unless (defined $data) {
+				die;
+			}
+			# Get rid of the newlines.
+			chomp $data;
+			# Debug.
+			dbug "$cskey -> You: $data";
+		}
+	});
+}
 
+# Keep Auto alive.
+while (1) { sleep 1; }
+
+###############
+# Subroutines #
+###############
+
+# Send data to socket.
+sub socksnd 
+{
+	my ($svr, $data) = @_;
+	
+	if (defined $SOCKET{$svr}) {
+		send($SOCKET{$svr}, $data."\n", 0);
+		dbug "You -> $svr: $data";
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}

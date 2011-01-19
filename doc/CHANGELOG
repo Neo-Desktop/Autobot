@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added sockets, support for multiple asynchronous sockets.
     * Bug fix: conf_get() now returns correct data by checking
       what type of reference the requested value is.
     * Foundation completed.
