@@ -1,50 +1,5 @@
-Auto To-Do List
-----------------------------------------------------------------
-
-Legend:
-    X = Done.
-    ! = In development.
-    O = Cancelled.
-    ? = Being questioned.
-    + = Planned for Auto v3.1.
-
-
- [ ] Language
-     [X] Create method of translation.
-     [X] Create API functions for translations.
-     [ ] Implement foreign language support in command help
-     [X] Add English strings
-     [ ] Add Spanish strings
-     [X] Add French strings
-
- [!] API
-     [ ] Create basic modular functions
-     [!] Create logging functions
-     [ ] Create command creation functions
-     [ ] Create user permissions (levels)
-
- [ ] IRC
-     [ ] Create IRC parser
-     [ ] Implement IRC protocol parser
-
- [ ] DB
-     [ ] Create Auto-Flatfile database format
-     [ ] Implement Auto-Flatfile as the main format
-     [ ] Add MySQL support
-
- [!] Sys
-     [ ] Create system file for UNIX (or: Linux, BSD, etc.)
-     [?+] Create system file for Microsoft Windows (currently unsupported)
-
- [ ] Features
-     [ ] Weather module
-     [ ] Google Calculator module
-     [ ] YouTube Search module
-     [ ] Twitter module
-     [ ] Advanced Topics module
-     [ ] Custom Triggers module
-     [ ] Shorten URL (bit.ly?) module
-     [?] Bot Talk module
-     [O] Minecraft<->IRC module
-     [?] 8-Ball module
-         
+Auto's TODO File
+============================================================================
+Throw stuff here you think could be useful or neccessary in future versions
+of auto. 
+============================================================================
