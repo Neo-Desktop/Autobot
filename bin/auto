@@ -47,7 +47,7 @@ if (defined $ARGV[0]) {
 println "* Parsing configuration file auto.conf...";
 our $CONF = Parser::Config->new("auto.conf") or err(1, "Failed to parse configuration file!", 1);
 our %SETTINGS = $CONF->parse or err(1, "Failed to parse configuration file!", 1);
-println "Success";
+println "Great Success!";
 
 # Check for required configuration values.
 my @REQCVALS = qw(locale expire_logs servers);
@@ -68,7 +68,7 @@ our $LOCALE = (conf_get("locale"))[0][0];
 my @lang = split('_', $LOCALE);
 Parser::Lang::parse($lang[0]) or err(2, "Failed to parse translation files!", 1);
 undef @lang;
-println "(Great) Success!";
+println "Great Success!";
 
 our $STARTTIME = time;
 println "* Auto successfully started at ".POSIX::strftime("%Y-%m-%d %I:%M:%S %p", localtime).".";
@@ -78,5 +78,6 @@ alog "Auto successfully started.";
 API::Log::expire_logs();
 
 # Create sockets.
+println "* Connecting to servers...";
 my %cservers = conf_get("server");
 # Aww... we ran out of steam. :/
