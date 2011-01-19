@@ -68,7 +68,7 @@ our $LOCALE = (conf_get("locale"))[0][0];
 my @lang = split('_', $LOCALE);
 Parser::Lang::parse($lang[0]) or err(2, "Failed to parse translation files!", 1);
 undef @lang;
-println "Success";
+println "(Great) Success!";
 
 our $STARTTIME = time;
 println "* Auto successfully started at ".POSIX::strftime("%Y-%m-%d %I:%M:%S %p", localtime).".";
@@ -79,3 +79,4 @@ API::Log::expire_logs();
 
 # Create sockets.
 my %cservers = conf_get("server");
+# Aww... we ran out of steam. :/
