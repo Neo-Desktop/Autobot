@@ -35,6 +35,8 @@ use constant {
 # Print startup message.
 println "* ".NAME." (version ".VER.".".SVER.".".REV.RSTAGE.") is starting up...";
 
+our ($PID);
+
 # Check for debug mode.
 our $DEBUG = 0;
 if (defined $ARGV[0]) {
@@ -70,15 +72,40 @@ Parser::Lang::parse($lang[0]) or err(2, "Failed to parse translation files!", 1)
 undef @lang;
 println " Success";
 
+# Expire old logs.
+API::Log::expire_logs();
+
+# Successful startup.
 our $STARTTIME = time;
 println "* Auto successfully started at ".POSIX::strftime("%Y-%m-%d %I:%M:%S %p", localtime).".";
 alog "Auto successfully started.";
 
-# Expire old logs.
-API::Log::expire_logs();
+# Fork into the background if not in debug mode.
+unless ($DEBUG) {
+    println "*** Becoming a daemon...";
+    open STDIN, '/dev/null' or err(2, "Can't read /dev/null: $!", 1);
+    open STDOUT, '>>/dev/null' or err(2, "Can't write to /dev/null: $!", 1);
+    open STDERR, '>>/dev/null' or err(2, "Can't write to /dev/null: $!", 1);
+    $PID = fork();
+    unless ($PID == 0) {
+        alog "* Successfully forked into the background. Process ID: ".$PID;
+        unless (-e "$Bin/auto.pid") {
+			`touch $Bin/auto.pid`;
+		}
+		open FPID, ">$Bin/auto.pid" or exit;
+		print FPID "$PID\n" or exit;
+		close FPID or exit;
+        exit;
+    }
+    POSIX::setsid() or err(2, "Can't start a new session: $!", 1);
+}
+else {
+    $PID = $$;
+}
 
 ## Create sockets.
-println "* Connecting to servers...";
+alog "* Connecting to servers...";
+dbug "* Connecting to servers...";
 # Get servers from config.
 my %cservers = conf_get("server");
 # Set the hashes and processes hashes.
@@ -120,18 +147,21 @@ foreach my $cskey (keys %cservers) {
 		}
 	}) or err(2, "Failed to create process for ".$cskey, 0) and next;
 	# Success!
-	println "  Successfully connected to server: ".$cskey;
+	alog "** Successfully connected to server: ".$cskey;
+	dbug "** Successfully connected to server: ".$cskey;
 	$it = 1;
 }
 
 # Success!
 if ($it) {
-	println " Success: Connected to server(s).";
+	alog "** Success: Connected to server(s).";
+	dbug "** Success: Connected to server(s).";
 }
 else {
 	err(2, "No server connections.", 1);
 }
 undef $it;
+
 
 # Keep Auto alive.
 while (1) { sleep 1; }
