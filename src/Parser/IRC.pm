@@ -7,8 +7,7 @@ package Parser::IRC;
 use strict;
 use warnings;
 use API::Std qw(conf_get);
-use Data::Dumper;
-
+use API::IRC qw(cjoin);
 
 # Raw parsing hash.
 our %RAWC = (
@@ -57,13 +56,13 @@ sub num001
 		my @sajoin = split(',', $cajoin[0]);
 		
 		foreach my $sjoin (@sajoin) {
-			Auto::socksnd($svr, "JOIN $sjoin");
+			cjoin($svr, $sjoin);
 		}
 	}
 	else {
 		# For multi-line ajoins.
 		foreach my $sjoin (@cajoin) {
-			Auto::socksnd($svr, "JOIN $sjoin");
+			cjoin($svr, $sjoin);
 		}
 	}
 }
