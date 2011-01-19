@@ -81,3 +81,5 @@ API::Log::expire_logs();
 println "* Connecting to servers...";
 my %cservers = conf_get("server");
 # Aww... we ran out of steam. :/
+
+1;
