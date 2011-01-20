@@ -85,7 +85,7 @@ our %SETTINGS = $CONF->parse or err(1, "Failed to parse configuration file!", 1)
 println " Success";
 
 # Check for required configuration values.
-my @REQCVALS = qw(locale expire_logs servers);
+my @REQCVALS = qw(locale expire_logs server);
 foreach my $REQCVAL (@REQCVALS) {
 	if (!conf_get($REQCVAL)) {
 		my $err = 2;
