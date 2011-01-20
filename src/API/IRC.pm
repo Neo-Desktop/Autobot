@@ -9,7 +9,7 @@ use warnings;
 use Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(cjoin cpart mode privmsg notice);
+our @EXPORT_OK = qw(cjoin cpart mode privmsg notice quit);
 
 
 # Join a channel.
@@ -51,3 +51,16 @@ sub notice {
 	
 	Auto::socksnd($svr, "NOTICE $target :$message");
 }
+
+# Quit IRC
+sub quit {
+	my ($svr, $reason) = @_;
+	
+	if (defined $reason) {
+		Auto::socksnd($svr, "QUIT :$reason");
+	}
+	else {
+		Auto::socksnd($svr, "QUIT :Leaving");
+	}
+}
+
