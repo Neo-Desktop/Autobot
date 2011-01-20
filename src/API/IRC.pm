@@ -9,7 +9,7 @@ use warnings;
 use Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(cjoin cpart);
+our @EXPORT_OK = qw(cjoin cpart mode);
 
 
 # Join a channel.
@@ -29,4 +29,11 @@ sub cpart {
 	else {
 		Auto::socksnd($svr, "PART $chan :Leaving");
 	}
+}
+
+# Set a mode
+sub mode {
+	my ($svr, $chan, $modes) = @_;
+
+	Auto::socksnd($svr, "MODE $chan $modes");
 }
