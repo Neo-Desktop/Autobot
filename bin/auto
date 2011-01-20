@@ -85,7 +85,7 @@ our %SETTINGS = $CONF->parse or err(1, "Failed to parse configuration file!", 1)
 println " Success";
 
 # Check for required configuration values.
-my @REQCVALS = qw(locale expire_logs servers);
+my @REQCVALS = qw(locale expire_logs server);
 foreach my $REQCVAL (@REQCVALS) {
 	if (!conf_get($REQCVAL)) {
 		my $err = 2;
@@ -153,6 +153,12 @@ foreach my $cskey (keys %cservers) {
 		PeerAddr  => $cservers{$cskey}{'host'}[0],
 		PeerPort  => $cservers{$cskey}{'port'}[0]
 	) or err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) and next; # Or error.
+	# Send PASS if we have one
+	if (defined $cservers{$cskey}{'pass'}[0]) {
+		socksnd($cskey, "PASS :".$cservers{$cskey}{'pass'}[0]) or                 
+			err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) 
+                	and next;
+	}
 	# Send USER and NICK.
 	socksnd($cskey, "USER ".$cservers{$cskey}{'ident'}[0]." * * :".$cservers{$cskey}{'realname'}[0]) or
 		err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) 
