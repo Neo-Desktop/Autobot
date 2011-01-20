@@ -62,7 +62,6 @@ sub modfind
 
 # Check operating system.
 print "Checking operating system..... $^O - ";
-my ($NEWLINE);
 if ($^O =~ /dos/i) {
 	print "DOS is not supported.\r\n";
 }
@@ -74,22 +73,18 @@ elsif ($^O eq "NetWare") {
 }
 elsif ($^O eq "linux") {
 	print "OK\n";
-	$NEWLINE = "\n";
 }
 elsif ($^O eq "os2") {
 	print "IBM OS/2 is not supported.\r\n";
 }
 elsif ($^O =~ /mac/i or $^O =~ /darwin/i) {
 	print "OK\r";
-	$NEWLINE = "\r";
 }
 elsif ($^O eq "freebsd") {
 	print "OK\n";
-	$NEWLINE = "\n";
 }
 elsif ($^O eq "openbsd") {
 	print "OK\n";
-	$NEWLINE = "\n";
 }
 else {
 	print "Unknown operating system. Contact support.\r\n";
