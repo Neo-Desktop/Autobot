@@ -32,6 +32,39 @@ use constant {
 	RSTAGE => 'd'
 };
 
+# Check for build files.
+unless (-e "$Bin/../build/os" and -e "$Bin/../build/perl" and -e "$Bin/../build/time" and -e "$Bin/../build/ver") {
+	println "Missing build file(s). Please build Auto before running it." and exit;
+}
+
+# Check build OS.
+open BFOS, "<$Bin/../build/os" or println "Cannot start: Broken build." and exit;
+my @BFOS = <BFOS>;
+close BFOS;
+if ($BFOS[0] ne $^O."\n") {
+	println "Cannot start: Broken build." and exit;
+}
+undef @BFOS;
+
+# Check build Perl version.
+open BFPERL, "<$Bin/../build/perl" or println "Cannot start: Broken build." and exit;
+my @BFPERL = <BFPERL>;
+close BFPERL;
+if ($BFPERL[0] ne $]."\n") {
+	println "Cannot start: Broken build." and exit;
+}
+undef @BFPERL;
+
+# Check build Auto version.
+open BFVER, "<$Bin/../build/ver" or println "Cannot start: Broken build." and exit;
+my @BFVER = <BFVER>;
+close BFVER;
+if ($BFVER[0] ne VER.".".SVER.".".REV.RSTAGE."\n") {
+	println "Cannot start: Broken build." and exit;
+}
+undef @BFVER;
+
+
 # Print startup message.
 println "* ".NAME." (version ".VER.".".SVER.".".REV.RSTAGE.") is starting up...";
 

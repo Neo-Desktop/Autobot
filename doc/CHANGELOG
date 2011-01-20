@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added an installation script.
     * Fork into the background if not in debug mode.
     * Begin on API::IRC.
     * Parse PING and Numeric:001.

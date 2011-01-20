@@ -1,0 +1,151 @@
+#!/usr/bin/env perl
+
+# Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
+# Copyright (C) 2010-2011 Xelhua Development Team (doc/CREDITS)
+# This program is free software; rights to this code are stated in doc/LICENSE.
+use strict;
+use warnings;
+use FindBin qw($Bin);
+our $Bin = $Bin;
+
+# Installation script.
+our $VERSION = 1.00;
+
+
+sub println
+{
+	my ($out) = @_;
+	
+	if (!defined $out) {
+		return;
+	}
+	
+	my ($nl);
+	if ($^O =~ /dos/i or $^O =~ /win/i or $^O =~ /netware/i) {
+		$nl = "\r\n";
+	}
+	elsif ($^O =~ /linux/i or $^O =~ /bsd/i) {
+		$nl = "\n";
+	}
+	elsif ($^O =~ /mac/i or $^O =~ /darwin/i) {
+		$nl = "\r";
+	}
+	else {
+		$nl = "\r\n";
+	}
+	
+	print $out.$nl;
+	
+	return 1;
+}
+
+sub ver
+{
+    my @vs = split('\.', $]);
+
+	my %ver = ();
+    $ver{ver} = $vs[0];
+    $ver{sub} = substr($vs[1], 1, 2);
+    $ver{rev} = substr($vs[1], 3, 3);
+
+    return %ver;
+}
+
+sub modfind
+{
+	my ($mod) = @_;
+	
+	print "Checking for $mod..... ";
+	eval('require '.$mod.'; 1;') and println "OK" or println "Not Found" and exit;
+}
+
+
+# Check operating system.
+print "Checking operating system..... $^O - ";
+my ($NEWLINE);
+if ($^O =~ /dos/i) {
+	print "DOS is not supported.\r\n";
+}
+elsif ($^O eq "MSWin32") {
+	print "Microsoft Windows is not supported. Support is planned for the future.\r\n";
+}
+elsif ($^O eq "NetWare") {
+	print "NetWare is not supported.\r\n";
+}
+elsif ($^O eq "linux") {
+	print "OK\n";
+	$NEWLINE = "\n";
+}
+elsif ($^O eq "os2") {
+	print "IBM OS/2 is not supported.\r\n";
+}
+elsif ($^O =~ /mac/i) {
+	print "OK\r";
+	$NEWLINE = "\r";
+}
+elsif ($^O eq "freebsd") {
+	print "OK\n";
+	$NEWLINE = "\n";
+}
+elsif ($^O eq "openbsd") {
+	print "OK\n";
+	$NEWLINE = "\n";
+}
+else {
+	print "Unknown operating system. Contact support.\r\n";
+}
+
+# Check Perl version.
+my %VER = ver();
+print "Checking Perl version..... $VER{ver}.$VER{sub}.$VER{rev} - ";
+if ($VER{ver} >= 5 and $VER{sub} >= 10) {
+	println "OK";
+}
+else {
+	println "Incompatible";
+	exit;
+}
+
+# Check for required CPAN modules.
+println "\0";
+println "--- CPAN Modules ---";
+modfind("Mouse");
+modfind("Async");
+
+# Create build.
+println "\0";
+println "Building.....";
+unless (-d "$Bin/build") {
+	`mkdir $Bin/build`;
+}
+unless (-e "$Bin/build/time") {
+	`touch $Bin/build/time`;
+}
+unless (-e "$Bin/build/os") {
+	`touch $Bin/build/os`;
+}
+unless (-e "$Bin/build/perl") {
+	`touch $Bin/build/perl`;
+}
+unless (-e "$Bin/build/ver") {
+	`touch $Bin/build/ver`;
+}
+
+open FTIME, ">$Bin/build/time" or println "Failed to install." and exit;
+print FTIME time."\n" or println "Failed to install." and exit;
+close FTIME or println "Failed to install." and exit;
+
+open FOS, ">$Bin/build/os" or println "Failed to install." and exit;
+print FOS $^O."\n" or println "Failed to install." and exit;
+close FOS or println "Failed to install." and exit;
+
+open FPERL, ">$Bin/build/perl" or println "Failed to install." and exit;
+print FPERL "$]\n" or println "Failed to install." and exit;
+close FPERL or println "Failed to install." and exit;
+
+open FVER, ">$Bin/build/ver" or println "Failed to install." and exit;
+print FVER "3.0.0d\n" or println "Failed to install." and exit;
+close FVER or println "Failed to install." and exit;
+
+# Success!
+println "Done. Auto successfully installed.";
