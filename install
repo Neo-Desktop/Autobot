@@ -79,7 +79,7 @@ elsif ($^O eq "linux") {
 elsif ($^O eq "os2") {
 	print "IBM OS/2 is not supported.\r\n";
 }
-elsif ($^O =~ /mac/i) {
+elsif ($^O =~ /mac/i or $^O =~ /darwin/i) {
 	print "OK\r";
 	$NEWLINE = "\r";
 }
