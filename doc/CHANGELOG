@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added mod_init() and mod_void() to API::Std.
     * Use Class::Unload.
     * Handle SIGTERM, SIGINT and SIGHUP.
     * Added quit() to API::IRC.
