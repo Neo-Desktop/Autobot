@@ -174,7 +174,7 @@ foreach my $cskey (keys %cservers) {
 			my $data = readline($SOCKET{$cskey});
 			# Lost connection: kill process.
 			unless (defined $data) {
-				die;
+				exit;
 			}
 			# Get rid of the newlines.
 			chomp $data;
@@ -201,7 +201,6 @@ else {
 }
 undef $it;
 
-
 # Keep Auto alive.
 while (1) { sleep 1; }
 
@@ -222,4 +221,16 @@ sub socksnd
 	else {
 		return 0;
 	}
+}
+
+# Load a module.
+sub mod_load {
+    my ($module) = @_;
+    
+    if (-e "$Bin/../modules/".lc($module).".pm") {
+        do "$Bin/../modules/".lc($module).".pm" and return 1 or print $@ and return 0;
+    }
+    else {
+        return 0;
+    }
 }
