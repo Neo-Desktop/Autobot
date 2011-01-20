@@ -43,13 +43,8 @@ greatly.
 
 ## 3. HOW TO INSTALL
 
-By installing and running Auto, you are agreeing to the terms
-stated in doc/LICENSE.  Auto is free but copyrighted software
-released under the terms of the 3-clause "New" BSD License.
-
-Dependencies: Perl 5.10.0 or later
-
-Enjoy and thanks for choosing Auto.
+nstallation documentation is at:
+http://wiki.xelhua.org/index.php/Auto:Install
 
 
 ## 4. HOW TO UPGRADE
