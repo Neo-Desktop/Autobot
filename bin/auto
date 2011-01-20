@@ -201,8 +201,6 @@ else {
 }
 undef $it;
 
-println "mk" and mod_load("m_hw");
-
 # Keep Auto alive.
 while (1) { sleep 1; }
 
