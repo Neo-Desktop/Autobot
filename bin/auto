@@ -64,6 +64,11 @@ if ($BFVER[0] ne VER.".".SVER.".".REV.RSTAGE."\n") {
 }
 undef @BFVER;
 
+# Set signal handlers.
+$SIG{TERM} = \&signal_TERM;
+$SIG{INT}  = \&signal_INT;
+$SIG{HUP}  = \&signal_HUP;
+
 
 # Print startup message.
 println "* ".NAME." (version ".VER.".".SVER.".".REV.RSTAGE.") is starting up...";
@@ -233,4 +238,34 @@ sub mod_load {
     else {
         return 0;
     }
+}
+
+
+## Signal handlers
+
+# SIGTERM
+sub signal_TERM
+{
+	API::IRC::quit($_, "Caught SIGTERM") foreach (keys %SOCKET);
+	dbug "!!! Caught SIGTERM; terminating...";
+	alog "!!! Caught SIGTERM; terminating...";
+	sleep 1;
+	exit;
+}
+
+# SIGINT
+sub signal_INT
+{
+	API::IRC::quit($_, "Caught SIGINT") foreach (keys %SOCKET);
+	dbug "!!! Caught SIGINT; terminating...";
+	alog "!!! Caught SIGINT; terminating...";
+	sleep 1;
+	exit;
+}
+
+# SIGHUP
+sub signal_HUP
+{
+	dbug "!!! Caught SIGHUP but rehash is unavailable; ignoring";
+	alog "!!! Caught SIGHUP but rehash is unavailable; ignoring";
 }
