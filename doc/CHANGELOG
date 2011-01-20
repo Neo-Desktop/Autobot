@@ -3,7 +3,10 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
-    * Added mode, privmsg, notice, and quit subroutine to API::IRC.
+    * Added quit() to API::IRC.
+    * Added notice() to API::IRC.
+    * Added privmsg() to API::IRC.
+    * Added mode() to API::IRC.
     * Added PASS support.
     * Bug fix: err() fatal errors now work. They didn't work
       due to bad regex.
