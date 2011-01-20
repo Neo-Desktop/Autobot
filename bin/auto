@@ -153,11 +153,11 @@ foreach my $cskey (keys %cservers) {
 		PeerAddr  => $cservers{$cskey}{'host'}[0],
 		PeerPort  => $cservers{$cskey}{'port'}[0]
 	) or err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) and next; # Or error.
-	# Send PASS if we have one
+	# Send PASS if we have one.
 	if (defined $cservers{$cskey}{'pass'}[0]) {
 		socksnd($cskey, "PASS :".$cservers{$cskey}{'pass'}[0]) or                 
 			err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) 
-                	and next;
+			and next;
 	}
 	# Send USER and NICK.
 	socksnd($cskey, "USER ".$cservers{$cskey}{'ident'}[0]." * * :".$cservers{$cskey}{'realname'}[0]) or
