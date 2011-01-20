@@ -12,6 +12,7 @@ use locale;
 use Mouse;
 use IO::Socket;
 use Async;
+use Class::Unload;
 use FindBin qw($Bin);
 our $Bin = $Bin;
 BEGIN { unshift(@INC, "$Bin/../src"); }

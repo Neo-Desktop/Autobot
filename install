@@ -111,6 +111,7 @@ println "\0";
 println "--- CPAN Modules ---";
 modfind("Mouse");
 modfind("Async");
+modfind("Class::Unload");
 
 # Create build.
 println "\0";
