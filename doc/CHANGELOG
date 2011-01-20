@@ -3,7 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
-    * Added support for PASS.
+    * Added mode subroutine to API::IRC.
+    * Added PASS support.
     * Bug fix: err() fatal errors now work. They didn't work
       due to bad regex.
     * Added an installation script.
