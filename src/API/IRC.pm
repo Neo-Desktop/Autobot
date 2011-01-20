@@ -9,7 +9,7 @@ use warnings;
 use Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(cjoin cpart mode msg notice);
+our @EXPORT_OK = qw(cjoin cpart mode privmsg notice);
 
 
 # Join a channel.
@@ -39,7 +39,7 @@ sub mode {
 }
 
 # Send a PRIVMSG
-sub msg {
+sub privmsg {
 	my ($svr, $target, $message) = @_;
 	
 	Auto::socksnd($svr, "PRIVMSG $target :$message");
