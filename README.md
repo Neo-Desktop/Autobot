@@ -43,7 +43,7 @@ greatly.
 
 ## 3. HOW TO INSTALL
 
-Installation documentation can be found [here](http://wiki.xelhua.org/index.php/Auto:Install)
+Installation documentation can be found [here](http://wiki.xelhua.org/index.php/Auto:Install).
 
 
 ## 4. HOW TO UPGRADE
