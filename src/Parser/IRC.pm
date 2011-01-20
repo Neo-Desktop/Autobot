@@ -55,15 +55,11 @@ sub num001
 		# For single-line ajoins.
 		my @sajoin = split(',', $cajoin[0]);
 		
-		foreach my $sjoin (@sajoin) {
-			cjoin($svr, $sjoin);
-		}
+		cjoin($svr, $_) foreach (@sajoin);
 	}
 	else {
 		# For multi-line ajoins.
-		foreach my $sjoin (@cajoin) {
-			cjoin($svr, $sjoin);
-		}
+		cjoin($svr, $_) foreach (@cajoin);
 	}
 }
 
