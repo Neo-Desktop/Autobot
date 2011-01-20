@@ -9,7 +9,7 @@ use warnings;
 use Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(cjoin cpart mode);
+our @EXPORT_OK = qw(cjoin cpart mode msg notice);
 
 
 # Join a channel.
@@ -36,4 +36,18 @@ sub mode {
 	my ($svr, $chan, $modes) = @_;
 
 	Auto::socksnd($svr, "MODE $chan $modes");
+}
+
+# Send a PRIVMSG
+sub msg {
+	my ($svr, $target, $message) = @_;
+	
+	Auto::socksnd($svr, "PRIVMSG $target :$message");
+}
+
+# Send a NOTICE
+sub notice {
+	my ($svr, $target, $message) = @_;
+	
+	Auto::socksnd($svr, "NOTICE $target :$message");
 }
