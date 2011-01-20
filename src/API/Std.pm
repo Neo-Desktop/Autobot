@@ -111,7 +111,7 @@ sub err
 	if ($lvl =~ m/[^0-9]/) {
 		return 0;
 	}
-	if ($fatal =~ m/(^0|1)/) {
+	if ($fatal =~ m/[^0-1]/) {
 		return 0;
 	}
 	

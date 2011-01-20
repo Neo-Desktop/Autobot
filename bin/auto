@@ -92,7 +92,8 @@ foreach my $REQCVAL (@REQCVALS) {
 		if ($REQCVAL eq "expire_logs") {
 			$err = 1;
 		}
-		err($err, "Missing required configuration value: $REQCVAL", 1);
+		print "Failed.\n";
+		err($err, "Missing required configuration value: $REQCVAL", 1) or print ".\n" and exit;
 	}
 }
 undef @REQCVALS;
