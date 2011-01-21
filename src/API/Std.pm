@@ -193,4 +193,24 @@ sub err
 	}
 }
 
+# Warn subroutine.
+sub awarn
+{
+	my ($lvl, $msg) = @_;
+	
+	# Check for an invalid level.
+	if ($lvl =~ m/[^0-9]/) {
+		return 0;
+	}
+	
+	# Level 1: Print to screen.
+	if ($lvl >= 1) {
+		API::Log::println("WARNING: $msg");
+	}
+	# Level 2: Log to file.
+	if ($lvl >= 2) {
+		API::Log::alog("WARNING: $msg");
+	}
+}
+
 1;
