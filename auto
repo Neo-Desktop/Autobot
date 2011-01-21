@@ -2,6 +2,7 @@
 # Written in sh because the user may not have Perl...to run Auto....
 
 PID=bin/auto.pid
+MODS="Mouse Async Class::Unload"
 
 if [ "$1" = "start" ] ; then
 	echo "Starting Auto. . ."
@@ -26,7 +27,7 @@ elif [ "$1" = "status" ]; then
 		echo "Status: Auto appears to not be running."
 	fi
 elif [ "$1" = "getmodules" ]; then
-	cpan -i Mouse Async Class:Unload
+	cpan -i $MODS
 
 else
 	echo "Usage: auto (start|stop|rehash|status|getmodules)"
