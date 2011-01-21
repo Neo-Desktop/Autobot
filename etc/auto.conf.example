@@ -12,6 +12,8 @@ server "Freenode" {
     ident "SomeBot";
     # Bot realname.
     realname "SomeBot";
+    # Server password. This is hardly ever used.
+    #pass "foobar123";
     # IP/host to connect from.
     bind 0.0.0.0;
     # Identify to auth services via PRIVMSG.
@@ -32,8 +34,8 @@ server "Thinstack" {
     ident "SomeBot";
     # Bot realname.
     realname "SomeBot";
-    # Connection password, this is hardly ever used.
-    #pass "password";
+    # Server password. This is hardly ever used.
+    #pass "foobar123";
     # IP/host to connect from.
     bind 0.0.0.0;
     # Identify to auth services via an alias.
