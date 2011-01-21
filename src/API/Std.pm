@@ -9,7 +9,7 @@ use warnings;
 use Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(conf_get trans err);
+our @EXPORT_OK = qw(conf_get trans err awarn);
 
 my (%LANGE, %MODULE);
 
