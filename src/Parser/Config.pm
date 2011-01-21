@@ -67,9 +67,36 @@ sub parse
 							next;
 						}
 						my $param = $ebuf[1];
-						$param =~ s/"//g;
-						my @param = ($param);
 						
+						if (substr($param, 0, 1) eq '"' and substr($param, length($param) - 1, 1) ne '"') {
+							# Multi-word string.
+							$param = substr($param, 1);
+							
+							for (my $i = 2; $i < scalar(@ebuf); $i++) {
+								if (substr($ebuf[$i], length($ebuf[$i]) - 1, 1) eq '"') {
+									$param .= " ".substr($ebuf[$i], 0, length($ebuf[$i]) - 1);
+									last;
+								}
+								else {
+									$param .= " ".$ebuf[$i];
+								}
+							}
+						}
+						elsif (substr($param, 0, 1) eq '"' and substr($param, length($param) - 1, 1) eq '"') {
+							# Single-word string.
+							$param = substr($param, 1, length($ebuf[1]) - 2);
+						}
+						elsif ($param =~ m/[0-9]/) {
+							# Numeric.
+							$param =~ s/[^0-9.]//g;
+						}
+						else {
+							# Garbage.
+							next;
+						}
+						
+						my @param = ($param);
+								
 						unless (!$blk) {
 							# We're inside a block.
 							if ($blk =~ m/@@@/) {

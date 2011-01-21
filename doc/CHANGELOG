@@ -3,6 +3,9 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * server:nspass removed. server:idstr added.
+    * Changed the way we parse strings to support multi-word
+      strings in config values.
     * Added server:nspass to config options. Will be replaced in
       the future by idstr.
     * Parse NICK.

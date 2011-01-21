@@ -57,9 +57,9 @@ sub num001
 	$got_001{$svr} = 1;
 	
 	# Identify string.
-	unless (!conf_get("server:$svr:nspass")) {
-		my $nspass = (conf_get("server:$svr:nspass"))[0][0];
-		Auto::socksnd($svr, "PRIVMSG NickServ :IDENTIFY $nspass");
+	unless (!conf_get("server:$svr:idstr")) {
+		my $idstr = (conf_get("server:$svr:idstr"))[0][0];
+		Auto::socksnd($svr, $idstr);
 	}
 	
 	# Get the auto-join from the config.
