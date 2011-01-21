@@ -47,6 +47,7 @@ sub _parse
 ###########################
 
 # Parse: Numeric:001
+# Successful connection.
 sub num001
 {
 	my ($svr, @ex) = @_;
@@ -70,6 +71,7 @@ sub num001
 }
 
 # Parse: Numeric:433
+# Nickname is already in use.
 sub num433
 {
 	my ($svr, undef) = @_;
