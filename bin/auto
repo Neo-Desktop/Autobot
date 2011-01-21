@@ -69,6 +69,9 @@ undef @BFVER;
 $SIG{TERM} = \&signal_TERM;
 $SIG{INT}  = \&signal_INT;
 $SIG{HUP}  = \&signal_HUP;
+API::Std::event_add("on_sigterm");
+API::Std::event_add("on_sigint");
+API::Std::event_add("on_sighup");
 
 
 # Print startup message.
@@ -212,6 +215,10 @@ while (1) { sleep 1; }
 # Subroutines #
 ###############
 
+sub on_sigint {
+	println "Goodbye world!";
+}
+
 # Send data to socket.
 sub socksnd 
 {
@@ -245,6 +252,7 @@ sub mod_load {
 # SIGTERM
 sub signal_TERM
 {
+	API::Std::event_run("on_sigterm");
 	API::IRC::quit($_, "Caught SIGTERM") foreach (keys %SOCKET);
 	dbug "!!! Caught SIGTERM; terminating...";
 	alog "!!! Caught SIGTERM; terminating...";
@@ -258,6 +266,7 @@ sub signal_TERM
 # SIGINT
 sub signal_INT
 {
+	API::Std::event_run("on_sigint");
 	API::IRC::quit($_, "Caught SIGINT") foreach (keys %SOCKET);
 	dbug "!!! Caught SIGINT; terminating...";
 	alog "!!! Caught SIGINT; terminating...";
@@ -271,6 +280,7 @@ sub signal_INT
 # SIGHUP
 sub signal_HUP
 {
+	API::Std::event_run("on_sighup");
 	dbug "!!! Caught SIGHUP but rehash is unavailable; ignoring";
 	alog "!!! Caught SIGHUP but rehash is unavailable; ignoring";
 }

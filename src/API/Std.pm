@@ -11,7 +11,7 @@ use Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(conf_get trans err awarn);
 
-my (%LANGE, %MODULE);
+my (%LANGE, %MODULE, %EVENTS, %HOOKS);
 
 
 # Initialize a module.
@@ -99,6 +99,84 @@ sub cmd_add
 sub cmd_del
 {
 	
+}
+
+# Add an event to Auto.
+sub event_add
+{
+	my ($name) = @_;
+	
+	unless (defined $EVENTS{lc($name)}) {
+		$EVENTS{lc($name)} = 1;
+		return 1;
+	}
+	else {
+		API::Log::dbug("DEBUG: Attempt to add a pre-existing event[".lc($name)."]! Ignoring...");
+		return 0;
+	}
+}
+
+# Delete an event from Auto.
+sub event_del
+{
+	my ($name) = @_;
+	
+	if (defined $EVENTS{lc($name)}) {
+		delete $EVENTS{lc($name)};
+		delete $HOOKS{lc($name)};
+		return 1;
+	}
+	else {
+		API::Log::dbug("DEBUG: Attempt to delete a non-existing event[".lc($name)."! Ignoring...");
+		return 0;
+	}
+}
+
+# Trigger an event.
+sub event_run
+{
+	my ($event) = @_;
+	
+	if (defined $EVENTS{lc($event)} and defined $HOOKS{lc($event)}) {
+		foreach my $hk (keys %{ $HOOKS{lc($event)} }) {
+			&{ $HOOKS{lc($event)}{$hk} }();
+		}
+	}
+	
+	return 1;
+}
+
+# Add a hook to Auto.
+sub hook_add
+{
+	my ($event, $name, $sub) = @_;
+	
+	unless (defined $HOOKS{lc($name)}) {
+		if (defined $EVENTS{lc($event)}) {
+			$HOOKS{lc($event)}{lc($name)} = $sub;
+			return 1;
+		}
+		else {
+			return 0;
+		}
+	}
+	else {
+		return 0;
+	}
+}
+
+# Delete a hook from Auto.
+sub hook_del
+{
+	my ($event, $name) = @_;
+	
+	if (defined $HOOKS{lc($event)}{lc($name)}) {
+		delete $HOOKS{lc($event)}{lc($name)};
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 # Configuration value getter.

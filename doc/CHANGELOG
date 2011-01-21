@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added event_add|del|run() and hook_add|del() to API::Std for
+      managing and running events/hooks.
     * server:nspass removed. server:idstr added.
     * Changed the way we parse strings to support multi-word
       strings in config values.
