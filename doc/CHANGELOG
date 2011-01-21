@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added timer_add() and timer_del() to API::Std for timers.
     * Added events: on_sigterm, on_sigint and on_sighup.
     * Added event_add|del|run() and hook_add|del() to API::Std for
       managing and running events/hooks.

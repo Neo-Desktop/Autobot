@@ -9,7 +9,7 @@ use warnings;
 use Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(conf_get trans err awarn);
+our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del);
 
 my (%LANGE, %MODULE, %EVENTS, %HOOKS);
 
@@ -177,6 +177,46 @@ sub hook_del
 	else {
 		return 0;
 	}
+}
+
+# Add a timer to Auto.
+sub timer_add
+{
+	my ($name, $type, $time, $sub) = @_;
+	$name = lc($name);
+	
+	# Check for invalid type/time.
+	if ($type =~ m/[^1-2]/) {
+		return 0;
+	}
+	if ($time =~ m/[^0-9]/) {
+		return 0;
+	}
+	
+	unless (defined $Auto::TIMERS{$name}) {
+		$Auto::TIMERS{$name}{type} = $type;
+		$Auto::TIMERS{$name}{time} = time + $time;
+		$Auto::TIMERS{$name}{secs} = $time if ($type == 2);
+		$Auto::TIMERS{$name}{sub}  = $sub;
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+# Delete a timer from Auto.
+sub timer_del
+{
+	my ($name) = @_;
+	$name = lc($name);
+	
+	if (defined $Auto::TIMERS{$name}) {
+		delete $Auto::TIMERS{$name};
+		return 1;
+	}
+	
+	return 0;
 }
 
 # Configuration value getter.
