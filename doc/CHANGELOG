@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Parse the channels the bot is in.
     * Parse Numeric:438.
     * Added timer_add() and timer_del() to API::Std for timers.
     * Added events: on_sigterm, on_sigint and on_sighup.
