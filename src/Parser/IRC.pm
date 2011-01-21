@@ -18,7 +18,7 @@ our %RAWC = (
 );
 
 # Variables for various functions.
-our (%got_001, %botnick);
+our (%got_001, %botnick, %botchans);
 
 # Parse raw data.
 sub _parse
@@ -91,6 +91,8 @@ sub num432
 		err(2, "Got error from server[".$svr."] before 001: Erroneous nickname. Closing connection.", 0);
 		API::IRC::quit($svr, "An error occurred.");
 	}
+	
+	delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
 }
 
 # Parse: Numeric:433
@@ -99,8 +101,23 @@ sub num433
 {
 	my ($svr, undef) = @_;
 	
-	if (defined $botnick{$svr}) {
-		API::IRC::nick($svr, $botnick{$svr}."_");
+	if (defined $botnick{$svr}{newnick}) {
+		API::IRC::nick($svr, $botnick{$svr}{newnick}."_");
+		delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
+	}
+}
+
+# Parse: Numeric:438
+# Nick change too fast.
+sub num438
+{
+	my ($svr, @ex) = @_;
+	
+	if (defined $botnick{$svr}{newnick}) {
+		API::Std::timer_add("num438_".$botnick{$svr}{newnick}, 1, $ex[11], sub { 
+			API::IRC::nick($Parser::IRC::botnick{$svr}{newnick});
+			delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
+		 });
 	}
 }
 
@@ -111,11 +128,10 @@ sub nick
 	
 	my %src = API::IRC::usrc(substr($ex[0], 1));
 	
-	# Check if this is coming from ourselves, meaning a forced nick change.
+	# Check if this is coming from ourselves.
 	if ($src{nick} eq $botnick{$svr}) {
-		# It is a forced nick change.
-		awarn(3, "Incoming NICK from myself?");
 		$botnick{$svr} = $ex[2];
+		delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
 	}	
 }
 
