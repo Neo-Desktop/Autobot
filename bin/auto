@@ -248,6 +248,9 @@ sub signal_TERM
 	API::IRC::quit($_, "Caught SIGTERM") foreach (keys %SOCKET);
 	dbug "!!! Caught SIGTERM; terminating...";
 	alog "!!! Caught SIGTERM; terminating...";
+	if (-e "$Bin/auto.pid") {
+		`rm $Bin/auto.pid`;
+	}
 	sleep 1;
 	exit;
 }
@@ -258,6 +261,9 @@ sub signal_INT
 	API::IRC::quit($_, "Caught SIGINT") foreach (keys %SOCKET);
 	dbug "!!! Caught SIGINT; terminating...";
 	alog "!!! Caught SIGINT; terminating...";
+	if (-e "$Bin/auto.pid") {
+		`rm $Bin/auto.pid`;
+	}
 	sleep 1;
 	exit;
 }
