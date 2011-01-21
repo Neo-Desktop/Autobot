@@ -3,13 +3,18 @@
 
 PID=bin/auto.pid
 MODS="Mouse Async Class::Unload"
+EMODS="MIME::Base64"
 
 if [ "$1" = "start" ] ; then
-	echo "Starting Auto. . ."
-	bin/auto
-	sleep 2
-	if [ ! -r $PID ]; then
-		echo "Possible failed startup... check Auto logs for more information"
+	if [ -e $PID ]; then
+		echo "Auto appears to be running already."
+	else
+		echo "Starting Auto. . ."
+		bin/auto
+		sleep 2
+		if [ ! -r $PID ]; then
+			echo "Possible failed startup... check Auto logs for more information"
+		fi
 	fi
 
 elif [ "$1" = "stop" ]; then
@@ -29,6 +34,9 @@ elif [ "$1" = "status" ]; then
 elif [ "$1" = "getmodules" ]; then
 	cpan -i $MODS
 
+elif [ "$1" = "getextras" ]; then
+	cpan -i $EMODS
+
 else
-	echo "Usage: auto (start|stop|rehash|status|getmodules)"
+	echo "Usage: auto (start|stop|rehash|status|getmodules|getextras)"
 fi
