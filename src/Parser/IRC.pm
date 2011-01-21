@@ -7,11 +7,12 @@ package Parser::IRC;
 use strict;
 use warnings;
 use API::Std qw(conf_get);
-use API::IRC qw(cjoin nick);
+use API::IRC qw(cjoin nick quit);
 
 # Raw parsing hash.
 our %RAWC = (
 	'001' => \&num001,
+	'432' => \&num432,
 	'433' => \&num433,
 );
 
@@ -67,6 +68,21 @@ sub num001
 	else {
 		# For multi-line ajoins.
 		cjoin($svr, $_) foreach (@cajoin);
+	}
+}
+
+# Parse: Numeric:432
+# Erroneous nickname.
+sub num432
+{
+	my ($svr, undef) = @_;
+	
+	if ($got_001{$svr}) {
+		err(3, "Got error from server[".$svr."]: Erroneous nickname.", 0);
+	}
+	else {
+		err(2, "Got error from server[".$svr."] before 001: Erroneous nickname. Closing connection.", 0);
+		quit($svr, "An error occurred.");
 	}
 }
 

@@ -88,5 +88,6 @@ sub quit
 	}
 	
 	delete $Parser::IRC::got_001{$svr} if (defined $Parser::IRC::got_001{$svr});
+	delete $Parser::IRC::botnick{$svr} if (defined $Parser::IRC::botnick{$svr});
 }
 
