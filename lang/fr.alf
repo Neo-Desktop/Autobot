@@ -14,5 +14,5 @@ msge "Access_denied" "Accès refusé"
 # Not enough parameters - Paramètres insuffisants
 msge "Not_enough_parameters" "Paramètres insuffisants"
 
-# Unknown command - Commande iconnue
+# Unknown command - Commande inconnue
 msge "Unknown_command" "Commande inconnue"
