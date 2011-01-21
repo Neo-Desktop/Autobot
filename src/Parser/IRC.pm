@@ -56,6 +56,12 @@ sub num001
 	
 	$got_001{$svr} = 1;
 	
+	# Identify string.
+	unless (!conf_get("server:$svr:nspass")) {
+		my $nspass = (conf_get("server:$svr:nspass"))[0][0];
+		Auto::socksnd($svr, "PRIVMSG NickServ :IDENTIFY $nspass");
+	}
+	
 	# Get the auto-join from the config.
 	my @cajoin = @{ (conf_get("server:$svr:ajoin"))[0] };
 	

@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added server:nspass to config options. Will be replaced in
+      the future by idstr.
     * Parse NICK.
     * Added usrc() to API::IRC for formatting a source.
     * Added awarn() to API::Std for warnings.
