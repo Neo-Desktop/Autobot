@@ -3,7 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
-    * Added $got_001 to Parser::IRC for checking if we've been
+    * Added nick() to API::IRC.
+    * Added %got_001 to Parser::IRC for checking if we've been
       sent 001.
     * Renamed API::IRC::mode() to cmode()
     * Added mod_init() and mod_void() to API::Std.

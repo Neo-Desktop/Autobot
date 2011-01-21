@@ -13,14 +13,16 @@ our @EXPORT_OK = qw(cjoin cpart mode privmsg notice quit);
 
 
 # Join a channel.
-sub cjoin {
+sub cjoin 
+{
 	my ($svr, $chan) = @_;
 	
 	Auto::socksnd($svr, "JOIN $chan");
 }
 
 # Part a channel.
-sub cpart {
+sub cpart 
+{
 	my ($svr, $chan, $reason) = @_;
 	
 	if (defined $reason) {
@@ -32,35 +34,48 @@ sub cpart {
 }
 
 # Set mode(s) on a channel.
-sub cmode {
+sub cmode 
+{
 	my ($svr, $chan, $modes) = @_;
 
 	Auto::socksnd($svr, "MODE $chan $modes");
 }
 
 # Set mode(s) on us.
-sub umode {
+sub umode 
+{
 	my ($svr, $modes) = @_;
 	
 	
 } 
 
 # Send a PRIVMSG.
-sub privmsg {
+sub privmsg 
+{
 	my ($svr, $target, $message) = @_;
 	
 	Auto::socksnd($svr, "PRIVMSG $target :$message");
 }
 
 # Send a NOTICE.
-sub notice {
+sub notice 
+{
 	my ($svr, $target, $message) = @_;
 	
 	Auto::socksnd($svr, "NOTICE $target :$message");
 }
 
+# Change bot nickname.
+sub nick 
+{
+	my ($svr, $newnick) = @_;
+	
+	Auto::socksnd($svr, "NICK $newnick");
+}
+
 # Quit IRC.
-sub quit {
+sub quit 
+{
 	my ($svr, $reason) = @_;
 	
 	if (defined $reason) {
