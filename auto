@@ -1,4 +1,5 @@
 #!/bin/sh
+# Written in sh because the user may not have Perl...to run Auto....
 
 PID=bin/auto.pid
 
