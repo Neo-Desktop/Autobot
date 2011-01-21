@@ -31,28 +31,35 @@ sub cpart {
 	}
 }
 
-# Set a mode
-sub mode {
+# Set mode(s) on a channel.
+sub cmode {
 	my ($svr, $chan, $modes) = @_;
 
 	Auto::socksnd($svr, "MODE $chan $modes");
 }
 
-# Send a PRIVMSG
+# Set mode(s) on us.
+sub umode {
+	my ($svr, $modes) = @_;
+	
+	
+} 
+
+# Send a PRIVMSG.
 sub privmsg {
 	my ($svr, $target, $message) = @_;
 	
 	Auto::socksnd($svr, "PRIVMSG $target :$message");
 }
 
-# Send a NOTICE
+# Send a NOTICE.
 sub notice {
 	my ($svr, $target, $message) = @_;
 	
 	Auto::socksnd($svr, "NOTICE $target :$message");
 }
 
-# Quit IRC
+# Quit IRC.
 sub quit {
 	my ($svr, $reason) = @_;
 	
