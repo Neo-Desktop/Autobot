@@ -9,7 +9,7 @@ use warnings;
 use Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(cjoin cpart cmode privmsg notice quit nick);
+our @EXPORT_OK = qw(cjoin cpart cmode privmsg notice quit nick usrc);
 
 
 # Join a channel.
@@ -89,5 +89,21 @@ sub quit
 	
 	delete $Parser::IRC::got_001{$svr} if (defined $Parser::IRC::got_001{$svr});
 	delete $Parser::IRC::botnick{$svr} if (defined $Parser::IRC::botnick{$svr});
+}
+
+
+# Get nick, ident and host from a <nick>!<ident>@<host>
+sub usrc
+{
+	my ($ex) = @_;
+	
+	my @si = split('!', $ex);
+	my @sii = split('@', $si[1]);
+	
+	return (
+		nick  => $si[0],
+		ident => $si[1],
+		host  => $sii[1]
+	);
 }
 

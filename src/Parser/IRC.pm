@@ -6,14 +6,15 @@
 package Parser::IRC;
 use strict;
 use warnings;
-use API::Std qw(conf_get err);
-use API::IRC qw(cjoin nick quit);
+use API::Std qw(conf_get err awarn);
+use API::IRC;
 
 # Raw parsing hash.
 our %RAWC = (
-	'001' => \&num001,
-	'432' => \&num432,
-	'433' => \&num433,
+	'001'      => \&num001,
+	'432'      => \&num432,
+	'433'      => \&num433,
+	'NICK'     => \&nick,
 );
 
 # Variables for various functions.
@@ -63,11 +64,11 @@ sub num001
 		# For single-line ajoins.
 		my @sajoin = split(',', $cajoin[0]);
 		
-		cjoin($svr, $_) foreach (@sajoin);
+		API::IRC::cjoin($svr, $_) foreach (@sajoin);
 	}
 	else {
 		# For multi-line ajoins.
-		cjoin($svr, $_) foreach (@cajoin);
+		API::IRC::cjoin($svr, $_) foreach (@cajoin);
 	}
 }
 
@@ -82,7 +83,7 @@ sub num432
 	}
 	else {
 		err(2, "Got error from server[".$svr."] before 001: Erroneous nickname. Closing connection.", 0);
-		quit($svr, "An error occurred.");
+		API::IRC::quit($svr, "An error occurred.");
 	}
 }
 
@@ -93,8 +94,23 @@ sub num433
 	my ($svr, undef) = @_;
 	
 	if (defined $botnick{$svr}) {
-		nick($svr, $botnick{$svr}."_");
+		API::IRC::nick($svr, $botnick{$svr}."_");
 	}
+}
+
+# Parse: NICK
+sub nick
+{
+	my ($svr, @ex) = @_;
+	
+	my %src = API::IRC::usrc(substr($ex[0], 1));
+	
+	# Check if this is coming from ourselves, meaning a forced nick change.
+	if ($src{nick} eq $botnick{$svr}) {
+		# It is a forced nick change.
+		awarn(3, "Incoming NICK from myself?");
+		$botnick{$svr} = $ex[2];
+	}	
 }
 
 1;

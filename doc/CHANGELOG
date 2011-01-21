@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Parse NICK.
+    * Added usrc() to API::IRC for formatting a source.
     * Added awarn() to API::Std for warnings.
     * Parse Numeric:432.
     * Parse Numeric:433.
