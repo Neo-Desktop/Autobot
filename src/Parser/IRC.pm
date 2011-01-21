@@ -14,6 +14,8 @@ our %RAWC = (
 	'001'      => \&num001,
 	'432'      => \&num432,
 	'433'      => \&num433,
+	'438'      => \&num438,
+	'JOIN'     => \&cjoin,
 	'NICK'     => \&nick,
 );
 
@@ -121,6 +123,23 @@ sub num438
 	}
 }
 
+# Parse: JOIN
+sub cjoin
+{
+	my ($svr, @ex) = @_;
+	my %src = API::IRC::usrc(substr($ex[0], 1));
+	
+	# Check if this is coming from ourselves.
+	if ($src{nick} eq $botnick{$svr}) {
+		unless (defined $botchans{$svr}) {
+			@{ $botchans{$svr} } = (substr($ex[2], 1));
+		}
+		else {
+			push(@{ $botchans{$svr} }, substr($ex[2], 1));
+		}
+	}
+}
+
 # Parse: NICK
 sub nick
 {
@@ -134,5 +153,7 @@ sub nick
 		delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
 	}	
 }
+
+
 
 1;

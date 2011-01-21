@@ -18,13 +18,6 @@ sub cjoin
 	my ($svr, $chan) = @_;
 	
 	Auto::socksnd($svr, "JOIN $chan");
-	
-	unless (defined $Parser::IRC::botchans{$svr}) {
-		@{ $Parser::IRC::botchans{$svr} } = ($chan);
-	}
-	else {
-		push(@{ $Parser::IRC::botchans{$svr} }, $chan);
-	}
 }
 
 # Part a channel.
