@@ -6,7 +6,7 @@
 package Parser::IRC;
 use strict;
 use warnings;
-use API::Std qw(conf_get);
+use API::Std qw(conf_get err);
 use API::IRC qw(cjoin nick quit);
 
 # Raw parsing hash.
