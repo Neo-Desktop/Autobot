@@ -3,6 +3,7 @@
 
 PID=bin/auto.pid
 MODS="Mouse Async Class::Unload"
+EMODS="MIME::Base64"
 
 if [ "$1" = "start" ] ; then
 	echo "Starting Auto. . ."
@@ -29,6 +30,9 @@ elif [ "$1" = "status" ]; then
 elif [ "$1" = "getmodules" ]; then
 	cpan -i $MODS
 
+elif [ "$1" = "getextras" ]; then
+	cpan -i $EMODS
+
 else
-	echo "Usage: auto (start|stop|rehash|status|getmodules)"
+	echo "Usage: auto (start|stop|rehash|status|getmodules|getextras)"
 fi
