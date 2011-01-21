@@ -7,15 +7,16 @@ package Parser::IRC;
 use strict;
 use warnings;
 use API::Std qw(conf_get);
-use API::IRC qw(cjoin);
+use API::IRC qw(cjoin nick);
 
 # Raw parsing hash.
 our %RAWC = (
 	'001' => \&num001,
+	'433' => \&num433,
 );
 
 # Variables for various functions.
-our (%got_001);
+our (%got_001, %botnick);
 
 # Parse raw data.
 sub _parse
@@ -65,6 +66,16 @@ sub num001
 	else {
 		# For multi-line ajoins.
 		cjoin($svr, $_) foreach (@cajoin);
+	}
+}
+
+# Parse: Numeric:433
+sub num433
+{
+	my ($svr, undef) = @_;
+	
+	if (defined $botnick{$svr}) {
+		nick($svr, $botnick{$svr}."_");
 	}
 }
 

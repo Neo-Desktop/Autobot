@@ -9,7 +9,7 @@ use warnings;
 use Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(cjoin cpart mode privmsg notice quit);
+our @EXPORT_OK = qw(cjoin cpart cmode privmsg notice quit nick);
 
 
 # Join a channel.
@@ -71,6 +71,8 @@ sub nick
 	my ($svr, $newnick) = @_;
 	
 	Auto::socksnd($svr, "NICK $newnick");
+	
+	$Parser::IRC::botnick{$svr} = $newnick;
 }
 
 # Quit IRC.
