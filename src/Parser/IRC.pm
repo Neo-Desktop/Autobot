@@ -14,6 +14,9 @@ our %RAWC = (
 	'001' => \&num001,
 );
 
+# Variables for various functions.
+our (%got_001);
+
 # Parse raw data.
 sub _parse
 {
@@ -46,6 +49,8 @@ sub _parse
 sub num001
 {
 	my ($svr, @ex) = @_;
+	
+	$got_001{$svr} = 1;
 	
 	# Get the auto-join from the config.
 	my @cajoin = @{ (conf_get("server:$svr:ajoin"))[0] };

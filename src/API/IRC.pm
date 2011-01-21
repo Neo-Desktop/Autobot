@@ -69,5 +69,7 @@ sub quit {
 	else {
 		Auto::socksnd($svr, "QUIT :Leaving");
 	}
+	
+	delete $Parser::IRC::got_001{$svr} if (defined $Parser::IRC::got_001{$svr});
 }
 
