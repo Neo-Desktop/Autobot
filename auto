@@ -1,0 +1,31 @@
+#!/bin/sh
+# Written in sh because the user may not have Perl...to run Auto....
+
+PID=bin/auto.pid
+
+if [ "$1" = "start" ] ; then
+	echo "Starting Auto. . ."
+	bin/auto
+	sleep 2
+	if [ ! -r $PID ]; then
+		echo "Possible failed startup... check Auto logs for more information"
+	fi
+
+elif [ "$1" = "stop" ]; then
+	echo "Stopping Auto. . ."
+	kill -TERM `cat $PID`
+
+elif [ "$1" = "rehash" ]; then
+	echo "Rehashing Auto. . ."
+	kill -HUP `cat $PID`
+
+elif [ "$1" = "status" ]; then
+	if [ -e $PID ]; then
+		echo "Status: Auto appears to be running."
+	else
+		echo "Status: Auto appears to not be running."
+	fi
+
+else
+	echo "Usage: auto (start|stop|rehash|status)"
+fi
