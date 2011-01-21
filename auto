@@ -25,7 +25,9 @@ elif [ "$1" = "status" ]; then
 	else
 		echo "Status: Auto appears to not be running."
 	fi
+elif [ "$1" = "getmodules" ]; then
+	cpan -i Mouse Async Class:Unload
 
 else
-	echo "Usage: auto (start|stop|rehash|status)"
+	echo "Usage: auto (start|stop|rehash|status|getmodules)"
 fi
