@@ -28,6 +28,11 @@ our %RAWC = (
 # Variables for various functions.
 our (%got_001, %botnick, %botchans);
 
+# Events.
+API::Std::event_add("on_rcjoin");
+API::Std::event_add("on_ucjoin");
+API::Std::event_add("on_nick");
+
 # Parse raw data.
 sub _parse
 {
@@ -191,26 +196,37 @@ sub cjoin
 	
 	# Check if this is coming from ourselves.
 	if ($src{nick} eq $botnick{$svr}) {
+		# It is. Add channel to array and trigger on_ucjoin.
 		unless (defined $botchans{$svr}) {
 			@{ $botchans{$svr} } = (substr($ex[2], 1));
 		}
 		else {
 			push(@{ $botchans{$svr} }, substr($ex[2], 1));
 		}
+		API::Std::event_run("on_ucjoin", (substr($ex[2], 1)));
+	}
+	else {
+		# It isn't. Trigger on_rcjoin.
+		API::Std::event_run("on_rcjoin", (%src, substr($ex[2], 1)));
 	}
 }
 
 # Parse: NICK
 sub nick
 {
-	my ($svr, @ex) = @_;
+	my ($svr, ($uex, undef, $nex)) = @_;
 	
-	my %src = API::IRC::usrc(substr($ex[0], 1));
+	my %src = API::IRC::usrc(substr($uex, 1));
 	
 	# Check if this is coming from ourselves.
 	if ($src{nick} eq $botnick{$svr}) {
-		$botnick{$svr} = $ex[2];
+		# It is. Update bot nick hash.
+		$botnick{$svr} = $nex;
 		delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
+	}
+	else {
+		# It isn't. Trigger on_nick.
+		API::Std::event_run("on_nick", (%src, $nex));
 	}	
 }
 
