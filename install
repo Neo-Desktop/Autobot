@@ -5,6 +5,7 @@
 # This program is free software; rights to this code are stated in doc/LICENSE.
 use strict;
 use warnings;
+use English;
 use FindBin qw($Bin);
 our $Bin = $Bin;
 
@@ -47,29 +48,29 @@ sub modfind
 
 
 # Check operating system.
-print "Checking operating system..... $^O - ";
-if ($^O =~ /dos/i) {
+print "Checking operating system..... $OSNAME - ";
+if ($OSNAME =~ /dos/i) {
 	print "DOS is not supported.\r\n";
 }
-elsif ($^O eq "MSWin32") {
+elsif ($OSNAME eq "MSWin32") {
 	print "Microsoft Windows is not supported. Support is planned for the future.\r\n";
 }
-elsif ($^O eq "NetWare") {
+elsif ($OSNAME eq "NetWare") {
 	print "NetWare is not supported.\r\n";
 }
-elsif ($^O eq "linux") {
+elsif ($OSNAME eq "linux") {
 	print "OK\n";
 }
-elsif ($^O eq "os2") {
+elsif ($OSNAME eq "os2") {
 	print "IBM OS/2 is not supported.\r\n";
 }
-elsif ($^O =~ /mac/i or $^O =~ /darwin/i) {
+elsif ($OSNAME =~ /mac/i or $OSNAME =~ /darwin/i) {
 	print "OK\r";
 }
-elsif ($^O eq "freebsd") {
+elsif ($OSNAME eq "freebsd") {
 	print "OK\n";
 }
-elsif ($^O eq "openbsd") {
+elsif ($OSNAME eq "openbsd") {
 	print "OK\n";
 }
 else {
@@ -118,7 +119,7 @@ print $FTIME time."\n" or println "Failed to install." and exit;
 close $FTIME or println "Failed to install." and exit;
 
 open(my $FOS, q{>}, "$Bin/build/os") or println "Failed to install." and exit;
-print $FOS $^O."\n" or println "Failed to install." and exit;
+print $FOS $OSNAME."\n" or println "Failed to install." and exit;
 close $FOS or println "Failed to install." and exit;
 
 open(my $FPERL, q{>}, "$Bin/build/perl") or println "Failed to install." and exit;
