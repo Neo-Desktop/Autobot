@@ -97,19 +97,19 @@ modfind("Class::Unload");
 # Create build.
 println "\0";
 println "Building.....";
-unless (-d "$Bin/build") {
+if (!-d "$Bin/build") {
 	system("mkdir $Bin/build");
 }
-unless (-e "$Bin/build/time") {
+if (!-e "$Bin/build/time") {
 	system("touch $Bin/build/time");
 }
-unless (-e "$Bin/build/os") {
+if (!-e "$Bin/build/os") {
 	system("touch $Bin/build/os");
 }
-unless (-e "$Bin/build/perl") {
+if (!-e "$Bin/build/perl") {
 	system("touch $Bin/build/perl");
 }
-unless (-e "$Bin/build/ver") {
+if (!-e "$Bin/build/ver") {
 	system("touch $Bin/build/ver");
 }
 
