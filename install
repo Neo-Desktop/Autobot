@@ -98,19 +98,19 @@ modfind("Class::Unload");
 println "\0";
 println "Building.....";
 unless (-d "$Bin/build") {
-	`mkdir $Bin/build`;
+	system("mkdir $Bin/build");
 }
 unless (-e "$Bin/build/time") {
-	`touch $Bin/build/time`;
+	system("touch $Bin/build/time");
 }
 unless (-e "$Bin/build/os") {
-	`touch $Bin/build/os`;
+	system("touch $Bin/build/os");
 }
 unless (-e "$Bin/build/perl") {
-	`touch $Bin/build/perl`;
+	system("touch $Bin/build/perl");
 }
 unless (-e "$Bin/build/ver") {
-	`touch $Bin/build/ver`;
+	system("touch $Bin/build/ver");
 }
 
 open FTIME, ">$Bin/build/time" or println "Failed to install." and exit;
