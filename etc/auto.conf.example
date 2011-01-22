@@ -17,7 +17,7 @@ server "Freenode" {
     # IP/host to connect from.
     bind 0.0.0.0;
     # Identify to auth services via PRIVMSG.
-    idstr = "PRIVMSG NickServ :IDENTIFY moocow12345";
+    idstr "PRIVMSG NickServ :IDENTIFY moocow12345";
     # Single-line channel auto-join.
     ajoin "#freenode,#somebot";
 }
