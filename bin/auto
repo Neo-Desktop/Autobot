@@ -18,7 +18,7 @@ our $Bin = $Bin;
 BEGIN { unshift(@INC, "$Bin/../src"); }
 use API::Std qw(conf_get err);
 use API::Log qw(println alog dbug);
-#use DB::Flatfile;
+use DB::Flatfile;
 use Parser::Config;
 use Parser::Lang;
 use Parser::IRC;
@@ -118,6 +118,9 @@ println " Success";
 
 # Expire old logs.
 API::Log::expire_logs();
+
+# Load database.
+DB::load();
 
 # Successful startup.
 our $STARTTIME = time;
@@ -275,6 +278,7 @@ sub signal_TERM
 {
 	API::Std::event_run("on_sigterm");
 	API::IRC::quit($_, "Caught SIGTERM") foreach (keys %SOCKET);
+	DB::flush();
 	dbug "!!! Caught SIGTERM; terminating...";
 	alog "!!! Caught SIGTERM; terminating...";
 	if (-e "$Bin/auto.pid") {
@@ -289,6 +293,7 @@ sub signal_INT
 {
 	API::Std::event_run("on_sigint");
 	API::IRC::quit($_, "Caught SIGINT") foreach (keys %SOCKET);
+	DB::flush();
 	dbug "!!! Caught SIGINT; terminating...";
 	alog "!!! Caught SIGINT; terminating...";
 	if (-e "$Bin/auto.pid") {
