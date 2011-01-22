@@ -139,12 +139,7 @@ sub event_run
 	
 	if (defined $EVENTS{lc($event)} and defined $HOOKS{lc($event)}) {
 		foreach my $hk (keys %{ $HOOKS{lc($event)} }) {
-			if (defined @args) {
-				&{ $HOOKS{lc($event)}{$hk} }(@args);
-			}
-			else {
-				&{ $HOOKS{lc($event)}{$hk} }();
-			}
+			&{ $HOOKS{lc($event)}{$hk} }(@args);
 		}
 	}
 	

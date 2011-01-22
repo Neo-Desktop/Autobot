@@ -181,7 +181,7 @@ sub num475
 
 # Parse: Numeric:477
 # Cannot join channel: Need registered nickname.
-sub num473
+sub num477
 {
 	my ($svr, (undef, undef, undef, $chan)) = @_;
 	
