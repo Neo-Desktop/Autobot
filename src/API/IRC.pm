@@ -102,7 +102,7 @@ sub usrc
 	
 	return (
 		nick  => $si[0],
-		ident => $si[1],
+		user => $si[1],
 		host  => $sii[1]
 	);
 }
