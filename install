@@ -113,21 +113,21 @@ unless (-e "$Bin/build/ver") {
 	system("touch $Bin/build/ver");
 }
 
-open FTIME, ">$Bin/build/time" or println "Failed to install." and exit;
-print FTIME time."\n" or println "Failed to install." and exit;
-close FTIME or println "Failed to install." and exit;
+open(my $FTIME, q{>}, "$Bin/build/time") or println "Failed to install." and exit;
+print $FTIME time."\n" or println "Failed to install." and exit;
+close $FTIME or println "Failed to install." and exit;
 
-open FOS, ">$Bin/build/os" or println "Failed to install." and exit;
-print FOS $^O."\n" or println "Failed to install." and exit;
-close FOS or println "Failed to install." and exit;
+open(my $FOS, q{>}, "$Bin/build/os") or println "Failed to install." and exit;
+print $FOS $^O."\n" or println "Failed to install." and exit;
+close $FOS or println "Failed to install." and exit;
 
-open FPERL, ">$Bin/build/perl" or println "Failed to install." and exit;
-print FPERL "$]\n" or println "Failed to install." and exit;
-close FPERL or println "Failed to install." and exit;
+open(my $FPERL, q{>}, "$Bin/build/perl") or println "Failed to install." and exit;
+print $FPERL "$]\n" or println "Failed to install." and exit;
+close $FPERL or println "Failed to install." and exit;
 
-open FVER, ">$Bin/build/ver" or println "Failed to install." and exit;
-print FVER "3.0.0d\n" or println "Failed to install." and exit;
-close FVER or println "Failed to install." and exit;
+open(my $FVER, q{>}, "$Bin/build/ver") or println "Failed to install." and exit;
+print $FVER "3.0.0d\n" or println "Failed to install." and exit;
+close $FVER or println "Failed to install." and exit;
 
 # Success!
 println "Done. Auto successfully installed.";
