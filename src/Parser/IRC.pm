@@ -15,6 +15,12 @@ our %RAWC = (
 	'432'      => \&num432,
 	'433'      => \&num433,
 	'438'      => \&num438,
+	'465'      => \&num465,
+	'471'      => \&num471,
+	'473'      => \&num473,
+	'474'      => \&num474,
+	'475'      => \&num475,
+	'477'      => \&num477,
 	'JOIN'     => \&cjoin,
 	'NICK'     => \&nick,
 );
@@ -121,6 +127,60 @@ sub num438
 			delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
 		 });
 	}
+}
+
+# Parse: Numeric:465
+# You're banned creep!
+sub num465
+{
+	my ($svr, undef) = @_;
+	
+	err(3, "Banned from ".$svr."! Closing link...", 0);
+}
+
+# Parse: Numeric:471
+# Cannot join channel: Channel is full.
+sub num471
+{
+	my ($svr, (undef, undef, undef, $chan)) = @_;
+	
+	err(3, "Cannot join channel ".$chan." on ".$svr.": Channel is full.", 0);
+}
+
+# Parse: Numeric:473
+# Cannot join channel: Channel is invite-only.
+sub num473
+{
+	my ($svr, (undef, undef, undef, $chan)) = @_;
+	
+	err(3, "Cannot join channel ".$chan." on ".$svr.": Channel is invite-only.", 0);
+}
+
+# Parse: Numeric:474
+# Cannot join channel: Banned from channel.
+sub num474
+{
+	my ($svr, (undef, undef, undef, $chan)) = @_;
+	
+	err(3, "Cannot join channel ".$chan." on ".$svr.": Banned from channel.", 0);
+}
+
+# Parse: Numeric:475
+# Cannot join channel: Bad key.
+sub num475
+{
+	my ($svr, (undef, undef, undef, $chan)) = @_;
+	
+	err(3, "Cannot join channel ".$chan." on ".$svr.": Bad key.", 0);
+}
+
+# Parse: Numeric:477
+# Cannot join channel: Need registered nickname.
+sub num473
+{
+	my ($svr, (undef, undef, undef, $chan)) = @_;
+	
+	err(3, "Cannot join channel ".$chan." on ".$svr.": Need registered nickname.", 0);
 }
 
 # Parse: JOIN
