@@ -24,21 +24,7 @@ sub println
 		return;
 	}
 	
-	my ($nl);
-	if ($^O =~ /dos/i or $^O =~ /win/i or $^O =~ /netware/i) {
-		$nl = "\r\n";
-	}
-	elsif ($^O =~ /linux/i or $^O =~ /bsd/i) {
-		$nl = "\n";
-	}
-	elsif ($^O =~ /mac/i or $^O =~ /darwin/i) {
-		$nl = "\r";
-	}
-	else {
-		$nl = "\r\n";
-	}
-	
-	print $out.$nl;
+	print $out.$/;
 	
 	return 1;
 }
