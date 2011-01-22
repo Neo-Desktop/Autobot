@@ -9,7 +9,7 @@ use warnings;
 use Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(cjoin cpart cmode privmsg notice quit nick usrc);
+our @EXPORT_OK = qw(cjoin cpart cmode umode privmsg notice quit nick usrc);
 
 
 # Join a channel.
@@ -46,7 +46,7 @@ sub umode
 {
 	my ($svr, $modes) = @_;
 	
-	
+	Auto::socksnd($svr, "MODE ".$Parser::IRC::botnick{$svr}." $modes");
 } 
 
 # Send a PRIVMSG.
