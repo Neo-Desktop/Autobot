@@ -135,11 +135,16 @@ sub event_del
 # Trigger an event.
 sub event_run
 {
-	my ($event) = @_;
+	my ($event, @args) = @_;
 	
 	if (defined $EVENTS{lc($event)} and defined $HOOKS{lc($event)}) {
 		foreach my $hk (keys %{ $HOOKS{lc($event)} }) {
-			&{ $HOOKS{lc($event)}{$hk} }();
+			if (defined @args) {
+				&{ $HOOKS{lc($event)}{$hk} }(@args);
+			}
+			else {
+				&{ $HOOKS{lc($event)}{$hk} }();
+			}
 		}
 	}
 	

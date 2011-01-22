@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added an optional @args onto event_run() for sending @args
+      to the subs that have hooked onto the event.
     * Parse the channels the bot is in.
     * Parse Numeric:438.
     * Added timer_add() and timer_del() to API::Std for timers.
