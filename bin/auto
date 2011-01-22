@@ -41,27 +41,27 @@ unless (-e "$Bin/../build/os" and -e "$Bin/../build/perl" and -e "$Bin/../build/
 }
 
 # Check build OS.
-open BFOS, "<$Bin/../build/os" or println "Cannot start: Broken build." and exit;
-my @BFOS = <BFOS>;
-close BFOS;
+open(my $BFOS, q{<}, "$Bin/../build/os") or println "Cannot start: Broken build." and exit;
+my @BFOS = <$BFOS>;
+close $BFOS;
 if ($BFOS[0] ne $^O."\n") {
 	println "Cannot start: Broken build." and exit;
 }
 undef @BFOS;
 
 # Check build Perl version.
-open BFPERL, "<$Bin/../build/perl" or println "Cannot start: Broken build." and exit;
-my @BFPERL = <BFPERL>;
-close BFPERL;
+open(my $BFPERL, q{<}, "$Bin/../build/perl") or println "Cannot start: Broken build." and exit;
+my @BFPERL = <$BFPERL>;
+close $BFPERL;
 if ($BFPERL[0] ne $]."\n") {
 	println "Cannot start: Broken build." and exit;
 }
 undef @BFPERL;
 
 # Check build Auto version.
-open BFVER, "<$Bin/../build/ver" or println "Cannot start: Broken build." and exit;
-my @BFVER = <BFVER>;
-close BFVER;
+open(my $BFVER, q{<}, "$Bin/../build/ver") or println "Cannot start: Broken build." and exit;
+my @BFVER = <$BFVER>;
+close $BFVER;
 if ($BFVER[0] ne VER.".".SVER.".".REV.RSTAGE."\n") {
 	println "Cannot start: Broken build." and exit;
 }
@@ -79,7 +79,7 @@ API::Std::event_add("on_sighup");
 # Print startup message.
 println "* ".NAME." (version ".VER.".".SVER.".".REV.RSTAGE.") is starting up...";
 
-our ($PID, %TIMERS);
+our ($APID, %TIMERS);
 
 # Check for debug mode.
 our $DEBUG = 0;
@@ -130,24 +130,24 @@ alog "Auto successfully started.";
 # Fork into the background if not in debug mode.
 unless ($DEBUG) {
     println "*** Becoming a daemon...";
-    open STDIN, '/dev/null' or err(2, "Can't read /dev/null: $!", 1);
-    open STDOUT, '>>/dev/null' or err(2, "Can't write to /dev/null: $!", 1);
-    open STDERR, '>>/dev/null' or err(2, "Can't write to /dev/null: $!", 1);
-    $PID = fork();
-    unless ($PID == 0) {
-        alog "* Successfully forked into the background. Process ID: ".$PID;
+    open(STDIN, q{<}, '/dev/null') or err(2, "Can't read /dev/null: $!", 1);
+    open(STDOUT, q{>>}, '/dev/null') or err(2, "Can't write to /dev/null: $!", 1);
+    open(STDERR, q{>>}, '/dev/null') or err(2, "Can't write to /dev/null: $!", 1);
+    $APID = fork();
+    unless ($APID == 0) {
+        alog "* Successfully forked into the background. Process ID: ".$APID;
         unless (-e "$Bin/auto.pid") {
-			`touch $Bin/auto.pid`;
+			system("touch $Bin/auto.pid");
 		}
-		open FPID, ">$Bin/auto.pid" or exit;
-		print FPID "$PID\n" or exit;
-		close FPID or exit;
+		open(my $FPID, q{>}, "$Bin/auto.pid") or exit;
+		print $FPID "$APID\n" or exit;
+		close $FPID or exit;
         exit;
     }
     POSIX::setsid() or err(2, "Can't start a new session: $!", 1);
 }
 else {
-    $PID = $$;
+    $APID = $$;
 }
 
 ## Create sockets.
@@ -194,7 +194,7 @@ foreach my $cskey (keys %cservers) {
 			dbug "$cskey -> You: $data";
 			
 			# Parse data.
-			Parser::IRC::_parse($cskey, $data);
+			Parser::IRC::ircparse($cskey, $data);
 		}
 	}) or err(2, "Failed to create process for ".$cskey, 0) and next;
 	# Success!
@@ -239,10 +239,6 @@ while (1) {
 # Subroutines #
 ###############
 
-sub on_sigint {
-	println "Goodbye world!";
-}
-
 # Send data to socket.
 sub socksnd 
 {
@@ -282,7 +278,7 @@ sub signal_TERM
 	dbug "!!! Caught SIGTERM; terminating...";
 	alog "!!! Caught SIGTERM; terminating...";
 	if (-e "$Bin/auto.pid") {
-		`rm $Bin/auto.pid`;
+		system("rm $Bin/auto.pid");
 	}
 	sleep 1;
 	exit;
@@ -297,7 +293,7 @@ sub signal_INT
 	dbug "!!! Caught SIGINT; terminating...";
 	alog "!!! Caught SIGINT; terminating...";
 	if (-e "$Bin/auto.pid") {
-		`rm $Bin/auto.pid`;
+		system("rm $Bin/auto.pid");
 	}
 	sleep 1;
 	exit;
@@ -309,4 +305,5 @@ sub signal_HUP
 	API::Std::event_run("on_sighup");
 	dbug "!!! Caught SIGHUP but rehash is unavailable; ignoring";
 	alog "!!! Caught SIGHUP but rehash is unavailable; ignoring";
+	return 1;
 }

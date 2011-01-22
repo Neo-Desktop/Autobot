@@ -34,7 +34,7 @@ API::Std::event_add("on_ucjoin");
 API::Std::event_add("on_nick");
 
 # Parse raw data.
-sub _parse
+sub ircparse
 {
 	my ($svr, $data) = @_;
 	
