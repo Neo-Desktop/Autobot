@@ -44,6 +44,8 @@ sub modfind
 	
 	print "Checking for $mod..... ";
 	eval('require '.$mod.'; 1;') and println "OK" or println "Not Found" and exit;
+	
+	return 1;
 }
 
 
