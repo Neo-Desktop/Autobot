@@ -14,9 +14,9 @@ my (%MEM);
 sub load
 {
 	# Open, read and close the database.
-	open FILE, "<$Auto::Bin/../etc/auto.db" or return 0;
-	my @fbuf = <FILE> or return 0;
-	close FILE or return 0;
+	open(my $FDB, q{<}, "$Auto::Bin/../etc/auto.db") or return 0;
+	my @fbuf = <$FDB> or return 0;
+	close $FDB or return 0;
 	
 	# Make sure the database version is compatible.
 	if ($fbuf[0] ne "DBV Auto-Flatfile_1.0\n") {
@@ -80,9 +80,9 @@ sub flush
 	unless (-e "$Auto::Bin/../etc/auto.db") {
 		`touch $Auto::Bin/../etc/auto.db`;
 	}
-	open FDB, ">$Auto::Bin/../etc/auto.db" or return 0;
-	print FDB $wd or return 0;
-	close FDB or return 0;
+	open(my $FDB, q{>}, "$Auto::Bin/../etc/auto.db") or return 0;
+	print $FDB $wd or return 0;
+	close $FDB or return 0;
 	
 	return 1;
 }
@@ -101,7 +101,7 @@ sub get
 }
 
 # Write to database.
-sub write
+sub mwrite
 {
 	my ($name, @values) = @_;
 	
