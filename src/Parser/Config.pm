@@ -21,9 +21,9 @@ sub new
 	}
 	
 	# Open, read and close the config.
-	open CONF, "<$Auto::Bin/../etc/$file" or return 0;
-	my @cosfl = <CONF> or return 0;
-	close CONF or return 0;
+	open(my $FCONF, q{<}, "$Auto::Bin/../etc/$file") or return 0;
+	my @cosfl = <$FCONF> or return 0;
+	close $FCONF or return 0;
 	
 	# Save it to self variable.
 	$self->{'config'}->{'path'} = "$Auto::Bin/../etc/$file";
@@ -41,9 +41,9 @@ sub parse
 	my (%rs);
 	
 	# Open, read and close it.
-	open CONF, "<$file" or return 0;
-	my @fbuf = <CONF> or return 0;
-	close CONF or return 0;
+	open(my $FCONF, q{<}, "$file") or return 0;
+	my @fbuf = <$FCONF> or return 0;
+	close $FCONF or return 0;
 	
 	# Iterate the file.
 	foreach my $buff (@fbuf) {
