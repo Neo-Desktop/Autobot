@@ -32,13 +32,14 @@ maintenance of Auto, and other projects.
 
 + Elijah "starcoder" Perrault &lt;elijah@starcoder.info&gt;
 + Matthew Barksdale &lt;mattwb65@gmail.com&gt;
-+ Russell Bradford &lt;russell@surgehost.net&gt;
 + Timothy "Tim-7967" Estes &lt;tim7967@gmail.com&gt;
+
 
 Contributors - Non-developers who contribute to the project
 greatly.
 
 + Chazz "Alexandria" Wolcott &lt;alyx@woomoo.org&gt;
++ Russell Bradford &lt;russell@surgehost.net&gt;
 
 
 ## 3. HOW TO INSTALL
