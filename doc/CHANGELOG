@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Parse TOPIC. (and added hook on_topic)
     * Added DB::Flatfile for DB:: database functions.
     * Added umode() to API::IRC.
     * Added events on_ucjoin, on_rcjoin and on_nick.

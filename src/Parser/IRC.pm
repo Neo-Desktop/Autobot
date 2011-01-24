@@ -32,6 +32,7 @@ our (%got_001, %botnick, %botchans);
 API::Std::event_add("on_rcjoin");
 API::Std::event_add("on_ucjoin");
 API::Std::event_add("on_nick");
+API::Std::event_add("on_topic");
 
 # Parse raw data.
 sub ircparse
@@ -230,6 +231,27 @@ sub nick
 	}	
 }
 
+# Parse: TOPIC
+sub topic
+{
+	my ($svr, @ex) = @_;
+	my %src = API::IRC::usrc(substr($ex[0], 1));
+	
+	# Ignore it if it's coming from us.
+	if (lc($src{nick}) ne lc($botnick{$svr})) {
+		$src{chan} = $ex[2];
+		my (@argv);
+		$argv[0] = substr($ex[3], 1);
+		if (defined $ex[4]) {
+			for (my $i = 4; $i < scalar(@ex); $i++) {
+				push(@argv, $ex[$i]);
+			}
+		}
+		API::Std::event_run("on_topic", (%src, @argv));
+	}
+	
+	return 1;
+}
 
 
 1;
