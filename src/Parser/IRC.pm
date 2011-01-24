@@ -56,6 +56,8 @@ sub ircparse
 			}
 		}
 	}
+	
+	return 1;
 }
 
 ###########################
@@ -90,6 +92,8 @@ sub num001
 		# For multi-line ajoins.
 		API::IRC::cjoin($svr, $_) foreach (@cajoin);
 	}
+	
+	return 1;
 }
 
 # Parse: Numeric:432
@@ -107,6 +111,8 @@ sub num432
 	}
 	
 	delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
+	
+	return 1;
 }
 
 # Parse: Numeric:433
@@ -119,6 +125,8 @@ sub num433
 		API::IRC::nick($svr, $botnick{$svr}{newnick}."_");
 		delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
 	}
+	
+	return 1;
 }
 
 # Parse: Numeric:438
@@ -133,6 +141,8 @@ sub num438
 			delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
 		 });
 	}
+	
+	return 1;
 }
 
 # Parse: Numeric:465
@@ -142,6 +152,8 @@ sub num465
 	my ($svr, undef) = @_;
 	
 	err(3, "Banned from ".$svr."! Closing link...", 0);
+	
+	return 1;
 }
 
 # Parse: Numeric:471
@@ -151,6 +163,8 @@ sub num471
 	my ($svr, (undef, undef, undef, $chan)) = @_;
 	
 	err(3, "Cannot join channel ".$chan." on ".$svr.": Channel is full.", 0);
+	
+	return 1;
 }
 
 # Parse: Numeric:473
@@ -160,6 +174,8 @@ sub num473
 	my ($svr, (undef, undef, undef, $chan)) = @_;
 	
 	err(3, "Cannot join channel ".$chan." on ".$svr.": Channel is invite-only.", 0);
+	
+	return 1;
 }
 
 # Parse: Numeric:474
@@ -169,6 +185,8 @@ sub num474
 	my ($svr, (undef, undef, undef, $chan)) = @_;
 	
 	err(3, "Cannot join channel ".$chan." on ".$svr.": Banned from channel.", 0);
+	
+	return 1;
 }
 
 # Parse: Numeric:475
@@ -178,6 +196,8 @@ sub num475
 	my ($svr, (undef, undef, undef, $chan)) = @_;
 	
 	err(3, "Cannot join channel ".$chan." on ".$svr.": Bad key.", 0);
+	
+	return 1;
 }
 
 # Parse: Numeric:477
@@ -187,6 +207,8 @@ sub num477
 	my ($svr, (undef, undef, undef, $chan)) = @_;
 	
 	err(3, "Cannot join channel ".$chan." on ".$svr.": Need registered nickname.", 0);
+	
+	return 1;
 }
 
 # Parse: JOIN
@@ -210,6 +232,8 @@ sub cjoin
 		# It isn't. Trigger on_rcjoin.
 		API::Std::event_run("on_rcjoin", (%src, substr($ex[2], 1)));
 	}
+	
+	return 1;
 }
 
 # Parse: NICK
@@ -228,7 +252,9 @@ sub nick
 	else {
 		# It isn't. Trigger on_nick.
 		API::Std::event_run("on_nick", (%src, $nex));
-	}	
+	}
+	
+	return 1;	
 }
 
 # Parse: TOPIC
