@@ -18,6 +18,8 @@ sub cjoin
 	my ($svr, $chan) = @_;
 	
 	Auto::socksnd($svr, "JOIN $chan");
+	
+	return 1;
 }
 
 # Part a channel.
@@ -31,6 +33,8 @@ sub cpart
 	else {
 		Auto::socksnd($svr, "PART $chan :Leaving");
 	}
+	
+	return 1;
 }
 
 # Set mode(s) on a channel.
@@ -39,6 +43,8 @@ sub cmode
 	my ($svr, $chan, $modes) = @_;
 
 	Auto::socksnd($svr, "MODE $chan $modes");
+	
+	return 1;
 }
 
 # Set mode(s) on us.
@@ -47,6 +53,8 @@ sub umode
 	my ($svr, $modes) = @_;
 	
 	Auto::socksnd($svr, "MODE ".$Parser::IRC::botnick{$svr}{nick}." $modes");
+	
+	return 1;
 } 
 
 # Send a PRIVMSG.
@@ -55,6 +63,8 @@ sub privmsg
 	my ($svr, $target, $message) = @_;
 	
 	Auto::socksnd($svr, "PRIVMSG $target :$message");
+	
+	return 1;
 }
 
 # Send a NOTICE.
@@ -63,6 +73,8 @@ sub notice
 	my ($svr, $target, $message) = @_;
 	
 	Auto::socksnd($svr, "NOTICE $target :$message");
+	
+	return 1;
 }
 
 # Change bot nickname.
@@ -73,6 +85,8 @@ sub nick
 	Auto::socksnd($svr, "NICK $newnick");
 	
 	$Parser::IRC::botnick{$svr}{newnick} = $newnick;
+	
+	return 1;
 }
 
 # Request the users of a channel.
@@ -99,6 +113,8 @@ sub quit
 	
 	delete $Parser::IRC::got_001{$svr} if (defined $Parser::IRC::got_001{$svr});
 	delete $Parser::IRC::botnick{$svr} if (defined $Parser::IRC::botnick{$svr});
+	
+	return 1;
 }
 
 
