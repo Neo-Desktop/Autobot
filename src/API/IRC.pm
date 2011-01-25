@@ -9,7 +9,7 @@ use warnings;
 use Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(cjoin cpart cmode umode privmsg notice quit nick usrc);
+our @EXPORT_OK = qw(cjoin cpart cmode umode privmsg notice quit nick names usrc);
 
 
 # Join a channel.
