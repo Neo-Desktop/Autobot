@@ -13,6 +13,7 @@ use API::IRC;
 our %RAWC = (
 	'001'      => \&num001,
 	'005'      => \&num005,
+	'353'      => \&num353,
 	'432'      => \&num432,
 	'433'      => \&num433,
 	'438'      => \&num438,
@@ -27,7 +28,7 @@ our %RAWC = (
 );
 
 # Variables for various functions.
-our (%got_001, %botnick, %botchans, %csprefix);
+our (%got_001, %botnick, %botchans, %csprefix, %chanusers);
 
 # Events.
 API::Std::event_add("on_rcjoin");
@@ -130,6 +131,45 @@ sub num005
 		}
 	}
 				
+	return 1;
+}
+
+# Parse: Numeric:353
+# NAMES reply.
+sub num353
+{
+	my ($svr, @ex) = @_;
+	
+	# Get rid of the colon.
+	$ex[5] = substr($ex[5], 1);
+	# Delete the old chanusers hash if it exists.
+	delete $chanusers{$svr}{$ex[4]} if (defined $chanusers{$svr}{$ex[4]});
+	# Iterate through each user.
+	for (my $i = 5; $i < scalar(@ex); $i++) {
+		my $fi = 0;
+		foreach (keys %{ $csprefix{$svr} }) {
+			# Check if the user has status in the channel.
+			if (substr($ex[$i], 0, 1) eq $csprefix{$svr}{$_}) {
+				# He/she does. Lets set that.
+				if (defined $chanusers{$svr}{$ex[4]}{lc(substr($ex[$i], 1))}) {
+					# If the user has multiple statuses.
+					$chanusers{$svr}{$ex[4]}{lc(substr($ex[$i], 1))} .= $_;
+				}
+				else {
+					# Or not.
+					$chanusers{$svr}{$ex[4]}{lc(substr($ex[$i], 1))} = $_;
+				}
+				$fi = 1;
+			}
+		}
+		# They had status, so go to the next user.
+		next if $fi;
+		# They didn't, set them as a normal user.
+		if (!defined $chanusers{$svr}{$ex[4]}{lc($ex[$i])}) {
+			$chanusers{$svr}{$ex[4]}{lc($ex[$i])} = 1;
+		}
+	}
+	
 	return 1;
 }
 
