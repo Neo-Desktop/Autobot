@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Enabled ./install features are now stored in $Auto::ENFEAT.
+    * Added --enable-sasl option to ./install for enabling SASL.
     * Added names() to API::IRC which sends NAMES.
     * Parse NAME replies (Numeric:353).
     * Parse Numeric:005 and store PREFIX's data.

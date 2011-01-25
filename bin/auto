@@ -49,6 +49,14 @@ if ($BFOS[0] ne $^O."\n") {
 }
 undef @BFOS;
 
+# Check build features.
+our $ENFEAT;
+open(my $BFFEAT, q{<}, "$Bin/../build/feat") or println "Cannot start: Broken build." and exit;
+my @BFFEAT = <$BFFEAT>;
+close $BFFEAT;
+$ENFEAT = substr($BFFEAT[0], 0, length($BFFEAT[0]) - 1);
+undef @BFFEAT;
+
 # Check build Perl version.
 open(my $BFPERL, q{<}, "$Bin/../build/perl") or println "Cannot start: Broken build." and exit;
 my @BFPERL = <$BFPERL>;
