@@ -79,6 +79,19 @@ else {
 	print "Unknown operating system. Contact support.\r\n";
 }
 
+# Iterate through the arguments passed to us.
+my $features = "base";
+if (defined $ARGV[0]) {
+	foreach (@ARGV) {
+		if ($_ eq "--enable-sasl") {
+			$features .= " sasl";
+		}
+		else {
+			println "Warning: Unknown option '".$_."'";
+		}
+	}
+}		
+
 # Check Perl version.
 my %VER = ver();
 print "Checking Perl version..... $VER{ver}.$VER{sub}.$VER{rev} - ";
@@ -96,6 +109,7 @@ println "--- CPAN Modules ---";
 modfind("Mouse");
 modfind("Async");
 modfind("Class::Unload");
+modfind("MIME::Base64") if ($features =~ /sasl/);
 
 # Create build.
 println "\0";
@@ -123,6 +137,10 @@ close $FTIME or println "Failed to install." and exit;
 open(my $FOS, q{>}, "$Bin/build/os") or println "Failed to install." and exit;
 print $FOS $OSNAME."\n" or println "Failed to install." and exit;
 close $FOS or println "Failed to install." and exit;
+
+open(my $FFEAT, q{>}, "$Bin/build/feat") or println "Failed to install." and exit;
+print $FFEAT $features."\n" or println "Failed to install." and exit;
+close $FFEAT or println "Failed to install." and exit;
 
 open(my $FPERL, q{>}, "$Bin/build/perl") or println "Failed to install." and exit;
 print $FPERL "$]\n" or println "Failed to install." and exit;
