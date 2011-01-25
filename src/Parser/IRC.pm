@@ -72,6 +72,18 @@ sub num001
 	
 	$got_001{$svr} = 1;
 	
+	# In case we don't get NICK from the server.
+	if (defined $botnick{$svr}{newnick}) {
+		$botnick{$svr}{nick} = $botnick{$svr}{newnick};
+		delete $botnick{$svr}{newnick};
+	}
+	
+	# Modes on connect.
+	unless (!conf_get("server:$svr:modes")) {
+		my $connmodes = (conf_get("server:$svr:modes"))[0][0];
+		API::IRC::umode($svr, $connmodes);
+	}
+	
 	# Identify string.
 	unless (!conf_get("server:$svr:idstr")) {
 		my $idstr = (conf_get("server:$svr:idstr"))[0][0];
@@ -82,7 +94,7 @@ sub num001
 	my @cajoin = @{ (conf_get("server:$svr:ajoin"))[0] };
 	
 	# Join the channels.
-	unless (defined $cajoin[1]) {
+	if (!defined $cajoin[1]) {
 		# For single-line ajoins.
 		my @sajoin = split(',', $cajoin[0]);
 		
@@ -218,7 +230,7 @@ sub cjoin
 	my %src = API::IRC::usrc(substr($ex[0], 1));
 	
 	# Check if this is coming from ourselves.
-	if ($src{nick} eq $botnick{$svr}) {
+	if ($src{nick} eq $botnick{$svr}{nick}) {
 		# It is. Add channel to array and trigger on_ucjoin.
 		unless (defined $botchans{$svr}) {
 			@{ $botchans{$svr} } = (substr($ex[2], 1));
@@ -244,9 +256,9 @@ sub nick
 	my %src = API::IRC::usrc(substr($uex, 1));
 	
 	# Check if this is coming from ourselves.
-	if ($src{nick} eq $botnick{$svr}) {
+	if ($src{nick} eq $botnick{$svr}{nick}) {
 		# It is. Update bot nick hash.
-		$botnick{$svr} = $nex;
+		$botnick{$svr}{nick} = $nex;
 		delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
 	}
 	else {
@@ -264,7 +276,7 @@ sub topic
 	my %src = API::IRC::usrc(substr($ex[0], 1));
 	
 	# Ignore it if it's coming from us.
-	if (lc($src{nick}) ne lc($botnick{$svr})) {
+	if (lc($src{nick}) ne lc($botnick{$svr}{nick})) {
 		$src{chan} = $ex[2];
 		my (@argv);
 		$argv[0] = substr($ex[3], 1);

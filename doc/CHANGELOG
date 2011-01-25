@@ -3,6 +3,9 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Bug fix: The bot's nick is now stored correctly.
+    * Added server:modes config option for setting modes on
+      connect.
     * Parse TOPIC. (and added hook on_topic)
     * Added DB::Flatfile for DB:: database functions.
     * Added umode() to API::IRC.

@@ -46,7 +46,7 @@ sub umode
 {
 	my ($svr, $modes) = @_;
 	
-	Auto::socksnd($svr, "MODE ".$Parser::IRC::botnick{$svr}." $modes");
+	Auto::socksnd($svr, "MODE ".$Parser::IRC::botnick{$svr}{nick}." $modes");
 } 
 
 # Send a PRIVMSG.
