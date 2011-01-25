@@ -48,6 +48,24 @@ sub modfind
 	return 1;
 }
 
+# Iterate through the arguments passed to us.
+my $features = "base";
+if (defined $ARGV[0]) {
+	foreach (@ARGV) {
+		if ($_ eq "-h" or $_ eq "--help") {
+			println "*** ./install help ***";
+			println " --enable-sasl - Enable support for SASL.";
+			println "*** End of Help ***";
+			exit;
+		}
+		elsif ($_ eq "--enable-sasl") {
+			$features .= " sasl";
+		}
+		else {
+			println "Warning: Unknown option '".$_."'";
+		}
+	}
+}
 
 # Check operating system.
 print "Checking operating system..... $OSNAME - ";
@@ -77,19 +95,6 @@ elsif ($OSNAME eq "openbsd") {
 }
 else {
 	print "Unknown operating system. Contact support.\r\n";
-}
-
-# Iterate through the arguments passed to us.
-my $features = "base";
-if (defined $ARGV[0]) {
-	foreach (@ARGV) {
-		if ($_ eq "--enable-sasl") {
-			$features .= " sasl";
-		}
-		else {
-			println "Warning: Unknown option '".$_."'";
-		}
-	}
 }		
 
 # Check Perl version.
