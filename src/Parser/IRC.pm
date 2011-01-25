@@ -12,6 +12,7 @@ use API::IRC;
 # Raw parsing hash.
 our %RAWC = (
 	'001'      => \&num001,
+	'005'      => \&num005,
 	'432'      => \&num432,
 	'433'      => \&num433,
 	'438'      => \&num438,
@@ -26,7 +27,7 @@ our %RAWC = (
 );
 
 # Variables for various functions.
-our (%got_001, %botnick, %botchans);
+our (%got_001, %botnick, %botchans, %csprefix);
 
 # Events.
 API::Std::event_add("on_rcjoin");
@@ -105,6 +106,30 @@ sub num001
 		API::IRC::cjoin($svr, $_) foreach (@cajoin);
 	}
 	
+	return 1;
+}
+
+# Parse: Numeric:005
+# Prefixes.
+sub num005
+{
+	my ($svr, @ex) = @_;
+	
+	# Find PREFIX.
+	foreach my $ex (@ex) {
+		if (substr($ex, 0, 7) eq "PREFIX=") {
+			# Found.
+			my $rpx = substr($ex, 8);
+			my ($pm, $pp) = split('\)', $rpx);
+			my @apm = split(//, $pm);
+			my @app = split(//, $pp);
+			foreach my $ppm (@apm) {
+				# Store data.
+				$csprefix{$svr}{$ppm} = shift(@app);
+			}
+		}
+	}
+				
 	return 1;
 }
 
