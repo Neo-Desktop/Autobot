@@ -75,6 +75,16 @@ sub nick
 	$Parser::IRC::botnick{$svr}{newnick} = $newnick;
 }
 
+# Request the users of a channel.
+sub names
+{
+	my ($svr, $chan) = @_;
+	
+	Auto::socksnd($svr, "NAMES $chan");
+	
+	return 1;
+}
+
 # Quit IRC.
 sub quit 
 {

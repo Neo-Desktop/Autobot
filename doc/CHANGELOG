@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added names() to API::IRC which sends NAMES.
     * Parse NAME replies (Numeric:353).
     * Parse Numeric:005 and store PREFIX's data.
     * Bug fix: The bot's nick is now stored correctly.
