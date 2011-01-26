@@ -1,0 +1,7 @@
+=head1 Auto Indev Trunk
+=over
+The trunk is used for including code in Auto's Git that does not yet work. 
+This way the developer's can collaborate on the code to fix it more quickly.
+
+NOTE: The code in trunk DOES NOT work. Do not use it.
+=back
