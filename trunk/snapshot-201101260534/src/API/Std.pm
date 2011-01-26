@@ -11,7 +11,7 @@ use Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add cmd_del);
 
-my (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
+our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
 
 
 # Initialize a module.
