@@ -39,7 +39,6 @@ Contributors - Non-developers who contribute to the project
 greatly.
 
 + Chazz "Alexandria" Wolcott &lt;alyx@woomoo.org&gt;
-+ Russell Bradford &lt;russell@surgehost.net&gt;
 
 
 ## 3. HOW TO INSTALL
