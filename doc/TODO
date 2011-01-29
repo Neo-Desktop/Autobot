@@ -18,22 +18,22 @@ Legend:
      [X] Add French strings
 
  [!] API
-     [!] Create basic modular functions
+     [X] Create basic modular functions
      [X] Create logging functions
-     [ ] Create command creation functions
-     [ ] Create user permissions (levels)
+     [X] Create command creation functions
+     [!] Create user permissions (levels)
 
  [!] IRC
-     [!] Create IRC parser
+     [X] Create IRC parser
 
  [!] DB
-     [!] Create Auto-Flatfile database format
-     [ ] Implement Auto-Flatfile as the main format
+     [X] Create Auto-Flatfile database format
+     [X] Implement Auto-Flatfile as the main format
      [ ] Add MySQL support
 
- [!] Sys
+ [O] Sys
      [ ] Create system file for UNIX (or: Linux, BSD, etc.)
-     [?+] Create system file for Microsoft Windows (currently unsupported)
+     [ ] Create system file for Microsoft Windows (currently unsupported)
 
  [ ] Features
      [ ] Weather module
