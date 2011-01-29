@@ -4,13 +4,14 @@
 package m_HelloChan;
 use strict;
 use warnings;
+use API::Std qw(hook_add hook_del);
 use API::IRC qw(privmsg);
 
 # Initialization subroutine.
 sub _init
 {
 	# Add a hook for when we join a channel.
-	API::Std::hook_add("on_ucjoin", "HelloChan", \&m_HelloChan::hello) or return 0;
+	hook_add("on_ucjoin", "HelloChan", \&m_HelloChan::hello) or return 0;
 	return 1;
 }
 
@@ -18,7 +19,7 @@ sub _init
 sub _void
 {
 	# Delete the hook.
-	API::Std::hook_del("on_ucjoin", "HelloChan") or return 0;
+	hook_del("on_ucjoin", "HelloChan") or return 0;
 	return 1;
 }
 
