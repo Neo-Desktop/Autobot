@@ -68,6 +68,9 @@ locale "en_US";
 # Expire logs in days. 0 disables.
 expire_logs 15;
 
+# Fantasy prefix.
+fantasy_pf "!";
+
 # Module autoload.
 module "m_weather";
 module "m_gcalc";
