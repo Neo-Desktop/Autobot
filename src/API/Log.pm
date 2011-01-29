@@ -53,18 +53,18 @@ sub alog
 	my $time = POSIX::strftime("%Y-%m-%d %I:%M:%S %p", localtime);
 	
 	# Create var/ if it doesn't exist.
-	unless (-d "$Auto::Bin/../var") {
-		`mkdir $Auto::Bin/../var`;
+	if (!-d "$Auto::Bin/../var") {
+		system("mkdir $Auto::Bin/../var");
 	}
 	# Create var/DATE.log if it doesn't exist.
-	unless (-e "$Auto::Bin/../var/$date.log") {
-		`touch $Auto::Bin/../var/$date.log`;
-	}
+	if (!-e "$Auto::Bin/../var/$date.log") {
+		system("touch $Auto::Bin/../var/$date.log");
+	}	
 	
 	# Open the logfile, print the log message to it and close it.
-	open LOG, ">>$Auto::Bin/../var/$date.log" or return 0;
-	print LOG "[$time] $lmsg\n" or return 0;
-	close LOG or return 0;
+	open(my $FLOG, q{>>}, "$Auto::Bin/../var/$date.log") or return 0;
+	print $FLOG "[$time] $lmsg\n" or return 0;
+	close $FLOG or return 0;
 	
 	return 1;
 }
@@ -98,7 +98,7 @@ sub expire_logs
 		
 		# If it's older than <config_value> days, delete it.
 		if (time - $epoch > 86400 * $celog) {
-			`rm $Auto::Bin/../var/$file`;
+			system("rm $Auto::Bin/../var/$file");
 		}
 	}
 }
