@@ -23,9 +23,9 @@ sub parse
 	}
 	
 	# Open, read and close the file.
-	open ALF, "<$Auto::Bin/../lang/$lang.alf" or return 0;
-	my @fbuf = <ALF>;
-	close ALF;
+	open(my $FALF, q{<}, "$Auto::Bin/../lang/$lang.alf") or return 0;
+	my @fbuf = <$FALF>;
+	close $FALF;
 	
 	# Iterate the file buffer.
 	foreach my $buff (@fbuf) {

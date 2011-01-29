@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Module names are now case sensitive.
+    * Added config option module for auto-loading a module.
     * Fixed a bug in API::Log that caused invalid months.
     * Changed how command data is passed to fix a bug.
     * Removed dependency Async.
