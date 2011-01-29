@@ -10,8 +10,7 @@ use Exporter;
 
 our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del);
-
+our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add cmd_del);
 
 
 # Initialize a module.
@@ -95,13 +94,13 @@ sub cmd_add
 	my ($cmd, $lvl, $fhelp, $shelp, $sub) = @_;
 	$cmd = uc($cmd);
 	
-	return 0 if (defined $CMDS{$cmd});
+	return 0 if (defined $API::Std::CMDS{$cmd});
 	return 0 if ($lvl =~ m/[^0-2]/);
 	
-	$CMDS{$cmd}{lvl}   = $lvl;
-	$CMDS{$cmd}{fhelp} = $fhelp;
-	$CMDS{$cmd}{shelp} = $shelp;
-	$CMDS{$cmd}{sub}   = $sub;
+	$API::Std::CMDS{$cmd}{lvl}   = $lvl;
+	$API::Std::CMDS{$cmd}{fhelp} = $fhelp;
+	$API::Std::CMDS{$cmd}{shelp} = $shelp;
+	$API::Std::CMDS{$cmd}{sub}   = $sub;
 	
 	return 1;
 }
@@ -113,8 +112,8 @@ sub cmd_del
 	my ($cmd) = @_;
 	$cmd = uc($cmd);
 	
-	if (defined $CMDS{$cmd}) {
-		delete $CMDS{$cmd};
+	if (defined $API::Std::CMDS{$cmd}) {
+		delete $API::Std::CMDS{$cmd};
 	}
 	else {
 		return 0;
