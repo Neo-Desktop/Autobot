@@ -341,6 +341,8 @@ sub err
 	if ($fatal) {
 		exit;
 	}
+	
+	return 1;
 }
 
 # Warn subroutine.
@@ -361,6 +363,8 @@ sub awarn
 	if ($lvl >= 2) {
 		API::Log::alog("WARNING: $msg");
 	}
+	
+	return 1;
 }
 
 1;
