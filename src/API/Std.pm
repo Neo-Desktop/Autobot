@@ -132,7 +132,6 @@ sub cmd_run
 	return 0 if (!defined $CMDS{$cmd});
 
 	if ($CMDS{$cmd}{lvl} == $lvl or $CMDS{$cmd}{lvl} == 2) {
-		API::Log::println $cmd;
 		&{ $CMDS{$cmd}{sub} }(%src, @argv);
 	}
 	
