@@ -2,7 +2,7 @@
 # Written in sh because the user may not have Perl...to run Auto....
 
 PID=bin/auto.pid
-MODS="Mouse Async Class::Unload"
+MODS="Mouse Class::Unload"
 EMODS="MIME::Base64"
 
 if [ "$1" = "start" ] ; then
