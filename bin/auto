@@ -16,7 +16,7 @@ use Class::Unload;
 use FindBin qw($Bin);
 our $Bin = $Bin;
 BEGIN { unshift(@INC, "$Bin/../src"); }
-use API::Std qw(conf_get err);
+use API::Std qw(conf_get err cmd_add cmd_del);
 use API::Log qw(println alog dbug);
 use DB::Flatfile;
 use Parser::Config;
@@ -167,10 +167,12 @@ else {
 }
 
 # Load modules.
-alog "* Loading modules...";
-dbug "* Loading modules...";
-foreach (@{ (conf_get("module"))[0] }) {
-	mod_load($_);
+if (conf_get("module") != 0) {
+	alog "* Loading modules...";
+	dbug "* Loading modules...";
+	foreach (@{ (conf_get("module"))[0] }) {
+		mod_load($_);
+	}
 }
 
 ## Create sockets.
