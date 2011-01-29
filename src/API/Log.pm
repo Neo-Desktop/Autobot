@@ -38,6 +38,8 @@ sub dbug
 		# We're in debug mode; print it out.
 		println $out;
 	}
+	
+	return 1;
 }
 
 # Log to file.
@@ -101,6 +103,8 @@ sub expire_logs
 			system("rm $Auto::Bin/../var/$file");
 		}
 	}
+	
+	return 1;
 }
 
 1;
