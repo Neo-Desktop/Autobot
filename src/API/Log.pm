@@ -86,7 +86,7 @@ sub expire_logs
 	}
 	
 	# Iterate through each logfile.
-	foreach my $file (<$Auto::Bin/../var/*>) {
+	foreach my $file (glob "$Auto::Bin/../var/*") {
 		my (undef, $file) = split('bin/../var/', $file);
 		
 		# Convert filename to UNIX time.
