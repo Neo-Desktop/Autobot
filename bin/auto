@@ -11,7 +11,7 @@ use POSIX;
 use locale;
 use Mouse;
 use IO::Socket;
-use Async;
+use IO::Select;
 use Class::Unload;
 use FindBin qw($Bin);
 our $Bin = $Bin;
@@ -104,7 +104,7 @@ our %SETTINGS = $CONF->parse or err(1, "Failed to parse configuration file!", 1)
 println " Success";
 
 # Check for required configuration values.
-my @REQCVALS = qw(locale expire_logs server);
+my @REQCVALS = qw(locale expire_logs server fantasy_pf);
 foreach my $REQCVAL (@REQCVALS) {
 	if (!conf_get($REQCVAL)) {
 		my $err = 2;
@@ -164,7 +164,8 @@ dbug "* Connecting to servers...";
 # Get servers from config.
 my %cservers = conf_get("server");
 # Set the hashes and processes hashes.
-my (%SOCKET, %SOCKPROC);
+my (%SOCKET, %SOCKETH, $SELECT);
+$SELECT = IO::Select->new();
 my $it = 0;
 # Iterate through each configured server.
 foreach my $cskey (keys %cservers) {
@@ -186,25 +187,8 @@ foreach my $cskey (keys %cservers) {
 		err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) 
 		and next;
 	API::IRC::nick($cskey, $cservers{$cskey}{'nick'}[0]);
-	# Create the process.
-	$SOCKPROC{$cskey} = Async->new(sub {
-		# Infinite loop.
-		while (1) {
-			# Read data from socket.
-			my $data = readline($SOCKET{$cskey});
-			# Lost connection: kill process.
-			unless (defined $data) {
-				exit;
-			}
-			# Get rid of the newlines.
-			chomp $data;
-			# Debug.
-			dbug "$cskey -> You: $data";
-			
-			# Parse data.
-			Parser::IRC::ircparse($cskey, $data);
-		}
-	}) or err(2, "Failed to create process for ".$cskey, 0) and next;
+	# Add to select.
+	$SELECT->add($SOCKET{$cskey});
 	# Success!
 	alog "** Successfully connected to server: ".$cskey;
 	dbug "** Successfully connected to server: ".$cskey;
@@ -221,8 +205,9 @@ else {
 }
 undef $it;
 
-# Check timers.
+# Infinite while loop.
 while (1) { 
+	# Timer check.
 	foreach my $tk (keys %TIMERS) {
 		if ($TIMERS{$tk}{time} <= time) {
 			&{ $TIMERS{$tk}{sub} }();
@@ -240,7 +225,28 @@ while (1) {
 			}
 		}
 	}
-	sleep 1; 	
+	# Socket check.
+	foreach my $sock ($SELECT->can_read(1)) {
+		# Figure out what network is sending us data.
+		my $sockid;
+		foreach (keys %SOCKET) {
+			$sockid = $_ if ($SOCKET{$_} eq $sock);
+		}
+		# Read the data.
+		my $data = readline($sock);
+		if (!defined $data) {
+			# Got EOF, close socket
+			err(2, "Lost connection to $sockid!", 0);
+			$SELECT->remove($sock);
+		}
+		# Remove the newlines.
+		chomp $data;
+		# Debug.
+		dbug $sockid." >> ".$data;
+		
+		# Parse data.
+		Parser::IRC::ircparse($sockid, $data);
+	}
 }
 
 ###############
@@ -254,7 +260,7 @@ sub socksnd
 	
 	if (defined $SOCKET{$svr}) {
 		send($SOCKET{$svr}, $data."\n", 0);
-		dbug "You -> $svr: $data";
+		dbug "$svr << $data";
 		return 1;
 	}
 	else {

@@ -3,6 +3,10 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Removed dependency Async.
+    * Rewrote the socket engine.
+    * Added cmd_add|del|run() to API::Std for commands.
+    * Parse PRIVMSG.
     * Enabled ./install features are now stored in $Auto::ENFEAT.
     * Added --enable-sasl option to ./install for enabling SASL.
     * Added names() to API::IRC which sends NAMES.

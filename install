@@ -112,7 +112,6 @@ else {
 println "\0";
 println "--- CPAN Modules ---";
 modfind("Mouse");
-modfind("Async");
 modfind("Class::Unload");
 modfind("MIME::Base64") if ($features =~ /sasl/);
 

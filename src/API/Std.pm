@@ -8,10 +8,10 @@ use strict;
 use warnings;
 use Exporter;
 
+our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del);
 
-my (%LANGE, %MODULE, %EVENTS, %HOOKS);
 
 
 # Initialize a module.
@@ -92,13 +92,51 @@ sub mod_void
 # Add a command to Auto.
 sub cmd_add
 {
+	my ($cmd, $lvl, $fhelp, $shelp, $sub) = @_;
+	$cmd = uc($cmd);
 	
+	return 0 if (defined $CMDS{$cmd});
+	return 0 if ($lvl =~ m/[^0-2]/);
+	
+	$CMDS{$cmd}{lvl}   = $lvl;
+	$CMDS{$cmd}{fhelp} = $fhelp;
+	$CMDS{$cmd}{shelp} = $shelp;
+	$CMDS{$cmd}{sub}   = $sub;
+	
+	return 1;
 }
+
 
 # Delete a command from Auto.
 sub cmd_del
 {
+	my ($cmd) = @_;
+	$cmd = uc($cmd);
 	
+	if (defined $CMDS{$cmd}) {
+		delete $CMDS{$cmd};
+	}
+	else {
+		return 0;
+	}
+	
+	return 1;
+}
+
+# Run a command if it exists.
+sub cmd_run
+{
+	my ($cmd, $lvl, %src, @argv) = @_;
+	$cmd = uc($cmd);
+
+	return 0 if (!defined $CMDS{$cmd});
+
+	if ($CMDS{$cmd}{lvl} == $lvl or $CMDS{$cmd}{lvl} == 2) {
+		API::Log::println $cmd;
+		&{ $CMDS{$cmd}{sub} }(%src, @argv);
+	}
+	
+	return 1;
 }
 
 # Add an event to Auto.
@@ -281,6 +319,16 @@ sub trans
 		$id =~ s/_/ /g;
 		return $id;
 	}
+}
+
+# Privilege subroutine.
+sub has_priv
+{
+	my (%user, $priv) = @_;
+	
+	
+	
+	return 1;
 }
 
 # Error subroutine.

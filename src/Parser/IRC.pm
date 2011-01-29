@@ -25,6 +25,7 @@ our %RAWC = (
 	'477'      => \&num477,
 	'JOIN'     => \&cjoin,
 	'NICK'     => \&nick,
+	'PRIVMSG'  => \&privmsg,
 );
 
 # Variables for various functions.
@@ -332,6 +333,35 @@ sub nick
 	}
 	
 	return 1;	
+}
+
+# Parse: PRIVMSG
+sub privmsg
+{
+	my ($svr, @ex) = @_;
+	my %src = API::IRC::usrc(substr($ex[0], 1));
+
+	my $cprefix = (conf_get("fantasy_pf"))[0][0];
+	my $rprefix = substr($ex[3], 1, 1);
+	my $cmd = uc(substr($ex[3], 2));
+	my (@argv);
+	for (my $i = 4; $i < scalar(@ex); $i++) {
+		push(@argv, $ex[$i]);
+	}
+	$src{svr} = $svr;
+	
+	# Check if it's to a channel or to us.
+	if (lc($ex[2]) eq lc($botnick{$svr}{nick})) {
+		# It is coming to us in a private message.
+		API::Std::cmd_run($cmd, 1, %src, @argv);
+	}
+	else {
+		# It is coming to us in a channel message.
+		$src{chan} = $ex[2];
+		API::Std::cmd_run($cmd, 0, %src, @argv);
+	}
+	
+	return 1;
 }
 
 # Parse: TOPIC
