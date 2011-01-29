@@ -10,7 +10,7 @@ use Exporter;
 
 our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add cmd_del);
+our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add cmd_del hook_add hook_del);
 
 
 # Initialize a module.
@@ -172,9 +172,9 @@ sub hook_add
 {
 	my ($event, $name, $sub) = @_;
 	
-	unless (defined $HOOKS{lc($name)}) {
-		if (defined $EVENTS{lc($event)}) {
-			$HOOKS{lc($event)}{lc($name)} = $sub;
+	unless (defined $API::Std::HOOKS{lc($name)}) {
+		if (defined $API::Std::EVENTS{lc($event)}) {
+			$API::Std::HOOKS{lc($event)}{lc($name)} = $sub;
 			return 1;
 		}
 		else {
@@ -191,8 +191,8 @@ sub hook_del
 {
 	my ($event, $name) = @_;
 	
-	if (defined $HOOKS{lc($event)}{lc($name)}) {
-		delete $HOOKS{lc($event)}{lc($name)};
+	if (defined $API::Std::HOOKS{lc($event)}{lc($name)}) {
+		delete $API::Std::HOOKS{lc($event)}{lc($name)};
 		return 1;
 	}
 	else {
