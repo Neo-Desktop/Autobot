@@ -339,26 +339,37 @@ sub nick
 sub privmsg
 {
 	my ($svr, @ex) = @_;
-	my %src = API::IRC::usrc(substr($ex[0], 1));
+	my %data = API::IRC::usrc(substr($ex[0], 1));
 
-	my $cprefix = (conf_get("fantasy_pf"))[0][0];
-	my $rprefix = substr($ex[3], 1, 1);
-	my $cmd = uc(substr($ex[3], 2));
-	my (@argv);
+	my @argv;
 	for (my $i = 4; $i < scalar(@ex); $i++) {
 		push(@argv, $ex[$i]);
 	}
-	$src{svr} = $svr;
+	$data{svr} = $svr;
+	@{ $data{args} } = @argv;
 	
+	my ($cmd, $cprefix, $rprefix);
 	# Check if it's to a channel or to us.
 	if (lc($ex[2]) eq lc($botnick{$svr}{nick})) {
 		# It is coming to us in a private message.
-		API::Std::cmd_run($cmd, 1, %src, @argv);
+		$cmd = uc(substr($ex[3], 1));
+		if (defined $API::Std::CMDS{$cmd}) {
+			if ($API::Std::CMDS{$cmd}{lvl} == 1 or $API::Std::CMDS{$cmd}{lvl} == 2) {
+				&{ $API::Std::CMDS{$cmd}{sub} }(%data) if $rprefix eq $cprefix;
+			}
+		}
 	}
 	else {
 		# It is coming to us in a channel message.
-		$src{chan} = $ex[2];
-		API::Std::cmd_run($cmd, 0, %src, @argv);
+		$data{chan} = $ex[2];
+		$cprefix = (conf_get("fantasy_pf"))[0][0];
+		$rprefix = substr($ex[3], 1, 1);
+		$cmd = uc(substr($ex[3], 2));
+		if (defined $API::Std::CMDS{$cmd}) {
+			if ($API::Std::CMDS{$cmd}{lvl} == 0 or $API::Std::CMDS{$cmd}{lvl} == 2) {
+				&{ $API::Std::CMDS{$cmd}{sub} }(%data) if $rprefix eq $cprefix;
+			}
+		}
 	}
 	
 	return 1;

@@ -92,6 +92,7 @@ sub expire_logs
 		# Convert filename to UNIX time.
 		my $yyyy = substr($file, 0, 4);
 		my $mm = substr($file, 4, 2);
+		$mm = $mm - 1;
 		my $dd = substr($file, 6, 2);
 		my $epoch = timelocal(0, 0, 0, $dd, $mm, $yyyy);
 		

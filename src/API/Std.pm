@@ -123,21 +123,6 @@ sub cmd_del
 	return 1;
 }
 
-# Run a command if it exists.
-sub cmd_run
-{
-	my ($cmd, $lvl, %src, @argv) = @_;
-	$cmd = uc($cmd);
-
-	return 0 if (!defined $CMDS{$cmd});
-
-	if ($CMDS{$cmd}{lvl} == $lvl or $CMDS{$cmd}{lvl} == 2) {
-		&{ $CMDS{$cmd}{sub} }(%src, @argv);
-	}
-	
-	return 1;
-}
-
 # Add an event to Auto.
 sub event_add
 {
