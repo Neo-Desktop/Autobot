@@ -175,7 +175,7 @@ else {
 }
 
 # Load modules.
-if (conf_get("module") != 0) {
+if (conf_get("module")) {
 	alog "* Loading modules...";
 	dbug "* Loading modules...";
 	foreach (@{ (conf_get("module"))[0] }) {
