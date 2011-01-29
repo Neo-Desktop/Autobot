@@ -111,6 +111,14 @@ our $CONF = Parser::Config->new("auto.conf") or err(1, "Failed to parse configur
 our %SETTINGS = $CONF->parse or err(1, "Failed to parse configuration file!", 1);
 println " Success";
 
+if (conf_get("die")) {
+	if ((conf_get("die"))[0][0] == 1) {
+		println "!!! You didn't read the whole config.";
+		println "!!! Insert new user then try again.";
+		exit;
+	}
+}
+
 # Check for required configuration values.
 my @REQCVALS = qw(locale expire_logs server fantasy_pf);
 foreach my $REQCVAL (@REQCVALS) {
