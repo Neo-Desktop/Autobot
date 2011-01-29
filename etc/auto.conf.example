@@ -72,5 +72,4 @@ expire_logs 15;
 fantasy_pf "!";
 
 # Module autoload.
-module "m_weather";
-module "m_gcalc";
+module "HelloChan";
