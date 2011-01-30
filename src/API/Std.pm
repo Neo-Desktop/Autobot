@@ -25,7 +25,7 @@ sub mod_init
 	API::Log::alog("MODULES: Attempting to load ".$name." (version ".$version.") by ".$author."...");
 	
 	# Check if this module is compatible with this version of Auto.
-	if ($autover ne "3.0.0d") {
+	if ($autover ne "3.0d") {
 		API::Log::dbug("MODULES: Failed to load ".$name.": Incompatible with your version of Auto.");
 		API::Log::alog("MODULES: Failed to load ".$name.": Incompatible with your version of Auto.");
 		return 0;
