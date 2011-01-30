@@ -173,7 +173,7 @@ sub hook_add
 {
 	my ($event, $name, $sub) = @_;
 	
-	unless (defined $API::Std::HOOKS{lc($name)}) {
+	if (!defined $API::Std::HOOKS{lc($name)}) {
 		if (defined $API::Std::EVENTS{lc($event)}) {
 			$API::Std::HOOKS{lc($event)}{lc($name)} = $sub;
 			return 1;
