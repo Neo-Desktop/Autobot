@@ -55,6 +55,15 @@ sub mod_init
 	}
 }
 
+# Check if a module exists.
+sub mod_exists
+{
+	my ($name) = @_;
+	
+	return 1 if defined $MODULE{$name};
+	return 0;
+}
+
 # Void a module.
 sub mod_void
 {
