@@ -11,7 +11,8 @@ use Exporter;
 our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add 
-					cmd_del hook_add hook_del rchook_add rchook_del match_user);
+					cmd_del hook_add hook_del rchook_add rchook_del match_user
+					has_privy);
 
 
 # Initialize a module.
