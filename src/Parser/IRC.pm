@@ -25,6 +25,7 @@ our %RAWC = (
 	'477'      => \&num477,
 	'JOIN'     => \&cjoin,
 	'NICK'     => \&nick,
+	'NOTICE'   => \&notice,
 	'PRIVMSG'  => \&privmsg,
 	'TOPIC'    => \&topic,
 );
@@ -36,6 +37,7 @@ our (%got_001, %botnick, %botchans, %csprefix, %chanusers);
 API::Std::event_add("on_rcjoin");
 API::Std::event_add("on_ucjoin");
 API::Std::event_add("on_nick");
+API::Std::event_add("on_notice");
 API::Std::event_add("on_cprivmsg");
 API::Std::event_add("on_uprivmsg");
 API::Std::event_add("on_topic");
@@ -336,6 +338,16 @@ sub nick
 	}
 	
 	return 1;	
+}
+
+# Parse: NOTICE
+sub notice
+{
+	my ($svr, @ex) = @_;
+	
+	API::Std::event_run("on_notice", ($svr, @ex));
+	
+	return 1;
 }
 
 # Parse: PRIVMSG
