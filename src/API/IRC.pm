@@ -9,7 +9,7 @@ use warnings;
 use Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(cjoin cpart cmode umode privmsg notice quit nick names usrc);
+our @EXPORT_OK = qw(cjoin cpart cmode umode privmsg notice quit nick names usrc match_mask);
 
 
 # Join a channel.
@@ -131,6 +131,25 @@ sub usrc
 		user => $si[1],
 		host  => $sii[1]
 	);
+}
+
+# Match two IRC masks.
+sub match_mask
+{
+	my ($mu, $mh) = @_;
+	
+	# Prepare the regex.
+	$mh =~ s/\./\\\./g;
+	$mh =~ s/\?/\./g;
+	$mh =~ s/\*/\.\*/g;
+	$mh = '^'.$mh.'$';
+	
+	# Let's grep the user's mask.
+	if (grep(/$mh/, $mu)) {
+		return 1;
+	}
+	
+	return 0;
 }
 
 

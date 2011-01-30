@@ -3,6 +3,9 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added match_mask() to API::IRC and match_user() to API::Std,
+      match_user checks config user:mask to find a user block, if
+      a match is found, the configured username is returned.
     * Added rchook_add() and rchook_del() to API::Std.
     * Parse NOTICE and added hook on_notice.
     * Added hooks on_uprivmsg and on_cprivmsg.

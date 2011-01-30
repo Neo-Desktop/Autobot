@@ -11,7 +11,7 @@ use Exporter;
 our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add 
-					cmd_del hook_add hook_del rchook_add rchook_del);
+					cmd_del hook_add hook_del rchook_add rchook_del match_user);
 
 
 # Initialize a module.
@@ -332,13 +332,31 @@ sub trans
 }
 
 # Privilege subroutine.
-sub has_priv
+sub match_user
 {
-	my (%user, $priv) = @_;
+	my (%user) = @_;
+
+	# Get data from config.
+	return 0 if (!conf_get("user"));
+	my %uhp = conf_get("user");
 	
+	foreach my $userkey (keys %uhp) {
+		# For each user block.
+		my %ulhp = %{ $uhp{$userkey} };
+		foreach my $uhk (keys %ulhp) {
+			# For each user.
+			if ($uhk eq "mask") {
+				# Put together the user information.
+				my $mask = $user{nick}."!".$user{user}."@".$user{host};
+				if (API::IRC::match_mask($mask, ($ulhp{$uhk})[0][0])) {
+					# We've got a host match.
+					return $userkey;
+				}
+			}
+		}
+	}
 	
-	
-	return 1;
+	return 0;
 }
 
 # Error subroutine.
