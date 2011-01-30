@@ -10,7 +10,8 @@ use Exporter;
 
 our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add cmd_del hook_add hook_del);
+our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add 
+					cmd_del hook_add hook_del rchook_add rchook_del);
 
 
 # Initialize a module.
@@ -238,6 +239,32 @@ sub timer_del
 	}
 	
 	return 0;
+}
+
+# Hook onto a raw command.
+sub rchook_add
+{
+	my ($cmd, $sub) = @_;
+	$cmd = uc($cmd);
+	
+	return 0 if defined $Parser::IRC::RAWC{$cmd};
+	
+	$Parser::IRC::RAWC{$cmd} = $sub;
+	
+	return 1;
+}
+
+# Delete a raw command hook.
+sub rchook_del
+{
+	my ($cmd) = @_;
+	$cmd = uc($cmd);
+	
+	return 0 if !defined $Parser::IRC::RAWC{$cmd};
+	
+	delete $Parser::IRC::RAWC{$cmd};
+	
+	return 1;
 }
 
 # Configuration value getter.

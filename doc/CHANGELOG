@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added rchook_add() and rchook_del() to API::Std.
     * Parse NOTICE and added hook on_notice.
     * Added hooks on_uprivmsg and on_cprivmsg.
     * Module names are now case sensitive.
