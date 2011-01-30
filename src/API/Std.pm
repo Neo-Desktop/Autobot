@@ -331,7 +331,7 @@ sub trans
 	}
 }
 
-# Privilege subroutine.
+# Match user subroutine.
 sub match_user
 {
 	my (%user) = @_;
@@ -352,6 +352,24 @@ sub match_user
 					# We've got a host match.
 					return $userkey;
 				}
+			}
+		}
+	}
+	
+	return 0;
+}
+
+# Privilege subroutine.
+sub has_priv
+{
+	my ($cuser, $cpriv) = @_;
+	
+	if (conf_get("user:$cuser:privs")) {
+		my $cups = (conf_get("user:$cuser:privs"))[0][0];
+		
+		if (defined $Auto::PRIVILEGES{$cups}) {
+			foreach (@{ $Auto::PRIVILEGES{$cups} }) {
+				return 1 if ($_ eq $cpriv or $_ eq "ALL");
 			}
 		}
 	}

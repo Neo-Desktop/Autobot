@@ -9,6 +9,7 @@ use strict;
 use warnings;
 use POSIX;
 use locale;
+use feature qw(switch);
 use Mouse;
 use IO::Socket;
 use IO::Select;
@@ -146,6 +147,55 @@ API::Log::expire_logs();
 # Load database.
 DB::load();
 
+# Parse privileges.
+our (%PRIVILEGES);
+# If there are any privsets.
+if (conf_get("privset")) {
+	# Get them.
+	my %tcprivs = conf_get("privset");
+	
+	foreach my $tckpriv (keys %tcprivs) {
+		# For each privset, get the inner values.
+		my %mcprivs = conf_get("privset:$tckpriv");
+		
+		# Iterate through them.
+		foreach my $mckpriv (keys %mcprivs) {
+			# Switch statement for the values.
+			given ($mckpriv) {
+				# If it's 'priv', save it as a privilege.
+				when ("priv") {
+					if (defined $PRIVILEGES{$tckpriv}) {
+						# If this privset exists, push to it.
+						push(@{ $PRIVILEGES{$tckpriv} }, ($mcprivs{$mckpriv})[0][0]);
+					}
+					else {
+						# Otherwise, create it.
+						@{ $PRIVILEGES{$tckpriv} } = (($mcprivs{$mckpriv})[0][0]);
+					}
+				}
+				# If it's 'inherit', inherit the privileges of another privset.
+				when ("inherit") {
+					# If the privset we're inheriting exists, continue.
+					if (defined $PRIVILEGES{($mcprivs{$mckpriv})[0][0]}) {
+						# Iterate through each privilege.
+						foreach (@{ $PRIVILEGES{($mcprivs{$mckpriv})[0][0]} }) {
+							# And save them to the privset inheriting them
+							if (defined $PRIVILEGES{$tckpriv}) {
+								# If this privset exists, push to it.
+								push(@{ $PRIVILEGES{$tckpriv} }, $_);
+							}
+							else {
+								# Otherwise, create it.
+								@{ $PRIVILEGES{$tckpriv} } = ($_);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 # Successful startup.
 our $STARTTIME = time;
 println "* Auto successfully started at ".POSIX::strftime("%Y-%m-%d %I:%M:%S %p", localtime).".";
@@ -233,6 +283,18 @@ else {
 	err(2, "No server connections.", 1);
 }
 undef $it;
+
+### NOTE: REMOVE THIS FROM MAINLINE CODE. IT IS FOR DEVELOPMENT PURPOSES ONLY. ###
+sub hw {
+	my (%data) = @_; my @argv = @{ $data{args} };
+	if (API::Std::has_priv(API::Std::match_user(%data), "cmd.say")) {
+		API::IRC::privmsg($data{svr}, $data{chan}, @argv);
+	}
+	return 1;
+}
+
+cmd_add("SAY", 0, 0, 0, \&Auto::hw) or exit;
+### End ###
 
 # Infinite while loop.
 while (1) { 

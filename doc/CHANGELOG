@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added has_priv() to API::Std.
+    * Finished the host-based privilege/permission system.
     * Added hook on_preconnect, this comes before USER (after PASS).
     * Added match_mask() to API::IRC and match_user() to API::Std,
       match_user checks config user:mask to find a user block, if
