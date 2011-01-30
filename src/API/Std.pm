@@ -70,7 +70,7 @@ sub mod_void
 		return 0;
 	}
 	
-	# Run the module's _init sub.
+	# Run the module's _void sub.
 	my $mi = eval($MODULE{$module}{pkg}."::_void();");
 	
 	if ($mi) {
