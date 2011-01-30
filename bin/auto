@@ -230,18 +230,6 @@ else {
 }
 undef $it;
 
-### NOTE: REMOVE THIS FROM MAINLINE CODE. IT IS FOR DEVELOPMENT PURPOSES ONLY. ###
-sub hw {
-	my (%data) = @_; my @argv = @{ $data{args} };
-	if (API::Std::match_user(( 'nick' => $data{nick}, 'user' => $data{user}, 'host' => $data{host} ))) {
-		API::IRC::privmsg($data{svr}, $data{chan}, @argv);
-	}
-	return 1;
-}
-
-cmd_add("SAY", 0, 0, 0, \&Auto::hw) or exit;
-### End ###
-
 # Infinite while loop.
 while (1) { 
 	# Timer check.
