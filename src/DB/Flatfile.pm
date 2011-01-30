@@ -117,5 +117,17 @@ sub mwrite
 	return 1;
 }
 
+# Delete from database.
+sub mdelete
+{
+	my ($name) = @_;
+	
+	if (defined $MEM{$name}) {
+		delete $MEM{$name};
+	}
+	
+	return 1;
+}
+
 
 1;
