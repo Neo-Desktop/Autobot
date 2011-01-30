@@ -9,7 +9,8 @@ use warnings;
 use Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(cjoin cpart cmode umode privmsg notice quit nick names usrc match_mask);
+our @EXPORT_OK = qw(cjoin cpart cmode umode privmsg notice quit nick names topic
+					usrc match_mask);
 
 
 # Join a channel.
@@ -95,6 +96,16 @@ sub names
 	my ($svr, $chan) = @_;
 	
 	Auto::socksnd($svr, "NAMES $chan");
+	
+	return 1;
+}
+
+# Send a topic to the channel.
+sub topic
+{
+	my ($svr, $chan, $topic) = @_;
+	
+	Auto::socksnd($svr, "TOPIC $chan :$topic");
 	
 	return 1;
 }
