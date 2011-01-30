@@ -185,6 +185,6 @@ sasl_timeout 20;
 
 This adds an extra dependency: You must build Auto with the --enable-sasl option.
 
-THis module is compatible with Auto v3.0alpha1+.
+This module is compatible with Auto v3.0a1+.
 
 =back
