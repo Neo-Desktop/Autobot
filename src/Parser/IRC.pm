@@ -26,6 +26,7 @@ our %RAWC = (
 	'JOIN'     => \&cjoin,
 	'NICK'     => \&nick,
 	'PRIVMSG'  => \&privmsg,
+	'TOPIC'    => \&topic,
 );
 
 # Variables for various functions.
@@ -35,6 +36,8 @@ our (%got_001, %botnick, %botchans, %csprefix, %chanusers);
 API::Std::event_add("on_rcjoin");
 API::Std::event_add("on_ucjoin");
 API::Std::event_add("on_nick");
+API::Std::event_add("on_cprivmsg");
+API::Std::event_add("on_uprivmsg");
 API::Std::event_add("on_topic");
 
 # Parse raw data.
@@ -358,6 +361,9 @@ sub privmsg
 				&{ $API::Std::CMDS{$cmd}{sub} }(%data) if $rprefix eq $cprefix;
 			}
 		}
+		
+		# Trigger event on_uprivmsg.
+		API::Std::event_run("on_uprivmsg", ($svr, @ex));
 	}
 	else {
 		# It is coming to us in a channel message.
@@ -370,6 +376,9 @@ sub privmsg
 				&{ $API::Std::CMDS{$cmd}{sub} }(%data) if $rprefix eq $cprefix;
 			}
 		}
+		
+		# Trigger event on_cprivmsg.
+		API::Std::event_run("on_cprivmsg", ($svr, @ex));
 	}
 	
 	return 1;
