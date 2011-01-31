@@ -120,10 +120,10 @@ sub mwrite
 # Delete from database.
 sub mdelete
 {
-	my ($name) = @_;
+	my ($name, $i) = @_;
 	
-	if (defined $MEM{$name}) {
-		delete $MEM{$name};
+	if (defined $MEM{$name}[$i]) {
+		delete $MEM{$name}[$i];
 	}
 	
 	return 1;
