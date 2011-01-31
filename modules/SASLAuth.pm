@@ -36,8 +36,8 @@ sub _void
 	hook_del("on_preconnect", "CAP") or return 0;
     rchook_del('CAP');
     rchook_del('903');
-    rchool_del('904');
-    rchool_del('906');
+    rchook_del('904');
+    rchook_del('906');
 	return 1;
 }
 
