@@ -35,15 +35,15 @@ Legend:
      [ ] Create system file for UNIX (or: Linux, BSD, etc.)
      [ ] Create system file for Microsoft Windows (currently unsupported)
 
- [ ] Features
+ [!] Features
      [ ] Weather module
      [ ] Google Calculator module
      [ ] YouTube Search module
      [ ] Twitter module
-     [ ] Advanced Topics module
+     [!] Advanced Topics module
      [ ] Custom Triggers module
      [X] Shorten URL (bit.ly?) module
      [?] Bot Talk module
      [O] Minecraft<->IRC module
-     [?] 8-Ball module
+     [ ] 8-Ball module
          
