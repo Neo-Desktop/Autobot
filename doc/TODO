@@ -42,7 +42,7 @@ Legend:
      [ ] Twitter module
      [ ] Advanced Topics module
      [ ] Custom Triggers module
-     [ ] Shorten URL (bit.ly?) module
+     [X] Shorten URL (bit.ly?) module
      [?] Bot Talk module
      [O] Minecraft<->IRC module
      [?] 8-Ball module
