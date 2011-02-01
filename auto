@@ -3,7 +3,7 @@
 
 PID=bin/auto.pid
 MODS="Mouse Class::Unload"
-EMODS="MIME::Base64"
+EMODS="MIME::Base64 XML::Simple"
 
 if [ "$1" = "start" ] ; then
 	if [ -e $PID ]; then
@@ -31,6 +31,7 @@ elif [ "$1" = "status" ]; then
 	else
 		echo "Status: Auto appears to not be running."
 	fi
+
 elif [ "$1" = "getmodules" ]; then
 	cpan -i $MODS
 
