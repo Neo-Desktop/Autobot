@@ -155,9 +155,9 @@ IRC Services also allows you to identify to NickServ/UserServ with SASL.
 To use SASLAuth, first add it to module auto-load then add the following to the server
 block(s) you wish to use SASL with:
 
-sasl_username "services accountname";
-sasl_password "services password";
-sasl_timeout <timeout in seconds>;
+  sasl_username "services accountname";
+  sasl_password "services password";
+  sasl_timeout <timeout in seconds>;
 
 =back
 
@@ -165,9 +165,9 @@ sasl_timeout <timeout in seconds>;
 
 =over
 
-sasl_username "JohnBot";
-sasl_password "foobar12345";
-sasl_timeout 20;
+  sasl_username "JohnBot";
+  sasl_password "foobar12345";
+  sasl_timeout 20;
 
 =back
 
