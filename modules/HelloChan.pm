@@ -36,4 +36,4 @@ sub hello
 
 
 # Start initialization.
-API::Std::mod_init("HelloChan", "Xelhua", "0.1", "3.0.0d", __PACKAGE__);
+API::Std::mod_init("HelloChan", "Xelhua", "0.1", "3.0d", __PACKAGE__);
