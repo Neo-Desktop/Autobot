@@ -3,6 +3,11 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+
+
+
+3.0 Alpha 1
+==================================================================
     * Added mod_exists() to API::Std.
     * Added SASL support with modules/SASLAuth.
     * Added mdelete() to DB/Flatfile.
