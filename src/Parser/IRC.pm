@@ -376,7 +376,7 @@ sub privmsg
 		$cmd = uc(substr($ex[3], 1));
 		if (defined $API::Std::CMDS{$cmd}) {
 			if ($API::Std::CMDS{$cmd}{lvl} == 1 or $API::Std::CMDS{$cmd}{lvl} == 2) {
-				&{ $API::Std::CMDS{$cmd}{sub} }(%data) if $rprefix eq $cprefix;
+				&{ $API::Std::CMDS{$cmd}{sub} }(%data);
 			}
 		}
 		
