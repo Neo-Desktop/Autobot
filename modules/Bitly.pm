@@ -174,7 +174,8 @@ Add Bitly to module auto-load and the following to your configuration file:
 
 =over
 
-This module adds no extra dependencies. 
+This module adds an extra dependency: LWP::UserAgent. You can get it from
+the CPAN <http://www.cpan.org>.
 
 This module is compatible with Auto version 3.0a2+.
 
