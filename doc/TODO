@@ -37,7 +37,7 @@ Legend:
 
  [!] Features
      [ ] Weather module
-     [ ] Google Calculator module
+     [X] Google Calculator module
      [ ] YouTube Search module
      [ ] Twitter module
      [!] Advanced Topics module
