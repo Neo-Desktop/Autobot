@@ -59,7 +59,7 @@ sub calc
 
 	if ($response->is_success) {
 	    # If successful, decode the content.
-		my $d = $json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($response->decoded_content);
+		my $d = $json->allow_nonref->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($response->decoded_content);
 
 		if ($d->{error} eq "" or $d->{error} == 0) {
 	        # And send to channel
