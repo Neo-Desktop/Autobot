@@ -38,7 +38,7 @@ use Core::IRC;
 
 
 our $VERSION = 3.0.0;
-$0 = NAME;
+$0 = "auto";
 
 # Check for build files.
 unless (-e "$Bin/../build/os" and -e "$Bin/../build/perl" and -e "$Bin/../build/time" and -e "$Bin/../build/ver") {
