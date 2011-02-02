@@ -354,8 +354,17 @@ sub match_user
 		# For each user block.
 		my %ulhp = %{ $uhp{$userkey} };
 		foreach my $uhk (keys %ulhp) {
-			# For each user.
-			if ($uhk eq "mask") {
+            # For each user.
+
+			if ($uhk eq "net") {
+                if (defined $user{svr}) {
+                    if (lc($user{svr}) ne lc(($ulhp{$uhk})[0][0])) {
+                        # config.user:net conflicts with irc.user:svr.
+                        last;
+                    }
+                }
+            }
+            elsif ($uhk eq "mask") {
 				# Put together the user information.
 				my $mask = $user{nick}."!".$user{user}."@".$user{host};
 				if (API::IRC::match_mask($mask, ($ulhp{$uhk})[0][0])) {
