@@ -100,7 +100,8 @@ println <<'EOF';
 EOF
 println "* ".NAME." (version ".VER.".".SVER.".".REV.RSTAGE.") is starting up...";
 
-our ($APID, %TIMERS);
+our ($APID, %TIMERS, $SOCKTIMEOUT);
+$SOCKTIMEOUT = 0;
 
 # Check for debug mode.
 our $DEBUG = 0;
@@ -272,6 +273,8 @@ foreach my $cskey (keys %cservers) {
 	API::IRC::nick($cskey, $cservers{$cskey}{'nick'}[0]);
 	# Add to select.
 	$SELECT->add($SOCKET{$cskey});
+	# Set some other variables.
+	$Parser::IRC::got_001{$cskey} = 0;
 	# Success!
 	alog "** Successfully connected to server: ".$cskey;
 	dbug "** Successfully connected to server: ".$cskey;
@@ -316,7 +319,7 @@ while (1) {
 		}
 	}
 	# Socket check.
-	foreach my $sock ($SELECT->can_read(1)) {
+	foreach my $sock ($SELECT->can_read($SOCKTIMEOUT)) {
 		# Figure out what network is sending us data.
 		my $sockid;
 		foreach (keys %SOCKET) {
