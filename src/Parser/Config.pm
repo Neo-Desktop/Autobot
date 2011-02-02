@@ -8,7 +8,6 @@ use strict;
 use warnings;
 
 # Create a new instance.
-# Funny how we still haven't taken advantage of Mouse/Moose yet.
 sub new 
 {
     my $class = shift;
@@ -104,7 +103,6 @@ sub parse
 								my @sblk = split('@@@', $blk);
 								
 								# Check to see if this config option already exists.
-								# Whose great idea was it to tab over this far? It screws with vim. :/
 								if (defined $rs{$sblk[0]}{$sblk[1]}{$ebuf[0]}) {
 									# It does, so merely push this second one to the existing array.
 									push(@{ $rs{$sblk[0]}{$sblk[1]}{$ebuf[0]} }, $param);
@@ -116,12 +114,11 @@ sub parse
 							}
 							else {
 								# We're inside a block with no parameter.
-								$rs{$blk}{$ebuf[0]} = $ebuf[1];
 								
 								# Check to see if this config option already exists.
 								if (defined $rs{$blk}{$ebuf[0]}) {
 									# It does, so merely push this second one to the existing array.
-									push(@{ $rs{$blk}{$ebuf[0]} }, $param);
+                                    push(@{ $rs{$blk}{$ebuf[0]} }, $param);
 								}
 								else {
 									# It doesn't, create it as an array.
@@ -157,7 +154,7 @@ sub parse
 				if (defined $ebuf[1]) {
 					if ($ebuf[1] eq '{') {
 						# This is the beginning of a block with no parameter.
-						$blk = $ebuf[0];
+                        $blk = $ebuf[0];
 					}
 					elsif (defined $ebuf[2]) {
 						if ($ebuf[2] eq '{') {
