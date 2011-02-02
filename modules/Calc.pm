@@ -32,12 +32,12 @@ sub _void
 
 # Help hashes.
 our %SHELP_CALC = (
-		'en' => "Calculate an expression.",
-		);
+	'en' => "Calculate an expression.",
+);
 
 our %FHELP_CALC = (
-		'en' => "This command will calculate an expression using Google Calculator. Syntax: CALC <expression>",
-		);
+	'en' => "This command will calculate an expression using Google Calculator. Syntax: CALC <expression>",
+);
 
 # Callback for CALC command.
 sub calc
@@ -58,19 +58,20 @@ sub calc
 	my $response = $ua->get($url);
 
 	if ($response->is_success) {
-	# If successful, decode the content.
+	    # If successful, decode the content.
 		my $d = $json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($response->decoded_content);
-	# And send to channel
+
 		if ($d->{error} eq "" or $d->{error} == 0) {
-			privmsg($data{svr}, $data{chan}, "Result: ".$d->{lhs}." = ".$d->{rhs});
+	        # And send to channel
+            privmsg($data{svr}, $data{chan}, "Result: ".$d->{lhs}." = ".$d->{rhs});
 		}
 		else {
-	# Otherwise, send an error message.
-			privmsg($data{svr}, $data{chan}, "Google calculator sent an error.");
+	        # Otherwise, send an error message.
+			privmsg($data{svr}, $data{chan}, "Google Calculator sent an error.");
 		}
 	}
 	else {
-	# Otherwise, send an error message.
+	    # Otherwise, send an error message.
 		privmsg($data{svr}, $data{chan}, "An error occurred while sending your expression to Google Calculator.");
 	}
 
@@ -88,8 +89,8 @@ __END__
 
 =over
 
-This module adds the CALC command for evaluating an
-expression using Google Calculator.
+This module adds the CALC command for evaluating an expression using 
+Google Calculator.
 
 =back
 
@@ -122,7 +123,9 @@ Add Calc to the module autoload.
 
 =over
 
-This module requires LWP::UserAgent, URI::Escape and JSON both obtainable from CPAN (http://cpan.org)
+This module requires LWP::UserAgent, URI::Escape and JSON. All are obtainable 
+from the CPAN <http://www.cpan.org>.
+
 This module is compatible with Auto version 3.0a2+.
 
 =back
