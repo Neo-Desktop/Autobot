@@ -4,7 +4,7 @@
 package m_Bitly;
 use strict;
 use warnings;
-use API::Std qw(cmd_add cmd_del conf_get err);
+use API::Std qw(cmd_add cmd_del conf_get err trans);
 use API::IRC qw(privmsg);
 use LWP::UserAgent;
 
@@ -62,6 +62,10 @@ sub shorten
     
     # Put together the call to the Bit.ly API. 
 	my @args = @{ $data{args} };
+    if (!defined $args[0]) {
+        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        return 0;
+    }
 	my ($surl, $user, $key) = ($args[0], (conf_get('bitly_user'))[0][0], (conf_get('bitly_key'))[0][0]);
 	my $url = "http://api.bit.ly/v3/shorten?version=3.0.1&longUrl=".$surl."&apiKey=".$key."&login=".$user."&format=txt";
     # Get the response via HTTP.
@@ -93,7 +97,11 @@ sub reverse
     $ua->timeout(2);
 
     # Put together the call to the Bit.ly API.
-    my @args = @{ $data{args} };
+    my @args = @{ $data{args} }; 
+    if (!defined $args[0]) {
+        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        return 0;
+    }
     my ($surl, $user, $key) = ($args[0], (conf_get('bitly_user'))[0][0], (conf_get('bitly_key'))[0][0]);
     my $url = "http://api.bit.ly/v3/expand?version=3.0.1&shortURL=".$surl."&apiKey=".$key."&login=".$user."&format=txt";
     # Get the response via HTTP.
