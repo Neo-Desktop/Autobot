@@ -246,7 +246,7 @@ dbug "* Connecting to servers...";
 # Get servers from config.
 my %cservers = conf_get("server");
 # Set the hashes and processes hashes.
-my (%SOCKET, %SOCKETH, $SELECT);
+our (%SOCKET, $SELECT);
 $SELECT = IO::Select->new();
 my $it = 0;
 # Iterate through each configured server.
@@ -294,6 +294,7 @@ API::Std::hook_add("on_uprivmsg", "ctcp_version_reply", \&Core::IRC::version_rep
 API::Std::cmd_add("MODLOAD", 1, \%Core::IRC::SHELP_MODLOAD, \%Core::IRC::FHELP_MODLOAD, \&Core::IRC::cmd_modload);
 API::Std::cmd_add("MODUNLOAD", 1, \%Core::IRC::SHELP_MODUNLOAD, \%Core::IRC::FHELP_MODUNLOAD, \&Core::IRC::cmd_modunload);
 API::Std::cmd_add("MODRELOAD", 1, \%Core::IRC::SHELP_MODRELOAD, \%Core::IRC::FHELP_MODRELOAD, \&Core::IRC::cmd_modreload);
+API::Std::cmd_add("SHUTDOWN", 2, \%Core::IRC::SHELP_SHUTDOWN, \%Core::IRC::FHELP_SHUTDOWN, \&Core::IRC::cmd_shutdown);
 
 # Infinite while loop.
 while (1) { 

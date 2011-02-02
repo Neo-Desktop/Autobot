@@ -8,7 +8,8 @@ use strict;
 use warnings;
 use English;
 use API::Std qw(trans has_priv match_user);
-use API::IRC qw(notice usrc);
+use API::Log qw(dbug alog);
+use API::IRC qw(notice quit usrc);
 
 sub version_reply
 {
@@ -163,6 +164,38 @@ sub cmd_modreload
         return 0;
     }
 
+    return 1;
+}
+
+# Help hashes for SHUTDOWN. Spanish, French and German needed.
+our %SHELP_SHUTDOWN = (
+    'en' => 'Shutdown Auto.',
+);
+our %FHELP_SHUTDOWN = (
+    'en' => 'This will send out shutdown notifications, quit all networks, flush the database then exit the program.',
+);
+# SHUTDOWN callback.
+sub cmd_shutdown
+{
+    my (%data) = @_;
+    
+    # Check for the appropriate privilege.
+    if (!has_priv(match_user(%data), "cmd.shutdown")) {
+        notice($data{svr}, $data{nick}, trans("Permission denied").".");
+        return 0;
+    }
+
+    # Goodbye world!
+    notice($data{svr}, $data{nick}, "Shutting down.");
+    dbug "Got SHUTDOWN from ".$data{nick}."!".$data{user}."@".$data{host}."! Shutting down. . .";
+    alog "Got SHUTDOWN from ".$data{nick}."!".$data{user}."@".$data{host}."! Shutting down. . .";
+    quit($_, "SHUTDOWN from ".$data{nick}) foreach (keys %Auto::SOCKET);
+    sleep 1;
+    DB::flush();
+    sleep 1;
+    exit;
+
+    # To appease PerlCritic.
     return 1;
 }
 
