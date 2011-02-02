@@ -85,14 +85,6 @@ sub num001
 	my ($svr, @ex) = @_;
 	
 	$got_001{$svr} = 1;
-	my $stst = 1;
-	foreach (keys %got_001) {
-		if (!$got_001{$_}) {
-			$stst = 0;
-			last;
-		}
-	}
-	$Auto::SOCKTIMEOUT = 1 if $stst; 
 	
 	# In case we don't get NICK from the server.
 	if (defined $botnick{$svr}{newnick}) {
