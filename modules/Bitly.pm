@@ -71,14 +71,8 @@ sub shorten
         # If successful, decode the content.
         my $d = $response->decoded_content;
 		chomp $d;
-		if ($d =~ m/bit.ly/i) {
-            # And send to channel.
-			privmsg($data{svr}, $data{chan}, "URL: ".$d);
-		}
-		else {
-            # Otherwise, send an error message.
-			privmsg($data{svr}, $data{chan}, "An error occurred while shortening your URL.");
-		}
+        # And send to channel.
+		privmsg($data{svr}, $data{chan}, "URL: ".$d);
 	}
     else {
         # Otherwise, send an error message.
@@ -110,7 +104,7 @@ sub reverse
         my $d = $response->decoded_content;
 		chomp $d;
         # And send it to channel.
-		privmsg($data{svr}, $data{chan}, "URL: ".$d);
+	    privmsg($data{svr}, $data{chan}, "URL: ".$d);
 	}
 	else {
         # Otherwise, send an error message.
