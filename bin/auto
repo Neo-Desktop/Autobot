@@ -324,6 +324,7 @@ while (1) {
 			# Got EOF, close socket
 			err(2, "Lost connection to $sockid!", 0);
 			$SELECT->remove($sock);
+            next;
 		}
 		# Remove the newlines.
 		chomp $data;
