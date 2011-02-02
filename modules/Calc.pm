@@ -83,7 +83,7 @@ sub calc
 }
 
 # Start initialization.
-API::Std::mod_init("Calc", "Xelhua", "1.00", "3.0d", __PACKAGE__);
+API::Std::mod_init("Calc", "Xelhua", "1.00", "3.0.0d", __PACKAGE__);
 
 __END__
 

@@ -124,7 +124,7 @@ sub reverse
 
 
 # Start initialization.
-API::Std::mod_init("Bitly", "Xelhua", "1.00", "3.0d", __PACKAGE__);
+API::Std::mod_init("Bitly", "Xelhua", "1.00", "3.0.0d", __PACKAGE__);
 
 __END__
 
