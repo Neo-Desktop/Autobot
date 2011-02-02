@@ -13,66 +13,66 @@ use JSON -support_by_pp;
 # Initialization subroutine.
 sub _init 
 {
-    # Create the CALC command.
+	# Create the CALC command.
 	cmd_add("CALC", 0, \%m_Calc::SHELP_CALC, \%m_Calc::FHELP_CALC, \&m_Calc::calc) or return 0;
 
-    # Success.
-    return 1;
+	# Success.
+	return 1;
 }
 
 # Void subroutine.
 sub _void 
 {
-    # Delete the CALC command.
+	# Delete the CALC command.
 	cmd_del("CALC") or return 0;
 
-    # Success.
+	# Success.
 	return 1;
 }
 
 # Help hashes.
 our %SHELP_CALC = (
-    'en' => "Calculate an expression.",
-);
+		'en' => "Calculate an expression.",
+		);
 
 our %FHELP_CALC = (
-    'en' => "This command will calculate an expression using Google Calculator. Syntax: CALC <expression>",
-);
+		'en' => "This command will calculate an expression using Google Calculator. Syntax: CALC <expression>",
+		);
 
 # Callback for CALC command.
 sub calc
 {
 	my (%data) = @_;
 
-    # Create an instance of LWP::UserAgent.
+	# Create an instance of LWP::UserAgent.
 	my $ua = LWP::UserAgent->new();
 	$ua->agent('Auto IRC Bot');
 	$ua->timeout(2);
-    # Create an instance of JSON.
-        my $json = JSON->new();    
-    # Put together the call to the Google Calculator API. 
+	# Create an instance of JSON.
+	my $json = JSON->new();    
+	# Put together the call to the Google Calculator API. 
 	my @args = @{ $data{args} };
 	my $expr = join(' ', @args);
 	my $url = "http://www.google.com/ig/calculator?q=".uri_escape($expr);
-    # Get the response via HTTP.
-    my $response = $ua->get($url);
+	# Get the response via HTTP.
+	my $response = $ua->get($url);
 
 	if ($response->is_success) {
-        # If successful, decode the content.
-        my $d = $json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($response->decoded_content);
-            # And send to channel
+	# If successful, decode the content.
+		my $d = $json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($response->decoded_content);
+	# And send to channel
 		if ($d->{error} eq "" or $d->{error} == 0) {
 			privmsg($data{svr}, $data{chan}, "Result: ".$d->{lhs}." = ".$d->{rhs});
 		}
 		else {
-            # Otherwise, send an error message.
+	# Otherwise, send an error message.
 			privmsg($data{svr}, $data{chan}, "Google calculator sent an error.");
 		}
 	}
-    else {
-        # Otherwise, send an error message.
-        privmsg($data{svr}, $data{chan}, "An error occurred while sending your expression to Google Calculator.");
-    }
+	else {
+	# Otherwise, send an error message.
+		privmsg($data{svr}, $data{chan}, "An error occurred while sending your expression to Google Calculator.");
+	}
 
 	return 1;
 }
