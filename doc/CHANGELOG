@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added Weather module.
     * Added Calc module.
     * Fixed the NAME,VER,SVER,REV,RSTAGE constants.
     * Added a CTCP VERSION reply.

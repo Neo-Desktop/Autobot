@@ -36,7 +36,7 @@ Legend:
      [ ] Create system file for Microsoft Windows (currently unsupported)
 
  [!] Features
-     [ ] Weather module
+     [X] Weather module
      [X] Google Calculator module
      [ ] YouTube Search module
      [ ] Twitter module
