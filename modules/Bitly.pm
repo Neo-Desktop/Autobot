@@ -5,7 +5,7 @@ package m_Bitly;
 use strict;
 use warnings;
 use API::Std qw(cmd_add cmd_del conf_get err trans);
-use API::IRC qw(privmsg);
+use API::IRC qw(privmsg notice);
 use LWP::UserAgent;
 
 # Initialization subroutine.
