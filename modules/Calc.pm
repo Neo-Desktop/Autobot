@@ -52,7 +52,11 @@ sub calc
 	my $json = JSON->new();    
 	# Put together the call to the Google Calculator API. 
 	my @args = @{ $data{args} };
-	my $expr = join(' ', @args);
+    if (!defined $args[0]) {
+        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        return 0;
+    }
+    my $expr = join(' ', @args);
 	my $url = "http://www.google.com/ig/calculator?q=".uri_escape($expr);
 	# Get the response via HTTP.
 	my $response = $ua->get($url);
