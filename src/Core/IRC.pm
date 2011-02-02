@@ -47,6 +47,13 @@ sub cmd_modload
         return 0;
     }
 
+    # Check if the module is already loaded.
+    if (API::Std::mod_exists($argv[0])) {
+        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 is already loaded.");
+        return 0;
+    }
+
+    # Go for it!
     my $tn = Auto::mod_load($argv[0]);
 
     # Check if we were successful or not.
