@@ -28,7 +28,7 @@ BEGIN {
 	    RSTAGE => 'd'
     };
 }
-use API::Std qw(conf_get err cmd_add cmd_del);
+use API::Std qw(conf_get err);
 use API::Log qw(println alog dbug);
 use DB::Flatfile;
 use Parser::Config;
@@ -290,6 +290,8 @@ undef $it;
 
 # Create core hooks.
 API::Std::hook_add("on_uprivmsg", "ctcp_version_reply", \&Core::IRC::version_reply);
+# Create core commands.
+API::Std::cmd_add("MODLOAD", 1, \%Core::IRC::SHELP_MODLOAD, \%Core::IRC::FHELP_MODLOAD, \&Core::IRC::cmd_modload);
 
 # Infinite while loop.
 while (1) { 
