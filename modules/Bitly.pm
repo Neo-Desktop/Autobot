@@ -4,8 +4,8 @@
 package m_Bitly;
 use strict;
 use warnings;
-use API::Std qw(cmd_add cmd_del conf_get err);
-use API::IRC qw(privmsg);
+use API::Std qw(cmd_add cmd_del conf_get err trans);
+use API::IRC qw(privmsg notice);
 use LWP::UserAgent;
 
 # Initialization subroutine.
@@ -62,6 +62,10 @@ sub shorten
     
     # Put together the call to the Bit.ly API. 
 	my @args = @{ $data{args} };
+    if (!defined $args[0]) {
+        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        return 0;
+    }
 	my ($surl, $user, $key) = ($args[0], (conf_get('bitly_user'))[0][0], (conf_get('bitly_key'))[0][0]);
 	my $url = "http://api.bit.ly/v3/shorten?version=3.0.1&longUrl=".$surl."&apiKey=".$key."&login=".$user."&format=txt";
     # Get the response via HTTP.
@@ -71,14 +75,8 @@ sub shorten
         # If successful, decode the content.
         my $d = $response->decoded_content;
 		chomp $d;
-		if ($d =~ m/bit.ly/i) {
-            # And send to channel.
-			privmsg($data{svr}, $data{chan}, "URL: ".$d);
-		}
-		else {
-            # Otherwise, send an error message.
-			privmsg($data{svr}, $data{chan}, "An error occurred while shortening your URL.");
-		}
+        # And send to channel.
+		privmsg($data{svr}, $data{chan}, "URL: ".$d);
 	}
     else {
         # Otherwise, send an error message.
@@ -99,7 +97,11 @@ sub reverse
     $ua->timeout(2);
 
     # Put together the call to the Bit.ly API.
-    my @args = @{ $data{args} };
+    my @args = @{ $data{args} }; 
+    if (!defined $args[0]) {
+        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        return 0;
+    }
     my ($surl, $user, $key) = ($args[0], (conf_get('bitly_user'))[0][0], (conf_get('bitly_key'))[0][0]);
     my $url = "http://api.bit.ly/v3/expand?version=3.0.1&shortURL=".$surl."&apiKey=".$key."&login=".$user."&format=txt";
     # Get the response via HTTP.
@@ -110,7 +112,7 @@ sub reverse
         my $d = $response->decoded_content;
 		chomp $d;
         # And send it to channel.
-		privmsg($data{svr}, $data{chan}, "URL: ".$d);
+	    privmsg($data{svr}, $data{chan}, "URL: ".$d);
 	}
 	else {
         # Otherwise, send an error message.
