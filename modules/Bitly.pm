@@ -12,7 +12,7 @@ use LWP::UserAgent;
 sub _init 
 {
     # Check for required configuration values.
-	if (!(conf_get('bitly_user'))[0][0] or !(conf_get('bitly_key'))[0][0]) {
+	if (!(conf_get('bitly:user'))[0][0] or !(conf_get('bitly:key'))[0][0]) {
 		err(2, "Please verify that you have bitly_user and bitly_key defined in your configuration file.", 0);
 		return 0;
 	}
@@ -66,7 +66,7 @@ sub shorten
         notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
         return 0;
     }
-	my ($surl, $user, $key) = ($args[0], (conf_get('bitly_user'))[0][0], (conf_get('bitly_key'))[0][0]);
+	my ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
 	my $url = "http://api.bit.ly/v3/shorten?version=3.0.1&longUrl=".$surl."&apiKey=".$key."&login=".$user."&format=txt";
     # Get the response via HTTP.
     my $response = $ua->get($url);
@@ -102,7 +102,7 @@ sub reverse
         notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
         return 0;
     }
-    my ($surl, $user, $key) = ($args[0], (conf_get('bitly_user'))[0][0], (conf_get('bitly_key'))[0][0]);
+    my ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
     my $url = "http://api.bit.ly/v3/expand?version=3.0.1&shortURL=".$surl."&apiKey=".$key."&login=".$user."&format=txt";
     # Get the response via HTTP.
     my $response = $ua->get($url);
@@ -145,8 +145,10 @@ URL using the bit.ly shortening service API.
 
 Add Bitly to module auto-load and the following to your configuration file:
 
-  bitly_user "<bit.ly username>";
-  bitly_key "<bit.ly API key>";
+  bitly {
+    user "<bit.ly username>";
+    key "<bit.ly API key>";
+  }
 
 =back
 
@@ -154,8 +156,10 @@ Add Bitly to module auto-load and the following to your configuration file:
 
 =over
 
-  bitly_user "JohnSmith";
-  bitly_key "A_a95929f19402a0s9301041f0f29581089";
+  bitly {
+    user "JohnSmith";
+    key "A_a95929f19402a0s9301041f0f29581089";
+  }
 
 <JohnSmith> !shorten http://www.google.com
 <Auto> URL: http://bit.ly/eFdSkG
