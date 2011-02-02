@@ -4,7 +4,7 @@
 package m_Calc;
 use strict;
 use warnings;
-use API::Std qw(cmd_add cmd_del);
+use API::Std qw(cmd_add cmd_del trans);
 use API::IRC qw(privmsg);
 use LWP::UserAgent;
 use URI::Escape;
