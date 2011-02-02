@@ -128,7 +128,9 @@ Add Weather to the module autoload.
 
 =over
 
-This module requires LWP::UserAgent and XML::Simple both obtainable from CPAN (http://cpan.org)
+This module requires LWP::UserAgent and XML::Simple. Both obtainable 
+from CPAN <http://www.cpan.org>.
+
 This module is compatible with Auto version 3.0a2+.
 
 =back
