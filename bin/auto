@@ -292,6 +292,8 @@ undef $it;
 API::Std::hook_add("on_uprivmsg", "ctcp_version_reply", \&Core::IRC::version_reply);
 # Create core commands.
 API::Std::cmd_add("MODLOAD", 1, \%Core::IRC::SHELP_MODLOAD, \%Core::IRC::FHELP_MODLOAD, \&Core::IRC::cmd_modload);
+API::Std::cmd_add("MODUNLOAD", 1, \%Core::IRC::SHELP_MODUNLOAD, \%Core::IRC::FHELP_MODUNLOAD, \&Core::IRC::cmd_modunload);
+API::Std::cmd_add("MODRELOAD", 1, \%Core::IRC::SHELP_MODRELOAD, \%Core::IRC::FHELP_MODRELOAD, \&Core::IRC::cmd_modreload);
 
 # Infinite while loop.
 while (1) { 

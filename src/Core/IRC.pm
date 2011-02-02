@@ -23,14 +23,14 @@ sub version_reply
 }
 
 
-# Help hashes for CMDLOAD. Spanish, French and German needed.
-our %SHELP_CMDLOAD = (
+# Help hashes for MODLOAD. Spanish, French and German needed.
+our %SHELP_MODLOAD = (
     'en' => 'Load a module.',
 );
-our %FHELP_CMDLOAD = (
+our %FHELP_MODLOAD = (
     'en' => 'Loads a module into the running Auto live.',
 );
-# CMDLOAD callback.
+# MODLOAD callback.
 sub cmd_modload
 {
     my (%data) = @_;
@@ -64,6 +64,102 @@ sub cmd_modload
     else {
         # We weren't.
         notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 failed to load.");
+        return 0;
+    }
+
+    return 1;
+}
+
+# Help hashes for MODUNLOAD. Spanish, French and German needed.
+our %SHELP_MODUNLOAD = (
+    'en' => 'Unload a module.',
+);
+our %FHELP_MODUNLOAD = (
+    'en' => 'Unloads a module from the running Auto live.',
+);
+# MODUNLOAD callback.
+sub cmd_modunload
+{
+    my (%data) = @_;
+    my @argv = @{ $data{args} };
+    
+    # Check for the appropriate privilege.
+    if (!has_priv(match_user(%data), "cfunc.modules")) {
+        notice($data{svr}, $data{nick}, trans("Permission denied").".");
+        return 0;
+    }
+    # Check for the needed parameters.
+    if (!defined $argv[0]) {
+        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        return 0;
+    }
+
+    # Check if the module exists.
+    if (!API::Std::mod_exists($argv[0])) {
+        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 is not loaded.");
+        return 0;
+    }
+
+    # Go for it!
+    my $tn = API::Std::mod_void($argv[0]);
+
+    # Check if we were successful or not.
+    if ($tn) {
+        # We were!
+        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 successfully unloaded.");
+    }
+    else {
+        # We weren't.
+        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 failed to unload.");
+        return 0;
+    }
+
+    return 1;
+}
+
+# Help hashes for MODRELOAD. Spanish, French and German needed.
+our %SHELP_MODRELOAD = (
+    'en' => 'Reload a module.',
+);
+our %FHELP_MODRELOAD = (
+    'en' => 'Unloads then loads a module into the running Auto live.',
+);
+# MODRELOAD callback.
+sub cmd_modreload
+{
+    my (%data) = @_;
+    my @argv = @{ $data{args} };
+    
+    # Check for the appropriate privilege.
+    if (!has_priv(match_user(%data), "cfunc.modules")) {
+        notice($data{svr}, $data{nick}, trans("Permission denied").".");
+        return 0;
+    }
+    # Check for the needed parameters.
+    if (!defined $argv[0]) {
+        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        return 0;
+    }
+
+    # Check if the module exists.
+    if (!API::Std::mod_exists($argv[0])) {
+        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 is not loaded.");
+        return 0;
+    }
+
+    # Go for it!
+    my ($tvn, $tln) = (0, 0);
+    $tvn = API::Std::mod_void($argv[0]);
+    $tln = Auto::mod_load($argv[0]) if $tvn;
+
+    # Check if we were successful or not.
+    if ($tvn and $tln) {
+        # We were!
+        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 successfully reloaded.");
+    }
+    else {
+        # We weren't.
+        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 failed to reload.");
         return 0;
     }
 

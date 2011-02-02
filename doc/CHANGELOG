@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added core command MODRELOAD.
+    * Added core command MODUNLOAD.
     * Added core command MODLOAD.
     * Added Weather module.
     * Added Calc module.
