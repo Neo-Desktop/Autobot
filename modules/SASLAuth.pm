@@ -48,8 +48,8 @@ sub handle_cap {
     
     given ($line) {
         when (/ LS /) {
-            $tosend .= ' multi-prefix' if $line =~ /multi-prefix/i;
-            $tosend .= ' sasl' if $line =~ /sasl/ and conf_get("server:$srv:sasl_username");
+            $tosend .= 'multi-prefix ' if $line =~ /multi-prefix/i;
+            $tosend .= 'sasl ' if $line =~ /sasl/ and conf_get("server:$srv:sasl_username");
             awarn(2, "SASL is unavailable on this server.") if $tosend !~ /sasl/;
             if ($tosend eq '') { Auto::socksnd($srv, 'CAP END') }
             else { Auto::socksnd($srv, "CAP REQ :$tosend"); }
