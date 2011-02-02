@@ -187,9 +187,9 @@ sub cmd_shutdown
 
     # Goodbye world!
     notice($data{svr}, $data{nick}, "Shutting down.");
-    dbug "Got SHUTDOWN from ".$data{nick}."!".$data{user}."@".$data{host}."! Shutting down. . .";
-    alog "Got SHUTDOWN from ".$data{nick}."!".$data{user}."@".$data{host}."! Shutting down. . .";
-    quit($_, "SHUTDOWN from ".$data{nick}) foreach (keys %Auto::SOCKET);
+    dbug "Got SHUTDOWN from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Shutting down. . .";
+    alog "Got SHUTDOWN from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Shutting down. . .";
+    quit($_, "SHUTDOWN from ".$data{nick}."/".$data{svr}) foreach (keys %Auto::SOCKET);
     sleep 1;
     DB::flush();
     sleep 1;
