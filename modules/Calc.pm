@@ -5,7 +5,7 @@ package m_Calc;
 use strict;
 use warnings;
 use API::Std qw(cmd_add cmd_del trans);
-use API::IRC qw(privmsg);
+use API::IRC qw(privmsg notice);
 use LWP::UserAgent;
 use URI::Escape;
 use JSON -support_by_pp;
