@@ -193,6 +193,7 @@ sub cmd_shutdown
     sleep 1;
     DB::flush();
     sleep 1;
+    system("rm $Auto::Bin/auto.pid");
     exit;
 
     # To appease PerlCritic.
