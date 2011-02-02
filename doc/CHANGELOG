@@ -3,8 +3,10 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Fixed the NAME,VER,SVER,REV,RSTAGE constants.
+    * Added a CTCP VERSION reply.
+    * Created Core::IRC.
     * Added Bit.ly module
-
 
 3.0 Alpha 1
 ==================================================================

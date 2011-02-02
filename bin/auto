@@ -16,23 +16,27 @@ use IO::Select;
 use Class::Unload;
 use FindBin qw($Bin);
 our $Bin = $Bin;
-BEGIN { unshift(@INC, "$Bin/../src"); }
+BEGIN { 
+    unshift(@INC, "$Bin/../src"); 
+
+    # Set version information.
+    use constant {
+	    NAME   => 'Auto IRC Bot',
+	    VER    => 3,
+	    SVER   => 0,
+	    REV    => 0,
+	    RSTAGE => 'd'
+    };
+}
 use API::Std qw(conf_get err cmd_add cmd_del);
 use API::Log qw(println alog dbug);
 use DB::Flatfile;
 use Parser::Config;
 use Parser::Lang;
 use Parser::IRC;
-#use Sys;
+use Core::IRC;
 
-# Set version information.
-use constant {
-	NAME   => 'Auto IRC Bot',
-	VER    => 3,
-	SVER   => 0,
-	REV    => 0,
-	RSTAGE => 'd'
-};
+
 our $VERSION = 3.0.0;
 $0 = NAME;
 
@@ -283,6 +287,9 @@ else {
 	err(2, "No server connections.", 1);
 }
 undef $it;
+
+# Create core hooks.
+API::Std::hook_add("on_uprivmsg", "ctcp_version_reply", \&Core::IRC::version_reply);
 
 # Infinite while loop.
 while (1) { 
