@@ -324,20 +324,30 @@ while (1) {
 			$sockid = $_ if ($SOCKET{$_} eq $sock);
 		}
 		# Read the data.
-		my $data = readline($sock);
-		if (!defined $data) {
+		my $idata;
+		recv($sock, $idata, POSIX::BUFSIZ, 0);
+		
+		# Check for the data.
+		if (!defined $idata || length($idata) == 0) {
 			# Got EOF, close socket
 			err(2, "Lost connection to $sockid!", 0);
 			$SELECT->remove($sock);
             next;
 		}
-		# Remove the newlines.
-		chomp $data;
-		# Debug.
-		dbug $sockid." >> ".$data;
 		
-		# Parse data.
-		Parser::IRC::ircparse($sockid, $data);
+		# Read the buffer.
+		my $data .= $idata;
+		while ($data =~ s/(.*\n)//) {
+			my $line = $1;
+			
+			# Remove the newlines.
+			chomp $line;
+			# Debug.
+			dbug $sockid." >> ".$line;
+		
+			# Parse data.
+			Parser::IRC::ircparse($sockid, $line);
+		}
 	}
 }
 
