@@ -9,12 +9,12 @@ Legend:
     + = Planned for Auto v3.1.
 
 
- [ ] Language
+ [X] Language
      [X] Create method of translation.
      [X] Create API functions for translations.
-     [ ] Implement foreign language support in command help
+     [X] Implement foreign language support in command help
      [X] Add English strings
-     [ ] Add Spanish strings
+     [X] Add Spanish strings
      [X] Add French strings
 
  [!] API
