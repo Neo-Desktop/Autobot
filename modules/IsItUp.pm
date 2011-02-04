@@ -12,7 +12,7 @@ use LWP::UserAgent;
 sub _init 
 {
 	# Create the ISITUP command.
-	cmd_add("ISITUP", 0, \%m_IsItUp::HELP_ISITUP, \&m_IsItUp::check) or return 0;
+	cmd_add("ISITUP", 0, 0, \%m_IsItUp::HELP_ISITUP, \&m_IsItUp::check) or return 0;
 
 	# Success.
 	return 1;

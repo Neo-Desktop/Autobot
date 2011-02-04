@@ -17,8 +17,8 @@ sub _init
 		return 0;
 	}
     # Create the SHORTEN and REVERSE commands.
-	cmd_add("SHORTEN", 0, \%m_Bitly::HELP_SHORTEN, \&m_Bitly::shorten) or return 0;
-	cmd_add("REVERSE", 0, \%m_Bitly::HELP_REVERSE, \&m_Bitly::reverse) or return 0;
+	cmd_add("SHORTEN", 0, 0, \%m_Bitly::HELP_SHORTEN, \&m_Bitly::shorten) or return 0;
+	cmd_add("REVERSE", 0, 0, \%m_Bitly::HELP_REVERSE, \&m_Bitly::reverse) or return 0;
 
     # Success.
     return 1;

@@ -14,7 +14,7 @@ use JSON -support_by_pp;
 sub _init 
 {
 	# Create the CALC command.
-	cmd_add("CALC", 0, \%m_Calc::HELP_CALC, \&m_Calc::calc) or return 0;
+	cmd_add("CALC", 0, 0, \%m_Calc::HELP_CALC, \&m_Calc::calc) or return 0;
 
 	# Success.
 	return 1;

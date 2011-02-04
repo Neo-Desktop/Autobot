@@ -13,7 +13,7 @@ use XML::Simple;
 sub _init 
 {
 	# Create the Weather command.
-	cmd_add("WEATHER", 0, \%m_Weather::HELP_WEATHER, \&m_Weather::weather) or return 0;
+	cmd_add("WEATHER", 0, 0, \%m_Weather::HELP_WEATHER, \&m_Weather::weather) or return 0;
 
 	# Success.
 	return 1;
