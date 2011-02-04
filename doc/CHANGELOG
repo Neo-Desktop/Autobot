@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added event on_part.
+    * Parse PART.
     * Update chanusers on JOIN.
     * Properly parse NICK and update chanusers.
     * Added --enable-ssl to ./install for the future SSL support.

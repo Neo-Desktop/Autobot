@@ -26,6 +26,7 @@ our %RAWC = (
 	'JOIN'     => \&cjoin,
 	'NICK'     => \&nick,
 	'NOTICE'   => \&notice,
+    'PART'     => \&part,
 	'PRIVMSG'  => \&privmsg,
 	'TOPIC'    => \&topic,
 );
@@ -38,6 +39,7 @@ API::Std::event_add("on_rcjoin");
 API::Std::event_add("on_ucjoin");
 API::Std::event_add("on_nick");
 API::Std::event_add("on_notice");
+API::Std::event_add("on_nick");
 API::Std::event_add("on_cprivmsg");
 API::Std::event_add("on_uprivmsg");
 API::Std::event_add("on_topic");
@@ -364,6 +366,32 @@ sub notice
 	API::Std::event_run("on_notice", ($svr, @ex));
 	
 	return 1;
+}
+
+# Parse: PART
+sub part
+{
+    my ($svr, @ex) = @_;
+    my %src = API::IRC::usrc(substr($ex[0], 1));
+
+    # Delete them from chanusers.
+    delete $chanusers{$svr}{$ex[2]}{$src{nick}} if defined $chanusers{$svr}{$ex[2]}{$src{nick}};
+    
+    # Set $msg to the part message.
+    my $msg = 0;
+    if (defined $ex[3]) {
+        $msg = substr($ex[3], 1);
+        if (defined $ex[4]) {
+            for (my $i = 4; $i < scalar(@ex); $i++) {
+                $msg .= " ".$ex[$i];
+            }
+        }
+    }
+
+    # Trigger on_part.
+    API::Std::event_run("on_part", ($svr, %src, $ex[2], $msg));
+
+    return 1;
 }
 
 # Parse: PRIVMSG
