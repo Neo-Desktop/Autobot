@@ -237,5 +237,71 @@ sub cmd_restart
     return 1;
 }
 
+# Help hashes for HELP. Spanish, French and German needed.
+our %SHELP_HELP = (
+    'en' => 'Displays help for commands.',
+);
+our %FHELP_HELP = (
+    'en' => 'Displays help for commands.',
+);
+# HELP callback.
+sub cmd_help
+{
+    my (%data) = @_;
+    my @argv = @{ $data{args} }; delete $data{args};
+
+    # Check for arguments and reply accordingly.
+    if (!defined $argv[0]) {
+        # No command specified. List commands.
+        my $cmdlist = '';
+        foreach (sort keys %API::Std::CMDS) {
+            $cmdlist .= ", \002".uc($_)."\002";
+        }
+        $cmdlist = substr($cmdlist, 2);
+
+        notice($data{svr}, $data{nick}, "Command List: ".$cmdlist);
+    }
+    else {
+        # Help for a specific command was requested. Lets get it.
+        my $rcm = uc($argv[0]);
+
+        if (defined $API::Std::CMDS{$rcm}{fhelp}) {
+            # If there is help for this command.
+            if ($API::Std::CMDS{$rcm}{fhelp}) {
+                # If there is valid help for this command.
+                
+                # Get the language.
+                my ($lang, undef) = split('_', $Auto::LOCALE);
+
+                if (defined ${ $API::Std::CMDS{$rcm}{fhelp} }{$lang}) {
+                    # If help for this command is available in the configured language.
+                    notice($data{svr}, $data{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{fhelp} }{$lang});
+                }
+                else {
+                    # If it isn't, default to English.
+                    if (defined ${ $API::Std::CMDS{$rcm}{fhelp} }{en}) {
+                        # If help for this command is available in English.
+                        notice($data{svr}, $data{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{fhelp} }{en});
+                    }
+                    else {
+                        # If it isn't, no help.
+                        notice($data{svr}, $data{nick}, "No help for \002".$rcm."\002 available.");
+                    }
+                }
+            }
+            else {
+                # If it isn't valid, no help.
+                notice($data{svr}, $data{nick}, "No help for \002".$rcm."\002 available.");
+            }
+        }
+        else {
+            # If there is no help, don't give any.
+            notice($data{svr}, $data{nick}, "No help for \002".$rcm."\002 available.");
+        }
+    }
+
+    return 1;
+}
+
 
 1;

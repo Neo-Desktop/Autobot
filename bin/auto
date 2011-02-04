@@ -298,6 +298,7 @@ API::Std::cmd_add("MODUNLOAD", 1, \%Core::IRC::SHELP_MODUNLOAD, \%Core::IRC::FHE
 API::Std::cmd_add("MODRELOAD", 1, \%Core::IRC::SHELP_MODRELOAD, \%Core::IRC::FHELP_MODRELOAD, \&Core::IRC::cmd_modreload);
 API::Std::cmd_add("SHUTDOWN", 2, \%Core::IRC::SHELP_SHUTDOWN, \%Core::IRC::FHELP_SHUTDOWN, \&Core::IRC::cmd_shutdown);
 API::Std::cmd_add("RESTART", 2, \%Core::IRC::SHELP_RESTART, \%Core::IRC::FHELP_RESTART, \&Core::IRC::cmd_restart);
+API::Std::cmd_add("HELP", 2, \%Core::IRC::SHELP_HELP, \%Core::IRC::FHELP_HELP, \&Core::IRC::cmd_help);
 
 # Infinite while loop.
 while (1) { 

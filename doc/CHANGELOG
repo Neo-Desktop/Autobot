@@ -3,6 +3,9 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Fixed cmd_add syntax. Correct format: name, level, short help,
+      full help, callback.
+    * Added core command HELP.
     * Added core command RESTART.
     * Added config option server:autorejoin for rejoining on kick.
     * Added event on_kick.
