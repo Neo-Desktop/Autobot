@@ -293,12 +293,12 @@ undef $it;
 # Create core hooks.
 API::Std::hook_add("on_uprivmsg", "ctcp_version_reply", \&Core::IRC::version_reply);
 # Create core commands.
-API::Std::cmd_add("MODLOAD", 1, \%Core::IRC::SHELP_MODLOAD, \%Core::IRC::FHELP_MODLOAD, \&Core::IRC::cmd_modload);
-API::Std::cmd_add("MODUNLOAD", 1, \%Core::IRC::SHELP_MODUNLOAD, \%Core::IRC::FHELP_MODUNLOAD, \&Core::IRC::cmd_modunload);
-API::Std::cmd_add("MODRELOAD", 1, \%Core::IRC::SHELP_MODRELOAD, \%Core::IRC::FHELP_MODRELOAD, \&Core::IRC::cmd_modreload);
-API::Std::cmd_add("SHUTDOWN", 2, \%Core::IRC::SHELP_SHUTDOWN, \%Core::IRC::FHELP_SHUTDOWN, \&Core::IRC::cmd_shutdown);
-API::Std::cmd_add("RESTART", 2, \%Core::IRC::SHELP_RESTART, \%Core::IRC::FHELP_RESTART, \&Core::IRC::cmd_restart);
-API::Std::cmd_add("HELP", 2, \%Core::IRC::SHELP_HELP, \%Core::IRC::FHELP_HELP, \&Core::IRC::cmd_help);
+API::Std::cmd_add("MODLOAD", 1, "cfunc.modules", \%Core::IRC::HELP_MODLOAD, \&Core::IRC::cmd_modload);
+API::Std::cmd_add("MODUNLOAD", 1, "cfunc.modules", \%Core::IRC::HELP_MODUNLOAD, \&Core::IRC::cmd_modunload);
+API::Std::cmd_add("MODRELOAD", 1, "cfunc.modules", \%Core::IRC::HELP_MODRELOAD, \&Core::IRC::cmd_modreload);
+API::Std::cmd_add("SHUTDOWN", 2, "cmd.shutdown", \%Core::IRC::HELP_SHUTDOWN, \&Core::IRC::cmd_shutdown);
+API::Std::cmd_add("RESTART", 2, "cmd.restart", \%Core::IRC::HELP_RESTART, \&Core::IRC::cmd_restart);
+API::Std::cmd_add("HELP", 2, 0, \%Core::IRC::HELP_HELP, \&Core::IRC::cmd_help);
 
 # Infinite while loop.
 while (1) { 

@@ -24,11 +24,8 @@ sub version_reply
 }
 
 
-# Help hashes for MODLOAD. Spanish, French and German needed.
-our %SHELP_MODLOAD = (
-    'en' => 'Load a module.',
-);
-our %FHELP_MODLOAD = (
+# Help hash for MODLOAD. Spanish, French and German needed.
+our %HELP_MODLOAD = (
     'en' => 'Loads a module into the running Auto live.',
 );
 # MODLOAD callback.
@@ -71,11 +68,8 @@ sub cmd_modload
     return 1;
 }
 
-# Help hashes for MODUNLOAD. Spanish, French and German needed.
-our %SHELP_MODUNLOAD = (
-    'en' => 'Unload a module.',
-);
-our %FHELP_MODUNLOAD = (
+# Help hash for MODUNLOAD. Spanish, French and German needed.
+our %HELP_MODUNLOAD = (
     'en' => 'Unloads a module from the running Auto live.',
 );
 # MODUNLOAD callback.
@@ -118,11 +112,8 @@ sub cmd_modunload
     return 1;
 }
 
-# Help hashes for MODRELOAD. Spanish, French and German needed.
-our %SHELP_MODRELOAD = (
-    'en' => 'Reload a module.',
-);
-our %FHELP_MODRELOAD = (
+# Help hash for MODRELOAD. Spanish, French and German needed.
+our %HELP_MODRELOAD = (
     'en' => 'Unloads then loads a module into the running Auto live.',
 );
 # MODRELOAD callback.
@@ -167,11 +158,8 @@ sub cmd_modreload
     return 1;
 }
 
-# Help hashes for SHUTDOWN. Spanish, French and German needed.
-our %SHELP_SHUTDOWN = (
-    'en' => 'Shutdown Auto.',
-);
-our %FHELP_SHUTDOWN = (
+# Help hash for SHUTDOWN. Spanish, French and German needed.
+our %HELP_SHUTDOWN = (
     'en' => 'This will send out shutdown notifications, quit all networks, flush the database then exit the program.',
 );
 # SHUTDOWN callback.
@@ -198,11 +186,8 @@ sub cmd_shutdown
     return 1;
 }
 
-# Help hashes for RESTART. Spanish, French and German needed.
-our %SHELP_RESTART = (
-    'en' => 'Restart Auto.',
-);
-our %FHELP_RESTART = (
+# Help hash for RESTART. Spanish, French and German needed.
+our %HELP_RESTART = (
     'en' => 'This will send out restart notifications, quit all networks, flush the database, start a new Auto process, then exit the program.',
 );
 # RESTART callback.
@@ -237,11 +222,8 @@ sub cmd_restart
     return 1;
 }
 
-# Help hashes for HELP. Spanish, French and German needed.
-our %SHELP_HELP = (
-    'en' => 'Displays help for commands.',
-);
-our %FHELP_HELP = (
+# Help hash for HELP. Spanish, French and German needed.
+our %HELP_HELP = (
     'en' => 'Displays help for commands.',
 );
 # HELP callback.
@@ -274,23 +256,23 @@ sub cmd_help
         # Help for a specific command was requested. Lets get it.
         my $rcm = uc($argv[0]);
 
-        if (defined $API::Std::CMDS{$rcm}{fhelp}) {
+        if (defined $API::Std::CMDS{$rcm}{help}) {
             # If there is help for this command.
-            if ($API::Std::CMDS{$rcm}{fhelp}) {
+            if ($API::Std::CMDS{$rcm}{help}) {
                 # If there is valid help for this command.
                 
                 # Get the language.
                 my ($lang, undef) = split('_', $Auto::LOCALE);
 
-                if (defined ${ $API::Std::CMDS{$rcm}{fhelp} }{$lang}) {
+                if (defined ${ $API::Std::CMDS{$rcm}{help} }{$lang}) {
                     # If help for this command is available in the configured language.
-                    notice($data{svr}, $data{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{fhelp} }{$lang});
+                    notice($data{svr}, $data{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{help} }{$lang});
                 }
                 else {
                     # If it isn't, default to English.
-                    if (defined ${ $API::Std::CMDS{$rcm}{fhelp} }{en}) {
+                    if (defined ${ $API::Std::CMDS{$rcm}{help} }{en}) {
                         # If help for this command is available in English.
-                        notice($data{svr}, $data{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{fhelp} }{en});
+                        notice($data{svr}, $data{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{help} }{en});
                     }
                     else {
                         # If it isn't, no help.
