@@ -465,7 +465,17 @@ sub privmsg
 		$cmd = uc(substr($ex[3], 1));
 		if (defined $API::Std::CMDS{$cmd}) {
 			if ($API::Std::CMDS{$cmd}{lvl} == 1 or $API::Std::CMDS{$cmd}{lvl} == 2) {
-				&{ $API::Std::CMDS{$cmd}{sub} }(%data);
+				if ($API::Std::CMDS{$cmd}{priv}) {
+                    if (API::Std::has_priv(API::Std::match_user(%data), $API::Std::CMDS{$cmd}{priv})) {
+                        &{ $API::Std::CMDS{$cmd}{sub} }(%data);
+                    }
+                    else {
+                        API::IRC::notice($data{svr}, $data{nick}, API::Std::trans("Permission denied").".");
+                    }
+                }
+                else {
+                    &{ $API::Std::CMDS{$cmd}{sub} }(%data);
+                }
 			}
 		}
 		
@@ -480,7 +490,17 @@ sub privmsg
 		$cmd = uc(substr($ex[3], 2));
 		if (defined $API::Std::CMDS{$cmd}) {
 			if ($API::Std::CMDS{$cmd}{lvl} == 0 or $API::Std::CMDS{$cmd}{lvl} == 2) {
-				&{ $API::Std::CMDS{$cmd}{sub} }(%data) if $rprefix eq $cprefix;
+                if ($API::Std::CMDS{$cmd}{priv}) {
+                    if (API::Std::has_priv(API::Std::match_user(%data), $API::Std::CMDS{$cmd}{priv})) {
+				        &{ $API::Std::CMDS{$cmd}{sub} }(%data) if $rprefix eq $cprefix;
+                    }
+                    else {
+                        API::IRC::notice($data{svr}, $data{nick}, API::Std::trans("Permission denied").".");
+                    }
+                }
+                else {
+                    &{ $API::Std::CMDS{$cmd}{sub} }(%data) if $rprefix eq $cprefix;
+                }
 			}
 		}
 		

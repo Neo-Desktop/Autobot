@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Privilege to use a command is now handled by the priv arg of
+      cmd_add.
     * HELP now only displays help if the user has the appropriate
       privileges.
     * Updated Core::IRC and all modules to obey the updated API.

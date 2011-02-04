@@ -34,11 +34,6 @@ sub cmd_modload
     my (%data) = @_;
     my @argv = @{ $data{args} };
     
-    # Check for the appropriate privilege.
-    if (!has_priv(match_user(%data), "cfunc.modules")) {
-        notice($data{svr}, $data{nick}, trans("Permission denied").".");
-        return 0;
-    }
     # Check for the needed parameters.
     if (!defined $argv[0]) {
         notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
@@ -78,11 +73,6 @@ sub cmd_modunload
     my (%data) = @_;
     my @argv = @{ $data{args} };
     
-    # Check for the appropriate privilege.
-    if (!has_priv(match_user(%data), "cfunc.modules")) {
-        notice($data{svr}, $data{nick}, trans("Permission denied").".");
-        return 0;
-    }
     # Check for the needed parameters.
     if (!defined $argv[0]) {
         notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
@@ -122,11 +112,6 @@ sub cmd_modreload
     my (%data) = @_;
     my @argv = @{ $data{args} };
     
-    # Check for the appropriate privilege.
-    if (!has_priv(match_user(%data), "cfunc.modules")) {
-        notice($data{svr}, $data{nick}, trans("Permission denied").".");
-        return 0;
-    }
     # Check for the needed parameters.
     if (!defined $argv[0]) {
         notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
@@ -167,12 +152,6 @@ sub cmd_shutdown
 {
     my (%data) = @_;
     
-    # Check for the appropriate privilege.
-    if (!has_priv(match_user(%data), "cmd.shutdown")) {
-        notice($data{svr}, $data{nick}, trans("Permission denied").".");
-        return 0;
-    }
-
     # Goodbye world!
     notice($data{svr}, $data{nick}, "Shutting down.");
     dbug "Got SHUTDOWN from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Shutting down. . .";
@@ -195,12 +174,6 @@ sub cmd_restart
 {
     my (%data) = @_;
     
-    # Check for the appropriate privilege.
-    if (!has_priv(match_user(%data), "cmd.restart")) {
-        notice($data{svr}, $data{nick}, trans("Permission denied").".");
-        return 0;
-    }
-
     # Goodbye world!
     notice($data{svr}, $data{nick}, "Restarting.");
     dbug "Got RESTART from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Restarting. . .";
