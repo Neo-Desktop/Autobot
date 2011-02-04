@@ -14,7 +14,7 @@ use JSON -support_by_pp;
 sub _init 
 {
 	# Create the CALC command.
-	cmd_add("CALC", 0, \%m_Calc::SHELP_CALC, \%m_Calc::FHELP_CALC, \&m_Calc::calc) or return 0;
+	cmd_add("CALC", 0, \%m_Calc::HELP_CALC, \&m_Calc::calc) or return 0;
 
 	# Success.
 	return 1;
@@ -31,10 +31,6 @@ sub _void
 }
 
 # Help hashes.
-our %SHELP_CALC = (
-	'en' => "Calculate an expression.",
-);
-
 our %FHELP_CALC = (
 	'en' => "This command will calculate an expression using Google Calculator. Syntax: CALC <expression>",
 );

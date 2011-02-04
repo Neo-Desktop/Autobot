@@ -17,8 +17,8 @@ sub _init
 		return 0;
 	}
     # Create the SHORTEN and REVERSE commands.
-	cmd_add("SHORTEN", 0, \%m_Bitly::SHELP_SHORTEN, \%m_Bitly::FHELP_SHORTEN, \&m_Bitly::shorten) or return 0;
-	cmd_add("REVERSE", 0, \%m_Bitly::SHELP_REVERSE, \%m_Bitly::FHELP_REVERSE, \&m_Bitly::reverse) or return 0;
+	cmd_add("SHORTEN", 0, \%m_Bitly::HELP_SHORTEN, \&m_Bitly::shorten) or return 0;
+	cmd_add("REVERSE", 0, \%m_Bitly::HELP_REVERSE, \&m_Bitly::reverse) or return 0;
 
     # Success.
     return 1;
@@ -36,17 +36,10 @@ sub _void
 }
 
 # Help hashes.
-our %SHELP_SHORTEN = (
-    'en' => "Shorten an URL.",
-);
-our %SHELP_REVERSE = (
-    'en' => "Expand a shortened URL.",
-);
-
-our %FHELP_SHORTEN = (
+our %HELP_SHORTEN = (
     'en' => "This command will shorten an URL using Bit.ly. Syntax: SHORTEN <url>",
 );
-our %FHELP_REVERSE = (
+our %HELP_REVERSE = (
     'en' => "This command will expand a Bit.ly URL. Syntax: REVERSE <url>",
 );
 

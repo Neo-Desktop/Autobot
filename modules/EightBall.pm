@@ -13,8 +13,8 @@ our $ANSWER = 0;
 sub _init 
 {
     # Create the 8BALL and RIGBALL commands.
-	cmd_add("8BALL", 0, \%m_EightBall::SHELP_8BALL, \%m_EightBall::FHELP_8BALL, \&m_EightBall::c_8ball) or return 0;
-	cmd_add("RIGBALL", 1, \%m_EightBall::SHELP_RIGBALL, \%m_EightBall::FHELP_RIGBALL, \&m_EightBall::rigball) or return 0;
+	cmd_add("8BALL", 0, \%m_EightBall::HELP_8BALL, \&m_EightBall::c_8ball) or return 0;
+	cmd_add("RIGBALL", 1, \%m_EightBall::HELP_RIGBALL, \&m_EightBall::rigball) or return 0;
 
     # Success.
     return 1;
@@ -32,17 +32,10 @@ sub _void
 }
 
 # Help hashes.
-our %SHELP_8BALL = (
-    'en' => "Ask the magic 8-Ball a question.",
-);
-our %SHELP_RIGBALL = (
-    'en' => "Set the next answer of the 8-Ball.",
-);
-
-our %FHELP_8BALL = (
+our %HELP_8BALL = (
     'en' => "This command will ask the magic 8-Ball your question. Syntax: 8BALL <question>",
 );
-our %FHELP_RIGBALL = (
+our %HELP_RIGBALL = (
     'en' => "This command will \"rig\" (set) the answer of the next 8-Ball question. Syntax: RIGBALL <answer>",
 );
 

@@ -12,7 +12,7 @@ use LWP::UserAgent;
 sub _init 
 {
 	# Create the ISITUP command.
-	cmd_add("ISITUP", 0, \%m_IsItUp::SHELP_ISITUP, \%m_IsItUp::FHELP_ISITUP, \&m_IsItUp::check) or return 0;
+	cmd_add("ISITUP", 0, \%m_IsItUp::HELP_ISITUP, \&m_IsItUp::check) or return 0;
 
 	# Success.
 	return 1;
@@ -29,11 +29,7 @@ sub _void
 }
 
 # Help hashes.
-our %SHELP_ISITUP = (
-		'en' => "Checks if a website is up.",
-		);
-
-our %FHELP_ISITUP = (
+our %HELP_ISITUP = (
 		'en' => "This command will check if a website appears up or down to the bot. Syntax: ISITUP <url>",
 		);
 

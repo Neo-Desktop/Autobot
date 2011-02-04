@@ -13,7 +13,7 @@ use XML::Simple;
 sub _init 
 {
 	# Create the Weather command.
-	cmd_add("WEATHER", 0, \%m_Weather::SHELP_WEATHER, \%m_Weather::FHELP_WEATHER, \&m_Weather::weather) or return 0;
+	cmd_add("WEATHER", 0, \%m_Weather::HELP_WEATHER, \&m_Weather::weather) or return 0;
 
 	# Success.
 	return 1;
@@ -30,11 +30,7 @@ sub _void
 }
 
 # Help hashes.
-our %SHELP_WEATHER = (
-		'en' => "Retrieve the weather.",
-		);
-
-our %FHELP_WEATHER = (
+our %HELP_WEATHER = (
 		'en' => "This command will retrieve the weather via Wunderground for the specified location. Syntax: WEATHER <location>",
 		);
 
