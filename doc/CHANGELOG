@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * HELP now only displays help if the user has the appropriate
+      privileges.
     * Updated Core::IRC and all modules to obey the updated API.
     * Deleted shelp from cmd_add, replaced with privilege. Renamed
       fhelp to help.

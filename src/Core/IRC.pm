@@ -239,12 +239,26 @@ sub cmd_help
         foreach (sort keys %API::Std::CMDS) {
             if (defined $data{chan}) {
                 if ($API::Std::CMDS{$_}{lvl} == 0 or $API::Std::CMDS{$_}{lvl} == 2) {
-                    $cmdlist .= ", \002".uc($_)."\002";
+                    if ($API::Std::CMDS{$_}{priv}) {
+                        if (has_priv(match_user(%data), $API::Std::CMDS{$_}{priv})) {
+                            $cmdlist .= ", \002".uc($_)."\002";
+                        }
+                    }
+                    else {
+                        $cmdlist .= ", \002".uc($_)."\002";
+                    }
                 }
             }
             else {
                 if ($API::Std::CMDS{$_}{lvl} == 1 or $API::Std::CMDS{$_}{lvl} == 2) {
-                    $cmdlist .= ", \002".uc($_)."\002";
+                    if ($API::Std::CMDS{$_}{priv}) {
+                        if (has_priv(match_user(%data), $API::Std::CMDS{$_}{priv})) {
+                            $cmdlist .= ", \002".uc($_)."\002";
+                        }
+                    }
+                    else {
+                        $cmdlist .= ", \002".uc($_)."\002";
+                    }
                 }
             }
         }
@@ -258,6 +272,15 @@ sub cmd_help
 
         if (defined $API::Std::CMDS{$rcm}{help}) {
             # If there is help for this command.
+            
+            # Check for necessary privileges.
+            if ($API::Std::CMDS{$rcm}{priv}) {
+                if (!has_priv(match_user(%data), $API::Std::CMDS{$rcm}{priv})) {
+                    notice($data{svr}, $data{nick}, trans("Access denied").".");
+                    return;
+                }
+            }
+
             if ($API::Std::CMDS{$rcm}{help}) {
                 # If there is valid help for this command.
                 
