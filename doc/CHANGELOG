@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added chanstatus-based permissions. This works via
+      user:chanstatus.
     * Catch __WARN__ and __DIE__, logging to file.
     * Added Spanish translations.
     * Added EightBall module.

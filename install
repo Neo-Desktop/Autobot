@@ -61,6 +61,9 @@ if (defined $ARGV[0]) {
 		elsif ($_ eq "--enable-sasl") {
 			$features .= " sasl";
 		}
+        elsif ($_ eq "--enable-ssl") {
+            $features .= " ssl";
+        }
 		else {
 			println "Warning: Unknown option '".$_."'";
 		}
@@ -113,7 +116,8 @@ println "\0";
 println "--- CPAN Modules ---";
 modfind("Mouse");
 modfind("Class::Unload");
-modfind("MIME::Base64") if ($features =~ /sasl/);
+modfind("IO::Socket::SSL") if $features =~ /ssl/;
+modfind("MIME::Base64") if $features =~ /sasl/;
 
 # Create build.
 println "\0";

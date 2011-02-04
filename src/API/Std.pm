@@ -372,6 +372,20 @@ sub match_user
 					return $userkey;
 				}
 			}
+            elsif ($uhk eq "chanstatus" and defined $ulhp{'net'}) {
+                my ($ccst, $ccnm) = split(':', ($ulhp{$uhk})[0][0]);
+                my $svr = $ulhp{net}[0];
+                if (defined $Auto::SOCKET{$svr}) {
+                    foreach my $bcj (@{ $Parser::IRC::botchans{$svr} }) {
+                        if (API::IRC::match_mask($bcj, $ccnm)) {
+                            API::IRC::names($svr, $bcj);
+                            if (defined $Parser::IRC::chanusers{$svr}{$bcj}{$user{nick}}) {
+                                return $userkey if $Parser::IRC::chanusers{$svr}{$bcj}{$user{nick}} =~ m/($ccst)/;
+                            }
+                        }
+                    }
+                }
+            }
 		}
 	}
 	
