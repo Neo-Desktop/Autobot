@@ -14,7 +14,7 @@ sub _init
 {
     # Create the 8BALL and RIGBALL commands.
 	cmd_add("8BALL", 0, 0, \%m_EightBall::HELP_8BALL, \&m_EightBall::c_8ball) or return 0;
-	cmd_add("RIGBALL", 1, 0, \%m_EightBall::HELP_RIGBALL, \&m_EightBall::rigball) or return 0;
+	cmd_add("RIGBALL", 1, "cmd.rigball", \%m_EightBall::HELP_RIGBALL, \&m_EightBall::rigball) or return 0;
 
     # Success.
     return 1;
@@ -87,11 +87,6 @@ sub rigball
     my (%data) = @_;
     my @argv = @{ $data{args} }; delete $data{args};
 
-    # Check for appropriate permissions.
-    if (!has_priv(match_user(%data), "cmd.rigball")) {
-        privmsg($data{svr}, $data{nick}, trans("Permission denied").".");
-        return;
-    }
     # Check for necessary parameters.
     if (!defined $argv[0]) {
         privmsg($data{svr}, $data{nick}, trans("Not enough parameters").".");
