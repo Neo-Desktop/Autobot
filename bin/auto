@@ -208,7 +208,7 @@ println "* Auto successfully started at ".POSIX::strftime("%Y-%m-%d %I:%M:%S %p"
 alog "Auto successfully started.";
 
 # Fork into the background if not in debug mode.
-unless ($DEBUG) {
+if (!$DEBUG) {
     println "*** Becoming a daemon...";
     open(STDIN, q{<}, '/dev/null') or err(2, "Can't read /dev/null: $!", 1);
     open(STDOUT, q{>>}, '/dev/null') or err(2, "Can't write to /dev/null: $!", 1);
