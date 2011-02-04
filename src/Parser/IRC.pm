@@ -329,7 +329,8 @@ sub cjoin
 sub nick
 {
 	my ($svr, ($uex, undef, $nex)) = @_;
-	
+    $nex = substr($nex, 1);
+
 	my %src = API::IRC::usrc(substr($uex, 1));
 	
 	# Check if this is coming from ourselves.
@@ -339,7 +340,15 @@ sub nick
 		delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
 	}
 	else {
-		# It isn't. Trigger on_nick.
+		# It isn't. Update chanusers and trigger on_nick.
+        foreach my $chk (keys %{ $chanusers{$svr} }) {
+            if (defined $chanusers{$svr}{$chk}{$src{nick}}) {
+                print "1\n";
+                $chanusers{$svr}{$chk}{$nex} = $chanusers{$svr}{$chk}{$src{nick}};
+                print "$nex set to $chanusers{$svr}{$chk}{$nex}\n";
+                delete $chanusers{$svr}{$chk}{$src{nick}};
+            }
+        }
 		API::Std::event_run("on_nick", ($svr, %src, $nex));
 	}
 	
