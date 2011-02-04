@@ -318,7 +318,8 @@ sub cjoin
 		API::Std::event_run("on_ucjoin", ($svr, substr($ex[2], 1)));
 	}
 	else {
-		# It isn't. Trigger on_rcjoin.
+		# It isn't. Update chanusers and trigger on_rcjoin.
+        $chanusers{$svr}{substr($ex[2], 1)}{$src{nick}} = 1;
 		API::Std::event_run("on_rcjoin", ($svr, %src, substr($ex[2], 1)));
 	}
 	
