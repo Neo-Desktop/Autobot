@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * If fantasy HELP is used, only display fantasy commands, if
+      private HELP is used, only display private commands.
     * Fixed cmd_add syntax. Correct format: name, level, short help,
       full help, callback.
     * Added core command HELP.

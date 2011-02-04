@@ -255,7 +255,16 @@ sub cmd_help
         # No command specified. List commands.
         my $cmdlist = '';
         foreach (sort keys %API::Std::CMDS) {
-            $cmdlist .= ", \002".uc($_)."\002";
+            if (defined $data{chan}) {
+                if ($API::Std::CMDS{$_}{lvl} == 0 or $API::Std::CMDS{$_}{lvl} == 2) {
+                    $cmdlist .= ", \002".uc($_)."\002";
+                }
+            }
+            else {
+                if ($API::Std::CMDS{$_}{lvl} == 1 or $API::Std::CMDS{$_}{lvl} == 2) {
+                    $cmdlist .= ", \002".uc($_)."\002";
+                }
+            }
         }
         $cmdlist = substr($cmdlist, 2);
 
