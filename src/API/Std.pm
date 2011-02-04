@@ -102,7 +102,7 @@ sub mod_void
 # Add a command to Auto.
 sub cmd_add
 {
-	my ($cmd, $lvl, $shelp, $fhelp, $sub) = @_;
+	my ($cmd, $lvl, $priv, $fhelp, $sub) = @_;
 	$cmd = uc($cmd);
 	
 	return 0 if (defined $API::Std::CMDS{$cmd});
@@ -110,7 +110,7 @@ sub cmd_add
 	
 	$API::Std::CMDS{$cmd}{lvl}   = $lvl;
 	$API::Std::CMDS{$cmd}{fhelp} = $fhelp;
-	$API::Std::CMDS{$cmd}{shelp} = $shelp;
+	$API::Std::CMDS{$cmd}{priv}  = $priv;
 	$API::Std::CMDS{$cmd}{sub}   = $sub;
 	
 	return 1;
