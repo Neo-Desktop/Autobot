@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Catch __WARN__ and __DIE__, logging to file.
     * Added Spanish translations.
     * Added EightBall module.
     * Rewrote the socket engine. This should fix random timeouts.

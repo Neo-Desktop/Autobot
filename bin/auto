@@ -81,9 +81,11 @@ if ($BFVER[0] ne VER.".".SVER.".".REV.RSTAGE."\n") {
 undef @BFVER;
 
 # Set signal handlers.
-$SIG{TERM} = \&signal_TERM;
-$SIG{INT}  = \&signal_INT;
-$SIG{HUP}  = \&signal_HUP;
+$SIG{TERM}       = \&signal_TERM;
+$SIG{INT}        = \&signal_INT;
+$SIG{HUP}        = \&signal_HUP;
+$SIG{'__WARN__'} = \&signal_PerlWARN;
+$SIG{'__DIE__'}  = \&signal_PerlDIE;
 API::Std::event_add("on_sigterm");
 API::Std::event_add("on_sigint");
 API::Std::event_add("on_sighup");
@@ -422,4 +424,26 @@ sub signal_HUP
 	dbug "!!! Caught SIGHUP but rehash is unavailable; ignoring";
 	alog "!!! Caught SIGHUP but rehash is unavailable; ignoring";
 	return 1;
+}
+
+# __WARN__
+sub signal_PerlWARN
+{
+    alog "Perl Warning: ".$_[0];
+    warn $_[0] if $DEBUG;
+    return 1;
+}
+
+# __DIE__
+sub signal_PerlDIE
+{
+    return if $^S;
+    alog "Perl Fatal: ".$_[0]." -- Terminating program!";
+	API::IRC::quit($_, "A fatal error occurred!") foreach (keys %SOCKET);
+    DB::flush();
+	if (-e "$Bin/auto.pid") {
+		system("rm $Bin/auto.pid");
+	}
+	sleep 1;
+    die "FATAL: ".$_[0];
 }
