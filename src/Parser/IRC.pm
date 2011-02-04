@@ -24,6 +24,7 @@ our %RAWC = (
 	'475'      => \&num475,
 	'477'      => \&num477,
 	'JOIN'     => \&cjoin,
+    'KICK'     => \&kick,
 	'NICK'     => \&nick,
 	'NOTICE'   => \&notice,
     'PART'     => \&part,
@@ -38,6 +39,7 @@ our (%got_001, %botnick, %botchans, %csprefix, %chanusers);
 # Events.
 API::Std::event_add("on_rcjoin");
 API::Std::event_add("on_ucjoin");
+API::Std::event_add("on_kick");
 API::Std::event_add("on_nick");
 API::Std::event_add("on_notice");
 API::Std::event_add("on_nick");
@@ -328,6 +330,55 @@ sub cjoin
 	}
 	
 	return 1;
+}
+
+# Parse: KICK
+sub kick
+{
+    my ($svr, @ex) = @_;
+    my %src = API::IRC::usrc(substr($ex[0], 1));
+
+    # Update chanusers.
+    delete $chanusers{$svr}{$ex[2]}{$ex[3]} if defined $chanusers{$svr}{$ex[2]}{$ex[3]};
+
+    # Set $msg to the kick message.
+    my $msg = 0;
+    if (defined $ex[4]) {
+        $msg = substr($ex[4], 1);
+        if (defined $ex[5]) {
+            for (my $i = 5; $i < scalar(@ex); $i++) {
+                $msg .= " ".$ex[$i];
+            }
+        }
+    }
+
+    # Check if we were the ones kicked.
+    if (lc($ex[3]) eq lc($botnick{$svr}{nick})) {
+        # We were kicked!
+
+        # Delete channel from botchans.
+        for (my $i = 0; $i <= scalar(@{ $botchans{$svr} }); $i++) {
+            if (defined $botchans{$svr}[$i]) {
+                undef $botchans{$svr}[$i] if $botchans{$svr}[$i] eq $ex[2];
+            }
+        }
+
+        # Log this horrible act.
+        API::Log::alog("I was kicked from ".$svr."/".$ex[2]." by ".$src{nick}."! Reason: ".$msg);
+
+        # Rejoin if we're told to in config.
+        if (conf_get("server:$svr:autorejoin")) {
+            if ((conf_get("server:$svr:autorejoin"))[0][0] eq 1) {
+                API::IRC::cjoin($svr, $ex[2]);
+            }
+        }
+    }
+    else {
+        # We weren't. Trigger on_kick.
+        API::Std::event_run("on_kick", ($svr, %src, $ex[2], $ex[3], $msg));
+    }
+
+    return 1;
 }
 
 # Parse: NICK
