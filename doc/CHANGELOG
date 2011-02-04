@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added core command RESTART.
     * Added config option server:autorejoin for rejoining on kick.
     * Added event on_kick.
     * Parse KICK.

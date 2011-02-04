@@ -190,10 +190,47 @@ sub cmd_shutdown
     dbug "Got SHUTDOWN from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Shutting down. . .";
     alog "Got SHUTDOWN from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Shutting down. . .";
     quit($_, "SHUTDOWN from ".$data{nick}."/".$data{svr}) foreach (keys %Auto::SOCKET);
-    sleep 1;
     DB::flush();
-    sleep 1;
     system("rm $Auto::Bin/auto.pid");
+    exit;
+
+    # To appease PerlCritic.
+    return 1;
+}
+
+# Help hashes for RESTART. Spanish, French and German needed.
+our %SHELP_RESTART = (
+    'en' => 'Restart Auto.',
+);
+our %FHELP_RESTART = (
+    'en' => 'This will send out restart notifications, quit all networks, flush the database, start a new Auto process, then exit the program.',
+);
+# RESTART callback.
+sub cmd_restart
+{
+    my (%data) = @_;
+    
+    # Check for the appropriate privilege.
+    if (!has_priv(match_user(%data), "cmd.restart")) {
+        notice($data{svr}, $data{nick}, trans("Permission denied").".");
+        return 0;
+    }
+
+    # Goodbye world!
+    notice($data{svr}, $data{nick}, "Restarting.");
+    dbug "Got RESTART from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Restarting. . .";
+    alog "Got RESTART from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Restarting. . .";
+    quit($_, "RESTART from ".$data{nick}."/".$data{svr}) foreach (keys %Auto::SOCKET);
+    DB::flush();
+    system("rm $Auto::Bin/auto.pid") if -e "$Auto::Bin/auto.pid";
+
+    # Time to come back from the dead!
+    if ($Auto::DEBUG) {
+        system("$Auto::Bin/auto -d");
+    }
+    else {
+        system("$Auto::Bin/auto");
+    }
     exit;
 
     # To appease PerlCritic.
