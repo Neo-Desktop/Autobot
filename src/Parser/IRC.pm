@@ -399,9 +399,7 @@ sub nick
 		# It isn't. Update chanusers and trigger on_nick.
         foreach my $chk (keys %{ $chanusers{$svr} }) {
             if (defined $chanusers{$svr}{$chk}{$src{nick}}) {
-                print "1\n";
                 $chanusers{$svr}{$chk}{$nex} = $chanusers{$svr}{$chk}{$src{nick}};
-                print "$nex set to $chanusers{$svr}{$chk}{$nex}\n";
                 delete $chanusers{$svr}{$chk}{$src{nick}};
             }
         }
