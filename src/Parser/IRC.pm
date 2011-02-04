@@ -28,7 +28,8 @@ our %RAWC = (
 	'NOTICE'   => \&notice,
     'PART'     => \&part,
 	'PRIVMSG'  => \&privmsg,
-	'TOPIC'    => \&topic,
+	'QUIT'     => \&quit,
+    'TOPIC'    => \&topic,
 );
 
 # Variables for various functions.
@@ -42,6 +43,7 @@ API::Std::event_add("on_notice");
 API::Std::event_add("on_nick");
 API::Std::event_add("on_cprivmsg");
 API::Std::event_add("on_uprivmsg");
+API::Std::event_add("on_quit");
 API::Std::event_add("on_topic");
 
 # Parse raw data.
@@ -438,6 +440,34 @@ sub privmsg
 	}
 	
 	return 1;
+}
+
+# Parse: QUIT
+sub quit
+{
+    my ($svr, @ex) = @_;
+	my %src = API::IRC::usrc(substr($ex[0], 1));
+
+    # Delete the user from all channels.
+    foreach my $ccu (keys %{ $chanusers{$svr} }) {
+        delete $chanusers{$svr}{$ccu}{$src{nick}} if defined $chanusers{$svr}{$ccu}{$src{nick}};
+    }
+
+    # Set $msg to the quit message.
+    my $msg = 0;
+    if (defined $ex[2]) {
+        $msg = substr($ex[2], 1);
+        if (defined $ex[3]) {
+            for (my $i = 3; $i < scalar(@ex); $i++) {
+                $msg .= " ".$ex[$i];
+            }
+        }
+    }
+
+    # Trigger on_quit.
+    API::Std::event_run("on_quit", ($svr, %src, $msg));
+    
+    return 1;
 }
 
 # Parse: TOPIC
