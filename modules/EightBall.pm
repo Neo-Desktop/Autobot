@@ -5,7 +5,7 @@ package m_EightBall;
 use strict;
 use warnings;
 use feature qw(switch);
-use API::Std qw(cmd_add cmd_del has_priv match_user trans);
+use API::Std qw(cmd_add cmd_del trans);
 use API::IRC qw(privmsg notice);
 our $ANSWER = 0;
 
