@@ -42,7 +42,6 @@ API::Std::event_add("on_ucjoin");
 API::Std::event_add("on_kick");
 API::Std::event_add("on_nick");
 API::Std::event_add("on_notice");
-API::Std::event_add("on_nick");
 API::Std::event_add("on_cprivmsg");
 API::Std::event_add("on_uprivmsg");
 API::Std::event_add("on_quit");
