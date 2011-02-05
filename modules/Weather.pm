@@ -31,8 +31,8 @@ sub _void
 
 # Help hashes.
 our %HELP_WEATHER = (
-		'en' => "This command will retrieve the weather via Wunderground for the specified location. Syntax: WEATHER <location>",
-		);
+	'en' => "This command will retrieve the weather via Wunderground for the specified location. \002Syntax:\002 WEATHER <location>",
+);
 
 # Callback for Weather command.
 sub weather
@@ -89,16 +89,8 @@ __END__
 
 =over
 
-This module adds the WEATHER command for retrieving
-the current weather.
-
-=back
-
-=head2 How To Use
-
-=over
-
-Add Weather to the module autoload.
+This module adds the WEATHER command for retrieving the 
+current weather.
 
 =back
 
@@ -107,7 +99,8 @@ Add Weather to the module autoload.
 =over
 
 <JohnSmith> !weather 10111
-<Auto> Results for Central Park, New York - Temperature: 27 F (-3 C) Wind Conditions: From the NE at 9 MPH Gusting to 22 MPH Conditions: Overcast
+<Auto> Results for Central Park, New York - Temperature: 27 F (-3 C) Wind Conditions: 
+From the NE at 9 MPH Gusting to 22 MPH Conditions: Overcast
 <Auto> Heat index: NA Humidity: 89% Pressure: 30.22 in (1023 mb) - Last Updated on February 1, 9:51 PM EST
 
 =back
@@ -124,9 +117,9 @@ Add Weather to the module autoload.
 
 =over
 
-This module requires LWP::UserAgent and XML::Simple. Both obtainable 
-from CPAN <http://www.cpan.org>.
+This module requires LWP::UserAgent and XML::Simple. Both are 
+obtainable from CPAN <http://www.cpan.org>.
 
-This module is compatible with Auto version 3.0a2+.
+This module is compatible with Auto version 3.0.0a2+.
 
 =back

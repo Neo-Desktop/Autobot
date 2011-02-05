@@ -183,8 +183,9 @@ block(s) you wish to use SASL with:
 
 =over
 
-This adds an extra dependency: You must build Auto with the --enable-sasl option.
+This adds an extra dependency: You must build Auto with the 
+--enable-sasl option.
 
-This module is compatible with Auto v3.0a1+.
+This module is compatible with Auto v3.0.0a1+.
 
 =back

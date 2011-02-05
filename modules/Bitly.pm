@@ -37,10 +37,10 @@ sub _void
 
 # Help hashes.
 our %HELP_SHORTEN = (
-    'en' => "This command will shorten an URL using Bit.ly. Syntax: SHORTEN <url>",
+    'en' => "This command will shorten an URL using Bit.ly. \002Syntax:\002 SHORTEN <url>",
 );
 our %HELP_REVERSE = (
-    'en' => "This command will expand a Bit.ly URL. Syntax: REVERSE <url>",
+    'en' => "This command will expand a Bit.ly URL. \002Syntax:\002 REVERSE <url>",
 );
 
 # Callback for SHORTEN command.
@@ -173,9 +173,9 @@ Add Bitly to module auto-load and the following to your configuration file:
 
 =over
 
-This module adds an extra dependency: LWP::UserAgent. You can get it from
-the CPAN <http://www.cpan.org>.
+This module adds an extra dependency: LWP::UserAgent. You can get it 
+from the CPAN <http://www.cpan.org>.
 
-This module is compatible with Auto version 3.0a2+.
+This module is compatible with Auto version 3.0.0a2+.
 
 =back

@@ -33,10 +33,10 @@ sub _void
 
 # Help hashes.
 our %HELP_8BALL = (
-    'en' => "This command will ask the magic 8-Ball your question. Syntax: 8BALL <question>",
+    'en' => "This command will ask the magic 8-Ball your question. \002Syntax:\002 8BALL <question>",
 );
 our %HELP_RIGBALL = (
-    'en' => "This command will \"rig\" (set) the answer of the next 8-Ball question. Syntax: RIGBALL <answer>",
+    'en' => "This command will \"rig\" (set) the answer of the next 8-Ball question. \002Syntax:\002 RIGBALL <answer>",
 );
 
 # Callback for 8BALL command.
@@ -143,6 +143,8 @@ command for setting ("rigging") the 8-Ball's next answer.
 
 =over
 
-This module is compatible with Auto version 3.0a2+.
+This module is compatible with Auto version 3.0.0a2+.
+
+Ported from Auto 1.0.
 
 =back

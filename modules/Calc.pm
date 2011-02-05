@@ -30,9 +30,9 @@ sub _void
 	return 1;
 }
 
-# Help hashes.
+# Help hash.
 our %FHELP_CALC = (
-	'en' => "This command will calculate an expression using Google Calculator. Syntax: CALC <expression>",
+	'en' => "This command will calculate an expression using Google Calculator. \002Syntax:\002 CALC <expression>",
 );
 
 # Callback for CALC command.
@@ -94,14 +94,6 @@ Google Calculator.
 
 =back
 
-=head2 How To Use
-
-=over
-
-Add Calc to the module autoload.
-
-=back
-
 =head2 Examples
 
 =over
@@ -115,7 +107,7 @@ Add Calc to the module autoload.
 
 =over
 
-* Add Spanish, French and German translations for the help hashes.
+* Add Spanish, French and German translations for the help hash.
 
 =back
 
@@ -123,9 +115,9 @@ Add Calc to the module autoload.
 
 =over
 
-This module requires LWP::UserAgent, URI::Escape and JSON. All are obtainable 
-from the CPAN <http://www.cpan.org>.
+This module requires LWP::UserAgent, URI::Escape and JSON. All are 
+obtainable from the CPAN <http://www.cpan.org>.
 
-This module is compatible with Auto version 3.0a2+.
+This module is compatible with Auto version 3.0.0a2+.
 
 =back

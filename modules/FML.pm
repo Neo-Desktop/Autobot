@@ -66,7 +66,6 @@ sub fml
 	return 1;
 }
 
-
 # Start initialization.
 API::Std::mod_init("FML", "Xelhua", "1.00", "3.0.0d", __PACKAGE__);
 

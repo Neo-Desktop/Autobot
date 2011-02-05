@@ -30,8 +30,8 @@ sub _void
 
 # Help hashes.
 our %HELP_ISITUP = (
-		'en' => "This command will check if a website appears up or down to the bot. Syntax: ISITUP <url>",
-		);
+	'en' => "This command will check if a website appears up or down to the bot. \002Syntax:\002 ISITUP <url>",
+);
 
 # Callback for ISITUP command.
 sub check
@@ -80,16 +80,8 @@ __END__
 
 =over
 
-This module adds the ISITUP command for checking if a
-website appears up or down to Auto.
-
-=back
-
-=head2 How To Use
-
-=over
-
-Add IsItUp to the module autoload.
+This module adds the ISITUP command for checking if a website 
+appears up or down to Auto.
 
 =back
 
@@ -114,9 +106,9 @@ Add IsItUp to the module autoload.
 
 =over
 
-This module requires LWP::UserAgent. All are obtainable 
-from the CPAN <http://www.cpan.org>.
+This module requires LWP::UserAgent. You can get it from
+the CPAN <http://www.cpan.org>.
 
-This module is compatible with Auto version 3.0a2+.
+This module is compatible with Auto version 3.0.0a2+.
 
 =back
