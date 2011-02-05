@@ -189,10 +189,10 @@ sub cmd_restart
 
     # Time to come back from the dead!
     if ($Auto::DEBUG) {
-        system("$Auto::Bin/auto -d");
+        system("$Auto::Bin/auto -d -nuc");
     }
     else {
-        system("$Auto::Bin/auto");
+        system("$Auto::Bin/auto -nuc");
     }
     exit;
 
