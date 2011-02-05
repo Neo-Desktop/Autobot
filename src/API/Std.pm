@@ -12,7 +12,7 @@ our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add 
 					cmd_del hook_add hook_del rchook_add rchook_del match_user
-					has_priv);
+					has_priv mod_exists);
 
 
 # Initialize a module.
@@ -60,7 +60,7 @@ sub mod_exists
 {
 	my ($name) = @_;
 	
-	return 1 if defined $MODULE{$name};
+	return 1 if defined $API::Std::MODULE{$name};
 	return 0;
 }
 
