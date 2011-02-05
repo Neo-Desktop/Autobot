@@ -25,7 +25,8 @@ BEGIN {
 	    VER    => 3,
 	    SVER   => 0,
 	    REV    => 0,
-	    RSTAGE => 'd'
+	    RSTAGE => 'd',
+        GR     => substr(`cat $Bin/../.git/refs/heads/indev`, 0, 7)
     };
 }
 use API::Std qw(conf_get err);
