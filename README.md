@@ -32,7 +32,6 @@ maintenance of Auto, and other projects.
 
 + Elijah "starcoder" Perrault &lt;elijah@starcoder.info&gt;
 + Matthew Barksdale &lt;mattwb65@gmail.com&gt;
-+ Timothy "Tim-7967" Estes &lt;tim7967@gmail.com&gt;
 
 
 Contributors - Non-developers who contribute to the project
