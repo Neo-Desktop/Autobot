@@ -1,52 +1,18 @@
 #!/usr/bin/env perl
-
 # Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
 # Copyright (C) 2010-2011 Xelhua Development Team (doc/CREDITS)
 # This program is free software; rights to this code are stated in doc/LICENSE.
+package Install;
 use strict;
 use warnings;
 use English qw(-no_match_vars);
 use FindBin qw($Bin);
 our $Bin = $Bin;
+BEGIN { unshift(@INC, "$Bin/src"); }
+use Lib::Install;
 
 # Installation script.
 our $VERSION = 1.00;
-
-
-sub println
-{
-	my ($out) = @_;
-	
-	if (!defined $out) {
-		return;
-	}
-	
-	print $out.$/;
-	
-	return 1;
-}
-
-sub ver
-{
-    my @vs = split('\.', $]);
-
-	my %ver = ();
-    $ver{ver} = $vs[0];
-    $ver{sub} = substr($vs[1], 1, 2);
-    $ver{rev} = substr($vs[1], 3, 3);
-
-    return %ver;
-}
-
-sub modfind
-{
-	my ($mod) = @_;
-	
-	print "Checking for $mod..... ";
-	eval('require '.$mod.'; 1;') and println "OK" or println "Not Found" and exit;
-	
-	return 1;
-}
 
 # Iterate through the arguments passed to us.
 my $features = "base";
@@ -55,6 +21,7 @@ if (defined $ARGV[0]) {
 		if ($_ eq "-h" or $_ eq "--help") {
 			println "*** ./install help ***";
 			println " --enable-sasl - Enable support for SASL.";
+            println " --enable-ipv6 - Enable support for IPv6.";
 			println "*** End of Help ***";
 			exit;
 		}
@@ -63,6 +30,9 @@ if (defined $ARGV[0]) {
 		}
         elsif ($_ eq "--enable-ssl") {
             $features .= " ssl";
+        }
+        elsif ($_ eq "--enable-ipv6") {
+            $features .= " ipv6";
         }
 		else {
 			println "Warning: Unknown option '".$_."'";
@@ -101,9 +71,8 @@ else {
 }		
 
 # Check Perl version.
-my %VER = ver();
-print "Checking Perl version..... $VER{ver}.$VER{sub}.$VER{rev} - ";
-if ($VER{ver} >= 5 and $VER{sub} >= 10) {
+print "Checking Perl version..... $] - ";
+if ($] >= 5.010000) {
 	println "OK";
 }
 else {
@@ -116,6 +85,7 @@ println "\0";
 println "--- CPAN Modules ---";
 modfind("Mouse");
 modfind("Class::Unload");
+modfind("IO::Socket::INET6") if $features =~ /ipv6/;
 modfind("IO::Socket::SSL") if $features =~ /ssl/;
 modfind("MIME::Base64") if $features =~ /sasl/;
 
@@ -138,25 +108,7 @@ if (!-e "$Bin/build/ver") {
 	system("touch $Bin/build/ver");
 }
 
-open(my $FTIME, q{>}, "$Bin/build/time") or println "Failed to install." and exit;
-print $FTIME time."\n" or println "Failed to install." and exit;
-close $FTIME or println "Failed to install." and exit;
-
-open(my $FOS, q{>}, "$Bin/build/os") or println "Failed to install." and exit;
-print $FOS $OSNAME."\n" or println "Failed to install." and exit;
-close $FOS or println "Failed to install." and exit;
-
-open(my $FFEAT, q{>}, "$Bin/build/feat") or println "Failed to install." and exit;
-print $FFEAT $features."\n" or println "Failed to install." and exit;
-close $FFEAT or println "Failed to install." and exit;
-
-open(my $FPERL, q{>}, "$Bin/build/perl") or println "Failed to install." and exit;
-print $FPERL "$]\n" or println "Failed to install." and exit;
-close $FPERL or println "Failed to install." and exit;
-
-open(my $FVER, q{>}, "$Bin/build/ver") or println "Failed to install." and exit;
-print $FVER "3.0.0d\n" or println "Failed to install." and exit;
-close $FVER or println "Failed to install." and exit;
+build($features);
 
 # Success!
 println "Done. Auto successfully installed.";
