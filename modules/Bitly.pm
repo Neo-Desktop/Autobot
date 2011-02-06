@@ -7,6 +7,7 @@ use warnings;
 use API::Std qw(cmd_add cmd_del conf_get err trans);
 use API::IRC qw(privmsg notice);
 use LWP::UserAgent;
+use URI::Escape;
 
 # Initialization subroutine.
 sub _init 
@@ -60,6 +61,7 @@ sub shorten
         return 0;
     }
 	my ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
+    my $surl = uri_escape($surl);
 	my $url = "http://api.bit.ly/v3/shorten?version=3.0.1&longUrl=".$surl."&apiKey=".$key."&login=".$user."&format=txt";
     # Get the response via HTTP.
     my $response = $ua->get($url);
@@ -96,6 +98,7 @@ sub reverse
         return 0;
     }
     my ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
+    my $surl = uri_escape($surl);
     my $url = "http://api.bit.ly/v3/expand?version=3.0.1&shortURL=".$surl."&apiKey=".$key."&login=".$user."&format=txt";
     # Get the response via HTTP.
     my $response = $ua->get($url);
@@ -173,8 +176,8 @@ Add Bitly to module auto-load and the following to your configuration file:
 
 =over
 
-This module adds an extra dependency: LWP::UserAgent. You can get it 
-from the CPAN <http://www.cpan.org>.
+This module adds  extra dependencies: LWP::UserAgent and URI::Escape. 
+You can get it from the CPAN <http://www.cpan.org>.
 
 This module is compatible with Auto version 3.0.0a2+.
 
