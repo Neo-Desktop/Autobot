@@ -37,6 +37,13 @@ Legend:
 
  [!] Features
      [X] Weather module
+     [!] Urban Dictionary module
+     [ ] UNO module
+     [ ] Google Search module
+     [ ] IRC Relay module
+     [ ] (Google?) News module
+     [ ] QDB module
+     [ ] Tumblr module
      [X] Google Calculator module
      [ ] YouTube Search module
      [ ] Twitter module
@@ -45,5 +52,5 @@ Legend:
      [X] Shorten URL (bit.ly?) module
      [?] Bot Talk module
      [O] Minecraft<->IRC module
-     [ ] 8-Ball module
+     [X] 8-Ball module
          
