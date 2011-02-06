@@ -13,6 +13,11 @@ use JSON -support_by_pp;
 # Initialization subroutine.
 sub _init 
 {
+    # Check for JSON::PP.
+    eval {
+        require JSON::PP;
+        1;
+    } or return 0;
 	# Create the CALC command.
 	cmd_add("CALC", 0, 0, \%m_Calc::HELP_CALC, \&m_Calc::calc) or return 0;
 
@@ -115,8 +120,8 @@ Google Calculator.
 
 =over
 
-This module requires LWP::UserAgent, URI::Escape and JSON. All are 
-obtainable from the CPAN <http://www.cpan.org>.
+This module requires LWP::UserAgent, URI::Escape and JSON/JSON::PP. 
+All are obtainable from the CPAN <http://www.cpan.org>.
 
 This module is compatible with Auto version 3.0.0a2+.
 
