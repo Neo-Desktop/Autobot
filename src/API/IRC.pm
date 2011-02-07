@@ -78,6 +78,16 @@ sub notice
 	return 1;
 }
 
+# Send an ACTION PRIVMSG.
+sub act
+{
+    my ($svr, $target, $message) = @_;
+
+    Auto::socksnd($svr, "PRIVMSG $target :\001ACTION $message\001");
+
+    return 1;
+}
+
 # Change bot nickname.
 sub nick 
 {
@@ -139,7 +149,7 @@ sub usrc
 	
 	return (
 		nick  => $si[0],
-		user => $si[1],
+		user => $sii[0],
 		host  => $sii[1]
 	);
 }
