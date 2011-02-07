@@ -9,6 +9,7 @@ use strict;
 use warnings;
 use POSIX;
 use locale;
+use English qw(-no_match_vars);
 use feature qw(switch);
 use Mouse;
 use IO::Socket;
@@ -17,7 +18,7 @@ use Class::Unload;
 use FindBin qw($Bin);
 our $Bin = $Bin;
 BEGIN {
-    unshift(@INC, "$Bin/../src"); 
+    unshift(@INC, "$Bin/../src");
 
     # Set version information.
     use constant {
@@ -39,7 +40,7 @@ use Core::IRC;
 
 
 our $VERSION = 3.0.0;
-local $0 = 'auto';
+local $PROGRAM_NAME = 'auto';
 
 # Check for build files.
 if (!-e "$Bin/../build/os" or !-e "$Bin/../build/perl" or !-e "$Bin/../build/time" or !-e "$Bin/../build/ver") {
@@ -49,8 +50,8 @@ if (!-e "$Bin/../build/os" or !-e "$Bin/../build/perl" or !-e "$Bin/../build/tim
 # Check build OS.
 open(my $BFOS, '<', "$Bin/../build/os") or println 'Cannot start: Broken build.' and exit;
 my @BFOS = <$BFOS>;
-close $BFOS;
-if ($BFOS[0] ne $^O."\n") {
+close $BFOS or println 'Cannot start: Broken build.' and exit;
+if ($BFOS[0] ne $OSNAME."\n") {
 	println 'Cannot start: Broken build.' and exit;
 }
 undef @BFOS;
@@ -59,14 +60,14 @@ undef @BFOS;
 our $ENFEAT;
 open(my $BFFEAT, '<', "$Bin/../build/feat") or println 'Cannot start: Broken build.' and exit;
 my @BFFEAT = <$BFFEAT>;
-close $BFFEAT;
+close $BFFEAT or println 'Cannot start: Broken build.' and exit;
 $ENFEAT = substr($BFFEAT[0], 0, length($BFFEAT[0]) - 1);
 undef @BFFEAT;
 
 # Check build Perl version.
 open(my $BFPERL, '<', "$Bin/../build/perl") or println 'Cannot start: Broken build.' and exit;
 my @BFPERL = <$BFPERL>;
-close $BFPERL;
+close $BFPERL or println 'Cannot start: Broken build.' and exit;
 if ($BFPERL[0] ne $]."\n") {
 	println 'Cannot start: Broken build.' and exit;
 }
@@ -75,8 +76,8 @@ undef @BFPERL;
 # Check build Auto version.
 open(my $BFVER, '<', "$Bin/../build/ver") or println 'Cannot start: Broken build.' and exit;
 my @BFVER = <$BFVER>;
-close $BFVER;
-if ($BFVER[0] ne VER.".".SVER.".".REV.RSTAGE."\n") {
+close $BFVER or println 'Cannot start: Broken build.' and exit;
+if ($BFVER[0] ne VER.q{.}.SVER.q{.}.REV.RSTAGE."\n") {
 	println 'Cannot start: Broken build.' and exit;
 }
 undef @BFVER;
@@ -101,7 +102,7 @@ println <<'EOF';
 88   8 88  8   88  8   8
 88   8 88ee8   88  8eee8
 EOF
-println '* '.NAME.' (version '.VER.'.'.SVER.'.'.REV.RSTAGE.') is starting up...';
+println '* '.NAME.' (version '.VER.q{.}.SVER.q{.}.REV.RSTAGE.') is starting up...';
 
 our ($APID, %TIMERS);
 
@@ -127,17 +128,17 @@ if (!$NUC and RSTAGE ne 'd') {
         'Timeout'  => 30
     ) or err(1, 'Cannot connect to update server! Aborting update check.');
     send($uss, "GET http://dist.xelhua.org/auto/version.txt\n", 0);
-    my $dll = '';
+    my $dll = q{};
     while (my $data = readline($uss)) {
         $data =~ s/(\n|\r)//g;
-        my ($v, $c) = split('=', $data);
+        my ($v, $c) = split(m/[=]/, $data);
 
         if ($v eq 'url') {
             $dll = $c;
         }
         elsif ($v eq 'version') {
-            if (VER.'.'.SVER.'.'.REV.RSTAGE ne $c) {
-                println('!!! NOTICE !!! Your copy of Auto is outdated. Current version: '.VER.'.'.SVER.'.'.REV.RSTAGE.' - Latest version: '.$c);
+            if (VER.q{.}.SVER.q{.}.REV.RSTAGE ne $c) {
+                println('!!! NOTICE !!! Your copy of Auto is outdated. Current version: '.VER.q{.}.SVER.q{.}.REV.RSTAGE.' - Latest version: '.$c);
                 println('!!! NOTICE !!! You can get the latest Auto by downloading '.$dll);
             }
             else {
@@ -160,7 +161,7 @@ println ' Success';
 
 if (conf_get('die')) {
 	if ((conf_get('die'))[0][0] == 1) {
-		println "!!! You didn't read the whole config.";
+		println '!!! You didn\'t read the whole config.';
 		println '!!! Insert new user then try again.';
 		exit;
 	}
@@ -182,7 +183,7 @@ undef @REQCVALS;
 # Parse translations.
 println '* Parsing translation files...';
 our $LOCALE = (conf_get('locale'))[0][0];
-my @lang = split('_', $LOCALE);
+my @lang = split(m/[_]/, $LOCALE);
 Parser::Lang::parse($lang[0]) or err(2, 'Failed to parse translation files!', 1);
 undef @lang;
 println ' Success';
@@ -199,12 +200,12 @@ our (%PRIVILEGES);
 if (conf_get('privset')) {
 	# Get them.
 	my %tcprivs = conf_get('privset');
-	
-	foreach my $tckpriv (keys %tcprivs) {
+
+    foreach my $tckpriv (keys %tcprivs) {
 		# For each privset, get the inner values.
 		my %mcprivs = conf_get("privset:$tckpriv");
-		
-		# Iterate through them.
+
+        # Iterate through them.
 		foreach my $mckpriv (keys %mcprivs) {
 			# Switch statement for the values.
 			given ($mckpriv) {
@@ -244,19 +245,19 @@ if (conf_get('privset')) {
 
 # Successful startup.
 our $STARTTIME = time;
-println '* Auto successfully started at '.POSIX::strftime('%Y-%m-%d %I:%M:%S %p', localtime).'.';
+println '* Auto successfully started at '.POSIX::strftime('%Y-%m-%d %I:%M:%S %p', localtime).q{.};
 alog 'Auto successfully started.';
 
 # Fork into the background if not in debug mode.
 if (!$DEBUG) {
     println '*** Becoming a daemon...';
-    open(STDIN, '<', '/dev/null') or err(2, "Can't read /dev/null: $!", 1);
-    open(STDOUT, '>>', '/dev/null') or err(2, "Can't write to /dev/null: $!", 1);
-    open(STDERR, '>>', '/dev/null') or err(2, "Can't write to /dev/null: $!", 1);
+    open(STDIN, '<', '/dev/null') or err(2, "Can't read /dev/null: $ERRNO", 1);
+    open(STDOUT, '>>', '/dev/null') or err(2, "Can't write to /dev/null: $ERRNO", 1);
+    open(STDERR, '>>', '/dev/null') or err(2, "Can't write to /dev/null: $ERRNO", 1);
     $APID = fork();
     if ($APID != 0) {
         alog '* Successfully forked into the background. Process ID: '.$APID;
-        unless (-e "$Bin/auto.pid") {
+        if (!-e "$Bin/auto.pid") {
 			system("touch $Bin/auto.pid");
 		}
 		open(my $FPID, '>', "$Bin/auto.pid") or exit;
@@ -264,10 +265,10 @@ if (!$DEBUG) {
 		close $FPID or exit;
         exit;
     }
-    POSIX::setsid() or err(2, "Can't start a new session: $!", 1);
+    POSIX::setsid() or err(2, "Can't start a new session: $ERRNO", 1);
 }
 else {
-    $APID = $$;
+    $APID = $PID;
 }
 
 # Events.
@@ -307,24 +308,24 @@ foreach my $cskey (keys %cservers) {
 
     # Create the socket.
     if ($use6) {
-	    $SOCKET{$cskey} = IO::Socket::INET6->new(%conndata) or 
-        err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].':'.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
+	    $SOCKET{$cskey} = IO::Socket::INET6->new(%conndata) or
+        err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
     }
     else {
-	    $SOCKET{$cskey} = IO::Socket::INET->new(%conndata) or 
-        err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].':'.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
+	    $SOCKET{$cskey} = IO::Socket::INET->new(%conndata) or
+        err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
     }
 
     # Send PASS if we have one.
 	if (defined $cservers{$cskey}{'pass'}[0]) {
-		socksnd($cskey, 'PASS :'.$cservers{$cskey}{'pass'}[0]) or                 
-			err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].':'.$cservers{$cskey}{'port'}[0].']', 0) 
+		socksnd($cskey, 'PASS :'.$cservers{$cskey}{'pass'}[0]) or
+			err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
 			and next;
 	}
 	API::Std::event_run('on_preconnect', $cskey);
 	# Send USER and NICK.
 	socksnd($cskey, 'USER '.$cservers{$cskey}{'ident'}[0].' * * :'.$cservers{$cskey}{'realname'}[0]) or
-		err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].':'.$cservers{$cskey}{'port'}[0].']', 0) 
+		err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
 		and next;
 	API::IRC::nick($cskey, $cservers{$cskey}{'nick'}[0]);
 	# Add to select.
@@ -356,7 +357,7 @@ API::Std::cmd_add('RESTART', 2, 'cmd.restart', \%Core::IRC::HELP_RESTART, \&Core
 API::Std::cmd_add('HELP', 2, 0, \%Core::IRC::HELP_HELP, \&Core::IRC::cmd_help);
 
 # Infinite while loop.
-while (1) { 
+while (1) {
 	# Timer check.
 	foreach my $tk (keys %TIMERS) {
 		if ($TIMERS{$tk}{time} <= time) {
@@ -385,7 +386,7 @@ while (1) {
 		# Read the data.
 		my $idata;
 		recv($sock, $idata, POSIX::BUFSIZ, 0);
-		
+
 		# Check for the data.
 		if (!defined $idata || length($idata) == 0) {
 			# Got EOF, close socket
@@ -393,18 +394,18 @@ while (1) {
 			$SELECT->remove($sock);
             next;
 		}
-		
-		# Read the buffer.
+
+        # Read the buffer.
 		my $data .= $idata;
 		while ($data =~ s/(.*\n)//) {
 			my $line = $1;
-			
-			# Remove the newlines.
+
+            # Remove the newlines.
 			chomp $line;
 			# Debug.
 			dbug $sockid.' >> '.$line;
-		
-			# Parse data.
+
+            # Parse data.
 			Parser::IRC::ircparse($sockid, $line);
 		}
 	}
@@ -415,11 +416,11 @@ while (1) {
 ###############
 
 # Send data to socket.
-sub socksnd 
+sub socksnd
 {
 	my ($svr, $data) = @_;
-	
-	if (defined $SOCKET{$svr}) {
+
+    if (defined $SOCKET{$svr}) {
 		send($SOCKET{$svr}, $data."\n", 0);
 		dbug "$svr << $data";
 		return 1;
@@ -432,9 +433,9 @@ sub socksnd
 # Load a module.
 sub mod_load {
     my ($module) = @_;
-    
-    if (-e "$Bin/../modules/".$module.".pm") {
-        do "$Bin/../modules/".$module.".pm" and return 1;
+
+    if (-e "$Bin/../modules/$module.pm") {
+        do "$Bin/../modules/$module.pm" and return 1;
     }
 
     return 0;
@@ -493,7 +494,7 @@ sub signal_perlwarn
 # __DIE__
 sub signal_perldie
 {
-    return if $^S;
+    return if $EXCEPTIONS_BEING_CAUGHT;
     alog 'Perl Fatal: '.$_[0].' -- Terminating program!';
 	API::IRC::quit($_, 'A fatal error occurred!') foreach (keys %SOCKET);
     DB::flush();
