@@ -8,6 +8,8 @@ use warnings;
 use feature qw(say);
 use Perl::Critic;
 
+our $VERSION = 1.00;
+
 # Set default severity to 1.
 my $severity = 1;
 
@@ -33,6 +35,7 @@ my $critic = Perl::Critic->new(-exclude => ['Perl::Critic::Policy::Miscellanea::
                                             'Perl::Critic::Policy::RegularExpressions::ProhibitSingleCharAlternation',
                                             'Perl::Critic::Policy::Modules::ProhibitExcessMainComplexity',
                                             'Perl::Critic::Policy::InputOutput::ProhibitBacktickOperators',
+                                            'Perl::Critic::Policy::InputOutput::RequireCheckedSyscalls',
                                             'Perl::Critic::Policy::CodeLayout::RequireTidyCode'], -severity => $severity);
 
 # Get violations.
