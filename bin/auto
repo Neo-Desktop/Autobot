@@ -101,7 +101,7 @@ println <<'EOF';
 88   8 88  8   88  8   8
 88   8 88ee8   88  8eee8
 EOF
-println "* ".NAME." (version ".VER.".".SVER.".".REV.RSTAGE.") is starting up...";
+println '* '.NAME.' (version '.VER.'.'.SVER.'.'.REV.RSTAGE.') is starting up...';
 
 our ($APID, %TIMERS);
 
@@ -136,12 +136,12 @@ if (!$NUC and RSTAGE ne 'd') {
             $dll = $c;
         }
         elsif ($v eq 'version') {
-            if (VER.".".SVER.".".REV.RSTAGE ne $c) {
-                println("!!! NOTICE !!! Your copy of Auto is outdated. Current version: ".VER.".".SVER.".".REV.RSTAGE." - Latest version: ".$c);
-                println("!!! NOTICE !!! You can get the latest Auto by downloading ".$dll);
+            if (VER.'.'.SVER.'.'.REV.RSTAGE ne $c) {
+                println('!!! NOTICE !!! Your copy of Auto is outdated. Current version: '.VER.'.'.SVER.'.'.REV.RSTAGE.' - Latest version: '.$c);
+                println('!!! NOTICE !!! You can get the latest Auto by downloading '.$dll);
             }
             else {
-                println("* Auto is up-to-date.");
+                println('* Auto is up-to-date.');
             }
         }
     }
@@ -153,15 +153,15 @@ if ($ENFEAT =~ /ipv6/) {
 }
 
 # Parse configuration file.
-println "* Parsing configuration file auto.conf...";
-our $CONF = Parser::Config->new("auto.conf") or err(1, "Failed to parse configuration file!", 1);
-our %SETTINGS = $CONF->parse or err(1, "Failed to parse configuration file!", 1);
-println " Success";
+println '* Parsing configuration file auto.conf...';
+our $CONF = Parser::Config->new('auto.conf') or err(1, 'Failed to parse configuration file!', 1);
+our %SETTINGS = $CONF->parse or err(1, 'Failed to parse configuration file!', 1);
+println ' Success';
 
-if (conf_get("die")) {
-	if ((conf_get("die"))[0][0] == 1) {
+if (conf_get('die')) {
+	if ((conf_get('die'))[0][0] == 1) {
 		println "!!! You didn't read the whole config.";
-		println "!!! Insert new user then try again.";
+		println '!!! Insert new user then try again.';
 		exit;
 	}
 }
@@ -171,7 +171,7 @@ my @REQCVALS = qw(locale expire_logs server fantasy_pf);
 foreach my $REQCVAL (@REQCVALS) {
 	if (!conf_get($REQCVAL)) {
 		my $err = 2;
-		if ($REQCVAL eq "expire_logs") {
+		if ($REQCVAL eq 'expire_logs') {
 			$err = 1;
 		}
 		err($err, "Missing required configuration value: $REQCVAL", 1);
@@ -180,12 +180,12 @@ foreach my $REQCVAL (@REQCVALS) {
 undef @REQCVALS;
 
 # Parse translations.
-println "* Parsing translation files...";
-our $LOCALE = (conf_get("locale"))[0][0];
+println '* Parsing translation files...';
+our $LOCALE = (conf_get('locale'))[0][0];
 my @lang = split('_', $LOCALE);
-Parser::Lang::parse($lang[0]) or err(2, "Failed to parse translation files!", 1);
+Parser::Lang::parse($lang[0]) or err(2, 'Failed to parse translation files!', 1);
 undef @lang;
-println " Success";
+println ' Success';
 
 # Expire old logs.
 API::Log::expire_logs();
@@ -196,9 +196,9 @@ DB::load();
 # Parse privileges.
 our (%PRIVILEGES);
 # If there are any privsets.
-if (conf_get("privset")) {
+if (conf_get('privset')) {
 	# Get them.
-	my %tcprivs = conf_get("privset");
+	my %tcprivs = conf_get('privset');
 	
 	foreach my $tckpriv (keys %tcprivs) {
 		# For each privset, get the inner values.
@@ -209,7 +209,7 @@ if (conf_get("privset")) {
 			# Switch statement for the values.
 			given ($mckpriv) {
 				# If it's 'priv', save it as a privilege.
-				when ("priv") {
+				when ('priv') {
 					if (defined $PRIVILEGES{$tckpriv}) {
 						# If this privset exists, push to it.
 						push(@{ $PRIVILEGES{$tckpriv} }, ($mcprivs{$mckpriv})[0][0]);
@@ -220,7 +220,7 @@ if (conf_get("privset")) {
 					}
 				}
 				# If it's 'inherit', inherit the privileges of another privset.
-				when ("inherit") {
+				when ('inherit') {
 					# If the privset we're inheriting exists, continue.
 					if (defined $PRIVILEGES{($mcprivs{$mckpriv})[0][0]}) {
 						# Iterate through each privilege.
@@ -244,12 +244,12 @@ if (conf_get("privset")) {
 
 # Successful startup.
 our $STARTTIME = time;
-println "* Auto successfully started at ".POSIX::strftime("%Y-%m-%d %I:%M:%S %p", localtime).".";
-alog "Auto successfully started.";
+println '* Auto successfully started at '.POSIX::strftime('%Y-%m-%d %I:%M:%S %p', localtime).'.';
+alog 'Auto successfully started.';
 
 # Fork into the background if not in debug mode.
 if (!$DEBUG) {
-    println "*** Becoming a daemon...";
+    println '*** Becoming a daemon...';
     open(STDIN, q{<}, '/dev/null') or err(2, "Can't read /dev/null: $!", 1);
     open(STDOUT, q{>>}, '/dev/null') or err(2, "Can't write to /dev/null: $!", 1);
     open(STDERR, q{>>}, '/dev/null') or err(2, "Can't write to /dev/null: $!", 1);
