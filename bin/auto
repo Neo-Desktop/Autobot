@@ -39,57 +39,57 @@ use Core::IRC;
 
 
 our $VERSION = 3.0.0;
-$0 = "auto";
+local $0 = 'auto';
 
 # Check for build files.
 unless (-e "$Bin/../build/os" and -e "$Bin/../build/perl" and -e "$Bin/../build/time" and -e "$Bin/../build/ver") {
-	println "Missing build file(s). Please build Auto before running it." and exit;
+	println 'Missing build file(s). Please build Auto before running it.' and exit;
 }
 
 # Check build OS.
-open(my $BFOS, q{<}, "$Bin/../build/os") or println "Cannot start: Broken build." and exit;
+open(my $BFOS, '<', "$Bin/../build/os") or println 'Cannot start: Broken build.' and exit;
 my @BFOS = <$BFOS>;
 close $BFOS;
 if ($BFOS[0] ne $^O."\n") {
-	println "Cannot start: Broken build." and exit;
+	println 'Cannot start: Broken build.' and exit;
 }
 undef @BFOS;
 
 # Check build features.
 our $ENFEAT;
-open(my $BFFEAT, q{<}, "$Bin/../build/feat") or println "Cannot start: Broken build." and exit;
+open(my $BFFEAT, '<', "$Bin/../build/feat") or println 'Cannot start: Broken build.' and exit;
 my @BFFEAT = <$BFFEAT>;
 close $BFFEAT;
 $ENFEAT = substr($BFFEAT[0], 0, length($BFFEAT[0]) - 1);
 undef @BFFEAT;
 
 # Check build Perl version.
-open(my $BFPERL, q{<}, "$Bin/../build/perl") or println "Cannot start: Broken build." and exit;
+open(my $BFPERL, '<', "$Bin/../build/perl") or println 'Cannot start: Broken build.' and exit;
 my @BFPERL = <$BFPERL>;
 close $BFPERL;
 if ($BFPERL[0] ne $]."\n") {
-	println "Cannot start: Broken build." and exit;
+	println 'Cannot start: Broken build.' and exit;
 }
 undef @BFPERL;
 
 # Check build Auto version.
-open(my $BFVER, q{<}, "$Bin/../build/ver") or println "Cannot start: Broken build." and exit;
+open(my $BFVER, '<', "$Bin/../build/ver") or println 'Cannot start: Broken build.' and exit;
 my @BFVER = <$BFVER>;
 close $BFVER;
 if ($BFVER[0] ne VER.".".SVER.".".REV.RSTAGE."\n") {
-	println "Cannot start: Broken build." and exit;
+	println 'Cannot start: Broken build.' and exit;
 }
 undef @BFVER;
 
 # Set signal handlers.
-$SIG{TERM}       = \&signal_TERM;
-$SIG{INT}        = \&signal_INT;
-$SIG{HUP}        = \&signal_HUP;
-$SIG{'__WARN__'} = \&signal_PerlWARN;
-$SIG{'__DIE__'}  = \&signal_PerlDIE;
-API::Std::event_add("on_sigterm");
-API::Std::event_add("on_sigint");
-API::Std::event_add("on_sighup");
+local $SIG{TERM}       = \&signal_term;
+local $SIG{INT}        = \&signal_int;
+local $SIG{HUP}        = \&signal_hup;
+local $SIG{'__WARN__'} = \&signal_perlwarn;
+local $SIG{'__DIE__'}  = \&signal_perldie;
+API::Std::event_add('on_sigterm');
+API::Std::event_add('on_sigint');
+API::Std::event_add('on_sighup');
 
 
 # Print startup message.
@@ -119,23 +119,23 @@ if (defined $ARGV[0]) {
 
 # Check for updates.
 if (!$NUC and RSTAGE ne 'd') {
-    println "* Connecting to update server...";
+    println '* Connecting to update server...';
     my $uss = IO::Socket::INET->new(
         'Proto'    => 'tcp',
         'PeerAddr' => 'dist.xelhua.org',
         'PeerPort' => 80,
         'Timeout'  => 30
-    ) or err(1, "Cannot connect to update server! Aborting update check.");
+    ) or err(1, 'Cannot connect to update server! Aborting update check.');
     send($uss, "GET http://dist.xelhua.org/auto/version.txt\n", 0);
     my $dll = '';
     while (my $data = readline($uss)) {
         $data =~ s/(\n|\r)//g;
         my ($v, $c) = split('=', $data);
 
-        if ($v eq "url") {
+        if ($v eq 'url') {
             $dll = $c;
         }
-        elsif ($v eq "version") {
+        elsif ($v eq 'version') {
             if (VER.".".SVER.".".REV.RSTAGE ne $c) {
                 println("!!! NOTICE !!! Your copy of Auto is outdated. Current version: ".VER.".".SVER.".".REV.RSTAGE." - Latest version: ".$c);
                 println("!!! NOTICE !!! You can get the latest Auto by downloading ".$dll);
@@ -145,6 +145,11 @@ if (!$NUC and RSTAGE ne 'd') {
             }
         }
     }
+}
+
+# Include IPv6 if Auto was built for it.
+if ($ENFEAT =~ /ipv6/) {
+    require IO::Socket::INET6;
 }
 
 # Parse configuration file.
@@ -288,14 +293,29 @@ $SELECT = IO::Select->new();
 my $it = 0;
 # Iterate through each configured server.
 foreach my $cskey (keys %cservers) {
-	# Create the socket.
-	$SOCKET{$cskey} = IO::Socket::INET->new(
+    # Prepare socket data.
+    my %conndata = (
 		Proto => "tcp",
-		LocalAddr => $cservers{$cskey}{'bind'}[0],
+    	LocalAddr => $cservers{$cskey}{'bind'}[0],
 		PeerAddr  => $cservers{$cskey}{'host'}[0],
-		PeerPort  => $cservers{$cskey}{'port'}[0]
-	) or err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) and next; # Or error.
-	# Send PASS if we have one.
+		PeerPort  => $cservers{$cskey}{'port'}[0],
+        Timeout   => 20,
+    );
+	# Set IPv6 data.
+    my $use6 = 0;
+    $use6 = $SOCKET{$cskey}{'ipv6'} if defined $SOCKET{$cskey}{'ipv6'}[0];
+
+    # Create the socket.
+    if ($use6) {
+	    $SOCKET{$cskey} = IO::Socket::INET6->new(%conndata) or 
+        err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].':'.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
+    }
+    else {
+	    $SOCKET{$cskey} = IO::Socket::INET->new(%conndata) or 
+        err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].':'.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
+    }
+
+    # Send PASS if we have one.
 	if (defined $cservers{$cskey}{'pass'}[0]) {
 		socksnd($cskey, "PASS :".$cservers{$cskey}{'pass'}[0]) or                 
 			err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) 
@@ -425,62 +445,62 @@ sub mod_load {
 ## Signal handlers
 
 # SIGTERM
-sub signal_TERM
+sub signal_term
 {
-	API::Std::event_run("on_sigterm");
-	API::IRC::quit($_, "Caught SIGTERM") foreach (keys %SOCKET);
+	API::Std::event_run('on_sigterm');
+	API::IRC::quit($_, 'Caught SIGTERM') foreach (keys %SOCKET);
 	DB::flush();
-	dbug "!!! Caught SIGTERM; terminating...";
-	alog "!!! Caught SIGTERM; terminating...";
+	dbug '!!! Caught SIGTERM; terminating...';
+	alog '!!! Caught SIGTERM; terminating...';
 	if (-e "$Bin/auto.pid") {
-		system("rm $Bin/auto.pid");
+		unlink "$Bin/auto.pid";
 	}
 	sleep 1;
 	exit;
 }
 
 # SIGINT
-sub signal_INT
+sub signal_int
 {
-	API::Std::event_run("on_sigint");
-	API::IRC::quit($_, "Caught SIGINT") foreach (keys %SOCKET);
+	API::Std::event_run('on_sigint');
+	API::IRC::quit($_, 'Caught SIGINT') foreach (keys %SOCKET);
 	DB::flush();
-	dbug "!!! Caught SIGINT; terminating...";
-	alog "!!! Caught SIGINT; terminating...";
+	dbug '!!! Caught SIGINT; terminating...';
+	alog '!!! Caught SIGINT; terminating...';
 	if (-e "$Bin/auto.pid") {
-		system("rm $Bin/auto.pid");
+		unlink "$Bin/auto.pid";
 	}
 	sleep 1;
 	exit;
 }
 
 # SIGHUP
-sub signal_HUP
+sub signal_hup
 {
-	API::Std::event_run("on_sighup");
-	dbug "!!! Caught SIGHUP but rehash is unavailable; ignoring";
-	alog "!!! Caught SIGHUP but rehash is unavailable; ignoring";
+	API::Std::event_run('on_sighup');
+	dbug '!!! Caught SIGHUP but rehash is unavailable; ignoring';
+	alog '!!! Caught SIGHUP but rehash is unavailable; ignoring';
 	return 1;
 }
 
 # __WARN__
-sub signal_PerlWARN
+sub signal_perlwarn
 {
-    alog "Perl Warning: ".$_[0];
+    alog 'Perl Warning: '.$_[0];
     warn $_[0] if $DEBUG;
     return 1;
 }
 
 # __DIE__
-sub signal_PerlDIE
+sub signal_perldie
 {
     return if $^S;
-    alog "Perl Fatal: ".$_[0]." -- Terminating program!";
-	API::IRC::quit($_, "A fatal error occurred!") foreach (keys %SOCKET);
+    alog 'Perl Fatal: '.$_[0].' -- Terminating program!';
+	API::IRC::quit($_, 'A fatal error occurred!') foreach (keys %SOCKET);
     DB::flush();
 	if (-e "$Bin/auto.pid") {
-		system("rm $Bin/auto.pid");
+		unlink "$Bin/auto.pid";
 	}
 	sleep 1;
-    die "FATAL: ".$_[0];
+    die 'FATAL: '.$_[0];
 }
