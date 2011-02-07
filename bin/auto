@@ -16,7 +16,7 @@ use IO::Select;
 use Class::Unload;
 use FindBin qw($Bin);
 our $Bin = $Bin;
-BEGIN { 
+BEGIN {
     unshift(@INC, "$Bin/../src"); 
 
     # Set version information.
@@ -42,7 +42,7 @@ our $VERSION = 3.0.0;
 local $0 = 'auto';
 
 # Check for build files.
-unless (-e "$Bin/../build/os" and -e "$Bin/../build/perl" and -e "$Bin/../build/time" and -e "$Bin/../build/ver") {
+if (!-e "$Bin/../build/os" or !-e "$Bin/../build/perl" or !-e "$Bin/../build/time" or !-e "$Bin/../build/ver") {
 	println 'Missing build file(s). Please build Auto before running it.' and exit;
 }
 
@@ -250,17 +250,17 @@ alog 'Auto successfully started.';
 # Fork into the background if not in debug mode.
 if (!$DEBUG) {
     println '*** Becoming a daemon...';
-    open(STDIN, q{<}, '/dev/null') or err(2, "Can't read /dev/null: $!", 1);
-    open(STDOUT, q{>>}, '/dev/null') or err(2, "Can't write to /dev/null: $!", 1);
-    open(STDERR, q{>>}, '/dev/null') or err(2, "Can't write to /dev/null: $!", 1);
+    open(STDIN, '<', '/dev/null') or err(2, "Can't read /dev/null: $!", 1);
+    open(STDOUT, '>>', '/dev/null') or err(2, "Can't write to /dev/null: $!", 1);
+    open(STDERR, '>>', '/dev/null') or err(2, "Can't write to /dev/null: $!", 1);
     $APID = fork();
-    unless ($APID == 0) {
-        alog "* Successfully forked into the background. Process ID: ".$APID;
+    if ($APID != 0) {
+        alog '* Successfully forked into the background. Process ID: '.$APID;
         unless (-e "$Bin/auto.pid") {
 			system("touch $Bin/auto.pid");
 		}
-		open(my $FPID, q{>}, "$Bin/auto.pid") or exit;
-		print $FPID "$APID\n" or exit;
+		open(my $FPID, '>', "$Bin/auto.pid") or exit;
+		print {$FPID} "$APID\n" or exit;
 		close $FPID or exit;
         exit;
     }
@@ -271,22 +271,22 @@ else {
 }
 
 # Events.
-API::Std::event_add("on_preconnect");
+API::Std::event_add('on_preconnect');
 
 # Load modules.
-if (conf_get("module")) {
-	alog "* Loading modules...";
-	dbug "* Loading modules...";
-	foreach (@{ (conf_get("module"))[0] }) {
+if (conf_get('module')) {
+	alog '* Loading modules...';
+	dbug '* Loading modules...';
+	foreach (@{ (conf_get('module'))[0] }) {
 		mod_load($_);
 	}
 }
 
 ## Create sockets.
-alog "* Connecting to servers...";
-dbug "* Connecting to servers...";
+alog '* Connecting to servers...';
+dbug '* Connecting to servers...';
 # Get servers from config.
-my %cservers = conf_get("server");
+my %cservers = conf_get('server');
 # Set the hashes and processes hashes.
 our (%SOCKET, $SELECT);
 $SELECT = IO::Select->new();
@@ -295,7 +295,7 @@ my $it = 0;
 foreach my $cskey (keys %cservers) {
     # Prepare socket data.
     my %conndata = (
-		Proto => "tcp",
+		Proto => 'tcp',
     	LocalAddr => $cservers{$cskey}{'bind'}[0],
 		PeerAddr  => $cservers{$cskey}{'host'}[0],
 		PeerPort  => $cservers{$cskey}{'port'}[0],
@@ -317,43 +317,43 @@ foreach my $cskey (keys %cservers) {
 
     # Send PASS if we have one.
 	if (defined $cservers{$cskey}{'pass'}[0]) {
-		socksnd($cskey, "PASS :".$cservers{$cskey}{'pass'}[0]) or                 
-			err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) 
+		socksnd($cskey, 'PASS :'.$cservers{$cskey}{'pass'}[0]) or                 
+			err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].':'.$cservers{$cskey}{'port'}[0].']', 0) 
 			and next;
 	}
-	API::Std::event_run("on_preconnect", $cskey);
+	API::Std::event_run('on_preconnect', $cskey);
 	# Send USER and NICK.
-	socksnd($cskey, "USER ".$cservers{$cskey}{'ident'}[0]." * * :".$cservers{$cskey}{'realname'}[0]) or
-		err(2, "Failed to connect to server: ".$cskey." [".$cservers{$cskey}{'host'}[0].":".$cservers{$cskey}{'port'}[0]."]", 0) 
+	socksnd($cskey, 'USER '.$cservers{$cskey}{'ident'}[0].' * * :'.$cservers{$cskey}{'realname'}[0]) or
+		err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].':'.$cservers{$cskey}{'port'}[0].']', 0) 
 		and next;
 	API::IRC::nick($cskey, $cservers{$cskey}{'nick'}[0]);
 	# Add to select.
 	$SELECT->add($SOCKET{$cskey});
 	# Success!
-	alog "** Successfully connected to server: ".$cskey;
-	dbug "** Successfully connected to server: ".$cskey;
+	alog '** Successfully connected to server: '.$cskey;
+	dbug '** Successfully connected to server: '.$cskey;
 	$it = 1;
 }
 
 # Success!
 if ($it) {
-	alog "** Success: Connected to server(s).";
-	dbug "** Success: Connected to server(s).";
+	alog '** Success: Connected to server(s).';
+	dbug '** Success: Connected to server(s).';
 }
 else {
-	err(2, "No server connections.", 1);
+	err(2, 'No server connections.', 1);
 }
 undef $it;
 
 # Create core hooks.
-API::Std::hook_add("on_uprivmsg", "ctcp_version_reply", \&Core::IRC::version_reply);
+API::Std::hook_add('on_uprivmsg', 'ctcp_version_reply', \&Core::IRC::version_reply);
 # Create core commands.
-API::Std::cmd_add("MODLOAD", 1, "cfunc.modules", \%Core::IRC::HELP_MODLOAD, \&Core::IRC::cmd_modload);
-API::Std::cmd_add("MODUNLOAD", 1, "cfunc.modules", \%Core::IRC::HELP_MODUNLOAD, \&Core::IRC::cmd_modunload);
-API::Std::cmd_add("MODRELOAD", 1, "cfunc.modules", \%Core::IRC::HELP_MODRELOAD, \&Core::IRC::cmd_modreload);
-API::Std::cmd_add("SHUTDOWN", 2, "cmd.shutdown", \%Core::IRC::HELP_SHUTDOWN, \&Core::IRC::cmd_shutdown);
-API::Std::cmd_add("RESTART", 2, "cmd.restart", \%Core::IRC::HELP_RESTART, \&Core::IRC::cmd_restart);
-API::Std::cmd_add("HELP", 2, 0, \%Core::IRC::HELP_HELP, \&Core::IRC::cmd_help);
+API::Std::cmd_add('MODLOAD', 1, 'cfunc.modules', \%Core::IRC::HELP_MODLOAD, \&Core::IRC::cmd_modload);
+API::Std::cmd_add('MODUNLOAD', 1, 'cfunc.modules', \%Core::IRC::HELP_MODUNLOAD, \&Core::IRC::cmd_modunload);
+API::Std::cmd_add('MODRELOAD', 1, 'cfunc.modules', \%Core::IRC::HELP_MODRELOAD, \&Core::IRC::cmd_modreload);
+API::Std::cmd_add('SHUTDOWN', 2, 'cmd.shutdown', \%Core::IRC::HELP_SHUTDOWN, \&Core::IRC::cmd_shutdown);
+API::Std::cmd_add('RESTART', 2, 'cmd.restart', \%Core::IRC::HELP_RESTART, \&Core::IRC::cmd_restart);
+API::Std::cmd_add('HELP', 2, 0, \%Core::IRC::HELP_HELP, \&Core::IRC::cmd_help);
 
 # Infinite while loop.
 while (1) { 
@@ -402,7 +402,7 @@ while (1) {
 			# Remove the newlines.
 			chomp $line;
 			# Debug.
-			dbug $sockid." >> ".$line;
+			dbug $sockid.' >> '.$line;
 		
 			# Parse data.
 			Parser::IRC::ircparse($sockid, $line);
@@ -434,11 +434,10 @@ sub mod_load {
     my ($module) = @_;
     
     if (-e "$Bin/../modules/".$module.".pm") {
-        do "$Bin/../modules/".$module.".pm" and return 1 or print $@ and return 0;
+        do "$Bin/../modules/".$module.".pm" and return 1;
     }
-    else {
-        return 0;
-    }
+
+    return 0;
 }
 
 
