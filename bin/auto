@@ -16,12 +16,12 @@ use IO::Socket;
 use IO::Select;
 use Class::Unload;
 use FindBin qw($Bin);
-our $Bin = $Bin;
+our $Bin = $Bin; ## no critic qw(NamingConventions::Capitalization Variables::ProhibitPackageVars)
 BEGIN {
     unshift @INC, "$Bin/../src";
 
     # Set version information.
-    use constant {
+    use constant { ## no critic qw(ValuesAndExpressions::ProhibitConstantPragma)
 	    NAME   => 'Auto IRC Bot',
 	    VER    => 3,
 	    SVER   => 0,
@@ -304,7 +304,7 @@ foreach my $cskey (keys %cservers) {
     );
 	# Set IPv6 data.
     my $use6 = 0;
-    $use6 = $SOCKET{$cskey}{'ipv6'} if defined $SOCKET{$cskey}{'ipv6'}[0];
+    if (defined $SOCKET{$cskey}{'ipv6'}[0]) { $use6 = $SOCKET{$cskey}{'ipv6'}[0]; }
 
     # Create the socket.
     if ($use6) {
@@ -381,7 +381,7 @@ while (1) {
 		# Figure out what network is sending us data.
 		my $sockid;
 		foreach (keys %SOCKET) {
-			$sockid = $_ if ($SOCKET{$_} eq $sock);
+			if ($SOCKET{$_} eq $sock) { $sockid = $_; }
 		}
 		# Read the data.
 		my $idata;
@@ -448,7 +448,7 @@ sub mod_load {
 sub signal_term
 {
 	API::Std::event_run('on_sigterm');
-	API::IRC::quit($_, 'Caught SIGTERM') foreach (keys %SOCKET);
+	foreach (keys %SOCKET) { API::IRC::quit($_, 'Caught SIGTERM'); }
 	DB::flush();
 	dbug '!!! Caught SIGTERM; terminating...';
 	alog '!!! Caught SIGTERM; terminating...';
@@ -463,7 +463,7 @@ sub signal_term
 sub signal_int
 {
 	API::Std::event_run('on_sigint');
-	API::IRC::quit($_, 'Caught SIGINT') foreach (keys %SOCKET);
+	foreach (keys %SOCKET) { API::IRC::quit($_, 'Caught SIGINT'); }
 	DB::flush();
 	dbug '!!! Caught SIGINT; terminating...';
 	alog '!!! Caught SIGINT; terminating...';
@@ -489,21 +489,24 @@ sub signal_perlwarn
     my ($warnmsg) = @_;
     $warnmsg =~ s/(\n|\r)//xsmg;
     alog 'Perl Warning: '.$warnmsg;
-    println 'Perl Warning: '.$warnmsg if $DEBUG;
+    if ($DEBUG) { println 'Perl Warning: '.$warnmsg; }
     return 1;
 }
 
 # __DIE__
 sub signal_perldie
 {
+    my ($diemsg) = @_;
+    $diemsg =~ s/(\n|\r)//xsmg;
+
     return if $EXCEPTIONS_BEING_CAUGHT;
-    alog 'Perl Fatal: '.$_[0].' -- Terminating program!';
-	API::IRC::quit($_, 'A fatal error occurred!') foreach (keys %SOCKET);
+    alog 'Perl Fatal: '.$diemsg.' -- Terminating program!';
+	foreach (keys %SOCKET) { API::IRC::quit($_, 'A fatal error occurred!'); }
     DB::flush();
 	if (-e "$Bin/auto.pid") {
 		unlink "$Bin/auto.pid";
 	}
 	sleep 1;
-    println 'FATAL: '.$_[0];
+    println 'FATAL: '.$diemsg;
     exit;
 }
