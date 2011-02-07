@@ -22,7 +22,7 @@ if (!defined $ARGV[0]) {
 if (defined $ARGV[1]) {
     # If a different severity was passed, get it.
     my $ts = $ARGV[1];
-    $ts = lc($ts);
+    $ts = lc $ts;
 
     if ($ts =~ m/^(1|2|3|4|5|brutal|cruel|harsh|stern|gentle)/xsm) {
         # If it's valid, set severity to it.
@@ -31,7 +31,7 @@ if (defined $ARGV[1]) {
 }
 
 # Create an instance of Perl::Critic, excluding certain Policies.
-my $critic = Perl::Critic->new(-exclude => ['Perl::Critic::Policy::Miscellanea::RequireRcsKeywords', 
+my $critic = Perl::Critic->new(-exclude => ['Perl::Critic::Policy::Miscellanea::RequireRcsKeywords',
                                             'Perl::Critic::Policy::RegularExpressions::ProhibitSingleCharAlternation',
                                             'Perl::Critic::Policy::Modules::ProhibitExcessMainComplexity',
                                             'Perl::Critic::Policy::InputOutput::ProhibitBacktickOperators',
