@@ -18,7 +18,7 @@ use Class::Unload;
 use FindBin qw($Bin);
 our $Bin = $Bin;
 BEGIN {
-    unshift(@INC, "$Bin/../src");
+    unshift @INC, "$Bin/../src";
 
     # Set version information.
     use constant {
@@ -27,7 +27,7 @@ BEGIN {
 	    SVER   => 0,
 	    REV    => 0,
 	    RSTAGE => 'd',
-        GR     => substr(`cat $Bin/../.git/refs/heads/indev`, 0, 7)
+        GR     => substr `cat $Bin/../.git/refs/heads/indev`, 0, 7
     };
 }
 use API::Std qw(conf_get err);
@@ -48,7 +48,7 @@ if (!-e "$Bin/../build/os" or !-e "$Bin/../build/perl" or !-e "$Bin/../build/tim
 }
 
 # Check build OS.
-open(my $BFOS, '<', "$Bin/../build/os") or println 'Cannot start: Broken build.' and exit;
+open my $BFOS, '<', "$Bin/../build/os" or println 'Cannot start: Broken build.' and exit;
 my @BFOS = <$BFOS>;
 close $BFOS or println 'Cannot start: Broken build.' and exit;
 if ($BFOS[0] ne $OSNAME."\n") {
@@ -58,14 +58,14 @@ undef @BFOS;
 
 # Check build features.
 our $ENFEAT;
-open(my $BFFEAT, '<', "$Bin/../build/feat") or println 'Cannot start: Broken build.' and exit;
+open my $BFFEAT, '<', "$Bin/../build/feat" or println 'Cannot start: Broken build.' and exit;
 my @BFFEAT = <$BFFEAT>;
 close $BFFEAT or println 'Cannot start: Broken build.' and exit;
-$ENFEAT = substr($BFFEAT[0], 0, length($BFFEAT[0]) - 1);
+$ENFEAT = substr $BFFEAT[0], 0, length($BFFEAT[0]) - 1;
 undef @BFFEAT;
 
 # Check build Perl version.
-open(my $BFPERL, '<', "$Bin/../build/perl") or println 'Cannot start: Broken build.' and exit;
+open my $BFPERL, '<', "$Bin/../build/perl" or println 'Cannot start: Broken build.' and exit;
 my @BFPERL = <$BFPERL>;
 close $BFPERL or println 'Cannot start: Broken build.' and exit;
 if ($BFPERL[0] ne $]."\n") {
@@ -74,7 +74,7 @@ if ($BFPERL[0] ne $]."\n") {
 undef @BFPERL;
 
 # Check build Auto version.
-open(my $BFVER, '<', "$Bin/../build/ver") or println 'Cannot start: Broken build.' and exit;
+open my $BFVER, '<', "$Bin/../build/ver" or println 'Cannot start: Broken build.' and exit;
 my @BFVER = <$BFVER>;
 close $BFVER or println 'Cannot start: Broken build.' and exit;
 if ($BFVER[0] ne VER.q{.}.SVER.q{.}.REV.RSTAGE."\n") {
@@ -127,11 +127,11 @@ if (!$NUC and RSTAGE ne 'd') {
         'PeerPort' => 80,
         'Timeout'  => 30
     ) or err(1, 'Cannot connect to update server! Aborting update check.');
-    send($uss, "GET http://dist.xelhua.org/auto/version.txt\n", 0);
+    send $uss, "GET http://dist.xelhua.org/auto/version.txt\n", 0;
     my $dll = q{};
-    while (my $data = readline($uss)) {
+    while (my $data = readline $uss) {
         $data =~ s/(\n|\r)//g;
-        my ($v, $c) = split(m/[=]/, $data);
+        my ($v, $c) = split m/[=]/, $data;
 
         if ($v eq 'url') {
             $dll = $c;
@@ -183,7 +183,7 @@ undef @REQCVALS;
 # Parse translations.
 println '* Parsing translation files...';
 our $LOCALE = (conf_get('locale'))[0][0];
-my @lang = split(m/[_]/, $LOCALE);
+my @lang = split m/[_]/, $LOCALE;
 Parser::Lang::parse($lang[0]) or err(2, 'Failed to parse translation files!', 1);
 undef @lang;
 println ' Success';
@@ -213,7 +213,7 @@ if (conf_get('privset')) {
 				when ('priv') {
 					if (defined $PRIVILEGES{$tckpriv}) {
 						# If this privset exists, push to it.
-						push(@{ $PRIVILEGES{$tckpriv} }, ($mcprivs{$mckpriv})[0][0]);
+						push @{ $PRIVILEGES{$tckpriv} }, ($mcprivs{$mckpriv})[0][0];
 					}
 					else {
 						# Otherwise, create it.
@@ -229,7 +229,7 @@ if (conf_get('privset')) {
 							# And save them to the privset inheriting them
 							if (defined $PRIVILEGES{$tckpriv}) {
 								# If this privset exists, push to it.
-								push(@{ $PRIVILEGES{$tckpriv} }, $_);
+								push @{ $PRIVILEGES{$tckpriv} }, $_;
 							}
 							else {
 								# Otherwise, create it.
@@ -251,16 +251,16 @@ alog 'Auto successfully started.';
 # Fork into the background if not in debug mode.
 if (!$DEBUG) {
     println '*** Becoming a daemon...';
-    open(STDIN, '<', '/dev/null') or err(2, "Can't read /dev/null: $ERRNO", 1);
-    open(STDOUT, '>>', '/dev/null') or err(2, "Can't write to /dev/null: $ERRNO", 1);
-    open(STDERR, '>>', '/dev/null') or err(2, "Can't write to /dev/null: $ERRNO", 1);
-    $APID = fork();
+    open STDIN, '<', '/dev/null' or err(2, "Can't read /dev/null: $ERRNO", 1);
+    open STDOUT, '>>', '/dev/null' or err(2, "Can't write to /dev/null: $ERRNO", 1);
+    open STDERR, '>>', '/dev/null' or err(2, "Can't write to /dev/null: $ERRNO", 1);
+    $APID = fork;
     if ($APID != 0) {
         alog '* Successfully forked into the background. Process ID: '.$APID;
         if (!-e "$Bin/auto.pid") {
-			system("touch $Bin/auto.pid");
+			system "touch $Bin/auto.pid";
 		}
-		open(my $FPID, '>', "$Bin/auto.pid") or exit;
+		open my $FPID, '>', "$Bin/auto.pid" or exit;
 		print {$FPID} "$APID\n" or exit;
 		close $FPID or exit;
         exit;
@@ -385,7 +385,7 @@ while (1) {
 		}
 		# Read the data.
 		my $idata;
-		recv($sock, $idata, POSIX::BUFSIZ, 0);
+		recv $sock, $idata, POSIX::BUFSIZ, 0;
 
 		# Check for the data.
 		if (!defined $idata || length($idata) == 0) {
@@ -421,7 +421,7 @@ sub socksnd
 	my ($svr, $data) = @_;
 
     if (defined $SOCKET{$svr}) {
-		send($SOCKET{$svr}, $data."\n", 0);
+		send $SOCKET{$svr}, $data."\n", 0;
 		dbug "$svr << $data";
 		return 1;
 	}
