@@ -486,8 +486,10 @@ sub signal_hup
 # __WARN__
 sub signal_perlwarn
 {
-    alog 'Perl Warning: '.$_[0];
-    warn $_[0] if $DEBUG;
+    my ($warnmsg) = @_;
+    $warnmsg =~ s/(\n|\r)//xsmg;
+    alog 'Perl Warning: '.$warnmsg;
+    println 'Perl Warning: '.$warnmsg if $DEBUG;
     return 1;
 }
 
@@ -502,5 +504,6 @@ sub signal_perldie
 		unlink "$Bin/auto.pid";
 	}
 	sleep 1;
-    die 'FATAL: '.$_[0];
+    println 'FATAL: '.$_[0];
+    exit;
 }
