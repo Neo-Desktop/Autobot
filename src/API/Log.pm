@@ -6,12 +6,14 @@
 package API::Log;
 use strict;
 use warnings;
+use English qw(-no_match_vars);
 use POSIX;
 use Time::Local;
 use Exporter;
+use base qw(Exporter);
 use API::Std qw(conf_get);
 
-our @ISA = qw(Exporter);
+our $VERSION = 3.000000;
 our @EXPORT_OK = qw(println dbug alog);
 
 
@@ -21,12 +23,13 @@ sub println
 	my ($out) = @_;
 
 	if (!defined $out) {
-		return;
+		print $RS;
 	}
+    else {
+        print $out.$RS;
+    }
 
-	print $out.$/;
-
-	return 1;
+    return 1;
 }
 
 # Print only if in debug mode.
@@ -51,22 +54,22 @@ sub alog
 	expire_logs();
 
 	# Get date and time in the desired format.
-	my $date = POSIX::strftime("%Y%m%d", localtime);
-	my $time = POSIX::strftime("%Y-%m-%d %I:%M:%S %p", localtime);
+	my $date = POSIX::strftime('%Y%m%d', localtime);
+	my $time = POSIX::strftime('%Y-%m-%d %I:%M:%S %p', localtime);
 
 	# Create var/ if it doesn't exist.
 	if (!-d "$Auto::Bin/../var") {
-		system("mkdir $Auto::Bin/../var");
+		mkdir "$Auto::Bin/../var", 0600; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
 	}
 	# Create var/DATE.log if it doesn't exist.
 	if (!-e "$Auto::Bin/../var/$date.log") {
-		system("touch $Auto::Bin/../var/$date.log");
+		system "touch $Auto::Bin/../var/$date.log";
 	}
 
 	# Open the logfile, print the log message to it and close it.
-	open(my $FLOG, q{>>}, "$Auto::Bin/../var/$date.log") or return 0;
-	print $FLOG "[$time] $lmsg\n" or return 0;
-	close $FLOG or return 0;
+	open my $FLOG, '>>', "$Auto::Bin/../var/$date.log" or return;
+	print {$FLOG} "[$time] $lmsg\n" or return;
+	close $FLOG or return;
 
 	return 1;
 }
@@ -75,10 +78,10 @@ sub alog
 sub expire_logs
 {
 	# Get configuration value.
-	my $celog = (conf_get("expire_logs"))[0][0] or return 0;
+	my $celog = (conf_get('expire_logs'))[0][0] or return;
 
 	# Check for invalid values.
-	if ($celog =~ m/[^0-9]/) {
+	if ($celog =~ m/[^0-9]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
 		# Must be numbers only.
 		return;
 	}
@@ -89,18 +92,18 @@ sub expire_logs
 
 	# Iterate through each logfile.
 	foreach my $file (glob "$Auto::Bin/../var/*") {
-		my (undef, $file) = split('bin/../var/', $file);
-	
+		my (undef, $file) = split 'bin/../var/', $file; ## no critic qw(BuiltinFunctions::ProhibitStringySplit)
+
 		# Convert filename to UNIX time.
-		my $yyyy = substr($file, 0, 4);
-		my $mm = substr($file, 4, 2);
+		my $yyyy = substr $file, 0, 4; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
+		my $mm = substr $file, 4, 2; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
 		$mm = $mm - 1;
-		my $dd = substr($file, 6, 2);
+		my $dd = substr $file, 6, 2; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
 		my $epoch = timelocal(0, 0, 0, $dd, $mm, $yyyy);
-	
+
 		# If it's older than <config_value> days, delete it.
-		if (time - $epoch > 86400 * $celog) {
-			system("rm $Auto::Bin/../var/$file");
+		if (time - $epoch > 86_400 * $celog) { ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
+			unlink "$Auto::Bin/../var/$file";
 		}
 	}
 
