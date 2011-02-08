@@ -19,13 +19,13 @@ our @EXPORT_OK = qw(println dbug alog);
 sub println
 {
 	my ($out) = @_;
-	
+
 	if (!defined $out) {
 		return;
 	}
-	
+
 	print $out.$/;
-	
+
 	return 1;
 }
 
@@ -33,12 +33,12 @@ sub println
 sub dbug
 {
 	my ($out) = @_;
-	
+
 	if ($Auto::DEBUG) {
 		# We're in debug mode; print it out.
 		println $out;
 	}
-	
+
 	return 1;
 }
 
@@ -46,14 +46,14 @@ sub dbug
 sub alog
 {
 	my ($lmsg) = @_;
-	
+
 	# Expire old logs first.
 	expire_logs();
-	
+
 	# Get date and time in the desired format.
 	my $date = POSIX::strftime("%Y%m%d", localtime);
 	my $time = POSIX::strftime("%Y-%m-%d %I:%M:%S %p", localtime);
-	
+
 	# Create var/ if it doesn't exist.
 	if (!-d "$Auto::Bin/../var") {
 		system("mkdir $Auto::Bin/../var");
@@ -61,13 +61,13 @@ sub alog
 	# Create var/DATE.log if it doesn't exist.
 	if (!-e "$Auto::Bin/../var/$date.log") {
 		system("touch $Auto::Bin/../var/$date.log");
-	}	
-	
+	}
+
 	# Open the logfile, print the log message to it and close it.
 	open(my $FLOG, q{>>}, "$Auto::Bin/../var/$date.log") or return 0;
 	print $FLOG "[$time] $lmsg\n" or return 0;
 	close $FLOG or return 0;
-	
+
 	return 1;
 }
 
@@ -76,7 +76,7 @@ sub expire_logs
 {
 	# Get configuration value.
 	my $celog = (conf_get("expire_logs"))[0][0] or return 0;
-	
+
 	# Check for invalid values.
 	if ($celog =~ m/[^0-9]/) {
 		# Must be numbers only.
@@ -86,24 +86,24 @@ sub expire_logs
 		# No expire.
 		return;
 	}
-	
+
 	# Iterate through each logfile.
 	foreach my $file (glob "$Auto::Bin/../var/*") {
 		my (undef, $file) = split('bin/../var/', $file);
-		
+	
 		# Convert filename to UNIX time.
 		my $yyyy = substr($file, 0, 4);
 		my $mm = substr($file, 4, 2);
 		$mm = $mm - 1;
 		my $dd = substr($file, 6, 2);
 		my $epoch = timelocal(0, 0, 0, $dd, $mm, $yyyy);
-		
+	
 		# If it's older than <config_value> days, delete it.
 		if (time - $epoch > 86400 * $celog) {
 			system("rm $Auto::Bin/../var/$file");
 		}
 	}
-	
+
 	return 1;
 }
 
