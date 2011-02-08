@@ -34,7 +34,7 @@ sub mod_init
 	}
 
 	# Run the module's _init sub.
-    my $mi = eval($pkg.'::_init();');
+    my $mi = eval($pkg.'::_init();'); ## no critic qw(BuiltinFunctions::ProhibitStringyEval)
 
 	if ($mi) {
 		# If successful, add to hash.
@@ -84,7 +84,7 @@ sub mod_void
 	}
 
 	# Run the module's _void sub.
-    my $mi = eval($MODULE{$module}{pkg}.'::_void();');
+    my $mi = eval($MODULE{$module}{pkg}.'::_void();'); ## no critic qw(BuiltinFunctions::ProhibitStringyEval)
 
 	if ($mi) {
 		# If successful, delete class from program and delete module from hash.
