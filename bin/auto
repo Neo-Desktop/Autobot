@@ -304,7 +304,7 @@ foreach my $cskey (keys %cservers) {
     );
 	# Set IPv6 data.
     my $use6 = 0;
-    if (defined $SOCKET{$cskey}{'ipv6'}[0]) { $use6 = $SOCKET{$cskey}{'ipv6'}[0]; }
+    if (defined $cservers{$cskey}{'ipv6'}[0]) { $use6 = $cservers{$cskey}{'ipv6'}[0]; }
 
     # Create the socket.
     if ($use6) {
