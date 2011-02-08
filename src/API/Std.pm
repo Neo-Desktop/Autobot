@@ -464,4 +464,4 @@ sub awarn
 
 
 1;
-# vim: set ai si nu sw=4 ts=4:
+# vim: set ai sw=4 ts=4:
