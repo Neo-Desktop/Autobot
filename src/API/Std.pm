@@ -109,7 +109,7 @@ sub cmd_add
 	$cmd = uc $cmd;
 
 	if (defined $API::Std::CMDS{$cmd}) { return; }
-	if ($lvl =~ m/[^0-2]/) { return; }
+	if ($lvl =~ m/[^0-2]/sm) { return; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
 
 	$API::Std::CMDS{$cmd}{lvl}   = $lvl;
 	$API::Std::CMDS{$cmd}{help}  = $help;
@@ -221,10 +221,10 @@ sub timer_add
 	$name = lc $name;
 
 	# Check for invalid type/time.
-	if ($type =~ m/[^1-2]/) {
+	if ($type =~ m/[^1-2]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
 		return;
 	}
-	if ($time =~ m/[^0-9]/) {
+	if ($time =~ m/[^0-9]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
 		return;
 	}
 
@@ -286,8 +286,8 @@ sub conf_get
 
 	# Create an array out of the value.
 	my @val;
-	if ($value =~ m/:/) {
-		@val = split m/[:]/, $value;
+	if ($value =~ m/:/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+		@val = split m/[:]/sm, $value; ## no critic qw(RegularExpressions::RequireExtendedFormatting)
 	}
 	else {
 		@val = ($value);
@@ -332,13 +332,13 @@ sub conf_get
 sub trans
 {
 	my ($id) = @_;
-	$id =~ s/ /_/g;
+	$id =~ s/ /_/gsm;
 
 	if (defined $API::Std::LANGE{$id}) {
 		return $API::Std::LANGE{$id};
 	}
 	else {
-		$id =~ s/_/ /g;
+		$id =~ s/_/ /gsm;
 		return $id;
 	}
 }
@@ -375,14 +375,14 @@ sub match_user
 				}
 			}
             elsif ($uhk eq 'chanstatus' and defined $ulhp{'net'}) {
-                my ($ccst, $ccnm) = split m/[:]/, ($ulhp{$uhk})[0][0];
+                my ($ccst, $ccnm) = split m/[:]/sm, ($ulhp{$uhk})[0][0]; ## no critic qw(RegularExpressions::RequireExtendedFormatting)
                 my $svr = $ulhp{net}[0];
                 if (defined $Auto::SOCKET{$svr}) {
                     foreach my $bcj (@{ $Parser::IRC::botchans{$svr} }) {
                         if (API::IRC::match_mask($bcj, $ccnm)) {
                             API::IRC::names($svr, $bcj);
                             if (defined $Parser::IRC::chanusers{$svr}{$bcj}{$user{nick}}) {
-                                if ($Parser::IRC::chanusers{$svr}{$bcj}{$user{nick}} =~ m/($ccst)/) { return $userkey; }
+                                if ($Parser::IRC::chanusers{$svr}{$bcj}{$user{nick}} =~ m/($ccst)/sm) { return $userkey; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
                             }
                         }
                     }
@@ -413,15 +413,15 @@ sub has_priv
 }
 
 # Error subroutine.
-sub err
+sub err ## no critic qw(Subroutines::ProhibitBuiltinHomonyms)
 {
 	my ($lvl, $msg, $fatal) = @_;
 
 	# Check for an invalid level.
-	if ($lvl =~ m/[^0-9]/) {
+	if ($lvl =~ m/[^0-9]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
 		return;
 	}
-	if ($fatal =~ m/[^0-1]/) {
+	if ($fatal =~ m/[^0-1]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
 		return;
 	}
 
@@ -446,7 +446,7 @@ sub awarn
 	my ($lvl, $msg) = @_;
 
 	# Check for an invalid level.
-	if ($lvl =~ m/[^0-9]/) {
+	if ($lvl =~ m/[^0-9]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
 		return;
 	}
 
