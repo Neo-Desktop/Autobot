@@ -44,17 +44,17 @@ sub mod_init
 		$MODULE{$name}{version} = $version;
 		$MODULE{$name}{author}  = $author;
 		$MODULE{$name}{pkg}     = $pkg;
-	
+
 		API::Log::dbug('MODULES: '.$name.' successfully loaded.');
 		API::Log::alog('MODULES: '.$name.' successfully loaded.');
-	
+
 		return 1;
 	}
 	else {
 		# Otherwise, return a failed to load message.
 		API::Log::dbug('MODULES: Failed to load '.$name.q{.});
 		API::Log::alog('MODULES: Failed to load '.$name.q{.});
-	
+
 		return;
 	}
 }
@@ -79,7 +79,7 @@ sub mod_void
 	API::Log::alog('MODULES: Attempting to unload module: '.$module.'...');
 
 	# Check if this module exists.
-	unless (defined $MODULE{$module}) {
+	if (!defined $MODULE{$module}) {
 		API::Log::dbug('MODULES: Failed to unload '.$module.'. No such module?');
 		API::Log::alog('MODULES: Failed to unload '.$module.'. No such module?');
 		return;
@@ -145,8 +145,8 @@ sub event_add
 {
 	my ($name) = @_;
 
-	if (!defined $EVENTS{lc($name)}) {
-		$EVENTS{lc($name)} = 1;
+	if (!defined $EVENTS{lc $name}) {
+		$EVENTS{lc $name} = 1;
 		return 1;
 	}
 	else {
@@ -160,9 +160,9 @@ sub event_del
 {
 	my ($name) = @_;
 
-	if (defined $EVENTS{lc($name)}) {
-		delete $EVENTS{lc($name)};
-		delete $HOOKS{lc($name)};
+	if (defined $EVENTS{lc $name}) {
+		delete $EVENTS{lc $name};
+		delete $HOOKS{lc $name};
 		return 1;
 	}
 	else {
@@ -291,7 +291,7 @@ sub conf_get
 	# Create an array out of the value.
 	my @val;
 	if ($value =~ m/:/) {
-		@val = split ':', $value;
+		@val = split m/[:]/, $value;
 	}
 	else {
 		@val = ($value);
@@ -300,7 +300,7 @@ sub conf_get
 	undef $value;
 
 	# Get the count of elements in the array.
-	my $count = scalar(@val);
+	my $count = scalar @val;
 
 	# Return the requested configuration value(s).
 	if ($count == 1) {
@@ -353,8 +353,8 @@ sub match_user
 	my (%user) = @_;
 
 	# Get data from config.
-    if (!conf_get("user")) { return; }
-	my %uhp = conf_get("user");
+    if (!conf_get('user')) { return; }
+	my %uhp = conf_get('user');
 
 	foreach my $userkey (keys %uhp) {
 		# For each user block.
@@ -362,23 +362,23 @@ sub match_user
 		foreach my $uhk (keys %ulhp) {
             # For each user.
 
-			if ($uhk eq "net") {
+			if ($uhk eq 'net') {
                 if (defined $user{svr}) {
-                    if (lc $user{svr} ne lc ($ulhp{$uhk})[0][0]) {
+                    if (lc $user{svr} ne lc(($ulhp{$uhk})[0][0])) {
                         # config.user:net conflicts with irc.user:svr.
                         last;
                     }
                 }
             }
-            elsif ($uhk eq "mask") {
+            elsif ($uhk eq 'mask') {
 				# Put together the user information.
-				my $mask = $user{nick}."!".$user{user}."@".$user{host};
+				my $mask = $user{nick}.q{!}.$user{user}.q{@}.$user{host};
 				if (API::IRC::match_mask($mask, ($ulhp{$uhk})[0][0])) {
 					# We've got a host match.
 					return $userkey;
 				}
 			}
-            elsif ($uhk eq "chanstatus" and defined $ulhp{'net'}) {
+            elsif ($uhk eq 'chanstatus' and defined $ulhp{'net'}) {
                 my ($ccst, $ccnm) = split ':', ($ulhp{$uhk})[0][0];
                 my $svr = $ulhp{net}[0];
                 if (defined $Auto::SOCKET{$svr}) {
@@ -405,10 +405,10 @@ sub has_priv
 
 	if (conf_get("user:$cuser:privs")) {
 		my $cups = (conf_get("user:$cuser:privs"))[0][0];
-	
+
 		if (defined $Auto::PRIVILEGES{$cups}) {
 			foreach (@{ $Auto::PRIVILEGES{$cups} }) {
-				if ($_ eq $cpriv or $_ eq "ALL") { return 1; }
+				if ($_ eq $cpriv or $_ eq 'ALL') { return 1; }
 			}
 		}
 	}
