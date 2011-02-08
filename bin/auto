@@ -11,6 +11,7 @@ use POSIX;
 use locale;
 use English qw(-no_match_vars);
 use feature qw(switch);
+use Sys::Hostname;
 use Mouse;
 use IO::Socket;
 use IO::Select;
@@ -331,11 +332,11 @@ foreach my $cskey (keys %cservers) {
 			and next;
 	}
 	API::Std::event_run('on_preconnect', $cskey);
-	# Send USER and NICK.
-	socksnd($cskey, 'USER '.$cservers{$cskey}{'ident'}[0].' * * :'.$cservers{$cskey}{'realname'}[0]) or
+	# Send NICK/USER.
+	API::IRC::nick($cskey, $cservers{$cskey}{'nick'}[0]);
+	socksnd($cskey, 'USER '.$cservers{$cskey}{'ident'}[0].' '.hostname.' '.$cservers{$cskey}{'host'}[0].' :'.$cservers{$cskey}{'realname'}[0]) or
 		err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
 		and next;
-	API::IRC::nick($cskey, $cservers{$cskey}{'nick'}[0]);
 	# Add to select.
 	$SELECT->add($SOCKET{$cskey});
 	# Success!
