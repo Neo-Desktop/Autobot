@@ -7,9 +7,11 @@ package API::Std;
 use strict;
 use warnings;
 use Exporter;
+use base qw(Exporter);
 
+
+our $VERSION = 3.000000;
 our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
-our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add 
 					cmd_del hook_add hook_del rchook_add rchook_del match_user
 					has_priv mod_exists);
@@ -19,16 +21,16 @@ our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add
 sub mod_init
 {
 	my ($name, $author, $version, $autover, $pkg) = @_;
-	
-	# Log/debug.
-	API::Log::dbug("MODULES: Attempting to load ".$name." (version ".$version.") by ".$author."...");
-	API::Log::alog("MODULES: Attempting to load ".$name." (version ".$version.") by ".$author."...");
+
+    # Log/debug.
+	API::Log::dbug('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...');
+	API::Log::alog('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...');
 	
 	# Check if this module is compatible with this version of Auto.
-	if ($autover ne "3.0.0d") {
-		API::Log::dbug("MODULES: Failed to load ".$name.": Incompatible with your version of Auto.");
-		API::Log::alog("MODULES: Failed to load ".$name.": Incompatible with your version of Auto.");
-		return 0;
+	if ($autover ne '3.0.0d') {
+		API::Log::dbug('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.');
+		API::Log::alog('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.');
+		return;
 	}
 	
 	# Run the module's _init sub.
