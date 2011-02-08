@@ -61,7 +61,7 @@ sub shorten
         return 0;
     }
 	my ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
-    my $surl = uri_escape($surl);
+    $surl = uri_escape($surl);
 	my $url = "http://api.bit.ly/v3/shorten?version=3.0.1&longUrl=".$surl."&apiKey=".$key."&login=".$user."&format=txt";
     # Get the response via HTTP.
     my $response = $ua->get($url);
@@ -98,7 +98,7 @@ sub reverse
         return 0;
     }
     my ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
-    my $surl = uri_escape($surl);
+    $surl = uri_escape($surl);
     my $url = "http://api.bit.ly/v3/expand?version=3.0.1&shortURL=".$surl."&apiKey=".$key."&login=".$user."&format=txt";
     # Get the response via HTTP.
     my $response = $ua->get($url);
