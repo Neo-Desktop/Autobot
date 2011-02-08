@@ -375,7 +375,7 @@ sub match_user
 				}
 			}
             elsif ($uhk eq 'chanstatus' and defined $ulhp{'net'}) {
-                my ($ccst, $ccnm) = split ':', ($ulhp{$uhk})[0][0];
+                my ($ccst, $ccnm) = split m/[:]/, ($ulhp{$uhk})[0][0];
                 my $svr = $ulhp{net}[0];
                 if (defined $Auto::SOCKET{$svr}) {
                     foreach my $bcj (@{ $Parser::IRC::botchans{$svr} }) {
