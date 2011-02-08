@@ -510,3 +510,5 @@ sub signal_perldie
     println 'FATAL: '.$diemsg;
     exit;
 }
+
+# vim: set ai si nu sw=4 ts=4:
