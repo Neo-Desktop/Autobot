@@ -149,9 +149,9 @@ if (!$NUC and RSTAGE ne 'd') {
 }
 
 # Include IPv6 if Auto was built for it.
-if ($ENFEAT =~ /ipv6/) {
-    require IO::Socket::INET6;
-}
+if ($ENFEAT =~ /ipv6/) { require IO::Socket::INET6; }
+# Include SSL if Auto was built for it.
+if ($ENFEAT =~ /ssl/) { require IO::Socket::SSL; }
 
 # Parse configuration file.
 println '* Parsing configuration file auto.conf...';
@@ -302,18 +302,26 @@ foreach my $cskey (keys %cservers) {
 		PeerPort  => $cservers{$cskey}{'port'}[0],
         Timeout   => 20,
     );
-	# Set IPv6 data.
+	# Set IPv6/SSL data.
     my $use6 = 0;
+    my $usessl = 0;
     if (defined $cservers{$cskey}{'ipv6'}[0]) { $use6 = $cservers{$cskey}{'ipv6'}[0]; }
+    if (defined $cservers{$cskey}{'ssl'}[0]) { $usessl = $cservers{$cskey}{'ssl'}[0]; }
 
     # Create the socket.
     if ($use6) {
 	    $SOCKET{$cskey} = IO::Socket::INET6->new(%conndata) or
-        err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
+        err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
     }
     else {
-	    $SOCKET{$cskey} = IO::Socket::INET->new(%conndata) or
-        err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
+        if ($usessl) {
+	        $SOCKET{$cskey} = IO::Socket::SSL->new(%conndata) or
+            err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
+        }
+        else {
+	        $SOCKET{$cskey} = IO::Socket::INET->new(%conndata) or
+            err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
+        }
     }
 
     # Send PASS if we have one.
@@ -385,7 +393,7 @@ while (1) {
 		}
 		# Read the data.
 		my $idata;
-		recv $sock, $idata, POSIX::BUFSIZ, 0;
+		sysread $sock, $idata, POSIX::BUFSIZ, 0;
 
 		# Check for the data.
 		if (!defined $idata || length($idata) == 0) {
@@ -421,7 +429,7 @@ sub socksnd
 	my ($svr, $data) = @_;
 
     if (defined $SOCKET{$svr}) {
-		send $SOCKET{$svr}, $data."\n", 0;
+		syswrite $SOCKET{$svr}, $data."\n", POSIX::BUFSIZ, 0;
 		dbug "$svr << $data";
 		return 1;
 	}

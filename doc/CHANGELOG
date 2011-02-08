@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Rewrote socket read/write methods.
+    * Added SSL support.
     * Added act() to API::IRC.
 
 3.0 Alpha 2
