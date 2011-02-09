@@ -1,0 +1,41 @@
+#!/usr/bin/env perl
+# Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
+# Copyright (C) 2010-2011 Xelhua Development Team (doc/CREDITS)
+# This program is free software; rights to this code are stated in doc/LICENSE.
+
+# A simple script for generating an SSL certificate.
+require 5.010000;
+use strict;
+use warnings;
+use FindBin qw($Bin);
+use feature qw(say);
+our $VERSION = 1.00;
+my $bin = $Bin;
+
+# Get the name of the network this cert is for.
+print "Network Name: ";
+my $net = <STDIN>;
+$net =~ s/(\r|\n)//g;
+say q{};
+
+# Generate key and cert.
+system 'openssl req -nodes -newkey rsa:2048 -keyout '.$bin.'/../etc/'.$net.'.key -x509 -days 3650 -out '.$bin.'/../etc/'.$net.'.cert';
+chmod 400, "$bin/../etc/$net.key";
+
+# Get the fingerprint.
+my $fpr = `openssl x509 -noout -fingerprint -text < $bin/../etc/$net.cert`;
+my $fp;
+while ($fpr =~ s/(.*\n)//) {
+    my $line = $1;
+    $line =~ s/(\r|\n)//g;
+
+    if ($line =~ m/^SHA1 Fingerprint/sm) {
+        my $sfp = substr($line, 17);
+        $sfp =~ s/://gsm;
+
+        $fp = $sfp;
+    }
+}
+
+# Print the fingerprint.
+say 'Done. Fingerprint: '.$fp;
