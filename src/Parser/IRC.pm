@@ -332,7 +332,7 @@ sub cjoin
 	else {
 		# It isn't. Update chanusers and trigger on_rcjoin.
         $chanusers{$svr}{substr $ex[2], 1}{$src{nick}} = 1;
-		API::Std::event_run("on_rcjoin", ($svr, %src, substr($ex[2], 1)));
+		API::Std::event_run("on_rcjoin", ($svr, \%src, substr($ex[2], 1)));
 	}
 	
 	return 1;
@@ -378,7 +378,7 @@ sub kick
     else {
         # We weren't. Update chanusers and trigger on_kick.
         if (defined $chanusers{$svr}{$ex[2]}{$ex[3]}) { delete $chanusers{$svr}{$ex[2]}{$ex[3]}; }
-        API::Std::event_run("on_kick", ($svr, %src, $ex[2], $ex[3], $msg));
+        API::Std::event_run("on_kick", ($svr, \%src, $ex[2], $ex[3], $msg));
     }
 
     return 1;
@@ -495,7 +495,7 @@ sub nick
                 delete $chanusers{$svr}{$chk}{$src{nick}};
             }
         }
-		API::Std::event_run("on_nick", ($svr, %src, $nex));
+		API::Std::event_run("on_nick", ($svr, \%src, $nex));
 	}
 	
 	return 1;	
@@ -532,7 +532,7 @@ sub part
     }
 
     # Trigger on_part.
-    API::Std::event_run("on_part", ($svr, %src, $ex[2], $msg));
+    API::Std::event_run("on_part", ($svr, \%src, $ex[2], $msg));
 
     return 1;
 }
@@ -642,7 +642,7 @@ sub topic
 				push(@argv, $ex[$i]);
 			}
 		}
-		API::Std::event_run("on_topic", ($svr, %src, @argv));
+		API::Std::event_run("on_topic", ($svr, \%src, @argv));
 	}
 	
 	return 1;
