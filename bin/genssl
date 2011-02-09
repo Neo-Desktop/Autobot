@@ -27,7 +27,7 @@ system 'openssl req -nodes -newkey rsa:2048 -keyout '.$bin.'/../etc/certs/'.$net
 chmod 0400, "$bin/../etc/certs/$net.key";
 
 # Get the fingerprint.
-my $fpr = `openssl x509 -noout -fingerprint -text < $bin/../etc/certs/$net.cert`;
+my $fpr = `openssl x509 -noout -fingerprint < $bin/../etc/certs/$net.cert`;
 my $fp;
 while ($fpr =~ s/(.*\n)//) {
     my $line = $1;
