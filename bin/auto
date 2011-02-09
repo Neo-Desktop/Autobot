@@ -30,6 +30,7 @@ BEGIN {
         GR     => substr `cat $Bin/../.git/refs/heads/indev`, 0, 7
     };
 }
+use Lib::Auto;
 use API::Std qw(conf_get err);
 use API::Log qw(println alog dbug);
 use DB::Flatfile;
@@ -37,7 +38,6 @@ use Parser::Config;
 use Parser::Lang;
 use Parser::IRC;
 use Core::IRC;
-
 
 our $VERSION = 3.0.0;
 local $PROGRAM_NAME = 'auto';
@@ -119,34 +119,7 @@ if (defined $ARGV[0]) {
 }
 
 # Check for updates.
-if (!$NUC and RSTAGE ne 'd') {
-    println '* Connecting to update server...';
-    my $uss = IO::Socket::INET->new(
-        'Proto'    => 'tcp',
-        'PeerAddr' => 'dist.xelhua.org',
-        'PeerPort' => 80,
-        'Timeout'  => 30
-    ) or err(1, 'Cannot connect to update server! Aborting update check.');
-    send $uss, "GET http://dist.xelhua.org/auto/version.txt\n", 0;
-    my $dll = q{};
-    while (my $data = readline $uss) {
-        $data =~ s/(\n|\r)//g;
-        my ($v, $c) = split m/[=]/, $data;
-
-        if ($v eq 'url') {
-            $dll = $c;
-        }
-        elsif ($v eq 'version') {
-            if (VER.q{.}.SVER.q{.}.REV.RSTAGE ne $c) {
-                println('!!! NOTICE !!! Your copy of Auto is outdated. Current version: '.VER.q{.}.SVER.q{.}.REV.RSTAGE.' - Latest version: '.$c);
-                println('!!! NOTICE !!! You can get the latest Auto by downloading '.$dll);
-            }
-            else {
-                println('* Auto is up-to-date.');
-            }
-        }
-    }
-}
+&Lib::Auto::checkver();
 
 # Include IPv6 if Auto was built for it.
 if ($ENFEAT =~ /ipv6/) { require IO::Socket::INET6; }
