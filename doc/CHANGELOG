@@ -9,6 +9,7 @@ Auto IRC Bot 3.0: Change Log
     * Rewrote socket read/write methods.
     * Added SSL support.
     * Added act() to API::IRC.
+    * Added IPv6 support.
 
 3.0 Alpha 2
 ==================================================================
