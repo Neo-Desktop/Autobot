@@ -38,6 +38,7 @@ our %RAWC = (
 our (%got_001, %botnick, %botchans, %csprefix, %chanusers, %chanmodes);
 
 # Events.
+API::Std::event_add("on_connect");
 API::Std::event_add("on_rcjoin");
 API::Std::event_add("on_ucjoin");
 API::Std::event_add("on_kick");
@@ -97,34 +98,10 @@ sub num001
 		$botnick{$svr}{nick} = $botnick{$svr}{newnick};
 		delete $botnick{$svr}{newnick};
 	}
-	
-	# Modes on connect.
-	unless (!conf_get("server:$svr:modes")) {
-		my $connmodes = (conf_get("server:$svr:modes"))[0][0];
-		API::IRC::umode($svr, $connmodes);
-	}
-	
-	# Identify string.
-	unless (!conf_get("server:$svr:idstr")) {
-		my $idstr = (conf_get("server:$svr:idstr"))[0][0];
-		Auto::socksnd($svr, $idstr);
-	}
-	
-	# Get the auto-join from the config.
-	my @cajoin = @{ (conf_get("server:$svr:ajoin"))[0] };
-	
-	# Join the channels.
-	if (!defined $cajoin[1]) {
-		# For single-line ajoins.
-		my @sajoin = split(',', $cajoin[0]);
+
+    # Trigger on_connect.
+    API::Std::event_run("on_connect", $svr);
 		
-		API::IRC::cjoin($svr, $_) foreach (@sajoin);
-	}
-	else {
-		# For multi-line ajoins.
-		API::IRC::cjoin($svr, $_) foreach (@cajoin);
-	}
-	
 	return 1;
 }
 

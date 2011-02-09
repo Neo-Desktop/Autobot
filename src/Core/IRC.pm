@@ -7,7 +7,7 @@ package Core::IRC;
 use strict;
 use warnings;
 use English qw(-no_match_vars);
-use API::Std qw(hook_add);
+use API::Std qw(hook_add conf_get);
 use API::IRC qw(notice usrc);
 our $VERSION = 3.000000;
 
@@ -40,6 +40,53 @@ hook_add("on_quit", "quit_update_chanusers", sub {
 
     return 1;
 });
+
+# Modes on connect.
+hook_add("on_connect", "on_connect_modes", sub {
+    my ($svr) = @_;
+
+	if (conf_get("server:$svr:modes")) {
+		my $connmodes = (conf_get("server:$svr:modes"))[0][0];
+		API::IRC::umode($svr, $connmodes);
+	}
+
+    return 1;
+});
+
+# Plaintext auth.
+hook_add("on_connect", "plaintext_auth", sub {
+	my ($svr) = @_;
+    
+    if (conf_get("server:$svr:idstr")) {
+		my $idstr = (conf_get("server:$svr:idstr"))[0][0];
+		Auto::socksnd($svr, $idstr);
+	}
+
+    return 1;
+});
+
+# Auto join.
+hook_add("on_connect", "autojoin", sub {
+    my ($svr) = @_;
+
+	# Get the auto-join from the config.
+	my @cajoin = @{ (conf_get("server:$svr:ajoin"))[0] };
+	
+	# Join the channels.
+	if (!defined $cajoin[1]) {
+		# For single-line ajoins.
+		my @sajoin = split(',', $cajoin[0]);
+		
+		API::IRC::cjoin($svr, $_) foreach (@sajoin);
+	}
+	else {
+		# For multi-line ajoins.
+		API::IRC::cjoin($svr, $_) foreach (@cajoin);
+    }
+
+    return 1;
+});
+
 
 1;
 # vim: set ai sw=4 ts=4:
