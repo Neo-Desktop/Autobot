@@ -378,11 +378,17 @@ sub match_user
                 my ($ccst, $ccnm) = split m/[:]/sm, ($ulhp{$uhk})[0][0]; ## no critic qw(RegularExpressions::RequireExtendedFormatting)
                 my $svr = $ulhp{net}[0];
                 if (defined $Auto::SOCKET{$svr}) {
-                    foreach my $bcj (@{ $Parser::IRC::botchans{$svr} }) {
-                        if (API::IRC::match_mask($bcj, $ccnm)) {
-                            API::IRC::names($svr, $bcj);
-                            if (defined $Parser::IRC::chanusers{$svr}{$bcj}{$user{nick}}) {
-                                if ($Parser::IRC::chanusers{$svr}{$bcj}{$user{nick}} =~ m/($ccst)/sm) { return $userkey; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+                    if ($ccnm eq 'CURRENT' and defined $user{chan}) {
+                        if (defined $Parser::IRC::chanusers{$svr}{$user{chan}}{$user{nick}}) {
+                            if ($Parser::IRC::chanusers{$svr}{$user{chan}}{$user{nick}} =~ m/($ccst)/sm) { return $userkey; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+                        }
+                    }
+                    else {
+                        foreach my $bcj (keys %{ $Parser::IRC::botchans{$svr} }) {
+                            if (API::IRC::match_mask($bcj, $ccnm)) {
+                                if (defined $Parser::IRC::chanusers{$svr}{$bcj}{$user{nick}}) {
+                                    if ($Parser::IRC::chanusers{$svr}{$bcj}{$user{nick}} =~ m/($ccst)/sm) { return $userkey; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+                                }
                             }
                         }
                     }
