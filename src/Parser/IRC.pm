@@ -364,7 +364,8 @@ sub kick
         }
     }
     else {
-        # We weren't. Trigger on_kick.
+        # We weren't. Update chanusers and trigger on_kick.
+        if (defined $chanusers{$svr}{$ex[2]}{$ex[3]}) { delete $chanusers{$svr}{$ex[2]}{$ex[3]}; }
         API::Std::event_run("on_kick", ($svr, %src, $ex[2], $ex[3], $msg));
     }
 
