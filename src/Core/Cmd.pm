@@ -2,8 +2,8 @@
 # Copyright (C) 2010-2011 Xelhua Development Team (doc/CREDITS)
 # This program is free software; rights to this code are stated in doc/LICENSE.
 
-# Core IRC functionality.
-package Core::IRC;
+# Core::Cmd - Core commands.
+package Core::Cmd;
 use strict;
 use warnings;
 use English;
@@ -297,3 +297,4 @@ sub cmd_help
 
 
 1;
+# vim: set ai sw=4 ts=4:

@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Renamed Core::IRC to Core::Cmd.
     * Parse MODE.
     * Added CertFP support.
     * Rewrote socket read/write methods.

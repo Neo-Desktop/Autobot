@@ -37,7 +37,7 @@ use DB::Flatfile;
 use Parser::Config;
 use Parser::Lang;
 use Parser::IRC;
-use Core::IRC;
+use Core::Cmd;
 
 our $VERSION = 3.0.0;
 local $PROGRAM_NAME = 'auto';
@@ -349,14 +349,14 @@ else {
 undef $it;
 
 # Create core hooks.
-API::Std::hook_add('on_uprivmsg', 'ctcp_version_reply', \&Core::IRC::version_reply);
+API::Std::hook_add('on_uprivmsg', 'ctcp_version_reply', \&Core::Cmd::version_reply);
 # Create core commands.
-API::Std::cmd_add('MODLOAD', 1, 'cfunc.modules', \%Core::IRC::HELP_MODLOAD, \&Core::IRC::cmd_modload);
-API::Std::cmd_add('MODUNLOAD', 1, 'cfunc.modules', \%Core::IRC::HELP_MODUNLOAD, \&Core::IRC::cmd_modunload);
-API::Std::cmd_add('MODRELOAD', 1, 'cfunc.modules', \%Core::IRC::HELP_MODRELOAD, \&Core::IRC::cmd_modreload);
-API::Std::cmd_add('SHUTDOWN', 2, 'cmd.shutdown', \%Core::IRC::HELP_SHUTDOWN, \&Core::IRC::cmd_shutdown);
-API::Std::cmd_add('RESTART', 2, 'cmd.restart', \%Core::IRC::HELP_RESTART, \&Core::IRC::cmd_restart);
-API::Std::cmd_add('HELP', 2, 0, \%Core::IRC::HELP_HELP, \&Core::IRC::cmd_help);
+API::Std::cmd_add('MODLOAD', 1, 'cfunc.modules', \%Core::Cmd::HELP_MODLOAD, \&Core::Cmd::cmd_modload);
+API::Std::cmd_add('MODUNLOAD', 1, 'cfunc.modules', \%Core::Cmd::HELP_MODUNLOAD, \&Core::Cmd::cmd_modunload);
+API::Std::cmd_add('MODRELOAD', 1, 'cfunc.modules', \%Core::Cmd::HELP_MODRELOAD, \&Core::Cmd::cmd_modreload);
+API::Std::cmd_add('SHUTDOWN', 2, 'cmd.shutdown', \%Core::Cmd::HELP_SHUTDOWN, \&Core::Cmd::cmd_shutdown);
+API::Std::cmd_add('RESTART', 2, 'cmd.restart', \%Core::Cmd::HELP_RESTART, \&Core::Cmd::cmd_restart);
+API::Std::cmd_add('HELP', 2, 0, \%Core::Cmd::HELP_HELP, \&Core::Cmd::cmd_help);
 
 # Infinite while loop.
 while (1) {
