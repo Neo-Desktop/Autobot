@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Updated hooks to use hashrefs.
     * Moved CTCP VERSION reply to Core::IRC.
     * Renamed Core::IRC to Core::Cmd.
     * Parse MODE.
