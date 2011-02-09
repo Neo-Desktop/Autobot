@@ -12,7 +12,6 @@ use locale;
 use English qw(-no_match_vars);
 use feature qw(switch);
 use Sys::Hostname;
-use Mouse;
 use IO::Socket;
 use IO::Select;
 use Class::Unload;
