@@ -309,6 +309,24 @@ foreach my $cskey (keys %cservers) {
     if (defined $cservers{$cskey}{'ipv6'}[0]) { $use6 = $cservers{$cskey}{'ipv6'}[0]; }
     if (defined $cservers{$cskey}{'ssl'}[0]) { $usessl = $cservers{$cskey}{'ssl'}[0]; }
 
+    # CertFP.
+    if ($usessl) {
+        if (defined $cservers{$cskey}{'certfp'}[0]) {
+            if ($cservers{$cskey}{'certfp'}[0] eq 1) {
+                $conndata{'SSL_use_cert'} = 1;
+                if (defined $cservers{$cskey}{'certfp_cert'}[0]) {
+                    $conndata{'SSL_cert_file'} = $cservers{$cskey}{'certfp_cert'}[0];
+                }
+                if (defined $cservers{$cskey}{'certfp_key'}[0]) {
+                    $conndata{'SSL_key_file'} = $cservers{$cskey}{'certfp_key'}[0];
+                }
+                if (defined $cservers{$cskey}{'certfp_pass'}[0]) {
+                    $conndata{'SSL_passwd_cb'} = sub { return $cservers{$cskey}{'certfp_pass'}[0]; };
+                }
+            }
+        }
+    }           
+
     # Create the socket.
     if ($use6) {
 	    $SOCKET{$cskey} = IO::Socket::INET6->new(%conndata) or
