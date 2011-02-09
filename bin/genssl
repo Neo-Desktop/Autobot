@@ -13,25 +13,25 @@ our $VERSION = 1.00;
 my $bin = $Bin;
 
 # Get the name of the network this cert is for.
-print "Network Name: ";
+print 'Network Name: ';
 my $net = <STDIN>;
-$net =~ s/(\r|\n)//g;
+$net =~ s/(\r|\n)//gxsm;
 say q{};
 
 # Generate key and cert.
 system 'openssl req -nodes -newkey rsa:2048 -keyout '.$bin.'/../etc/'.$net.'.key -x509 -days 3650 -out '.$bin.'/../etc/'.$net.'.cert';
-chmod 400, "$bin/../etc/$net.key";
+chmod 0400, "$bin/../etc/$net.key";
 
 # Get the fingerprint.
 my $fpr = `openssl x509 -noout -fingerprint -text < $bin/../etc/$net.cert`;
 my $fp;
 while ($fpr =~ s/(.*\n)//) {
     my $line = $1;
-    $line =~ s/(\r|\n)//g;
+    $line =~ s/(\r|\n)//gsm;
 
     if ($line =~ m/^SHA1 Fingerprint/sm) {
-        my $sfp = substr($line, 17);
-        $sfp =~ s/://gsm;
+        my $sfp = substr $line, 17;
+        $sfp =~ s/://gxsm;
 
         $fp = $sfp;
     }
@@ -41,4 +41,3 @@ while ($fpr =~ s/(.*\n)//) {
 say 'Done. Fingerprint: '.$fp;
 
 # vim: set ai sw=4 ts=4:
-
