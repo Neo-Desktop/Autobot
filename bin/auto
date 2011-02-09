@@ -329,17 +329,20 @@ foreach my $cskey (keys %cservers) {
 
     # Create the socket.
     if ($use6) {
-	    $SOCKET{$cskey} = IO::Socket::INET6->new(%conndata) or
-        err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
+	    $SOCKET{$cskey} = IO::Socket::INET6->new(%conndata) or # Or error.
+        err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0) 
+        and delete $SOCKET{$cskey} and next;
     }
     else {
         if ($usessl) {
-	        $SOCKET{$cskey} = IO::Socket::SSL->new(%conndata) or
-            err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
+	        $SOCKET{$cskey} = IO::Socket::SSL->new(%conndata) or # Or error.
+            err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0) 
+            and delete $SOCKET{$cskey} and next;
         }
         else {
-	        $SOCKET{$cskey} = IO::Socket::INET->new(%conndata) or
-            err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0) and next; # Or error.
+	        $SOCKET{$cskey} = IO::Socket::INET->new(%conndata) or # Or error.
+            err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0) 
+            and delete $SOCKET{$cskey} and next;
         }
     }
 
@@ -419,6 +422,7 @@ while (1) {
 			# Got EOF, close socket
 			err(2, "Lost connection to $sockid!", 0);
 			$SELECT->remove($sock);
+            delete $SOCKET{$sockid};
             next;
 		}
 
