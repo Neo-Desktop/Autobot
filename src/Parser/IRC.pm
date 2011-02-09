@@ -25,7 +25,7 @@ our %RAWC = (
 	'477'      => \&num477,
 	'JOIN'     => \&cjoin,
     'KICK'     => \&kick,
-#    'MODE'     => \&mode,
+    'MODE'     => \&mode,
 	'NICK'     => \&nick,
 	'NOTICE'   => \&notice,
     'PART'     => \&part,
@@ -422,28 +422,51 @@ sub mode
                 }
                 else {
                     # It's a mode, lets check if it's a status mode.
-                    my $user = shift(@ex);
+                    my $nnt = 0;
+                    foreach (keys %{ $csprefix{$svr} }) {
+                        if ($modes =~ /($_)/) {
+                            $nnt = 1;
+                            last;
+                        }
+                    }
 
-                    if (defined $chanusers{$svr}{$chan}{$user}) {
-                        if ($op == 1) {
-                            if ($chanusers{$svr}{$chan}{$user} eq 1) {
-                                $chanusers{$svr}{$chan}{$user} = $maf;
+                    if ($nnt) {
+                        # It is a status mode, lets parse changes.
+                        my $user = shift(@ex);
+
+                        if (defined $chanusers{$svr}{$chan}{$user}) {
+                            if ($op == 1) {
+                                if ($chanusers{$svr}{$chan}{$user} eq 1) {
+                                    $chanusers{$svr}{$chan}{$user} = $maf;
+                                }
+                                else {
+                                    $chanusers{$svr}{$chan}{$user} .= $maf;
+                                }
                             }
-                            else {
-                                $chanusers{$svr}{$chan}{$user} .= $maf;
+                            elsif ($op == 2) {
+                                if (length($chanusers{$svr}{$chan}{$user}) == 1) {
+                                    $chanusers{$svr}{$chan}{$user} = 1;
+                                }
+                                else {
+                                    $chanusers{$svr}{$chan}{$user} =~ s/($maf)//gxsm;
+                                }
                             }
                         }
-                        elsif ($op == 2) {
-                            if (length($chanusers{$svr}{$chan}{$user}) == 1) {
-                                $chanusers{$svr}{$chan}{$user} = 1;
-                            }
+                        else {
+                            $chanusers{$svr}{$chan}{$user} = $maf;
                         }
                     }
                     else {
-                        $chanusers{$svr}{$chan}{$user} = $maf;
+                        # It is not. Lets adjust arguments accordingly.
+                        if (defined $chanmodes{$svr}{$maf}) {
+                            if ($chanmodes{$svr}{$maf} == 1 || $chanmodes{$svr}{$maf} == 2) { shift @ex; }
+                            if ($chanmodes{$svr}{$maf} == 3) { 
+                                if ($op == 1) { shift @ex; }
+                            }
+                        }
                     }
                 }
-            }
+            }   
         }
     }
 
