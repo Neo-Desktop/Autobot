@@ -35,7 +35,7 @@ our %RAWC = (
 );
 
 # Variables for various functions.
-our (%got_001, %botnick, %botchans, %csprefix, %chanusers);
+our (%got_001, %botnick, %botchans, %csprefix, %chanusers, %chanmodes);
 
 # Events.
 API::Std::event_add("on_rcjoin");
@@ -134,10 +134,10 @@ sub num005
 {
 	my ($svr, @ex) = @_;
 	
-	# Find PREFIX.
+	# Find PREFIX and CHANMODES.
 	foreach my $ex (@ex) {
-		if (substr($ex, 0, 7) eq "PREFIX=") {
-			# Found.
+		if ($ex =~ m/^PREFIX/xsm) {
+			# Found PREFIX.
 			my $rpx = substr($ex, 8);
 			my ($pm, $pp) = split('\)', $rpx);
 			my @apm = split(//, $pm);
@@ -147,6 +147,18 @@ sub num005
 				$csprefix{$svr}{$ppm} = shift(@app);
 			}
 		}
+        elsif ($ex =~ m/^CHANMODES/xsm) {
+            # Found CHANMODES.
+            my ($mtl, $mtp, $mtpp, $mts) = split m/[,]/xsm, substr($ex, 10);
+            # List modes.
+            foreach (split(//, $mtl)) { $chanmodes{$svr}{$_} = 1; }
+            # Modes with parameter.
+            foreach (split(//, $mtp)) { $chanmodes{$svr}{$_} = 2; }
+            # Modes with parameter when +.
+            foreach (split(//, $mtpp)) { $chanmodes{$svr}{$_} = 3; }
+            # Modes without parameter.
+            foreach (split(//, $mts)) { $chanmodes{$svr}{$_} = 4; }
+        }
 	}
 				
 	return 1;
