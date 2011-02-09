@@ -25,6 +25,7 @@ our %RAWC = (
 	'477'      => \&num477,
 	'JOIN'     => \&cjoin,
     'KICK'     => \&kick,
+#    'MODE'     => \&mode,
 	'NICK'     => \&nick,
 	'NOTICE'   => \&notice,
     'PART'     => \&part,
@@ -313,18 +314,12 @@ sub cjoin
 	
 	# Check if this is coming from ourselves.
 	if ($src{nick} eq $botnick{$svr}{nick}) {
-		# It is. Add channel to array and trigger on_ucjoin.
-		unless (defined $botchans{$svr}) {
-			@{ $botchans{$svr} } = (substr($ex[2], 1));
-		}
-		else {
-			push(@{ $botchans{$svr} }, substr($ex[2], 1));
-		}
+		$botchans{$svr}{substr $ex[2], 1} = 1;
 		API::Std::event_run("on_ucjoin", ($svr, substr($ex[2], 1)));
 	}
 	else {
 		# It isn't. Update chanusers and trigger on_rcjoin.
-        $chanusers{$svr}{substr($ex[2], 1)}{$src{nick}} = 1;
+        $chanusers{$svr}{substr $ex[2], 1}{$src{nick}} = 1;
 		API::Std::event_run("on_rcjoin", ($svr, %src, substr($ex[2], 1)));
 	}
 	
@@ -356,11 +351,7 @@ sub kick
         # We were kicked!
 
         # Delete channel from botchans.
-        for (my $i = 0; $i <= scalar(@{ $botchans{$svr} }); $i++) {
-            if (defined $botchans{$svr}[$i]) {
-                undef $botchans{$svr}[$i] if $botchans{$svr}[$i] eq $ex[2];
-            }
-        }
+        delete $botchans{$svr}{$ex[2]};
 
         # Log this horrible act.
         API::Log::alog("I was kicked from ".$svr."/".$ex[2]." by ".$src{nick}."! Reason: ".$msg);
@@ -375,6 +366,72 @@ sub kick
     else {
         # We weren't. Trigger on_kick.
         API::Std::event_run("on_kick", ($svr, %src, $ex[2], $ex[3], $msg));
+    }
+
+    return 1;
+}
+
+# Parse: MODE
+sub mode
+{
+    my ($svr, @ex) = @_;
+
+    if ($ex[2] ne $botnick{$svr}{nick}) {
+        # Set data we'll need later.
+        my $chan = $ex[2];
+        my $modes = $ex[3];
+        # Get rid of the useless data, so the mode parser will work smoothly.
+        shift @ex; shift @ex; shift @ex; shift @ex;
+
+        # Check if the modes contain any status modes.
+        my $nt = 0;
+        foreach (keys %{ $csprefix{$svr} }) {
+            if ($modes =~ /($_)/) {
+                $nt = 1;
+                last;
+            }
+        }
+
+        if ($nt) {
+            # It did. Lets parse the changes.
+            
+            my @ma = split(//, $modes);
+
+            my $op = 1;
+            foreach my $maf (@ma) {
+                if ($maf eq '+') {
+                    # If it's a +, change the operator to 1.
+                    $op = 1;
+                }
+                elsif ($maf eq '-') {
+                    # If it's a -, change the operator to 2.
+                    $op = 2;
+                }
+                else {
+                    # It's a mode, lets check if it's a status mode.
+                    my $user = shift(@ex);
+
+                    if (defined $chanusers{$svr}{$chan}{$user}) {
+                        if ($op == 1) {
+                            if ($chanusers{$svr}{$chan}{$user} eq 1) {
+                                $chanusers{$svr}{$chan}{$user} = $maf;
+                            }
+                            else {
+                                $chanusers{$svr}{$chan}{$user} .= $maf;
+                            }
+                        }
+                        elsif ($op == 2) {
+                            if (length($chanusers{$svr}{$chan}{$user}) == 1) {
+                                $chanusers{$svr}{$chan}{$user} = 1;
+                            }
+                        }
+                    }
+                    else {
+                        $chanusers{$svr}{$chan}{$user} = $maf;
+                    }
+                }
+            }
+        }
     }
 
     return 1;
