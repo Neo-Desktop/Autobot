@@ -34,6 +34,8 @@ sub cpart
 	else {
 		Auto::socksnd($svr, "PART $chan :Leaving");
 	}
+
+    if (defined $Parser::IRC::botchans{$svr}{$chan}) { delete $Parser::IRC::botchans{$svr}{$chan}; }
 	
 	return 1;
 }
