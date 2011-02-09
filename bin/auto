@@ -287,10 +287,10 @@ foreach my $cskey (keys %cservers) {
             if ($cservers{$cskey}{'certfp'}[0] eq 1) {
                 $conndata{'SSL_use_cert'} = 1;
                 if (defined $cservers{$cskey}{'certfp_cert'}[0]) {
-                    $conndata{'SSL_cert_file'} = "$Bin/../etc/".$cservers{$cskey}{'certfp_cert'}[0];
+                    $conndata{'SSL_cert_file'} = "$Bin/../etc/certs/".$cservers{$cskey}{'certfp_cert'}[0];
                 }
                 if (defined $cservers{$cskey}{'certfp_key'}[0]) {
-                    $conndata{'SSL_key_file'} = "$Bin/../etc/".$cservers{$cskey}{'certfp_key'}[0];
+                    $conndata{'SSL_key_file'} = "$Bin/../etc/certs/".$cservers{$cskey}{'certfp_key'}[0];
                 }
                 if (defined $cservers{$cskey}{'certfp_pass'}[0]) {
                     $conndata{'SSL_passwd_cb'} = sub { return $cservers{$cskey}{'certfp_pass'}[0]; };
