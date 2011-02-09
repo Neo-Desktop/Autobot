@@ -39,3 +39,6 @@ while ($fpr =~ s/(.*\n)//) {
 
 # Print the fingerprint.
 say 'Done. Fingerprint: '.$fp;
+
+# vim: set ai sw=4 ts=4:
+
