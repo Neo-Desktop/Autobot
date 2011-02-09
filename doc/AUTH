@@ -1,0 +1,71 @@
+Auto 3.0: IRC Authentication Methods
+-------------------------------------------------------------------------------
+
+Auto comes packaged with three methods of authenticating to IRC auth services
+(e.g. NickServ).
+
+- Plaintext IRC Message
+
+This is the simplest, most basic method, and is discouraged. It works by adding
+idstr to the server block you're going to use this with.
+
+idstr should be set to the string that must be sent to identify. Like so:
+
+For a network using NickServ but has no NS alias:
+idstr "PRIVMSG NickServ :IDENTIFY <password>";
+
+If the network has an NS alias, this is better:
+idstr "NS IDENTIFY <password>";
+
+- Certificate Fingerprint (CertFP)
+
+This is a much securer method of authentication than plaintext. It requires you
+connect to the target network using SSL.
+
+First you need to generate a certificate, please run bin/genssl and answer the
+questions, it will then print "Done. Fingerprint: <random characters", this is
+your CertFP.
+
+To identify with it, make sure the network you're connecting to supports
+CertFP authentication. Usually if they do, the command to add the certificate
+is /msg NickServ CERT ADD <fingerprint>. Consult the network for the exact
+command.
+
+After adding the fingerprint to the bot's account on auth services, add the
+following config options to the server block you're using this with:
+
+certfp 1;
+certfp_cert "<netname>.cert";
+certfp_key "<netname>.key";
+
+If you specified a password for the keyfile during certification generation
+(if you used bin/genssl, ignore this), specify it like so:
+
+certfp_pass "<password>";
+
+<netname> is the network name you gave to bin/genssl.
+
+Now you can connect to the network (with SSL) and it should identify
+automatically and securely.
+
+- SASL (Simple Authentication and Security Layer)
+
+This is another method of authentication that is securer than plaintext. It
+requires that Auto be built with the --enable-sasl option.
+
+Currently, some networks do not support SASL authentication, consult the
+network about this before using SASL.
+
+Using SASL is simple, simply add SASLAuth to module autoload and add the
+following to the server block you're using it with:
+
+sasl_username "<services accountname>";
+sasl_password "<services password>";
+sasl_timeout <timeout>;
+
+Usually you'll want to set <timeout> to 20. The others are straightforward.
+
+Now connect to the network and you should automatically authenticate using
+SASL.
+
+Support for DH-Blowfish SASL is coming soon.
