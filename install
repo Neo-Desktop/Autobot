@@ -84,7 +84,7 @@ else {
 # Check for required CPAN modules.
 println "\0";
 println "--- CPAN Modules ---";
-modfind("Mouse");
+#modfind("Mouse");
 modfind("Class::Unload");
 modfind("IO::Socket::INET6") if $features =~ /ipv6/;
 modfind("IO::Socket::SSL") if $features =~ /ssl/;
