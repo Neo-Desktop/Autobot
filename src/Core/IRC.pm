@@ -7,7 +7,7 @@ package Core::IRC;
 use strict;
 use warnings;
 use English qw(-no_match_vars);
-use API::Std qw(hook_add hook_del);
+use API::Std qw(hook_add);
 use API::IRC qw(notice usrc);
 our $VERSION = 3.000000;
 
@@ -27,3 +27,7 @@ hook_add("on_uprivmsg", "ctcp_version_reply", sub {
 
     return 1;
 });
+
+
+1;
+# vim: set ai sw=4 ts=4:
