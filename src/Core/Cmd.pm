@@ -11,24 +11,6 @@ use API::Std qw(trans has_priv match_user);
 use API::Log qw(dbug alog);
 use API::IRC qw(notice quit usrc);
 
-sub version_reply
-{
-    my (($svr, @ex)) = @_;
-    my %src = usrc(substr($ex[0], 1));
-
-    if ($ex[3] eq ":\001VERSION\001") {
-        if (Auto::RSTAGE ne 'd') {
-            notice($svr, $src{nick}, "VERSION ".Auto::NAME." ".Auto::VER.".".Auto::SVER.".".Auto::REV.Auto::RSTAGE." ".$OSNAME);
-        }
-        else {
-            notice($svr, $src{nick}, "VERSION ".Auto::NAME." ".Auto::VER.".".Auto::SVER.".".Auto::REV.Auto::RSTAGE."-".Auto::GR." ".$OSNAME);
-        }
-    }
-
-    return 1;
-}
-
-
 # Help hash for MODLOAD. Spanish, French and German needed.
 our %HELP_MODLOAD = (
     'en' => 'Loads a module into the running Auto live.',

@@ -37,6 +37,7 @@ use DB::Flatfile;
 use Parser::Config;
 use Parser::Lang;
 use Parser::IRC;
+use Core::IRC;
 use Core::Cmd;
 
 our $VERSION = 3.0.0;
@@ -348,8 +349,6 @@ else {
 }
 undef $it;
 
-# Create core hooks.
-API::Std::hook_add('on_uprivmsg', 'ctcp_version_reply', \&Core::Cmd::version_reply);
 # Create core commands.
 API::Std::cmd_add('MODLOAD', 1, 'cfunc.modules', \%Core::Cmd::HELP_MODLOAD, \&Core::Cmd::cmd_modload);
 API::Std::cmd_add('MODUNLOAD', 1, 'cfunc.modules', \%Core::Cmd::HELP_MODUNLOAD, \&Core::Cmd::cmd_modunload);
