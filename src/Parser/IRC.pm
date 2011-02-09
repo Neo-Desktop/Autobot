@@ -106,7 +106,7 @@ sub num001
 }
 
 # Parse: Numeric:005
-# Prefixes.
+# Prefixes and channel modes.
 sub num005
 {
 	my ($svr, @ex) = @_;

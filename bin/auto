@@ -262,7 +262,7 @@ alog '* Connecting to servers...';
 dbug '* Connecting to servers...';
 # Get servers from config.
 my %cservers = conf_get('server');
-# Set the hashes and processes hashes.
+# Set the socket hash and select instance.
 our (%SOCKET, $SELECT);
 $SELECT = IO::Select->new();
 my $it = 0;
