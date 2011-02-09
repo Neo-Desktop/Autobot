@@ -28,6 +28,18 @@ hook_add("on_uprivmsg", "ctcp_version_reply", sub {
     return 1;
 });
 
+# QUIT hook; delete user from chanusers.
+hook_add("on_quit", "quit_update_chanusers", sub {
+    my (($svr, $src, undef)) = @_;
+    my %src = %{ $src };
+
+    # Delete the user from all channels.
+    foreach my $ccu (keys %{ $Parser::IRC::chanusers{$svr} }) {
+        if (defined $Parser::IRC::chanusers{$svr}{$ccu}{$src{nick}}) { delete $Parser::IRC::chanusers{$svr}{$ccu}{$src{nick}}; }
+    }
+
+    return 1;
+});
 
 1;
 # vim: set ai sw=4 ts=4:

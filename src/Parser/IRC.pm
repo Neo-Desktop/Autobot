@@ -609,11 +609,6 @@ sub quit
     my ($svr, @ex) = @_;
 	my %src = API::IRC::usrc(substr($ex[0], 1));
 
-    # Delete the user from all channels.
-    foreach my $ccu (keys %{ $chanusers{$svr} }) {
-        delete $chanusers{$svr}{$ccu}{$src{nick}} if defined $chanusers{$svr}{$ccu}{$src{nick}};
-    }
-
     # Set $msg to the quit message.
     my $msg = 0;
     if (defined $ex[2]) {
@@ -626,7 +621,7 @@ sub quit
     }
 
     # Trigger on_quit.
-    API::Std::event_run("on_quit", ($svr, %src, $msg));
+    API::Std::event_run("on_quit", ($svr, \%src, $msg));
     
     return 1;
 }
