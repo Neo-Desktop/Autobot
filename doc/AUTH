@@ -23,7 +23,7 @@ This is a much securer method of authentication than plaintext. It requires you
 connect to the target network using SSL.
 
 First you need to generate a certificate, please run bin/genssl and answer the
-questions, it will then print "Done. Fingerprint: <random characters", this is
+questions, it will then print "Done. Fingerprint: <random characters>", this is
 your CertFP.
 
 To identify with it, make sure the network you're connecting to supports
