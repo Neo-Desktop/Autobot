@@ -424,7 +424,7 @@ sub mode
                     # It's a mode, lets check if it's a status mode.
                     my $nnt = 0;
                     foreach (keys %{ $csprefix{$svr} }) {
-                        if ($modes =~ /($_)/) {
+                        if ($maf eq $_) {
                             $nnt = 1;
                             last;
                         }
