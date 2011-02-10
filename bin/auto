@@ -14,6 +14,8 @@ use feature qw(switch);
 use Sys::Hostname;
 use IO::Socket;
 use IO::Select;
+use DBI;
+use DBD::SQLite;
 use Class::Unload;
 use FindBin qw($Bin);
 our $Bin = $Bin; ## no critic qw(NamingConventions::Capitalization Variables::ProhibitPackageVars)
@@ -33,7 +35,7 @@ BEGIN {
 use Lib::Auto;
 use API::Std qw(conf_get err);
 use API::Log qw(println alog dbug);
-use DB::Flatfile;
+#use DB::Flatfile;
 use Parser::Config;
 use Parser::Lang;
 use Parser::IRC;
@@ -165,8 +167,12 @@ println ' Success';
 # Expire old logs.
 API::Log::expire_logs();
 
-# Load database.
-DB::load();
+# Connect to database.
+if (!-e "$Bin/../etc/auto.db") {
+    system "touch $Bin/../etc/auto.db";
+    system "chmod a+x $Bin/../etc/auto.db";
+}
+our $DB = DBI->connect("dbi:SQLite:dbname=$Bin/../etc/auto.db", q{}, q{});
 
 # Parse privileges.
 our (%PRIVILEGES);
@@ -451,8 +457,8 @@ sub signal_term
 {
 	API::Std::event_run('on_sigterm');
 	foreach (keys %SOCKET) { API::IRC::quit($_, 'Caught SIGTERM'); }
-	DB::flush();
-	dbug '!!! Caught SIGTERM; terminating...';
+	$DB->disconnect;
+    dbug '!!! Caught SIGTERM; terminating...';
 	alog '!!! Caught SIGTERM; terminating...';
 	if (-e "$Bin/auto.pid") {
 		unlink "$Bin/auto.pid";
@@ -466,8 +472,8 @@ sub signal_int
 {
 	API::Std::event_run('on_sigint');
 	foreach (keys %SOCKET) { API::IRC::quit($_, 'Caught SIGINT'); }
-	DB::flush();
-	dbug '!!! Caught SIGINT; terminating...';
+	$DB->disconnect;
+    dbug '!!! Caught SIGINT; terminating...';
 	alog '!!! Caught SIGINT; terminating...';
 	if (-e "$Bin/auto.pid") {
 		unlink "$Bin/auto.pid";
@@ -504,8 +510,8 @@ sub signal_perldie
     return if $EXCEPTIONS_BEING_CAUGHT;
     alog 'Perl Fatal: '.$diemsg.' -- Terminating program!';
 	foreach (keys %SOCKET) { API::IRC::quit($_, 'A fatal error occurred!'); }
-    DB::flush();
-	if (-e "$Bin/auto.pid") {
+	$DB->disconnect;
+    if (-e "$Bin/auto.pid") {
 		unlink "$Bin/auto.pid";
 	}
 	sleep 1;

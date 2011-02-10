@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Switched from Auto-Flatfile to SQLite for database backend.
     * Added a Badwords module.
     * Added kick() to API::IRC.
     * Added DBI and DBD::SQLite to core dependencies.
