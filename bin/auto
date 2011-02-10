@@ -4,13 +4,13 @@
 # Copyright (C) 2010-2011 Xelhua Development Team (doc/CREDITS)
 # This program is free software; rights to this code are stated in doc/LICENSE.
 package Auto;
-require 5.010000;
+use 5.010_000;
 use strict;
 use warnings;
+no feature qw(say state);
 use POSIX;
 use locale;
 use English qw(-no_match_vars);
-use feature qw(switch);
 use Sys::Hostname;
 use IO::Socket;
 use IO::Select;
@@ -20,7 +20,7 @@ use Class::Unload;
 use FindBin qw($Bin);
 our $Bin = $Bin; ## no critic qw(NamingConventions::Capitalization Variables::ProhibitPackageVars)
 BEGIN {
-    unshift @INC, "$Bin/../src";
+    unshift @INC, "$Bin/../lib";
 
     # Set version information.
     use constant { ## no critic qw(ValuesAndExpressions::ProhibitConstantPragma)
