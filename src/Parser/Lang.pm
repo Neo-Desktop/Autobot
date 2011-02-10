@@ -2,7 +2,7 @@
 # Copyright (C) 2010-2011 Xelhua Development Team (doc/CREDITS)
 # This program is free software; rights to this code are stated in doc/LICENSE.
 
-# Language file parser.
+# Parser::Lang - Language file parser.
 package Parser::Lang;
 use strict;
 use warnings;
@@ -66,3 +66,4 @@ sub parse
 
 
 1;
+# vim: set ai sw=4 ts=4:
