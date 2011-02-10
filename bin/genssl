@@ -4,11 +4,10 @@
 # This program is free software; rights to this code are stated in doc/LICENSE.
 
 # A simple script for generating an SSL certificate.
-require 5.010000;
+use 5.010_000;
 use strict;
 use warnings;
 use FindBin qw($Bin);
-use feature qw(say);
 our $VERSION = 1.00;
 my $bin = $Bin;
 
