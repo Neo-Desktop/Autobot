@@ -102,7 +102,6 @@ sub checkver
 
 sub checkcore
 {
-    println "Checking for Perl core modules.....";
     println "\0";
     modfind('Carp');
     modfind('FindBin');
