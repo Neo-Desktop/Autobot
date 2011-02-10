@@ -11,7 +11,7 @@ our $Bin = $Bin;
 
 our $VERSION = 1.00;
 our @ISA = qw(Exporter);
-our @EXPORT = qw(println modfind build checkver);
+our @EXPORT = qw(println modfind build checkver checkcore);
 
 sub println
 {
@@ -31,8 +31,8 @@ sub modfind
 {
     my ($mod) = @_;
 
-    print "Checking for $mod..... ";
-    eval('require '.$mod.'; 1;') and println "OK" or println "Not Found" and exit;
+    print "    $mod: ";
+    eval('require '.$mod.'; 1;') and println "Found" or println "Not Found" and $Install::ERROR = 1;
 
     return 1;
 }
@@ -98,4 +98,17 @@ sub checkver
     }
 
     return 1;
+}
+
+sub checkcore
+{
+    println "Checking for Perl core modules.....";
+    println "\0";
+    modfind('Carp');
+    modfind('FindBin');
+    modfind('feature');
+    modfind('IO::Socket');
+    modfind('Sys::Hostname');
+    modfind('POSIX');
+    modfind('Time::Local');
 }
