@@ -9,7 +9,7 @@ use warnings;
 use Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(cjoin cpart cmode umode privmsg notice quit nick names topic
+our @EXPORT_OK = qw(cjoin cpart cmode umode kick privmsg notice quit nick names topic
 					usrc match_mask);
 
 
@@ -120,6 +120,16 @@ sub topic
 	Auto::socksnd($svr, "TOPIC $chan :$topic");
 	
 	return 1;
+}
+
+# Kick a user.
+sub kick
+{
+    my ($svr, $chan, $nick, $msg) = @_;
+
+    Auto::socksnd($svr, "KICK $chan $nick :$msg");
+
+    return 1;
 }
 
 # Quit IRC.

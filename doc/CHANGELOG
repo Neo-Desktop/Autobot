@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ==================================================================
+    * Added kick() to API::IRC.
     * Added DBI and DBD::SQLite to core dependencies.
     * Added on_connect hook, triggered after we receive 001.
     * Updated hooks to use hashrefs.
