@@ -1,8 +1,8 @@
 Auto IRC Bot 3.0: Change Log
-------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 3.0 Indev
-==================================================================
+===============================================================================
     * Moved signal handlers to Lib::Auto.
     * Renamed src/ to lib/.
     * Switched from Auto-Flatfile to SQLite for database backend.
@@ -21,21 +21,19 @@ Auto IRC Bot 3.0: Change Log
     * Added IPv6 support.
 
 3.0 Alpha 2
-==================================================================
+===============================================================================
     * Added update check for non-indev releases.
     * Added Git revision to version string for dev releases.
     * Added an FML module for retrieving random FML quotes.
-    * Privilege to use a command is now handled by the priv arg of
-      cmd_add.
-    * HELP now only displays help if the user has the appropriate
-      privileges.
+    * Privilege to use a command is now handled by the priv arg of cmd_add.
+    * HELP now only displays help if the user has the appropriate privileges.
     * Updated Core::IRC and all modules to obey the updated API.
-    * Deleted shelp from cmd_add, replaced with privilege. Renamed
-      fhelp to help.
-    * If fantasy HELP is used, only display fantasy commands, if
-      private HELP is used, only display private commands.
-    * Fixed cmd_add syntax. Correct format: name, level, short help,
-      full help, callback.
+    * Deleted shelp from cmd_add, replaced with privilege. Renamed fhelp to
+      help.
+    * If fantasy HELP is used, only display fantasy commands, if private HELP
+      is used, only display private commands.
+    * Fixed cmd_add syntax. Correct format: name, level, short help, full help,
+      callback.
     * Added core command HELP.
     * Added core command RESTART.
     * Added config option server:autorejoin for rejoining on kick.
@@ -48,8 +46,7 @@ Auto IRC Bot 3.0: Change Log
     * Update chanusers on JOIN.
     * Properly parse NICK and update chanusers.
     * Added --enable-ssl to ./install for the future SSL support.
-    * Added chanstatus-based permissions. This works via
-      user:chanstatus.
+    * Added chanstatus-based permissions. This works via user:chanstatus.
     * Catch __WARN__ and __DIE__, logging to file.
     * Added Spanish translations.
     * Added EightBall module.
@@ -69,7 +66,7 @@ Auto IRC Bot 3.0: Change Log
     * Added Bit.ly module.
 
 3.0 Alpha 1
-==================================================================
+===============================================================================
     * Added mod_exists() to API::Std.
     * Added SASL support with modules/SASLAuth.
     * Added mdelete() to DB/Flatfile.
@@ -77,9 +74,9 @@ Auto IRC Bot 3.0: Change Log
     * Added has_priv() to API::Std.
     * Finished the host-based privilege/permission system.
     * Added hook on_preconnect, this comes before USER (after PASS).
-    * Added match_mask() to API::IRC and match_user() to API::Std,
-      match_user checks config user:mask to find a user block, if
-      a match is found, the configured username is returned.
+    * Added match_mask() to API::IRC and match_user() to API::Std, match_user
+      checks config user:mask to find a user block, if a match is found, the
+      configured username is returned.
     * Added rchook_add() and rchook_del() to API::Std.
     * Parse NOTICE and added hook on_notice.
     * Added hooks on_uprivmsg and on_cprivmsg.
@@ -97,34 +94,32 @@ Auto IRC Bot 3.0: Change Log
     * Parse NAME replies (Numeric:353).
     * Parse Numeric:005 and store PREFIX's data.
     * Bug fix: The bot's nick is now stored correctly.
-    * Added server:modes config option for setting modes on
-      connect.
+    * Added server:modes config option for setting modes on connect.
     * Parse TOPIC. (and added hook on_topic)
     * Added DB::Flatfile for DB:: database functions.
     * Added umode() to API::IRC.
     * Added events on_ucjoin, on_rcjoin and on_nick.
     * Parse numerics 465, 471-475 and 477.
-    * Added an optional @args onto event_run() for sending @args
-      to the subs that have hooked onto the event.
+    * Added an optional @args onto event_run() for sending @args to the subs
+      that have hooked onto the event.
     * Parse the channels the bot is in.
     * Parse Numeric:438.
     * Added timer_add() and timer_del() to API::Std for timers.
     * Added events: on_sigterm, on_sigint and on_sighup.
-    * Added event_add|del|run() and hook_add|del() to API::Std for
-      managing and running events/hooks.
+    * Added event_add|del|run() and hook_add|del() to API::Std for managing and
+      running events/hooks.
     * server:nspass removed. server:idstr added.
-    * Changed the way we parse strings to support multi-word
-      strings in config values.
-    * Added server:nspass to config options. Will be replaced in
-      the future by idstr.
+    * Changed the way we parse strings to support multi-word strings in config
+      values.
+    * Added server:nspass to config options. Will be replaced in the future by
+      idstr.
     * Parse NICK.
     * Added usrc() to API::IRC for formatting a source.
     * Added awarn() to API::Std for warnings.
     * Parse Numeric:432.
     * Parse Numeric:433.
     * Added nick() to API::IRC.
-    * Added %got_001 to Parser::IRC for checking if we've been
-      sent 001.
+    * Added %got_001 to Parser::IRC for checking if we've been sent 001.
     * Renamed API::IRC::mode() to cmode()
     * Added mod_init() and mod_void() to API::Std.
     * Use Class::Unload.
@@ -134,16 +129,15 @@ Auto IRC Bot 3.0: Change Log
     * Added privmsg() to API::IRC.
     * Added mode() to API::IRC.
     * Added PASS support.
-    * Bug fix: err() fatal errors now work. They didn't work
-      due to bad regex.
+    * Bug fix: err() fatal errors now work. They didn't work due to bad regex.
     * Added an installation script.
     * Fork into the background if not in debug mode.
     * Begin on API::IRC.
     * Parse PING and Numeric:001.
     * Begin on the IRC parser.
     * Added sockets, support for multiple asynchronous sockets.
-    * Bug fix: conf_get() now returns correct data by checking
-      what type of reference the requested value is.
+    * Bug fix: conf_get() now returns correct data by checking what type of
+      reference the requested value is.
     * Foundation completed.
     * Added API function err()
     * Added API function dbug()
@@ -175,7 +169,6 @@ Auto IRC Bot 3.0: Change Log
     * Added gettext compile script.
     * Gettext English language files.
     * New developer; Matthew Barksdale.
-    * Added documentation for the future Auto-Flatfile database 
-      format.
+    * Added documentation for the future Auto-Flatfile database format.
     * Added a basic launcher.
     * Finished standard documentation.
