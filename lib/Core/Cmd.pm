@@ -182,6 +182,27 @@ sub cmd_restart
     return 1;
 }
 
+# Help hash for REHASH. Spanish, French and German needed.
+our %HELP_REHASH = (
+    'en' => 'This will reload the configuration file, update logs, load new modules and connect to new servers.',
+);
+# REHASH callback.
+sub cmd_rehash
+{
+    my (%data) = @_;
+    
+    # Send out notifications.
+    notice($data{svr}, $data{nick}, "Rehashing.");
+    dbug "Got REHASH from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Rehashing. . .";
+    alog "Got REHASH from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Rehashing. . .";
+
+    # Rehash.
+    Lib::Auto::rehash();
+    notice($data{svr}, $data{nick}, "Done.");
+
+    return 1;
+}
+
 # Help hash for HELP. Spanish, French and German needed.
 our %HELP_HELP = (
     'en' => 'Displays help for commands.',

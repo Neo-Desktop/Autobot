@@ -361,6 +361,7 @@ API::Std::cmd_add('MODUNLOAD', 1, 'cfunc.modules', \%Core::Cmd::HELP_MODUNLOAD, 
 API::Std::cmd_add('MODRELOAD', 1, 'cfunc.modules', \%Core::Cmd::HELP_MODRELOAD, \&Core::Cmd::cmd_modreload);
 API::Std::cmd_add('SHUTDOWN', 2, 'cmd.shutdown', \%Core::Cmd::HELP_SHUTDOWN, \&Core::Cmd::cmd_shutdown);
 API::Std::cmd_add('RESTART', 2, 'cmd.restart', \%Core::Cmd::HELP_RESTART, \&Core::Cmd::cmd_restart);
+API::Std::cmd_add('REHASH', 2, 'cmd.rehash', \%Core::Cmd::HELP_REHASH, \&Core::Cmd::cmd_rehash);
 API::Std::cmd_add('HELP', 2, 0, \%Core::Cmd::HELP_HELP, \&Core::Cmd::cmd_help);
 
 # Infinite while loop.
