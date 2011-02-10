@@ -86,11 +86,11 @@ if ($BFVER[0] ne VER.q{.}.SVER.q{.}.REV.RSTAGE."\n") {
 undef @BFVER;
 
 # Set signal handlers.
-local $SIG{TERM}       = \&signal_term;
-local $SIG{INT}        = \&signal_int;
-local $SIG{HUP}        = \&signal_hup;
-local $SIG{'__WARN__'} = \&signal_perlwarn;
-local $SIG{'__DIE__'}  = \&signal_perldie;
+local $SIG{TERM}       = \&Lib::Auto::signal_term;
+local $SIG{INT}        = \&Lib::Auto::signal_int;
+local $SIG{HUP}        = \&Lib::Auto::signal_hup;
+local $SIG{'__WARN__'} = \&Lib::Auto::signal_perlwarn;
+local $SIG{'__DIE__'}  = \&Lib::Auto::signal_perldie;
 API::Std::event_add('on_sigterm');
 API::Std::event_add('on_sigint');
 API::Std::event_add('on_sighup');
@@ -447,76 +447,6 @@ sub mod_load {
     }
 
     return 0;
-}
-
-
-## Signal handlers
-
-# SIGTERM
-sub signal_term
-{
-	API::Std::event_run('on_sigterm');
-	foreach (keys %SOCKET) { API::IRC::quit($_, 'Caught SIGTERM'); }
-	$DB->disconnect;
-    dbug '!!! Caught SIGTERM; terminating...';
-	alog '!!! Caught SIGTERM; terminating...';
-	if (-e "$Bin/auto.pid") {
-		unlink "$Bin/auto.pid";
-	}
-	sleep 1;
-	exit;
-}
-
-# SIGINT
-sub signal_int
-{
-	API::Std::event_run('on_sigint');
-	foreach (keys %SOCKET) { API::IRC::quit($_, 'Caught SIGINT'); }
-	$DB->disconnect;
-    dbug '!!! Caught SIGINT; terminating...';
-	alog '!!! Caught SIGINT; terminating...';
-	if (-e "$Bin/auto.pid") {
-		unlink "$Bin/auto.pid";
-	}
-	sleep 1;
-	exit;
-}
-
-# SIGHUP
-sub signal_hup
-{
-	API::Std::event_run('on_sighup');
-	dbug '!!! Caught SIGHUP but rehash is unavailable; ignoring';
-	alog '!!! Caught SIGHUP but rehash is unavailable; ignoring';
-	return 1;
-}
-
-# __WARN__
-sub signal_perlwarn
-{
-    my ($warnmsg) = @_;
-    $warnmsg =~ s/(\n|\r)//xsmg;
-    alog 'Perl Warning: '.$warnmsg;
-    if ($DEBUG) { println 'Perl Warning: '.$warnmsg; }
-    return 1;
-}
-
-# __DIE__
-sub signal_perldie
-{
-    my ($diemsg) = @_;
-    $diemsg =~ s/(\n|\r)//xsmg;
-
-    return if $EXCEPTIONS_BEING_CAUGHT;
-    alog 'Perl Fatal: '.$diemsg.' -- Terminating program!';
-	foreach (keys %SOCKET) { API::IRC::quit($_, 'A fatal error occurred!'); }
-	$DB->disconnect;
-    if (-e "$Bin/auto.pid") {
-		unlink "$Bin/auto.pid";
-	}
-	sleep 1;
-    println 'FATAL: '.$diemsg;
-    exit;
 }
 
 # vim: set ai sw=4 ts=4:
