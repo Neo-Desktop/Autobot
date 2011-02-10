@@ -85,6 +85,8 @@ else {
 println "\0";
 println "--- CPAN Modules ---";
 #modfind("Mouse");
+modfind("DBI");
+modfind("DBD::SQLite");
 modfind("Class::Unload");
 modfind("IO::Socket::INET6") if $features =~ /ipv6/;
 modfind("IO::Socket::SSL") if $features =~ /ssl/;
