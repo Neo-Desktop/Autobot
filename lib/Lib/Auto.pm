@@ -240,9 +240,10 @@ sub signal_int
 # SIGHUP
 sub signal_hup
 {
+    dbug '!!! Caught SIGHUP; rehashing';
+    alog '!!! Caught SIGHUP; rehashing';
+    rehash();
     API::Std::event_run('on_sighup');
-    dbug '!!! Caught SIGHUP but rehash is unavailable; ignoring';
-    alog '!!! Caught SIGHUP but rehash is unavailable; ignoring';
     return 1;
 }
 
