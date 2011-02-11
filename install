@@ -92,7 +92,7 @@ else {
 
 # Check for required CPAN modules.
 println "\0";
-println '*** CPAN Modules ***';
+println 'Checking for required CPAN modules......';
 println "\0";
 #modfind("Mouse");
 modfind('DBI');
