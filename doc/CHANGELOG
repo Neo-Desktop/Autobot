@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Added a QDB module.
     * SIGHUP now triggers a rehash.
     * Added core command REHASH.
     * Moved signal handlers to Lib::Auto.
