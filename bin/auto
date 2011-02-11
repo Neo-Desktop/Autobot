@@ -172,7 +172,7 @@ if (!-e "$Bin/../etc/auto.db") {
     system "touch $Bin/../etc/auto.db";
     system "chmod a+x $Bin/../etc/auto.db";
 }
-our $DB = DBI->connect("dbi:SQLite:dbname=$Bin/../etc/auto.db", q{}, q{}) or exit;
+our $DB = DBI->connect("dbi:SQLite:dbname=$Bin/../etc/auto.db", q{}, q{});
 
 # Parse privileges.
 our (%PRIVILEGES);
