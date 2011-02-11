@@ -452,6 +452,14 @@ sub mod_load {
         }
     }
 
+    my $errs = $EVAL_ERROR;
+    while ($errs =~ s/(.*\n)//) {
+        my $line = $1;
+        $line =~ s/(\r|\n)//g;
+        alog 'Error in '.$module.': '.$line;
+        dbug 'Error in '.$module.': '.$line;
+    }
+
     return;
 }
 
