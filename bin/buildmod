@@ -108,17 +108,4 @@ foreach (@pars) {
     }
 }
 
-open my $FHBM, '<', $modulep;
-
-my $db = '# buildmod.built: YES '.time."\n";
-foreach my $line (<$FHBM>) {
-    $line =~ s/(\r|\n)//g;
-    $db .= $line."\n";
-}
-close $FHBM;
-
-open $FHBM, '>', $modulep;
-print {$FHBM} $db;
-close $FHBM;
-
 say 'Done.';
