@@ -13,7 +13,6 @@ use Exporter;
 use base qw(Exporter);
 use API::Std qw(conf_get);
 
-our $VERSION = 3.000000;
 our @EXPORT_OK = qw(println dbug alog);
 
 

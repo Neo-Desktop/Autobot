@@ -9,7 +9,6 @@ use warnings;
 use English qw(-no_match_vars);
 use API::Std qw(hook_add conf_get);
 use API::IRC qw(notice usrc);
-our $VERSION = 3.000000;
 
 # CTCP VERSION reply.
 hook_add("on_uprivmsg", "ctcp_version_reply", sub {
