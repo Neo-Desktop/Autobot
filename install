@@ -131,6 +131,11 @@ if (!-e "$Bin/build/ver") {
 }
 
 build($features);
+println 'Done.';
+
+println q{};
+installmods();
+println q{};
 
 # Success!
 println "Done. Auto successfully installed.";

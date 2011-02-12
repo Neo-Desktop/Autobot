@@ -11,7 +11,7 @@ our $Bin = $Bin;
 
 our $VERSION = 1.00;
 our @ISA = qw(Exporter);
-our @EXPORT = qw(println modfind build checkver checkcore);
+our @EXPORT = qw(println modfind build checkver checkcore installmods);
 
 sub println
 {
@@ -110,4 +110,22 @@ sub checkcore
     modfind('Sys::Hostname');
     modfind('POSIX');
     modfind('Time::Local');
+}
+
+sub installmods
+{
+    print 'Would you like to install any official modules? [y/n] ';
+    my $response = <STDIN>;
+    chomp $response;
+    if (lc $response eq 'y') {
+        println 'What modules would you like to install? (separate by commas)';
+        println 'Available modules: Badwords, Bitly, Calc, EightBall, FML, HelloChan, IsItUp, QDB, SASLAuth, Weather';
+        print '> ';
+        my $modules = <STDIN>; chomp $modules;
+        $modules =~ s/ //g;
+        my @modst = split ',', $modules;
+        foreach (@modst) {
+            system "$Bin/bin/buildmod $_";
+        }
+    }
 }

@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Added module installer to ./install.
     * Added a module buildsys.
     * Added a QDB module.
     * SIGHUP now triggers a rehash.
