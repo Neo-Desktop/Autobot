@@ -21,13 +21,13 @@ my $module = $ARGV[0];
 # Set full path.
 my $type = 0;
 my $modulep;
-if (-e "$Bin/../modules/$module.pm") {
-    $modulep = "$Bin/../modules/$module.pm";
+if (-e "$Bin/../modules/src/$module.pm") {
+    $modulep = "$Bin/../modules/src/$module.pm";
     $type = 1;
 }
 else {
-    if (-e "$Bin/../modules/$module/Buildfile") {
-        $modulep = "$Bin/../modules/$module/Buildfile";
+    if (-e "$Bin/../modules/src/$module/Buildfile") {
+        $modulep = "$Bin/../modules/src/$module/Buildfile";
         $type = 2;
     }
     else {
@@ -117,6 +117,7 @@ foreach my $line (<$FHBM>) {
 }
 close $FHBM;
 
+$modulep =~ s/src\///g;
 open $FHBM, '>', $modulep;
 print {$FHBM} $db;
 close $FHBM;
