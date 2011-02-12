@@ -11,7 +11,7 @@ use API::IRC qw(privmsg);
 sub _init
 {
 	# Add a hook for when we join a channel.
-	hook_add("on_ucjoin", "HelloChan", \&m_HelloChan::hello) or return 0;
+	hook_add("on_rcjoin", "HelloChan", \&m_HelloChan::hello) or return 0;
 	return 1;
 }
 
@@ -19,17 +19,17 @@ sub _init
 sub _void
 {
 	# Delete the hook.
-	hook_del("on_ucjoin", "HelloChan") or return 0;
+	hook_del("on_rcjoin", "HelloChan") or return 0;
 	return 1;
 }
 
 # Main subroutine.
 sub hello
 {
-	my (($svr, $chan)) = @_;
+	my (($svr, %src, $chan)) = @_;
 	
 	# Send a PRIVMSG.
-	privmsg($svr, $chan, "Hello channel! I am a bot!");
+	privmsg($svr, $chan, "Hello ".$src{nick});
 	
 	return 1;
 }
@@ -37,3 +37,5 @@ sub hello
 
 # Start initialization.
 API::Std::mod_init("HelloChan", "Xelhua", "1.00", "3.0.0d", __PACKAGE__);
+# vim: set ai sw=4 ts=4:
+# build: perl=5.010000

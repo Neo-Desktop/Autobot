@@ -80,6 +80,8 @@ sub weather
 
 # Start initialization.
 API::Std::mod_init("Weather", "Xelhua", "1.00", "3.0.0d", __PACKAGE__);
+# vim: set ai sw=4 ts=4:
+# build: cpan=LWP::UserAgent,XML::Simple perl=5.010000
 
 __END__
 
