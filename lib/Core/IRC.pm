@@ -1,12 +1,14 @@
-# lib/Core/IRC.pm - Core IRC hooks.
+# lib/Core/IRC.pm - Core IRC hooks and timers.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
 package Core::IRC;
 use strict;
 use warnings;
 use English qw(-no_match_vars);
-use API::Std qw(hook_add conf_get);
+use API::Std qw(hook_add timer_add conf_get);
 use API::IRC qw(notice usrc);
+
+our (%usercmd);
 
 # CTCP VERSION reply.
 hook_add("on_uprivmsg", "ctcp_version_reply", sub {
@@ -83,6 +85,23 @@ hook_add("on_connect", "autojoin", sub {
 
     return 1;
 });
+
+sub clear_usercmd_timer 
+{
+    # If ratelimit is set to 1 in config, add this timer.
+    if ((conf_get('ratelimit'))[0][0] eq 1) {
+        # Clear usercmd hash every X seconds.
+        timer_add('clear_usercmd', 2, (conf_get('ratelimit_time'))[0][0], sub {
+            foreach (keys %Core::IRC::usercmd) {
+                $Core::IRC::usercmd{$_} = 0;
+            }
+
+            return 1;
+        });
+    }
+
+    return 1;
+}
 
 
 1;

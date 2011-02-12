@@ -11,7 +11,7 @@ use base qw(Exporter);
 our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
 our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add 
 					cmd_del hook_add hook_del rchook_add rchook_del match_user
-					has_priv mod_exists);
+					has_priv mod_exists ratelimit_check);
 
 
 # Initialize a module.
@@ -413,6 +413,38 @@ sub has_priv
 	}
 
 	return;
+}
+
+# Ratelimit check subroutine.
+sub ratelimit_check
+{
+    my (%src) = @_;
+
+    # Check if ratelimit is set to on.
+    if ((conf_get('ratelimit'))[0][0] == 1) {
+        if (!defined $Core::IRC::usercmd{$src{nick}.'@'.$src{host}.'/'.$src{svr}}) {
+            # Set a usercmd entry for this user.
+            $Core::IRC::usercmd{$src{nick}.'@'.$src{host}.'/'.$src{svr}} = 0;
+        }
+
+        # If the user has not passed the rate limit.
+        if ($Core::IRC::usercmd{$src{nick}.'@'.$src{host}.'/'.$src{svr}} <= (conf_get('ratelimit_amount'))[0][0]) {
+            # Increment their uses and return 1.
+            $Core::IRC::usercmd{$src{nick}.'@'.$src{host}.'/'.$src{svr}}++;
+            return 1;
+        }
+        else {
+            # Increment their uses and return 0.
+            $Core::IRC::usercmd{$src{nick}.'@'.$src{host}.'/'.$src{svr}}++;
+            return 0;
+        }
+    }
+    else {
+        # It isn't. Return 1.
+        return 1;
+    }
+
+    return 1;
 }
 
 # Error subroutine.

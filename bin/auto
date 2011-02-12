@@ -144,7 +144,7 @@ if (conf_get('die')) {
 }
 
 # Check for required configuration values.
-my @REQCVALS = qw(locale expire_logs server fantasy_pf);
+my @REQCVALS = qw(locale expire_logs server fantasy_pf ratelimit);
 foreach my $REQCVAL (@REQCVALS) {
 	if (!conf_get($REQCVAL)) {
 		my $err = 2;
@@ -173,6 +173,9 @@ if (!-e "$Bin/../etc/auto.db") {
     system "chmod a+x $Bin/../etc/auto.db";
 }
 our $DB = DBI->connect("dbi:SQLite:dbname=$Bin/../etc/auto.db", q{}, q{});
+
+# Ratelimit timer.
+Core::IRC::clear_usercmd_timer();
 
 # Parse privileges.
 our (%PRIVILEGES);
