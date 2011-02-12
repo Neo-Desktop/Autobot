@@ -53,3 +53,5 @@ elif [ "$1" = "getextras" ]; then
 else
 	echo "Usage: auto (start|stop|rehash|status|getmodules|getextras)"
 fi
+
+# vim: set ai sw=4 ts=4:
