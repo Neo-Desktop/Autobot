@@ -3,6 +3,10 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+
+
+3.0 Alpha 3
+===============================================================================
     * Added command rate limiting.
     * Added module installer to ./install.
     * Added a module buildsys.
