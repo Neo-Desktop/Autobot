@@ -1,8 +1,6 @@
-# Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
+# lib/Parser/IRC.pm - Subroutines for parsing incoming data from IRC.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-
-# Parser::IRC - Subroutines for parsing incoming data from IRC.
 package Parser::IRC;
 use strict;
 use warnings;

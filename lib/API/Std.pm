@@ -1,8 +1,6 @@
-# Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
+# lib/API/Std.pm - Standard API subroutines.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-
-# Standard API subroutines.
 package API::Std;
 use strict;
 use warnings;

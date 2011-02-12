@@ -1,4 +1,4 @@
-# Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
+# Module: Weather. See below for documentation.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
 package m_Weather;

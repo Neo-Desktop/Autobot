@@ -1,8 +1,6 @@
-# Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
+# lib/Core/Cmd.pm - Core commands.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-
-# Core::Cmd - Core commands.
 package Core::Cmd;
 use strict;
 use warnings;

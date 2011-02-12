@@ -1,8 +1,6 @@
-# Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
+# lib/Parser/Lang.pm - Language file parser.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-
-# Parser::Lang - Language file parser.
 package Parser::Lang;
 use strict;
 use warnings;

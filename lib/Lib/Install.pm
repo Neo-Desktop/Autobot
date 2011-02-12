@@ -1,4 +1,4 @@
-# Auto IRC Bot. An advanced, lightweight and powerful IRC bot.
+# lib/Lib/Install.pm - Installation subroutines.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
 package Lib::Install;
