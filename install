@@ -17,16 +17,16 @@ our $VERSION = 1.00;
 our $ERROR = 0;
 
 # Iterate through the arguments passed to us.
-my $features = "base ssl";
+my $features = 'base ssl';
 if (defined $ARGV[0]) {
 	foreach (@ARGV) {
-		if ($_ eq "-h" or $_ eq "--help") {
-			println "*** ./install help ***";
-			println " --enable-sasl - Enable support for SASL.";
-            println " --enable-ipv6 - Enable support for IPv6.";
-            println " --disable-ssl - Disable support for SSL.";
-			println "*** End of Help ***";
-			exit;
+		if ($_ eq '-h' or $_ eq '--help') {
+			println '*** ./install help ***';
+			println ' --enable-sasl - Enable support for SASL.';
+            println ' --enable-ipv6 - Enable support for IPv6.';
+            println ' --disable-ssl - Disable support for SSL.';
+			println '*** End of Help ***';
+			exit 1;
 		}
 		elsif ($_ eq "--enable-sasl") {
 			$features .= " sasl";
