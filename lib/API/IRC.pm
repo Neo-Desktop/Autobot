@@ -125,7 +125,7 @@ sub kick
 {
     my ($svr, $chan, $nick, $msg) = @_;
 
-    Auto::socksnd($svr, "KICK $chan $nick :$msg");
+    Auto::socksnd($svr, "KICK $chan $nick :".((defined $msg) ? $msg : 'No reason'));
 
     return 1;
 }
