@@ -14,7 +14,7 @@ sub _init
     cmd_add('QDB', 0, 0, \%m_QDB::HELP_QDB, \&m_QDB::cmd_qdb) or return;
 
     # Check for database table.
-    $Auto::DB->do('CREATE TABLE IF NOT EXISTS qdb (key INTEGER PRIMARY KEY, creator TEXT, time INTEGER, quote TEXT)') or return;
+    $Auto::DB->do('CREATE TABLE IF NOT EXISTS qdb (quoteid INTEGER PRIMARY KEY, creator TEXT, time INTEGER, quote TEXT)') or return;
 
     # Success.
     return 1;
@@ -76,7 +76,7 @@ sub cmd_qdb
             }
 
             # Get quote.
-            my $dbq = $Auto::DB->prepare('SELECT * FROM qdb WHERE key = ?') or
+            my $dbq = $Auto::DB->prepare('SELECT * FROM qdb WHERE quoteid = ?') or
                 notice($data{svr}, $data{nick}, trans('An error occurred').'. Quote might not exist.') and return;
             $dbq->execute($argv[1]) or notice($data{svr}, $data{nick}, trans('An error occurred').'. Quote might not exist.') and return;
             my @data = $dbq->fetchrow_array;
@@ -103,7 +103,7 @@ sub cmd_qdb
             if ($rand == 0) { $rand = $count; }
 
             # Get quote.
-            my $dbq = $Auto::DB->prepare('SELECT * FROM qdb WHERE key = ?') or
+            my $dbq = $Auto::DB->prepare('SELECT * FROM qdb WHERE quoteid = ?') or
                 notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
             $dbq->execute($rand) or notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
             my @data = $dbq->fetchrow_array;
@@ -125,7 +125,7 @@ sub cmd_qdb
             }
             
             # Update database.
-            my $dbq = $Auto::DB->do("UPDATE qdb SET quote = \"NOTICE: Quote deleted.\" WHERE key = $argv[1]");
+            my $dbq = $Auto::DB->do("UPDATE qdb SET quote = \"NOTICE: Quote deleted.\" WHERE quoteid = $argv[1]");
 
             notice($data{svr}, $data{nick}, (($dbq) ? 'Done.' : trans('An error occurred').q{.}));
         }
@@ -167,6 +167,6 @@ database.
 
 =over
 
-This module is compatible with Auto v3.0.0a3+.
+This module is compatible with Auto v3.0.0a4+.
 
 =back
