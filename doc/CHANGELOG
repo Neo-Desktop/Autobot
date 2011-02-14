@@ -3,7 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
-
+    * Added a database upgrade script for upgrading the `qdb` table in 3.0.0a3
+      to the new format used by 3.0.0a4.
 
 3.0 Alpha 3
 ===============================================================================
