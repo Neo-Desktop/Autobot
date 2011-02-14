@@ -224,6 +224,7 @@ given (lc((conf_get('database:format'))[0][0])) {
         if ($ENFEAT !~ /pgsql/) { err(2, 'Auto not built with PostgreSQL support. Aborting.', 1); }
         my @reqcval = qw(database:name database:host database:username database:password);
         foreach (@reqcval) { if (!conf_get($_)) { err(2, "Missing required configuration value $_. Aborting.", 1); } }
+        undef @reqcval;
 
         # Import DBD::Pg.
         require DBD::Pg;
