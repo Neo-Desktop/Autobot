@@ -183,7 +183,7 @@ given (lc((conf_get('database:format'))[0][0])) {
             system "chmod a+x $Bin/../etc/".(conf_get('database:filename'))[0][0];
         }
         # Connect to database.
-        $DB = DBI->connect("dbi:SQLite:dbname=$Bin/../etc/".(conf_get('database:filename'))[0][0], q{}, q{});
+        $DB = DBI->connect("dbi:SQLite:dbname=$Bin/../etc/".(conf_get('database:filename'))[0][0]);
     }
     when ('mysql') {
         # MySQL.
