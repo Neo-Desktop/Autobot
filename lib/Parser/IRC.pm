@@ -301,12 +301,12 @@ sub cjoin
 	
 	# Check if this is coming from ourselves.
 	if ($src{nick} eq $botnick{$svr}{nick}) {
-		$botchans{$svr}{substr $ex[2], 1} = 1;
+		$botchans{$svr}{lc(substr $ex[2], 1)} = 1;
 		API::Std::event_run("on_ucjoin", ($svr, substr($ex[2], 1)));
 	}
 	else {
 		# It isn't. Update chanusers and trigger on_rcjoin.
-        $chanusers{$svr}{substr $ex[2], 1}{$src{nick}} = 1;
+        $chanusers{$svr}{lc(substr $ex[2], 1)}{$src{nick}} = 1;
 		API::Std::event_run("on_rcjoin", ($svr, \%src, substr($ex[2], 1)));
 	}
 	
