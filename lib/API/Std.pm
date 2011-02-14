@@ -468,6 +468,10 @@ sub err ## no critic qw(Subroutines::ProhibitBuiltinHomonyms)
 	if ($lvl >= 2) {
 		API::Log::alog("ERROR: $msg");
 	}
+    # Level 3: Log to IRC.
+    if ($lvl >= 3) {
+        API::Log::slog("ERROR: $msg");
+    }
 
 	# If it's a fatal error, exit the program.
 	if ($fatal) { exit; }
@@ -493,6 +497,10 @@ sub awarn
 	if ($lvl >= 2) {
 		API::Log::alog("WARNING: $msg");
 	}
+    # Level 3: Log to IRC.
+    if ($lvl >= 3) {
+        API::Log::slog("WARNING: $msg");
+    }
 
 	return 1;
 }
