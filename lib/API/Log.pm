@@ -11,7 +11,7 @@ use Exporter;
 use base qw(Exporter);
 use API::Std qw(conf_get);
 
-our @EXPORT_OK = qw(println dbug alog);
+our @EXPORT_OK = qw(println dbug alog slog);
 
 
 # Print with the system newline appended.
@@ -107,6 +107,39 @@ sub expire_logs
 	return 1;
 }
 
+# Subroutine for logging to an IRC logchan.
+sub slog
+{
+    my ($msg) = @_;
+
+    # Check if logging to channel is enabled.
+    if (conf_get('logchan')) {
+        # It is, continue.
+
+        # Split the network and channel.
+        my ($net, $chan) = split '/', (conf_get('logchan'))[0][0];
+        $chan = lc $chan;
+
+        # Check if we're connected to the network.
+        if (!defined $Auto::SOCKET{$net}) {
+            dbug 'WARNING: slog(): Unable to log to IRC: Not connected to network.';
+            alog 'WARNING: slog(): Unable to log to IRC: Not connected to network.';
+            return;
+        }
+
+        # Check if we're in the channel.
+        if (!defined $Parser::IRC::botchans{$net}{$chan}) {
+            dbug 'WARNING: slog(): Unable to log to IRC: Not in channel.';
+            alog 'WARNING: slog(): Unable to log to IRC: Not in channel.';
+            return;
+        }
+
+        # Log to IRC.
+        API::IRC::privmsg($net, $chan, "\002LOG:\002 $msg");
+    }
+
+    return 1;
+}
 
 1;
 # vim: set ai sw=4 ts=4:
