@@ -183,11 +183,11 @@ given (lc((conf_get('database:format'))[0][0])) {
             system "chmod a+x $Bin/../etc/".(conf_get('database:filename'))[0][0];
         }
         # Connect to database.
-        $DB = DBI->connect("dbi:SQLite:dbname=$Bin/../etc/".(conf_get('database:filename'))[0][0]);
+        $DB = DBI->connect("dbi:SQLite:dbname=$Bin/../etc/".(conf_get('database:filename'))[0][0]) or err(2, 'Failed to connect to database!', 1);
     }
     when ('mysql') {
         # MySQL.
-        if ($ENFEAT !~ /mysql/) { err(2, 'Auto not built with SQLite support. Aborting.', 1); }
+        if ($ENFEAT !~ /mysql/) { err(2, 'Auto not built with MySQL support. Aborting.', 1); }
         my @reqcval = qw(database:host database:name database:username database:password);
         foreach (@reqcval) { if (!conf_get($_)) { err(2, "Missing required configuration value $_. Aborting.", 1); } }
         undef @reqcval;
@@ -199,14 +199,26 @@ given (lc((conf_get('database:format'))[0][0])) {
         if (conf_get('database:port')) {
             # If we were given a port, connect with it.
             $DB = DBI->connect('DBI:mysql:database='.(conf_get('database:name'))[0][0].';host='.(conf_get('database:host'))[0][0].';port='.(conf_get('database:port'))[0][0],
-                (conf_get('database:username'))[0][0], (conf_get('database:password'))[0][0]);
+                (conf_get('database:username'))[0][0], (conf_get('database:password'))[0][0]) or err(2, 'Failed to connect to database!', 1);;
         }
         else {
             # If not, connect without specifying a port.
             $DB = DBI->connect('DBI:mysql:database='.(conf_get('database:name'))[0][0].';host='.(conf_get('database:host'))[0][0],
-                (conf_get('database:username'))[0][0], (conf_get('database:password'))[0][0]);
+                (conf_get('database:username'))[0][0], (conf_get('database:password'))[0][0]) or err(2, 'Failed to connect to database!', 1);;
         }
     }
+    # CSV no work. :(
+    #when ('csv') {
+    #    # CSV.
+    #    if ($ENFEAT !~ /csv/) { err(2, 'Auto not built with CSV support.', 1); }
+    #    if (!conf_get('database:dir')) { err(2, 'Missing required configuration value database:dir. Aborting.', 1); }
+    #
+    #    # Import DBD::CSV.
+    #    require DBD::CSV;
+    #
+    #    # Connect to database.
+    #    $DB = DBI->connect("dbi:CSV:f_dir=$Bin/../etc/".(conf_get('database:dir'))[0][0]) or err(2, 'Failed to connect to database!', 1);
+    #}
     # Unknown database format.
     default { err(2, 'Unknown database format \''.lc((conf_get('database:format'))[0][0]).'\'. Aborting.', 1); }
 }
