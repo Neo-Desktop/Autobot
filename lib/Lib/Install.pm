@@ -119,7 +119,7 @@ sub installmods
     chomp $response;
     if (lc $response eq 'y') {
         println 'What modules would you like to install? (separate by commas)';
-        println 'Available modules: Badwords, Bitly, Calc, EightBall, FML, HelloChan, IsItUp, QDB, SASLAuth, Weather';
+        println 'Available modules: Badwords, Bitly, Calc, EightBall, FML, Greet, HelloChan, IsItUp, QDB, SASLAuth, Weather';
         print '> ';
         my $modules = <STDIN>; chomp $modules;
         $modules =~ s/ //g;
