@@ -13,6 +13,9 @@ sub _init
     # Create the QDB command.
     cmd_add('QDB', 0, 0, \%m_QDB::HELP_QDB, \&m_QDB::cmd_qdb) or return;
 
+    # Check the database format. Fail to load if it's PostgreSQL.
+    if ($Auto::ENFEAT =~ /pgsql/) { err(2, 'Unable to load QDB: PostgreSQL is not supported.', 0); return; }
+
     # Check for database table.
     $Auto::DB->do('CREATE TABLE IF NOT EXISTS qdb (quoteid INTEGER PRIMARY KEY, creator TEXT, time INTEGER, quote TEXT)') or return;
 
