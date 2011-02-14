@@ -27,9 +27,12 @@ Legend:
      [X] Create IRC parser
 
  [!] DB
-     [X] Create Auto-Flatfile database format
-     [X] Implement Auto-Flatfile as the main format
-     [ ] Add MySQL support
+     [O] Create Auto-Flatfile database format
+     [O] Implement Auto-Flatfile as the main format
+     [X] Add SQLite support as default
+     [x] Add MySQL support
+     [ ] Add PostgreSQL support
+     [?] Add Oracle DB support
 
  [O] Sys
      [ ] Create system file for UNIX (or: Linux, BSD, etc.)
