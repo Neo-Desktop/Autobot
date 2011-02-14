@@ -38,12 +38,12 @@ if (defined $ARGV[0]) {
             $features .= ' ipv6';
         }
         elsif ($_ eq '--with-mysql') {
-            $features =~ s/(sqlite|csv)/mysql/g;
+            $features =~ s/(sqlite|pgsql)/mysql/g;
         }
-        #elsif ($_ eq '--with-csv') {
-        #    $features =~ s/(sqlite|mysql)/csv/g;
-        #}
-		else {
+		elsif ($_ eq '--with-pgsql') {
+            $features =~ s/(sqlite|mysql)/pgsql/g;
+        }
+        else {
 			println "Warning: Unknown option '$_'";
 		}
 	}
@@ -105,7 +105,7 @@ println "\0";
 modfind('DBI');
 modfind('DBD::SQLite') if $features =~ /sqlite/;
 modfind('DBD::mysql') if $features =~ /mysql/;
-modfind('DBD::CSV') if $features =~ /csv/;
+modfind('DBD::Pg') if $features =~ /pgsql/;
 modfind('Class::Unload');
 modfind('IO::Socket::INET6') if $features =~ /ipv6/;
 modfind('IO::Socket::SSL') if $features =~ /ssl/;

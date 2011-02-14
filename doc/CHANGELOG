@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Added PostgreSQL support. Official modules do not support this yet.
     * database:format now a required configuration value.
     * Added support for MySQL. ./install --with-mysql
     * Added a database upgrade script for upgrading the `qdb` table in 3.0.0a3

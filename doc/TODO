@@ -31,7 +31,7 @@ Legend:
      [O] Implement Auto-Flatfile as the main format
      [X] Add SQLite support as default
      [x] Add MySQL support
-     [O] Add PostgreSQL support
+     [X] Add PostgreSQL support
      [O] Add Oracle DB support
 
  [O] Sys
