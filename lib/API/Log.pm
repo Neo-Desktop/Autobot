@@ -36,7 +36,7 @@ sub dbug
 
 	if ($Auto::DEBUG) {
 		# We're in debug mode; print it out.
-		println $out;
+		say $out;
 	}
 
 	return 1;
