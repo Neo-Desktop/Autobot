@@ -4,6 +4,7 @@
 package API::Log;
 use strict;
 use warnings;
+use feature qw(say);
 use English qw(-no_match_vars);
 use POSIX;
 use Time::Local;
