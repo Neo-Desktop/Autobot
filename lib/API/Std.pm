@@ -337,11 +337,11 @@ sub conf_get
 # Translation subroutine.
 sub trans
 {
-	my ($id) = @_;
+    my $id = shift;
 	$id =~ s/ /_/gsm;
 
 	if (defined $API::Std::LANGE{$id}) {
-		return $API::Std::LANGE{$id};
+		return sprintf $API::Std::LANGE{$id}, @_;
 	}
 	else {
 		$id =~ s/_/ /gsm;
