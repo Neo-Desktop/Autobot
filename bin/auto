@@ -7,7 +7,7 @@ package Auto;
 use 5.010_000;
 use strict;
 use warnings;
-no feature qw(say state);
+no feature qw(state);
 use POSIX;
 use locale;
 use English qw(-no_match_vars);
@@ -46,41 +46,41 @@ local $PROGRAM_NAME = 'auto';
 
 # Check for build files.
 if (!-e "$Bin/../build/os" or !-e "$Bin/../build/perl" or !-e "$Bin/../build/time" or !-e "$Bin/../build/ver") {
-	println 'Missing build file(s). Please build Auto before running it.' and exit;
+	say 'Missing build file(s). Please build Auto before running it.' and exit;
 }
 
 # Check build OS.
-open my $BFOS, '<', "$Bin/../build/os" or println 'Cannot start: Broken build.' and exit;
+open my $BFOS, '<', "$Bin/../build/os" or say 'Cannot start: Broken build.' and exit;
 my @BFOS = <$BFOS>;
-close $BFOS or println 'Cannot start: Broken build.' and exit;
+close $BFOS or say 'Cannot start: Broken build.' and exit;
 if ($BFOS[0] ne $OSNAME."\n") {
-	println 'Cannot start: Broken build.' and exit;
+	say 'Cannot start: Broken build.' and exit;
 }
 undef @BFOS;
 
 # Check build features.
 our $ENFEAT;
-open my $BFFEAT, '<', "$Bin/../build/feat" or println 'Cannot start: Broken build.' and exit;
+open my $BFFEAT, '<', "$Bin/../build/feat" or say 'Cannot start: Broken build.' and exit;
 my @BFFEAT = <$BFFEAT>;
-close $BFFEAT or println 'Cannot start: Broken build.' and exit;
+close $BFFEAT or say 'Cannot start: Broken build.' and exit;
 $ENFEAT = substr $BFFEAT[0], 0, length($BFFEAT[0]) - 1;
 undef @BFFEAT;
 
 # Check build Perl version.
-open my $BFPERL, '<', "$Bin/../build/perl" or println 'Cannot start: Broken build.' and exit;
+open my $BFPERL, '<', "$Bin/../build/perl" or say 'Cannot start: Broken build.' and exit;
 my @BFPERL = <$BFPERL>;
-close $BFPERL or println 'Cannot start: Broken build.' and exit;
+close $BFPERL or say 'Cannot start: Broken build.' and exit;
 if ($BFPERL[0] ne $]."\n") {
-	println 'Cannot start: Broken build.' and exit;
+	say 'Cannot start: Broken build.' and exit;
 }
 undef @BFPERL;
 
 # Check build Auto version.
-open my $BFVER, '<', "$Bin/../build/ver" or println 'Cannot start: Broken build.' and exit;
+open my $BFVER, '<', "$Bin/../build/ver" or say 'Cannot start: Broken build.' and exit;
 my @BFVER = <$BFVER>;
-close $BFVER or println 'Cannot start: Broken build.' and exit;
+close $BFVER or say 'Cannot start: Broken build.' and exit;
 if ($BFVER[0] ne VER.q{.}.SVER.q{.}.REV.RSTAGE."\n") {
-	println 'Cannot start: Broken build.' and exit;
+	say 'Cannot start: Broken build.' and exit;
 }
 undef @BFVER;
 
@@ -96,7 +96,7 @@ API::Std::event_add('on_sighup');
 
 
 # Print startup message.
-println <<'EOF';
+say <<'EOF';
 8""""8                  
 8    8 e   e eeeee eeeee
 8eeee8 8   8   8   8  88
@@ -104,7 +104,7 @@ println <<'EOF';
 88   8 88  8   88  8   8
 88   8 88ee8   88  8eee8
 EOF
-println '* '.NAME.' (version '.VER.q{.}.SVER.q{.}.REV.RSTAGE.') is starting up...';
+say '* '.NAME.' (version '.VER.q{.}.SVER.q{.}.REV.RSTAGE.') is starting up...';
 
 our ($APID, %TIMERS);
 
@@ -129,15 +129,15 @@ if ($ENFEAT =~ /ipv6/) { require IO::Socket::INET6; }
 if ($ENFEAT =~ /ssl/) { require IO::Socket::SSL; }
 
 # Parse configuration file.
-println '* Parsing configuration file auto.conf...';
+say '* Parsing configuration file auto.conf...';
 our $CONF = Parser::Config->new('auto.conf') or err(1, 'Failed to parse configuration file!', 1);
 our %SETTINGS = $CONF->parse or err(1, 'Failed to parse configuration file!', 1);
-println ' Success';
+say ' Success';
 
 if (conf_get('die')) {
 	if ((conf_get('die'))[0][0] == 1) {
-		println '!!! You didn\'t read the whole config.';
-		println '!!! Insert new user then try again.';
+	    say '!!! You didn\'t read the whole config.';
+		say '!!! Insert new user then try again.';
 		exit;
 	}
 }
@@ -156,12 +156,12 @@ foreach my $REQCVAL (@REQCVALS) {
 undef @REQCVALS;
 
 # Parse translations.
-println '* Parsing translation files...';
+say '* Parsing translation files...';
 our $LOCALE = (conf_get('locale'))[0][0];
 my @lang = split m/[_]/, $LOCALE;
 Parser::Lang::parse($lang[0]) or err(2, 'Failed to parse translation files!', 1);
 undef @lang;
-println ' Success';
+say ' Success';
 
 # Expire old logs.
 API::Log::expire_logs();
@@ -300,12 +300,12 @@ if (conf_get('privset')) {
 
 # Successful startup.
 our $STARTTIME = time;
-println '* Auto successfully started at '.POSIX::strftime('%Y-%m-%d %I:%M:%S %p', localtime).q{.};
+say '* Auto successfully started at '.POSIX::strftime('%Y-%m-%d %I:%M:%S %p', localtime).q{.};
 alog 'Auto successfully started.';
 
 # Fork into the background if not in debug mode.
 if (!$DEBUG) {
-    println '*** Becoming a daemon...';
+    say '*** Becoming a daemon...';
     open STDIN, '<', '/dev/null' or err(2, "Can't read /dev/null: $ERRNO", 1);
     open STDOUT, '>>', '/dev/null' or err(2, "Can't write to /dev/null: $ERRNO", 1);
     open STDERR, '>>', '/dev/null' or err(2, "Can't write to /dev/null: $ERRNO", 1);
