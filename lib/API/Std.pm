@@ -4,6 +4,7 @@
 package API::Std;
 use strict;
 use warnings;
+use feature qw(say);
 use Exporter;
 use base qw(Exporter);
 
@@ -470,7 +471,7 @@ sub err ## no critic qw(Subroutines::ProhibitBuiltinHomonyms)
 
 	# Level 1: Print to screen.
 	if ($lvl >= 1) {
-		API::Log::println("ERROR: $msg");
+		say "ERROR: $msg";
 	}
 	# Level 2: Log to file.
 	if ($lvl >= 2) {
@@ -499,7 +500,7 @@ sub awarn
 
 	# Level 1: Print to screen.
 	if ($lvl >= 1) {
-		API::Log::println("WARNING: $msg");
+	    say "WARNING: $msg";
 	}
 	# Level 2: Log to file.
 	if ($lvl >= 2) {
