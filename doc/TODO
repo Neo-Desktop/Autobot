@@ -8,6 +8,8 @@ Legend:
     ? = Being questioned.
     + = Planned for Auto v3.1.
 
+ [ ] Cleanup
+     [ ] Replace println with Perl 5.10's say.
 
  [X] Language
      [X] Create method of translation.
@@ -21,7 +23,6 @@ Legend:
      [X] Create basic modular functions
      [X] Create logging functions
      [X] Create command creation functions
-     [!] Create user permissions (levels)
 
  [!] IRC
      [X] Create IRC parser
