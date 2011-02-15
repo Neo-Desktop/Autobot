@@ -22,11 +22,13 @@ sub mod_init
     # Log/debug.
 	API::Log::dbug('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...');
 	API::Log::alog('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...');
+    if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...'); }
 
     # Check if this module is compatible with this version of Auto.
 	if ($autover ne '3.0.0d') {
 		API::Log::dbug('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.');
 		API::Log::alog('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.');
+        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.'); }
 		return;
 	}
 
@@ -42,6 +44,7 @@ sub mod_init
 
 		API::Log::dbug('MODULES: '.$name.' successfully loaded.');
 		API::Log::alog('MODULES: '.$name.' successfully loaded.');
+        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: '.$name.' successfully loaded.'); }
 
 		return 1;
 	}
@@ -49,6 +52,7 @@ sub mod_init
 		# Otherwise, return a failed to load message.
 		API::Log::dbug('MODULES: Failed to load '.$name.q{.});
 		API::Log::alog('MODULES: Failed to load '.$name.q{.});
+        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to load '.$name.q{.}); }
 
 		return;
 	}
@@ -72,11 +76,13 @@ sub mod_void
 	# Log/debug.
 	API::Log::dbug('MODULES: Attempting to unload module: '.$module.'...');
 	API::Log::alog('MODULES: Attempting to unload module: '.$module.'...');
+    if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Attempting to unload module: '.$module.'...'); }
 
 	# Check if this module exists.
 	if (!defined $MODULE{$module}) {
 		API::Log::dbug('MODULES: Failed to unload '.$module.'. No such module?');
 		API::Log::alog('MODULES: Failed to unload '.$module.'. No such module?');
+        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to unload '.$module.'. No such module?'); }
 		return;
 	}
 
@@ -89,12 +95,14 @@ sub mod_void
 		delete $MODULE{$module};
 		API::Log::dbug('MODULES: Successfully unloaded '.$module.q{.});
 		API::Log::alog('MODULES: Successfully unloaded '.$module.q{.});
+        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Successfully unloaded '.$module.q{.}); }
 		return 1;
 	}
 	else {
 		# Otherwise, return a failed to unload message.
 		API::Log::dbug('MODULES: Failed to unload '.$module.q{.});
 		API::Log::alog('MODULES: Failed to unload '.$module.q{.});
+        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to unload '.$module.q{.}); }
 		return;
 	}
 }
