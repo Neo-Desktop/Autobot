@@ -7,9 +7,12 @@ use warnings;
 use English qw(-no_match_vars);
 use Sys::Hostname;
 use feature qw(switch);
-use API::Std qw(conf_get err);
+use API::Std qw(hook_add conf_get err);
 use API::Log qw(println dbug alog);
 our $VERSION = 3.000000;
+
+# Core events.
+API::Std::event_add('on_shutdown');
 
 # Update checker.
 sub checkver
@@ -203,6 +206,13 @@ sub rehash
     return 1;
 }
 
+# Shutdown.
+hook_add('on_shutdown', 'shutdown.core_cleanup', sub {
+    if (defined $Auto::DB) { $Auto::DB->disconnect; }
+    if (-e "$Auto::Bin/auto.pid") { unlink "$Auto::Bin/auto.pid"; }
+    return 1;
+});
+
 ###################
 # Signal handlers #
 ###################
@@ -211,13 +221,10 @@ sub rehash
 sub signal_term
 {
     API::Std::event_run('on_sigterm');
+    API::Std::event_run('on_shutdown');
     foreach (keys %Auto::SOCKET) { API::IRC::quit($_, 'Caught SIGTERM'); }
-    $Auto::DB->disconnect;
     dbug '!!! Caught SIGTERM; terminating...';
     alog '!!! Caught SIGTERM; terminating...';
-    if (-e "$Auto::Bin/auto.pid") {
-        unlink "$Auto::Bin/auto.pid";
-    }
     sleep 1;
     exit;
 }
@@ -226,13 +233,10 @@ sub signal_term
 sub signal_int
 {
     API::Std::event_run('on_sigint');
+    API::Std::event_run('on_shutdown');
     foreach (keys %Auto::SOCKET) { API::IRC::quit($_, 'Caught SIGINT'); }
-    $Auto::DB->disconnect;
     dbug '!!! Caught SIGINT; terminating...';
     alog '!!! Caught SIGINT; terminating...';
-    if (-e "$Auto::Bin/auto.pid") {
-        unlink "$Auto::Bin/auto.pid";
-    }
     sleep 1;
     exit;
 }
@@ -266,10 +270,7 @@ sub signal_perldie
     return if $EXCEPTIONS_BEING_CAUGHT;
     alog 'Perl Fatal: '.$diemsg.' -- Terminating program!';
     foreach (keys %Auto::SOCKET) { API::IRC::quit($_, 'A fatal error occurred!'); }
-    $Auto::DB->disconnect;
-    if (-e "$Auto::Bin/auto.pid") {
-        unlink "$Auto::Bin/auto.pid";
-    }
+    API::Std::event_run('on_shutdown');
     sleep 1;
     println 'FATAL: '.$diemsg;
     exit;

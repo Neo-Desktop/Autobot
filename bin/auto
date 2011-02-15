@@ -438,9 +438,6 @@ API::Std::cmd_add('SHUTDOWN', 2, 'cmd.shutdown', \%Core::Cmd::HELP_SHUTDOWN, \&C
 API::Std::cmd_add('RESTART', 2, 'cmd.restart', \%Core::Cmd::HELP_RESTART, \&Core::Cmd::cmd_restart);
 API::Std::cmd_add('REHASH', 2, 'cmd.rehash', \%Core::Cmd::HELP_REHASH, \&Core::Cmd::cmd_rehash);
 API::Std::cmd_add('HELP', 2, 0, \%Core::Cmd::HELP_HELP, \&Core::Cmd::cmd_help);
-# Core events.
-API::Std::event_add('on_shutdown');
-
 
 # Infinite while loop.
 while (1) {
@@ -481,9 +478,7 @@ while (1) {
             delete $SOCKET{$sockid};
             if (!keys %SOCKET) {
                 # No more connections, stop the program.
-                $Auto::DB->disconnect;
                 API::Std::event_run('on_shutdown');
-                if (-e "$Bin/auto.pid") { unlink "$Bin/auto.pid"; }
                 dbug '* No more IRC connections, shutting down.';
                 alog '* No more IRC connections, shutting down.';
                 sleep 1;

@@ -142,8 +142,7 @@ sub cmd_shutdown
     dbug "Got SHUTDOWN from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Shutting down. . .";
     alog "Got SHUTDOWN from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Shutting down. . .";
     quit($_, "SHUTDOWN from ".$data{nick}."/".$data{svr}) foreach (keys %Auto::SOCKET);
-    $Auto::DB->disconnect;
-    system("rm $Auto::Bin/auto.pid");
+    API::Std::event_run('on_shutdown');
     exit;
 
     # To appease PerlCritic.
@@ -164,8 +163,7 @@ sub cmd_restart
     dbug "Got RESTART from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Restarting. . .";
     alog "Got RESTART from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Restarting. . .";
     quit($_, "RESTART from ".$data{nick}."/".$data{svr}) foreach (keys %Auto::SOCKET);
-    $Auto::DB->disconnect;
-    system("rm $Auto::Bin/auto.pid") if -e "$Auto::Bin/auto.pid";
+    API::Std::event_run('on_shutdown');
 
     # Time to come back from the dead!
     if ($Auto::DEBUG) {
