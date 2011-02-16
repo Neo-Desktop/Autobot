@@ -299,7 +299,7 @@ sub cjoin
 	my ($svr, @ex) = @_;
 	my %src = API::IRC::usrc(substr($ex[0], 1));
     my $chan = $ex[2];
-    if ($chan =~ m/^:/xsm) { $chan = substr $chan, 1; }
+    $chan =~ s/^://gxsm;
 	
 	# Check if this is coming from ourselves.
 	if ($src{nick} eq $botnick{$svr}{nick}) {
