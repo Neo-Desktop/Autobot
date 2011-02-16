@@ -36,14 +36,12 @@ sub _void
 # Callback for act_on_badword hook.
 sub actonbadword
 {
-	my (($svr, @ex)) = @_;
-    my %src = API::IRC::usrc(substr $ex[0], 1);
+	my (($src, $chan, @msg)) = @_;
 
-	my $msg = substr $ex[3], 1;
-    for (my $i = 4; $i < scalar @ex; $i++) { $msg .= q{ }.$ex[$i]; }
+    my $msg = join ' ', @msg;
 
-    if (conf_get("badwords:$ex[2]:word")) {
-        my @words = @{ (conf_get("badwords:$ex[2]:word"))[0] };
+    if (conf_get("badwords:$chan:word")) {
+        my @words = @{ (conf_get("badwords:$chan:word"))[0] };
 
         foreach (@words) {
             my ($w, $a) = split m/[:]/, $_;
@@ -51,17 +49,17 @@ sub actonbadword
             if ($msg =~ m/($w)/ixsm) {
                 given ($a) {
                     when ('kick') { 
-                        kick($svr, $ex[2], $src{nick}, 'Foul language is prohibited here.'); 
+                        kick($src->{svr}, $chan, $src->{nick}, 'Foul language is prohibited here.'); 
                     }
                     when ('kickban') { 
-                        cmode($svr, $ex[2], '+b *!*@'.$src{host}); 
-                        kick($svr, $ex[2], $src{nick}, 'Foul language is prohibited here.'); 
+                        cmode($src->{svr}, $chan, '+b *!*@'.$src->{host}); 
+                        kick($src->{svr}, $chan, $src->{nick}, 'Foul language is prohibited here.'); 
                     }
                     when ('quiet') { 
-                        cmode($svr, $ex[2], '+q *!*@'.$src{host}); 
+                        cmode($src->{svr}, $chan, '+q *!*@'.$src->{host}); 
                     }
                     default { 
-                        kick($svr, $ex[2], $src{nick}, 'Foul language is prohibited here.'); 
+                        kick($src->{svr}, $chan, $src->{nick}, 'Foul language is prohibited here.'); 
                     }
                 }
             }
@@ -72,7 +70,7 @@ sub actonbadword
 }
 
 
-API::Std::mod_init("Badwords", "Xelhua", "1.00", "3.0.0d", __PACKAGE__);
+API::Std::mod_init('Badwords', 'Xelhua', '1.00', '3.0.0d', __PACKAGE__);
 # vim: set ai sw=4 ts=4:
 # build: perl=5.010000
 

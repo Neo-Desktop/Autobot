@@ -12,15 +12,14 @@ our (%usercmd);
 
 # CTCP VERSION reply.
 hook_add("on_uprivmsg", "ctcp_version_reply", sub {
-    my (($svr, @ex)) = @_;
-    my %src = usrc(substr($ex[0], 1));
+    my (($src, @msg)) = @_;
 
-    if ($ex[3] eq ":\001VERSION\001") {
+    if ($msg[0] eq "\001VERSION\001") {
         if (Auto::RSTAGE ne 'd') {
-            notice($svr, $src{nick}, "\001VERSION ".Auto::NAME." ".Auto::VER.".".Auto::SVER.".".Auto::REV.Auto::RSTAGE." ".$OSNAME."\001");
+            notice($src->{svr}, $src->{nick}, "\001VERSION ".Auto::NAME." ".Auto::VER.".".Auto::SVER.".".Auto::REV.Auto::RSTAGE." ".$OSNAME."\001");
         }
         else {
-            notice($svr, $src{nick}, "\001VERSION ".Auto::NAME." ".Auto::VER.".".Auto::SVER.".".Auto::REV.Auto::RSTAGE."-".Auto::GR." ".$OSNAME."\001");
+            notice($src->{svr}, $src->{nick}, "\001VERSION ".Auto::NAME." ".Auto::VER.".".Auto::SVER.".".Auto::REV.Auto::RSTAGE."-".Auto::GR." ".$OSNAME."\001");
         }
     }
 
