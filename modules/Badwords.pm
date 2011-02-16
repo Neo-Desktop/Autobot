@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use feature qw(switch);
 use API::Std qw(hook_add hook_del conf_get err);
-use API::IRC qw(privmsg notice kick cmode);
+use API::IRC qw(privmsg notice kick ban);
 
 # Initialization subroutine.
 sub _init 
@@ -52,11 +52,11 @@ sub actonbadword
                         kick($src->{svr}, $chan, $src->{nick}, 'Foul language is prohibited here.'); 
                     }
                     when ('kickban') { 
-                        cmode($src->{svr}, $chan, '+b *!*@'.$src->{host}); 
+                        ban($src->{svr}, $chan, 'b', $src); 
                         kick($src->{svr}, $chan, $src->{nick}, 'Foul language is prohibited here.'); 
                     }
                     when ('quiet') { 
-                        cmode($src->{svr}, $chan, '+q *!*@'.$src->{host}); 
+                        ban($src->{svr}, $chan, 'q', $src); 
                     }
                     default { 
                         kick($src->{svr}, $chan, $src->{nick}, 'Foul language is prohibited here.'); 
