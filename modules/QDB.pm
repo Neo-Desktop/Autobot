@@ -38,12 +38,11 @@ our %HELP_QDB = (
 );
 sub cmd_qdb
 {
-    my (%data) = @_;
-    my @argv = @{ $data{args} };
+    my ($src, @argv) = @_;
 
     # Check for needed parameter.
     if (!defined $argv[0]) {
-        notice($data{svr}, $data{nick}, trans('Not enough parameters').q{.});
+        notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
         return;
     }
     
@@ -52,7 +51,7 @@ sub cmd_qdb
         when ('ADD') {
             # QDB ADD.
             if (!defined $argv[1]) {
-                notice($data{svr}, $data{nick}, trans('Not enough parameters').q{.});
+                notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
                 return;
             }
 
@@ -61,45 +60,45 @@ sub cmd_qdb
 
             # Insert into database.
             my $dbq = $Auto::DB->prepare('INSERT INTO qdb (creator, time, quote) VALUES (?, ?, ?)') or 
-                notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
-            $dbq->execute($data{nick}, time, join(q{ }, @argv)) or
-                notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
+                notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
+            $dbq->execute($src->{nick}, time, join(q{ }, @argv)) or
+                notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
 
             # Get ID.
             my $count = $Auto::DB->selectrow_array('SELECT COUNT(*) FROM qdb') or
-                notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
+                notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
 
-            privmsg($data{svr}, $data{chan}, 'Quote successfully submitted. ID: '.$count);
+            privmsg($src->{svr}, $src->{chan}, 'Quote successfully submitted. ID: '.$count);
         }
         when ('VIEW') {
             # QDB VIEW.
             if (!defined $argv[1]) {
-                notice($data{svr}, $data{nick}, trans('Not enough parameters').q{.});
+                notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
                 return;
             }
 
             # Get quote.
             my $dbq = $Auto::DB->prepare('SELECT * FROM qdb WHERE quoteid = ?') or
-                notice($data{svr}, $data{nick}, trans('An error occurred').'. Quote might not exist.') and return;
-            $dbq->execute($argv[1]) or notice($data{svr}, $data{nick}, trans('An error occurred').'. Quote might not exist.') and return;
+                notice($src->{svr}, $src->{nick}, trans('An error occurred').'. Quote might not exist.') and return;
+            $dbq->execute($argv[1]) or notice($src->{svr}, $src->{nick}, trans('An error occurred').'. Quote might not exist.') and return;
             my @data = $dbq->fetchrow_array;
 
             # Send it back.
-            privmsg($data{svr}, $data{chan}, "\002Submitted by\002 $data[1] \002on\002 ".POSIX::strftime('%F', localtime($data[2]))." \002at\002 ".POSIX::strftime('%I:%M %p', localtime($data[2])));
-            privmsg($data{svr}, $data{chan}, $data[3]);
+            privmsg($src->{svr}, $src->{chan}, "\002Submitted by\002 $data[1] \002on\002 ".POSIX::strftime('%F', localtime($data[2]))." \002at\002 ".POSIX::strftime('%I:%M %p', localtime($data[2])));
+            privmsg($src->{svr}, $src->{chan}, $data[3]);
         }
         when ('COUNT') {
             # Get count.
             my $count = $Auto::DB->selectrow_array('SELECT COUNT(*) FROM qdb') or
-                notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
+                notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
 
             # Send it back.
-            privmsg($data{svr}, $data{chan}, "There is currently \002$count\002 quotes in my database.");
+            privmsg($src->{svr}, $src->{chan}, "There is currently \002$count\002 quotes in my database.");
         }
         when ('RAND') {
             # Get count.
             my $count = $Auto::DB->selectrow_array('SELECT COUNT(*) FROM qdb') or
-                notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
+                notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
 
             # Random number.
             my $rand = int(rand($count));
@@ -107,32 +106,32 @@ sub cmd_qdb
 
             # Get quote.
             my $dbq = $Auto::DB->prepare('SELECT * FROM qdb WHERE quoteid = ?') or
-                notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
-            $dbq->execute($rand) or notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
+                notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
+            $dbq->execute($rand) or notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
             my @data = $dbq->fetchrow_array;
 
             # Send it back.
-            privmsg($data{svr}, $data{chan}, "\002ID:\002 $data[0] - \002Submitted by\002 $data[1] \002on\002 ".POSIX::strftime('%F', localtime($data[2]))." \002at\002 ".POSIX::strftime('%I:%M %p', localtime($data[2])));
-            privmsg($data{svr}, $data{chan}, $data[3]);
+            privmsg($src->{svr}, $src->{chan}, "\002ID:\002 $data[0] - \002Submitted by\002 $data[1] \002on\002 ".POSIX::strftime('%F', localtime($data[2]))." \002at\002 ".POSIX::strftime('%I:%M %p', localtime($data[2])));
+            privmsg($src->{svr}, $src->{chan}, $data[3]);
         }
         when ('DEL') {
             # Check for the cmd.qdbdel privilege.
-            if (!has_priv(match_user(%data), 'cmd.qdbdel')) {
-                notice($data{svr}, $data{chan}, trans('Permission denied').q{.});
+            if (!has_priv(match_user(%$src), 'cmd.qdbdel')) {
+                notice($src->{svr}, $src->{chan}, trans('Permission denied').q{.});
                 return;
             }
             # Check for the needed parameter.
             if (!defined $argv[1]) {
-                notice($data{svr}, $data{nick}, trans('Not enough parameters').q{.});
+                notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
                 return;
             }
             
             # Update database.
             my $dbq = $Auto::DB->do("UPDATE qdb SET quote = \"NOTICE: Quote deleted.\" WHERE quoteid = $argv[1]");
 
-            notice($data{svr}, $data{nick}, (($dbq) ? 'Done.' : trans('An error occurred').q{.}));
+            notice($src->{svr}, $src->{nick}, (($dbq) ? 'Done.' : trans('An error occurred').q{.}));
         }
-        default { notice($data{svr}, $data{nick}, "Unknown action \002".uc($argv[0])."\002. \002Syntax:\002 QDB (ADD|VIEW|COUNT|RAND|DEL) [quote]"); return; }
+        default { notice($src->{svr}, $src->{nick}, "Unknown action \002".uc($argv[0])."\002. \002Syntax:\002 QDB (ADD|VIEW|COUNT|RAND|DEL) [quote]"); return; }
     }
 
     return 1;
