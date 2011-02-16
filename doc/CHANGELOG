@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Changed command callback arguments to: \%src, @args
     * Bundle server with \%src in the on_rcjoin event.
     * logchan is now joined automatically.
     * Changed on_notice arguments to: \%src, $target, @msg

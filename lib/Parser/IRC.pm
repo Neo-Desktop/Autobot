@@ -534,7 +534,6 @@ sub privmsg
 		push(@argv, $ex[$i]);
 	}
 	$data{svr} = $svr;
-	@{ $data{args} } = @argv;
 	
 	my ($cmd, $cprefix, $rprefix);
 	# Check if it's to a channel or to us.
@@ -554,7 +553,7 @@ sub privmsg
                             # If this command requires a privilege...
                             if (API::Std::has_priv(API::Std::match_user(%data), $API::Std::CMDS{$cmd}{priv})) {
                                 # Make sure they have it.
-                                &{ $API::Std::CMDS{$cmd}{'sub'} }(%data);
+                                &{ $API::Std::CMDS{$cmd}{'sub'} }(\%data, @argv);
                             }
                             else {
                                 # Else give them the boot.
@@ -563,7 +562,7 @@ sub privmsg
                         }
                         else {
                             # Else execute the command without any extra checks.
-                            &{ $API::Std::CMDS{$cmd}{'sub'} }(%data);
+                            &{ $API::Std::CMDS{$cmd}{'sub'} }(\%data, @argv);
                         }
                     }
                     else {
@@ -595,7 +594,7 @@ sub privmsg
                             # If this command takes a privilege...
                             if (API::Std::has_priv(API::Std::match_user(%data), $API::Std::CMDS{$cmd}{priv})) {
                                 # Make sure they have it.
-                                &{ $API::Std::CMDS{$cmd}{'sub'} }(%data) if $rprefix eq $cprefix;
+                                &{ $API::Std::CMDS{$cmd}{'sub'} }(\%data, @argv) if $rprefix eq $cprefix;
                             }
                             else {
                                 # Else give them the boot.
@@ -604,7 +603,7 @@ sub privmsg
                         }
                         else {
                             # Else continue executing without any extra checks.
-                            &{ $API::Std::CMDS{$cmd}{'sub'} }(%data) if $rprefix eq $cprefix;
+                            &{ $API::Std::CMDS{$cmd}{'sub'} }(\%data, @argv) if $rprefix eq $cprefix;
                         }
                     }
                     else {
