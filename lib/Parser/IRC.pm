@@ -577,7 +577,9 @@ sub privmsg
         }
 
 		# Trigger event on_uprivmsg.
-		API::Std::event_run("on_uprivmsg", ($svr, @ex));
+        shift @ex; shift @ex; shift @ex;
+        $ex[0] = substr $ex[0], 1;
+		API::Std::event_run("on_uprivmsg", (\%data, @ex));
 	}
 	else {
 		# It is coming to us in a channel message.
@@ -618,7 +620,10 @@ sub privmsg
         }
 
 		# Trigger event on_cprivmsg.
-		API::Std::event_run("on_cprivmsg", ($svr, @ex));
+        my $target = $ex[2]; delete $data{chan};
+        shift @ex; shift @ex; shift @ex;
+        $ex[0] = substr $ex[0], 1;
+		API::Std::event_run("on_cprivmsg", (\%data, $target, @ex));
 	}
 	
 	return 1;
