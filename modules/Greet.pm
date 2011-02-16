@@ -77,6 +77,7 @@ sub cmd_greet
             my $dbq = $Auto::DB->prepare('INSERT INTO greets (nick, greet) VALUES (?, ?)') or notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
             $dbq->execute($nick, $greet) or notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
 
+            API::Log::slog('cmd_greet(): Creating new greet.');
             # Done.
             notice($data{svr}, $data{nick}, "Successfully added greet for \002$nick\002.");
         }
@@ -118,7 +119,7 @@ sub hook_rcjoin
         my @data = $Auto::DB->selectrow_array('SELECT * FROM greets WHERE nick = "'.$nick.'"');
         
         # Send the greet.
-        privmsg($svr, $chan, "[\002".$src->{nick}."\002] ".$data[1]);
+        privmsg($src->{svr}, $chan, "[\002".$src->{nick}."\002] ".$data[1]);
     }
 
     return 1;
