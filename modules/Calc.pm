@@ -43,7 +43,7 @@ our %FHELP_CALC = (
 # Callback for CALC command.
 sub calc
 {
-	my (%data) = @_;
+	my ($src, @args) = @_;
 
 	# Create an instance of LWP::UserAgent.
 	my $ua = LWP::UserAgent->new();
@@ -52,9 +52,8 @@ sub calc
 	# Create an instance of JSON.
 	my $json = JSON->new();    
 	# Put together the call to the Google Calculator API. 
-	my @args = @{ $data{args} };
     if (!defined $args[0]) {
-        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
         return 0;
     }
     my $expr = join(' ', @args);
@@ -68,16 +67,16 @@ sub calc
 
 		if ($d->{error} eq "" or $d->{error} == 0) {
 	        # And send to channel
-            privmsg($data{svr}, $data{chan}, "Result: ".$d->{lhs}." = ".$d->{rhs});
+            privmsg($src->{svr}, $src->{chan}, "Result: ".$d->{lhs}." = ".$d->{rhs});
 		}
 		else {
 	        # Otherwise, send an error message.
-			privmsg($data{svr}, $data{chan}, "Google Calculator sent an error.");
+			privmsg($src->{svr}, $src->{chan}, "Google Calculator sent an error.");
 		}
 	}
 	else {
 	    # Otherwise, send an error message.
-		privmsg($data{svr}, $data{chan}, "An error occurred while sending your expression to Google Calculator.");
+		privmsg($src->{svr}, $src->{chan}, "An error occurred while sending your expression to Google Calculator.");
 	}
 
 	return 1;
