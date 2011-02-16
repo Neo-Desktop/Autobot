@@ -82,6 +82,13 @@ hook_add("on_connect", "autojoin", sub {
 		# For multi-line ajoins.
 		API::IRC::cjoin($svr, $_) foreach (@cajoin);
     }
+    # And logchan, if applicable.
+    if (conf_get('logchan')) {
+        my ($lcn, $lcc) = split '/', (conf_get('logchan'))[0][0];
+        if ($lcn eq $svr) {
+            API::IRC::cjoin($svr, $lcc);
+        }
+    }
 
     return 1;
 });
