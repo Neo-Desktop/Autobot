@@ -480,8 +480,16 @@ sub nick
 sub notice
 {
 	my ($svr, @ex) = @_;
+
+    # Prepare all the data.
+    my %src = API::IRC::usrc(substr $ex[0], 1);
+    my $target = $ex[2];
+    shift @ex; shift @ex; shift @ex;
+    $ex[0] = substr $ex[0], 1;
+    $src{svr} = $svr;
 	
-	API::Std::event_run("on_notice", ($svr, @ex));
+    # Send it off.
+	API::Std::event_run("on_notice", (\%src, $target, @ex));
 	
 	return 1;
 }

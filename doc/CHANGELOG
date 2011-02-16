@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Changed on_notice arguments to: \%src, $target, @msg
     * Clean up shutdown.
     * Created event on_shutdown.
     * Shutdown if there are no more IRC connections.
