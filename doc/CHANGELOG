@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * bantype is now a required configuration value.
+    * Added ban() to API::IRC.
     * Changed on_cprivmsg arguments to: \%src, $channel, @msg
     * Changed on_uprivmsg arguments to: \%src, @msg
     * Bug fix: Commands getting Permission denied even with incorrect prefix.

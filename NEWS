@@ -28,6 +28,7 @@ Incompatibilities:
 * Database: Changed structure of the `qdb` table. Modify the configuration
   values in upgrade.pl then run it to upgrade the database.
 * database:format is now required in the config.
+* bantype is now required in the config.
 
 We thank you for choosing Auto. Please remember that he is still in early
 development stages. But we hope we've piqued your interest, as Auto's upcoming

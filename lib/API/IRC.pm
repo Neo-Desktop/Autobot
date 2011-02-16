@@ -4,12 +4,46 @@
 package API::IRC;
 use strict;
 use warnings;
+use feature qw(switch);
 use Exporter;
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(cjoin cpart cmode umode kick privmsg notice quit nick names topic
-					usrc match_mask);
+our @EXPORT_OK = qw(ban cjoin cpart cmode umode kick privmsg notice quit nick names
+                    topic usrc match_mask);
 
+
+# Set a ban, based on config bantype value.
+sub ban
+{
+    my ($svr, $chan, $type, $user) = @_;
+    my $cbt = (API::Std::conf_get('bantype'))[0][0];
+
+    # Prepare the mask we're going to ban.
+    my $mask;
+    given ($cbt) {
+        when (1) { $mask = '*!*@'.$user->{host}; }
+        when (2) { $mask = $user->{nick}.'!*@*'; }
+        when (3) { $mask = '*!'.$user->{user}.'@'.$user->{host}; }
+        when (4) { $mask = $user->{nick}.'!*'.$user->{user}.'@'.$user->{host}; }
+        when (5) {
+            my @hd = split m/[\.]/, $user->{host};
+            shift @hd;
+            $mask = '*!*@*.'.join ' ', @hd;
+        }
+    }
+
+    # Now set the ban.
+    if (lc $type eq 'b') {
+        # We were requested to set a regular ban.
+        cmode($svr, $chan, "+b $mask");
+    }
+    elsif (lc $type eq 'q') {
+        # We were requested to set a ratbox-style quiet.
+        cmode($svr, $chan, "+q $mask");
+    }
+
+    return 1;
+}
 
 # Join a channel.
 sub cjoin 
