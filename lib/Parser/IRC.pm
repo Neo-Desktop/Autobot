@@ -587,7 +587,7 @@ sub privmsg
             $cprefix = (conf_get("fantasy_pf"))[0][0];
 		    $rprefix = substr($ex[3], 1, 1);
 		    $cmd = uc(substr($ex[3], 2));
-		    if (defined $API::Std::CMDS{$cmd}) {
+		    if (defined $API::Std::CMDS{$cmd} and $rprefix eq $cprefix) {
                 # If this is indeed a command, continue.
 			    if ($API::Std::CMDS{$cmd}{lvl} == 0 or $API::Std::CMDS{$cmd}{lvl} == 2) {
                     # Ensure the level is public or all.
@@ -597,7 +597,7 @@ sub privmsg
                             # If this command takes a privilege...
                             if (API::Std::has_priv(API::Std::match_user(%data), $API::Std::CMDS{$cmd}{priv})) {
                                 # Make sure they have it.
-                                &{ $API::Std::CMDS{$cmd}{'sub'} }(\%data, @argv) if $rprefix eq $cprefix;
+                                &{ $API::Std::CMDS{$cmd}{'sub'} }(\%data, @argv);
                             }
                             else {
                                 # Else give them the boot.
