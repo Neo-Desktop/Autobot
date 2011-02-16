@@ -6,6 +6,7 @@ use strict;
 use warnings;
 use API::Std qw(conf_get err awarn trans);
 use API::IRC;
+use Data::Dumper;
 
 # Raw parsing hash.
 our %RAWC = (
@@ -53,8 +54,9 @@ sub ircparse
 	my ($svr, $data) = @_;
 	
 	# Split spaces into @ex.
-	my @ex = split(' ', $data);
-	
+	my @ex = split /\s+/, $data;
+	print Dumper(@ex);
+
 	# Make sure there is enough data.
 	if (defined $ex[0] and defined $ex[1]) {
 		# If it's a ping...
