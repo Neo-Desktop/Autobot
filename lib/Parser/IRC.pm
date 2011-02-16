@@ -298,16 +298,18 @@ sub cjoin
 {
 	my ($svr, @ex) = @_;
 	my %src = API::IRC::usrc(substr($ex[0], 1));
+    my $chan = $ex[2];
+    if ($chan =~ m/^:/xsm) { $chan = substr $chan, 1; }
 	
 	# Check if this is coming from ourselves.
 	if ($src{nick} eq $botnick{$svr}{nick}) {
 		$botchans{$svr}{lc(substr $ex[2], 1)} = 1;
-		API::Std::event_run("on_ucjoin", ($svr, substr($ex[2], 1)));
+		API::Std::event_run("on_ucjoin", ($svr, $chan));
 	}
 	else {
 		# It isn't. Update chanusers and trigger on_rcjoin.
         $chanusers{$svr}{lc(substr $ex[2], 1)}{$src{nick}} = 1;
-		API::Std::event_run("on_rcjoin", ($svr, \%src, substr($ex[2], 1)));
+		API::Std::event_run("on_rcjoin", ($svr, \%src, $chan));
 	}
 	
 	return 1;
