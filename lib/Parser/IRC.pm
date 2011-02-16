@@ -484,6 +484,9 @@ sub notice
 {
 	my ($svr, @ex) = @_;
 
+    # Ensure this is coming from a user rather than a server.
+    if ($ex[0] !~ m/!/xsm) { return; }
+
     # Prepare all the data.
     my %src = API::IRC::usrc(substr $ex[0], 1);
     my $target = $ex[2];
