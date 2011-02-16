@@ -13,6 +13,7 @@ our $VERSION = 3.000000;
 
 # Core events.
 API::Std::event_add('on_shutdown');
+API::Std::event_add('on_rehash');
 
 # Update checker.
 sub checkver
@@ -202,6 +203,8 @@ sub rehash
             dbug '** Successfully connected to server: '.$cskey;
         }
     }
+
+    # Now trigger on_rehash.
 
     return 1;
 }
