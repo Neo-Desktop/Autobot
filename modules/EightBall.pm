@@ -42,15 +42,14 @@ our %HELP_RIGBALL = (
 # Callback for 8BALL command.
 sub c_8ball
 {
-	my (%data) = @_;
-    my @argv = @{ $data{args} }; delete $data{args};
+	my ($src, @argv) = @_;
 
     if (!defined $argv[0]) {
-        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
         return;
     }
 
-    privmsg($data{svr}, $data{chan}, "\002Question:\002 ".join(" ", @argv));
+    privmsg($src->{svr}, $src->{chan}, "\002Question:\002 ".join(" ", @argv));
     
     my $a = '';
     if (!$ANSWER) {
@@ -76,7 +75,7 @@ sub c_8ball
         $ANSWER = 0;
     }
 
-    privmsg($data{svr}, $data{chan}, "\002Answer:\002 ".$a);
+    privmsg($src->{svr}, $src->{chan}, "\002Answer:\002 ".$a);
     
 	return 1;
 }
@@ -84,17 +83,16 @@ sub c_8ball
 # Callback for RIGBALL command.
 sub rigball 
 {
-    my (%data) = @_;
-    my @argv = @{ $data{args} }; delete $data{args};
+    my ($src, @argv) = @_;
 
     # Check for necessary parameters.
     if (!defined $argv[0]) {
-        privmsg($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        privmsg($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
         return;
     }
 
     $ANSWER = join(" ", @argv);
-    privmsg($data{svr}, $data{nick}, "Answer set to: ".$ANSWER);
+    privmsg($src->{svr}, $src->{nick}, "Answer set to: ".$ANSWER);
 
 	return 1;
 }

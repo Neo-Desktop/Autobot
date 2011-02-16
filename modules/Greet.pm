@@ -44,12 +44,11 @@ our %HELP_GREET = (
 # Callback for GREET.
 sub cmd_greet
 {
-    my (%data) = @_;
-    my @argv = @{ $data{args} }; delete $data{args};
+    my ($src, @argv) = @_;
 
     # Check for required parameters.
     if (!defined $argv[0]) {
-        notice($data{svr}, $data{nick}, trans('Not enough parameters').q{.});
+        notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
         return;
     }
 
@@ -60,7 +59,7 @@ sub cmd_greet
             
             # Check for needed parameters.
             if (!defined $argv[1] or !defined $argv[2]) {
-                notice($data{svr}, $data{nick}, trans('Not enough parameters').q{.});
+                notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
                 return;
             }
             my $nick = $argv[1]; shift @argv; shift @argv;
@@ -69,39 +68,39 @@ sub cmd_greet
 
             # Make sure it doesn't already exist.
             if ($Auto::DB->selectrow_array('SELECT * FROM greets WHERE nick = "'.$nick.'"')) {
-                notice($data{svr}, $data{nick}, "A greet for \002$nick\002 already exists.");
+                notice($src->{svr}, $src->{nick}, "A greet for \002$nick\002 already exists.");
                 return;
             }
 
             # Insert into database.
-            my $dbq = $Auto::DB->prepare('INSERT INTO greets (nick, greet) VALUES (?, ?)') or notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
-            $dbq->execute($nick, $greet) or notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
+            my $dbq = $Auto::DB->prepare('INSERT INTO greets (nick, greet) VALUES (?, ?)') or notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
+            $dbq->execute($nick, $greet) or notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
 
             API::Log::slog('cmd_greet(): Creating new greet.');
             # Done.
-            notice($data{svr}, $data{nick}, "Successfully added greet for \002$nick\002.");
+            notice($src->{svr}, $src->{nick}, "Successfully added greet for \002$nick\002.");
         }
         when ('DEL') {
             # GREET DEL
             
             # Check for needed parameters.
             if (!defined $argv[1]) {
-                notice($data{svr}, $data{nick}, trans('Not enough parameters').q{.});
+                notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
                 return;
             }
             my $nick = lc $argv[1];
 
             # Check if there is a greet for this user.
             if (!$Auto::DB->selectrow_array('SELECT * FROM greets WHERE nick = "'.$nick.'"')) {
-                notice($data{svr}, $data{nick}, "There is no greet for \002$nick\002.");
+                notice($src->{svr}, $src->{nick}, "There is no greet for \002$nick\002.");
                 return;
             }
 
             # Delete it.
-            $Auto::DB->do('DELETE FROM greets WHERE nick = "'.$nick.'"') or notice($data{svr}, $data{nick}, trans('An error occurred').q{.}) and return;
-            notice($data{svr}, $data{nick}, "Greet for \002$nick\002 successfully deleted.");
+            $Auto::DB->do('DELETE FROM greets WHERE nick = "'.$nick.'"') or notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
+            notice($src->{svr}, $src->{nick}, "Greet for \002$nick\002 successfully deleted.");
         }
-        default { notice($data{svr}, $data{nick}, "Unknown action \002$argv[0]\002. \002Syntax:\002 GREET (ADD|DEL)"); return; }
+        default { notice($src->{svr}, $src->{nick}, "Unknown action \002$argv[0]\002. \002Syntax:\002 GREET (ADD|DEL)"); return; }
     }
 
     return 1;
@@ -110,7 +109,7 @@ sub cmd_greet
 # Call back for on_rcjoin hook.
 sub hook_rcjoin
 {
-    my (($svr, $src, $chan)) = @_;
+    my (($src, $chan)) = @_;
     my $nick = lc $src->{nick};
 
     # Check if there's a greet for this user.

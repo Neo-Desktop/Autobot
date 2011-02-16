@@ -36,22 +36,21 @@ our %HELP_ISITUP = (
 # Callback for ISITUP command.
 sub check
 {
-	my (%data) = @_;
+	my ($src, @argv) = @_;
 
 	# Create an instance of LWP::UserAgent.
 	my $ua = LWP::UserAgent->new();
 	$ua->agent('Auto IRC Bot');
 	$ua->timeout(2);
-	my @args = @{ $data{args} };
-	my $curl = $args[0];
 	# Do we have enough parameters?
-	if (!defined $args[0]) {
-		notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+	if (!defined $argv[0]) {
+		notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
 		return 0;
 	}
+	my $curl = $argv[0];
 	# Does the URL start with http(s)?
 	if ($curl !~ m/^http/) {
-		$curl = "http://".$curl;
+		$curl = 'http://'.$curl;
 	}
 
 	# Get the response via HTTP.
@@ -59,18 +58,18 @@ sub check
 
 	if ($response->is_success) {
 		# If successful, it's up.
-		privmsg($data{svr}, $data{chan}, $curl." appears to be up from here.");
+		privmsg($src->{svr}, $src->{chan}, $curl.' appears to be up from here.');
 	}
 	else {
 		# Otherwise, it's down.
-		privmsg($data{svr}, $data{chan}, $curl." appears to be down from here.");
+		privmsg($src->{svr}, $src->{chan}, $curl.' appears to be down from here.');
 	}
 
 	return 1;
 }
 
 # Start initialization.
-API::Std::mod_init("IsItUp", "Xelhua", "1.00", "3.0.0d", __PACKAGE__);
+API::Std::mod_init('IsItUp', 'Xelhua', '1.00', '3.0.0d', __PACKAGE__);
 # vim: set ai sw=4 ts=4:
 # build: cpan=LWP::UserAgent perl=5.010000
 

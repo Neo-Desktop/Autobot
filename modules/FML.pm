@@ -36,7 +36,7 @@ our %HELP_FML = (
 # Callback for FML command.
 sub fml
 {
-	my (%data) = @_;
+	my ($src, undef) = @_;
 
     # Create an instance of LWP::UserAgent.
 	my $ua = LWP::UserAgent->new();
@@ -56,11 +56,11 @@ sub fml
         my ($fml, undef) = split('Agree:', $dfa);
 
         # And send to channel.
-		privmsg($data{svr}, $data{chan}, "\002Random FML:\002 ".$fml);
+		privmsg($src->{svr}, $src->{chan}, "\002Random FML:\002 ".$fml);
 	}
     else {
         # Otherwise, send an error message.
-        privmsg($data{svr}, $data{chan}, "An error occurred while retrieving the FML.");
+        privmsg($src->{svr}, $src->{chan}, "An error occurred while retrieving the FML.");
     }
 
 	return 1;
