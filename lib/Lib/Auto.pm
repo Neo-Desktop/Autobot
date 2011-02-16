@@ -205,6 +205,7 @@ sub rehash
     }
 
     # Now trigger on_rehash.
+    API::Std::event_run('on_rehash');
 
     return 1;
 }
