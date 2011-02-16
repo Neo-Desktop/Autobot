@@ -54,7 +54,7 @@ sub rehash
     my %newsettings = $Auto::CONF->parse or err(2, 'Failed to parse configuration file!', 0) and return;
 
     # Check for required configuration values.
-    my @REQCVALS = qw(locale expire_logs server fantasy_pf);
+    my @REQCVALS = qw(locale expire_logs server fantasy_pf ratelimit database:format bantype);
     foreach my $REQCVAL (@REQCVALS) {
         if (!defined $newsettings{$REQCVAL}) {
             err(2, "Missing required configuration value: $REQCVAL", 0) and return;
