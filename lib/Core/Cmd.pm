@@ -16,18 +16,17 @@ our %HELP_MODLOAD = (
 # MODLOAD callback.
 sub cmd_modload
 {
-    my (%data) = @_;
-    my @argv = @{ $data{args} };
+    my ($src, @argv) = @_;
     
     # Check for the needed parameters.
     if (!defined $argv[0]) {
-        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
         return 0;
     }
 
     # Check if the module is already loaded.
     if (API::Std::mod_exists($argv[0])) {
-        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 is already loaded.");
+        notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 is already loaded.");
         return 0;
     }
 
@@ -37,11 +36,11 @@ sub cmd_modload
     # Check if we were successful or not.
     if ($tn) {
         # We were!
-        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 successfully loaded.");
+        notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 successfully loaded.");
     }
     else {
         # We weren't.
-        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 failed to load.");
+        notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 failed to load.");
         return 0;
     }
 
@@ -55,18 +54,17 @@ our %HELP_MODUNLOAD = (
 # MODUNLOAD callback.
 sub cmd_modunload
 {
-    my (%data) = @_;
-    my @argv = @{ $data{args} };
+    my ($src, @argv) = @_;
     
     # Check for the needed parameters.
     if (!defined $argv[0]) {
-        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
         return 0;
     }
 
     # Check if the module exists.
     if (!API::Std::mod_exists($argv[0])) {
-        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 is not loaded.");
+        notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 is not loaded.");
         return 0;
     }
 
@@ -76,11 +74,11 @@ sub cmd_modunload
     # Check if we were successful or not.
     if ($tn) {
         # We were!
-        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 successfully unloaded.");
+        notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 successfully unloaded.");
     }
     else {
         # We weren't.
-        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 failed to unload.");
+        notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 failed to unload.");
         return 0;
     }
 
@@ -94,18 +92,17 @@ our %HELP_MODRELOAD = (
 # MODRELOAD callback.
 sub cmd_modreload
 {
-    my (%data) = @_;
-    my @argv = @{ $data{args} };
+    my ($src, @argv) = @_;
     
     # Check for the needed parameters.
     if (!defined $argv[0]) {
-        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
         return 0;
     }
 
     # Check if the module exists.
     if (!API::Std::mod_exists($argv[0])) {
-        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 is not loaded.");
+        notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 is not loaded.");
         return 0;
     }
 
@@ -117,11 +114,11 @@ sub cmd_modreload
     # Check if we were successful or not.
     if ($tvn and $tln) {
         # We were!
-        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 successfully reloaded.");
+        notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 successfully reloaded.");
     }
     else {
         # We weren't.
-        notice($data{svr}, $data{nick}, "Module \002".$argv[0]."\002 failed to reload.");
+        notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 failed to reload.");
         return 0;
     }
 
@@ -135,13 +132,13 @@ our %HELP_SHUTDOWN = (
 # SHUTDOWN callback.
 sub cmd_shutdown
 {
-    my (%data) = @_;
+    my ($src, undef) = @_;
     
     # Goodbye world!
-    notice($data{svr}, $data{nick}, "Shutting down.");
-    dbug "Got SHUTDOWN from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Shutting down. . .";
-    alog "Got SHUTDOWN from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Shutting down. . .";
-    quit($_, "SHUTDOWN from ".$data{nick}."/".$data{svr}) foreach (keys %Auto::SOCKET);
+    notice($src->{svr}, $src->{nick}, "Shutting down.");
+    dbug "Got SHUTDOWN from ".$src->{nick}."!".$src->{user}."@".$src->{host}."/".$src->{svr}."! Shutting down. . .";
+    alog "Got SHUTDOWN from ".$src->{nick}."!".$src->{user}."@".$src->{host}."/".$src->{svr}."! Shutting down. . .";
+    quit($_, "SHUTDOWN from ".$src->{nick}."/".$src->{svr}) foreach (keys %Auto::SOCKET);
     API::Std::event_run('on_shutdown');
     exit;
 
@@ -156,13 +153,13 @@ our %HELP_RESTART = (
 # RESTART callback.
 sub cmd_restart
 {
-    my (%data) = @_;
+    my ($src, undef) = @_;
     
     # Goodbye world!
-    notice($data{svr}, $data{nick}, "Restarting.");
-    dbug "Got RESTART from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Restarting. . .";
-    alog "Got RESTART from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Restarting. . .";
-    quit($_, "RESTART from ".$data{nick}."/".$data{svr}) foreach (keys %Auto::SOCKET);
+    notice($src->{svr}, $src->{nick}, "Restarting.");
+    dbug "Got RESTART from ".$src->{nick}."!".$src->{user}."@".$src->{host}."/".$src->{svr}."! Restarting. . .";
+    alog "Got RESTART from ".$src->{nick}."!".$src->{user}."@".$src->{host}."/".$src->{svr}."! Restarting. . .";
+    quit($_, "RESTART from ".$src->{nick}."/".$src->{svr}) foreach (keys %Auto::SOCKET);
     API::Std::event_run('on_shutdown');
 
     # Time to come back from the dead!
@@ -185,16 +182,16 @@ our %HELP_REHASH = (
 # REHASH callback.
 sub cmd_rehash
 {
-    my (%data) = @_;
+    my ($src, undef) = @_;
     
     # Send out notifications.
-    notice($data{svr}, $data{nick}, "Rehashing.");
-    dbug "Got REHASH from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Rehashing. . .";
-    alog "Got REHASH from ".$data{nick}."!".$data{user}."@".$data{host}."/".$data{svr}."! Rehashing. . .";
+    notice($src->{svr}, $src->{nick}, "Rehashing.");
+    dbug "Got REHASH from ".$src->{nick}."!".$src->{user}."@".$src->{host}."/".$src->{svr}."! Rehashing. . .";
+    alog "Got REHASH from ".$src->{nick}."!".$src->{user}."@".$src->{host}."/".$src->{svr}."! Rehashing. . .";
 
     # Rehash.
     Lib::Auto::rehash();
-    notice($data{svr}, $data{nick}, "Done.");
+    notice($src->{svr}, $src->{nick}, "Done.");
 
     return 1;
 }
@@ -206,18 +203,17 @@ our %HELP_HELP = (
 # HELP callback.
 sub cmd_help
 {
-    my (%data) = @_;
-    my @argv = @{ $data{args} }; delete $data{args};
+    my ($src, @argv) = @_;
 
     # Check for arguments and reply accordingly.
     if (!defined $argv[0]) {
         # No command specified. List commands.
         my $cmdlist = '';
         foreach (sort keys %API::Std::CMDS) {
-            if (defined $data{chan}) {
+            if (defined $src->{chan}) {
                 if ($API::Std::CMDS{$_}{lvl} == 0 or $API::Std::CMDS{$_}{lvl} == 2) {
                     if ($API::Std::CMDS{$_}{priv}) {
-                        if (has_priv(match_user(%data), $API::Std::CMDS{$_}{priv})) {
+                        if (has_priv(match_user(%$src), $API::Std::CMDS{$_}{priv})) {
                             $cmdlist .= ", \002".uc($_)."\002";
                         }
                     }
@@ -229,7 +225,7 @@ sub cmd_help
             else {
                 if ($API::Std::CMDS{$_}{lvl} == 1 or $API::Std::CMDS{$_}{lvl} == 2) {
                     if ($API::Std::CMDS{$_}{priv}) {
-                        if (has_priv(match_user(%data), $API::Std::CMDS{$_}{priv})) {
+                        if (has_priv(match_user(%$src), $API::Std::CMDS{$_}{priv})) {
                             $cmdlist .= ", \002".uc($_)."\002";
                         }
                     }
@@ -241,7 +237,7 @@ sub cmd_help
         }
         $cmdlist = substr($cmdlist, 2);
 
-        notice($data{svr}, $data{nick}, "Command List: ".$cmdlist);
+        notice($src->{svr}, $src->{nick}, "Command List: ".$cmdlist);
     }
     else {
         # Help for a specific command was requested. Lets get it.
@@ -252,8 +248,8 @@ sub cmd_help
             
             # Check for necessary privileges.
             if ($API::Std::CMDS{$rcm}{priv}) {
-                if (!has_priv(match_user(%data), $API::Std::CMDS{$rcm}{priv})) {
-                    notice($data{svr}, $data{nick}, trans("Access denied").".");
+                if (!has_priv(match_user(%$src), $API::Std::CMDS{$rcm}{priv})) {
+                    notice($src->{svr}, $src->{nick}, trans("Access denied").".");
                     return;
                 }
             }
@@ -266,28 +262,28 @@ sub cmd_help
 
                 if (defined ${ $API::Std::CMDS{$rcm}{help} }{$lang}) {
                     # If help for this command is available in the configured language.
-                    notice($data{svr}, $data{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{help} }{$lang});
+                    notice($src->{svr}, $src->{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{help} }{$lang});
                 }
                 else {
                     # If it isn't, default to English.
                     if (defined ${ $API::Std::CMDS{$rcm}{help} }{en}) {
                         # If help for this command is available in English.
-                        notice($data{svr}, $data{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{help} }{en});
+                        notice($src->{svr}, $src->{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{help} }{en});
                     }
                     else {
                         # If it isn't, no help.
-                        notice($data{svr}, $data{nick}, "No help for \002".$rcm."\002 available.");
+                        notice($src->{svr}, $src->{nick}, "No help for \002".$rcm."\002 available.");
                     }
                 }
             }
             else {
                 # If it isn't valid, no help.
-                notice($data{svr}, $data{nick}, "No help for \002".$rcm."\002 available.");
+                notice($src->{svr}, $src->{nick}, "No help for \002".$rcm."\002 available.");
             }
         }
         else {
             # If there is no help, don't give any.
-            notice($data{svr}, $data{nick}, "No help for \002".$rcm."\002 available.");
+            notice($src->{svr}, $src->{nick}, "No help for \002".$rcm."\002 available.");
         }
     }
 

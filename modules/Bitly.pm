@@ -47,7 +47,7 @@ our %HELP_REVERSE = (
 # Callback for SHORTEN command.
 sub shorten 
 {
-	my (%data) = @_;
+	my ($src, @args) = @_;
 
     # Create an instance of LWP::UserAgent.
 	my $ua = LWP::UserAgent->new();
@@ -55,9 +55,8 @@ sub shorten
 	$ua->timeout(2);
     
     # Put together the call to the Bit.ly API. 
-	my @args = @{ $data{args} };
     if (!defined $args[0]) {
-        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
         return 0;
     }
 	my ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
@@ -71,11 +70,11 @@ sub shorten
         my $d = $response->decoded_content;
 		chomp $d;
         # And send to channel.
-		privmsg($data{svr}, $data{chan}, "URL: ".$d);
+		privmsg($src->{svr}, $src->{chan}, "URL: ".$d);
 	}
     else {
         # Otherwise, send an error message.
-        privmsg($data{svr}, $data{chan}, "An error occurred while shortening your URL.");
+        privmsg($src->{svr}, $src->{chan}, "An error occurred while shortening your URL.");
     }
 
 	return 1;
@@ -84,7 +83,7 @@ sub shorten
 # Callback for REVERSE command.
 sub reverse 
 {
-    my (%data) = @_;
+    my ($src, @args) = @_;
 
     # Create an instance of LWP::UserAgent.
     my $ua = LWP::UserAgent->new();
@@ -92,9 +91,8 @@ sub reverse
     $ua->timeout(2);
 
     # Put together the call to the Bit.ly API.
-    my @args = @{ $data{args} }; 
     if (!defined $args[0]) {
-        notice($data{svr}, $data{nick}, trans("Not enough parameters").".");
+        notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
         return 0;
     }
     my ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
@@ -108,11 +106,11 @@ sub reverse
         my $d = $response->decoded_content;
 		chomp $d;
         # And send it to channel.
-	    privmsg($data{svr}, $data{chan}, "URL: ".$d);
+	    privmsg($src->{svr}, $src->{chan}, "URL: ".$d);
 	}
 	else {
         # Otherwise, send an error message.
-		privmsg($data{svr}, $data{chan}, "An error occurred while reversing your URL.");
+		privmsg($src->{svr}, $src->{chan}, "An error occurred while reversing your URL.");
 	}
 
 	return 1;
