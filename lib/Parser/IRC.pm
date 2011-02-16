@@ -529,76 +529,81 @@ sub privmsg
 	# Check if it's to a channel or to us.
 	if (lc($ex[2]) eq lc($botnick{$svr}{nick})) {
 		# It is coming to us in a private message.
-		$cmd = uc(substr($ex[3], 1));
-		if (defined $API::Std::CMDS{$cmd}) {
-            # If this is indeed a command, continue.
-			if ($API::Std::CMDS{$cmd}{lvl} == 1 or $API::Std::CMDS{$cmd}{lvl} == 2) {
-                # Ensure the level is private or all.
-                if (!defined $Core::IRC::usercmd{$data{nick}.'@'.$data{host}}) { $Core::IRC::usercmd{$data{nick}.'@'.$data{host}} = 0; }
-                if (API::Std::ratelimit_check(%data)) {
-                    # Continue if the user has not passed the ratelimit amount.
-				    if ($API::Std::CMDS{$cmd}{priv}) {
-                        # If this command requires a privilege...
-                        if (API::Std::has_priv(API::Std::match_user(%data), $API::Std::CMDS{$cmd}{priv})) {
-                            # Make sure they have it.
-                            &{ $API::Std::CMDS{$cmd}{'sub'} }(%data);
+        
+        # Ensure it's a valid length.
+        if (length($ex[3]) > 1) {
+		    $cmd = uc(substr($ex[3], 1));
+		    if (defined $API::Std::CMDS{$cmd}) {
+                # If this is indeed a command, continue.
+			    if ($API::Std::CMDS{$cmd}{lvl} == 1 or $API::Std::CMDS{$cmd}{lvl} == 2) {
+                    # Ensure the level is private or all.
+                    if (API::Std::ratelimit_check(%data)) {
+                        # Continue if the user has not passed the ratelimit amount.
+				        if ($API::Std::CMDS{$cmd}{priv}) {
+                            # If this command requires a privilege...
+                            if (API::Std::has_priv(API::Std::match_user(%data), $API::Std::CMDS{$cmd}{priv})) {
+                                # Make sure they have it.
+                                &{ $API::Std::CMDS{$cmd}{'sub'} }(%data);
+                            }
+                            else {
+                                # Else give them the boot.
+                                API::IRC::notice($data{svr}, $data{nick}, API::Std::trans("Permission denied").".");
+                            }
                         }
                         else {
-                            # Else give them the boot.
-                            API::IRC::notice($data{svr}, $data{nick}, API::Std::trans("Permission denied").".");
+                            # Else execute the command without any extra checks.
+                            &{ $API::Std::CMDS{$cmd}{'sub'} }(%data);
                         }
                     }
                     else {
-                        # Else execute the command without any extra checks.
-                        &{ $API::Std::CMDS{$cmd}{'sub'} }(%data);
+                        # Send them a notice about their bad deed.
+                        API::IRC::notice($data{svr}, $data{nick}, trans('Rate limit exceeded').q{.});
                     }
-                }
-                else {
-                    # Send them a notice about their bad deed.
-                    API::IRC::notice($data{svr}, $data{nick}, trans('Rate limit exceeded').q{.});
-                }
-			}
-		}
-		
+			    }
+		    }
+        }
+
 		# Trigger event on_uprivmsg.
 		API::Std::event_run("on_uprivmsg", ($svr, @ex));
 	}
 	else {
 		# It is coming to us in a channel message.
 		$data{chan} = $ex[2];
-		$cprefix = (conf_get("fantasy_pf"))[0][0];
-		$rprefix = substr($ex[3], 1, 1);
-		$cmd = uc(substr($ex[3], 2));
-		if (defined $API::Std::CMDS{$cmd}) {
-            # If this is indeed a command, continue.
-			if ($API::Std::CMDS{$cmd}{lvl} == 0 or $API::Std::CMDS{$cmd}{lvl} == 2) {
-                # Ensure the level is public or all.
-                if (!defined $Core::IRC::usercmd{$data{nick}.'@'.$data{host}}) { $Core::IRC::usercmd{$data{nick}.'@'.$data{host}} = 0; }
-                if (API::Std::ratelimit_check(%data)) {
-                    # Continue if the user has not passed the ratelimit amount.
-                    if ($API::Std::CMDS{$cmd}{priv}) {
-                        # If this command takes a privilege...
-                        if (API::Std::has_priv(API::Std::match_user(%data), $API::Std::CMDS{$cmd}{priv})) {
-                            # Make sure they have it.
-                            &{ $API::Std::CMDS{$cmd}{'sub'} }(%data) if $rprefix eq $cprefix;
+        # Ensure it's a valid length before continuing.
+		if (length($ex[3]) > 1) {
+            $cprefix = (conf_get("fantasy_pf"))[0][0];
+		    $rprefix = substr($ex[3], 1, 1);
+		    $cmd = uc(substr($ex[3], 2));
+		    if (defined $API::Std::CMDS{$cmd}) {
+                # If this is indeed a command, continue.
+			    if ($API::Std::CMDS{$cmd}{lvl} == 0 or $API::Std::CMDS{$cmd}{lvl} == 2) {
+                    # Ensure the level is public or all.
+                    if (API::Std::ratelimit_check(%data)) {
+                        # Continue if the user has not passed the ratelimit amount.
+                        if ($API::Std::CMDS{$cmd}{priv}) {
+                            # If this command takes a privilege...
+                            if (API::Std::has_priv(API::Std::match_user(%data), $API::Std::CMDS{$cmd}{priv})) {
+                                # Make sure they have it.
+                                &{ $API::Std::CMDS{$cmd}{'sub'} }(%data) if $rprefix eq $cprefix;
+                            }
+                            else {
+                                # Else give them the boot.
+                                API::IRC::notice($data{svr}, $data{nick}, API::Std::trans("Permission denied").".");
+                            }
                         }
-                         else {
-                            # Else give them the boot.
-                            API::IRC::notice($data{svr}, $data{nick}, API::Std::trans("Permission denied").".");
+                        else {
+                            # Else continue executing without any extra checks.
+                            &{ $API::Std::CMDS{$cmd}{'sub'} }(%data) if $rprefix eq $cprefix;
                         }
                     }
                     else {
-                        # Else continue executing without any extra checks.
-                        &{ $API::Std::CMDS{$cmd}{'sub'} }(%data) if $rprefix eq $cprefix;
+                        # Send them a notice about their bad deed.
+                        API::IRC::notice($data{svr}, $data{nick}, trans('Rate limit exceeded').q{.});
                     }
                 }
-                else {
-                    # Send them a notice about their bad deed.
-                    API::IRC::notice($data{svr}, $data{nick}, trans('Rate limit exceeded').q{.});
-                }
-            }
-		}
-		
+		    }
+        }
+
 		# Trigger event on_cprivmsg.
 		API::Std::event_run("on_cprivmsg", ($svr, @ex));
 	}
