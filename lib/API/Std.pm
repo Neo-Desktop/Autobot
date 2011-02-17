@@ -180,7 +180,8 @@ sub event_run
 
 	if (defined $EVENTS{lc $event} and defined $HOOKS{lc $event}) {
 		foreach my $hk (keys %{ $HOOKS{lc $event} }) {
-			&{ $HOOKS{lc $event}{$hk} }(@args);
+			my $ri = &{ $HOOKS{lc $event}{$hk} }(@args);
+            if ($ri == -1) { last; }
 		}
 	}
 
@@ -439,6 +440,7 @@ sub ratelimit_check
         # If the user has not passed the rate limit.
         if ($Core::IRC::usercmd{$src{nick}.'@'.$src{host}.'/'.$src{svr}} <= (conf_get('ratelimit_amount'))[0][0]) {
             # Increment their uses and return 1.
+
             $Core::IRC::usercmd{$src{nick}.'@'.$src{host}.'/'.$src{svr}}++;
             return 1;
         }
