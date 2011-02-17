@@ -8,6 +8,8 @@ use strict;
 use warnings;
 use English qw(-no_match_vars);
 use FindBin qw($Bin);
+use Pod::Html;
+use Pod::Man;
 our $Bin = $Bin;
 
 our $VERSION = 1.00;
@@ -103,12 +105,49 @@ foreach (@pars) {
             print 'Checking Perl version..... '.$PERL_VERSION.' - ';
             if ($] < $val) { $die = 1; }
             say (($die) ? 'Not OK' : 'OK');
-            print $RS;
             if ($die) { say 'Failed to build '.$module.'.'; exit; }
         }
     }
 }
 
+# Generate documentation.
+my $got_end = 0;
+open my $FMPH, '<', $modulep;
+my @MPBUF = <$FMPH>;
+close $FMPH;
+
+say 'Generating documentation.....';
+my $podbuf;
+foreach my $line (@MPBUF) {
+    if (!defined $line) { $line = ' '; }
+    $line =~ s/(\r|\n)//g;
+
+    if ($line eq '__END__') {
+        $got_end = 1;
+    }
+
+    if ($got_end and $line ne '__END__') {
+        $podbuf .= $line."\n";
+    }
+}
+
+# Create the autodoc/ dir if it doesn't exist.
+if (!-d "$Bin/../autodoc") {
+    mkdir "$Bin/../autodoc";
+}
+
+# Save to POD file in autodoc/
+open my $FMPNH, '>', "$Bin/../autodoc/$module.pod";
+print {$FMPNH} $podbuf;
+close $FMPNH;
+
+# Create HTML.
+pod2html("--infile=$Bin/../autodoc/$module.pod", "--outfile=$Bin/../autodoc/$module.html");
+# Create *roff.
+my $manifier = Pod::Man->new();
+$manifier->parse_from_file("$Bin/../autodoc/$module.pod", "$Bin/../autodoc/$module.1");
+
+print $RS;
 say 'Done.';
 
 # vim: set ai sw=4 ts=4:

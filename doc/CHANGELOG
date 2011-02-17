@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * bin/buildmod now retrieves the POD from modules and creates man(1) page
+      plus HTML file.
     * cjoin() now supports a channel key as the last argument.
     * Added a ChanTopics module for advanced management of channel topics.
     * bantype is now a required configuration value.
