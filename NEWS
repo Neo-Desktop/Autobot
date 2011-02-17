@@ -20,6 +20,7 @@ In this alpha4 release, we have added:
 * Improved multilingual support.
 * A ChanTopics module for advanced management of channel topics.
 * buildmod now generates HTML and man(1) pages from a module's POD.
+* server:ajoin now supports channel keys by spacing the name and key.
 
 Bug fixes:
 

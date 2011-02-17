@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * server:ajoin now supports channel keys by spacing the name and key.
     * Hooks can now block events by returning -1.
     * bin/buildmod now retrieves the POD from modules and creates man(1) page
       plus HTML file.
