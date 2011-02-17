@@ -30,6 +30,8 @@ sub _init
     cmd_add('OTHER', 0, 'topic.static', \%m_ChanTopics::HELP_OTHER, \&m_ChanTopics::cmd_other) or return;
     # Create the STATIC command.
     cmd_add('STATIC', 0, 'topic.static', \%m_ChanTopics::HELP_STATIC, \&m_ChanTopics::cmd_static) or return;
+    # Create the TSYNC command.
+    cmd_add('TSYNC', 0, 'topic.topic', \%m_ChanTopics::HELP_TSYNC, \&m_ChanTopics::cmd_tsync) or return;
 
     return 1;
 }
@@ -45,6 +47,7 @@ sub _void
     cmd_del('STATUS') or return;
     cmd_del('OTHER') or return;
     cmd_del('STATIC') or return;
+    cmd_del('TSYNC') or return;
 
     return 1;
 }
@@ -70,6 +73,9 @@ our %HELP_OTHER = (
 );
 our %HELP_STATIC = (
     'en' => "This command allows you to set the static section of a channel topic. \002Syntax:\002 STATIC <new static>",
+);
+our %HELP_TSYNC = (
+    'en' => "This command allows you to sync the channel topic with the topic in the database. \002Syntax:\002 TSYNC",
 );
 
 # Callback for TOPIC command.
@@ -236,6 +242,20 @@ sub cmd_static
 
     # Set new topic.
     topic($src->{svr}, $src->{chan}, "Topic: $topic $div $owner $verb $status $div $other $div ".join(' ', @argv));
+
+    return 1;
+}
+
+# Callback for TSYNC command.
+sub cmd_tsync
+{
+    my ($src, @argv) = @_;
+
+    # Get the topic data.
+    my ($topic, $div, $owner, $verb, $status, $other, $static) = _getdata(lc $src->{svr}, lc $src->{chan});
+
+    # Set new topic.
+    topic($src->{svr}, $src->{chan}, "Topic: $topic $div $owner $verb $status $div $other $div $static");
 
     return 1;
 }
