@@ -50,7 +50,7 @@ sub cjoin
 {
 	my ($svr, $chan, $key) = @_;
 	
-	Auto::socksnd($svr, "JOIN ".((defined $key) ? "$chan" : "$chan $key"));
+	Auto::socksnd($svr, "JOIN ".((defined $key) ? "$chan $key" : "$chan"));
 	
 	return 1;
 }
