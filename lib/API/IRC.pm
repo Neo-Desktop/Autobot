@@ -48,9 +48,9 @@ sub ban
 # Join a channel.
 sub cjoin 
 {
-	my ($svr, $chan) = @_;
+	my ($svr, $chan, $key) = @_;
 	
-	Auto::socksnd($svr, "JOIN $chan");
+	Auto::socksnd($svr, "JOIN ".((defined $key) ? "$chan" : "$chan $key"));
 	
 	return 1;
 }
