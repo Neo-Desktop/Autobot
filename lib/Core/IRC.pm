@@ -75,11 +75,33 @@ hook_add("on_connect", "autojoin", sub {
 		# For single-line ajoins.
 		my @sajoin = split(',', $cajoin[0]);
 		
-		API::IRC::cjoin($svr, $_) foreach (@sajoin);
+        foreach (@sajoin) {
+            # Check if a key was specified.
+            if ($_ =~ m/\s/xsm) {
+                # There was, join with it.
+                my ($chan, $key) = split / /;
+                API::IRC::cjoin($svr, $chan, $key);
+            }
+            else {
+                # Else join without one.
+		        API::IRC::cjoin($svr, $_);
+            }
+        }
 	}
 	else {
 		# For multi-line ajoins.
-		API::IRC::cjoin($svr, $_) foreach (@cajoin);
+		foreach (@cajoin) {
+            # Check if a key was specified.
+            if ($_ =~ m/\s/xsm) {
+                # There was, join with it.
+                my ($chan, $key) = split / /;
+                API::IRC::cjoin($svr, $chan, $key);
+            }
+            else {
+                # Else join without one.
+                API::IRC::cjoin($svr, $_);
+            }
+        }
     }
     # And logchan, if applicable.
     if (conf_get('logchan')) {
