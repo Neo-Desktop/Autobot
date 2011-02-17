@@ -18,6 +18,7 @@ In this alpha4 release, we have added:
 * A Greet module for greeting users on join.
 * IRC logchan functionality.
 * Improved multilingual support.
+* A ChanTopics module for advanced management of channel topics.
 
 Bug fixes:
 
