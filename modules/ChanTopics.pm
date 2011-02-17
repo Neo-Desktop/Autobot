@@ -320,4 +320,6 @@ This module is not compatible with PostgreSQL, yet.
 
 This module is compatible with Auto v3.0.0a4+.
 
+Ported from v1.0.
+
 =back
