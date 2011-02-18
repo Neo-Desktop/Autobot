@@ -5,6 +5,7 @@ package M::LinkTitle;
 use strict;
 use warnings;
 use LWP::UserAgent;
+use HTML::Entities;
 use API::Std qw(hook_add hook_del);
 use API::IRC qw(privmsg);
 
@@ -52,8 +53,10 @@ sub gettitle
                 
                 # Check for <title>
                 if ($data =~ m{<title>(.*)</title>}ixsm) {
-                    # Found. Return it to channel.
-                    privmsg($src->{svr}, $chan, "\2Title:\2 $1");
+                    # Found. Decode it.
+                    my $title = decode_entities($1);
+                    # Return to channel.
+                    privmsg($src->{svr}, $chan, "\2Title:\2 $title");
                 }
             }
         }
@@ -65,7 +68,7 @@ sub gettitle
 # Start initialization.
 API::Std::mod_init('LinkTitle', 'Xelhua', '1.00', '3.0.0a5', __PACKAGE__);
 # vim: set ai sw=4 ts=4:
-# build: cpan=LWP::UserAgent perl=5.010000
+# build: cpan=LWP::UserAgent,HTML::Entities perl=5.010000
 
 __END__
 
@@ -90,13 +93,18 @@ detected, Auto will connect to it and get the page title by scanning for the
 
 =head1 DEPENDENCIES
 
-This module is dependent on one module from the CPAN.
+This module is dependent on two modules from the CPAN.
 
 =over
 
 =item L<LWP::UserAgent|LWP::UserAgent>
 
 This module is used for connecting to the target web server via HTTP(S).
+
+=item L<HTML::Entities|HTML::Entities>
+
+This module is used for decoding HTML entities in the response we receive from
+the server.
 
 =back
 
