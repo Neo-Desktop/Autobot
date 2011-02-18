@@ -1,3 +1,4 @@
-*.conf
+auto.conf
 build/*
 *.swp
+autodoc/*
