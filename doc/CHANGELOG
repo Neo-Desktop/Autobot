@@ -3,7 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
-
+    * Added a LinkTitle module for getting the title of a web page posted in a
+      channel.
 
 3.0 Alpha 4
 ===============================================================================
