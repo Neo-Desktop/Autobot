@@ -3,6 +3,10 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+
+
+3.0 Alpha 4
+===============================================================================
     * Added a Dictionary module for looking up definitions of words.
     * server:ajoin now supports channel keys by spacing the name and key.
     * Hooks can now block events by returning -1.
