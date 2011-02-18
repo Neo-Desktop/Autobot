@@ -118,7 +118,7 @@ sub reverse
 
 
 # Start initialization.
-API::Std::mod_init("Bitly", "Xelhua", "1.00", "3.0.0d", __PACKAGE__);
+API::Std::mod_init('Bitly', 'Xelhua', '1.00', '3.0.0a4', __PACKAGE__);
 # vim: set ai sw=4 ts=4:
 # build: cpan=LWP::UserAgent,URI::Escape perl=5.010000
 
@@ -176,9 +176,9 @@ Add Bitly to module auto-load and the following to your configuration file:
 
 =over
 
-This module adds  extra dependencies: LWP::UserAgent and URI::Escape. 
-You can get it from the CPAN <http://www.cpan.org>.
+This module adds extra dependencies: LWP::UserAgent and URI::Escape. You can
+get it from the CPAN <http://www.cpan.org>.
 
-This module is compatible with Auto version 3.0.0a2+.
+This module is compatible with Auto version 3.0.0a4+.
 
 =back

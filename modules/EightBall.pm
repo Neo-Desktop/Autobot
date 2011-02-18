@@ -13,8 +13,8 @@ our $ANSWER = 0;
 sub _init 
 {
     # Create the 8BALL and RIGBALL commands.
-	cmd_add("8BALL", 0, 0, \%M::EightBall::HELP_8BALL, \&M::EightBall::c_8ball) or return 0;
-	cmd_add("RIGBALL", 1, "cmd.rigball", \%M::EightBall::HELP_RIGBALL, \&M::EightBall::rigball) or return 0;
+	cmd_add('8BALL', 0, 0, \%M::EightBall::HELP_8BALL, \&M::EightBall::c_8ball) or return 0;
+	cmd_add('RIGBALL', 1, 'cmd.rigball', \%M::EightBall::HELP_RIGBALL, \&M::EightBall::rigball) or return 0;
 
     # Success.
     return 1;
@@ -24,8 +24,8 @@ sub _init
 sub _void 
 {
     # Delete the 8BALL and RIGBALL commands.
-	cmd_del("8BALL") or return 0;
-	cmd_del("RIGBALL") or return 0;
+	cmd_del('8BALL') or return 0;
+	cmd_del('RIGBALL') or return 0;
 
     # Success.
 	return 1;
@@ -99,7 +99,7 @@ sub rigball
 
 
 # Start initialization.
-API::Std::mod_init("EightBall", "Xelhua", "1.00", "3.0.0d", __PACKAGE__);
+API::Std::mod_init('EightBall', 'Xelhua', '1.00', '3.0.0a4', __PACKAGE__);
 # vim: set ai sw=4 ts=4:
 # build: perl=5.010000
 
@@ -143,7 +143,7 @@ command for setting ("rigging") the 8-Ball's next answer.
 
 =over
 
-This module is compatible with Auto version 3.0.0a2+.
+This module is compatible with Auto version 3.0.0a4+.
 
 Ported from Auto 1.0.
 

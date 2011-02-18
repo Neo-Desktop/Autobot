@@ -12,7 +12,7 @@ use LWP::UserAgent;
 sub _init 
 {
 	# Create the ISITUP command.
-	cmd_add("ISITUP", 0, 0, \%M::IsItUp::HELP_ISITUP, \&M::IsItUp::check) or return 0;
+	cmd_add('ISITUP', 0, 0, \%M::IsItUp::HELP_ISITUP, \&M::IsItUp::check) or return 0;
 
 	# Success.
 	return 1;
@@ -22,7 +22,7 @@ sub _init
 sub _void 
 {
 	# Delete the ISITUP command.
-	cmd_del("ISITUP") or return 0;
+	cmd_del('ISITUP') or return 0;
 
 	# Success.
 	return 1;
@@ -69,7 +69,7 @@ sub check
 }
 
 # Start initialization.
-API::Std::mod_init('IsItUp', 'Xelhua', '1.00', '3.0.0d', __PACKAGE__);
+API::Std::mod_init('IsItUp', 'Xelhua', '1.00', '3.0.0a4', __PACKAGE__);
 # vim: set ai sw=4 ts=4:
 # build: cpan=LWP::UserAgent perl=5.010000
 
@@ -110,6 +110,6 @@ appears up or down to Auto.
 This module requires LWP::UserAgent. You can get it from
 the CPAN <http://www.cpan.org>.
 
-This module is compatible with Auto version 3.0.0a2+.
+This module is compatible with Auto version 3.0.0a4+.
 
 =back

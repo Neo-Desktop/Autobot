@@ -13,11 +13,6 @@ use JSON -support_by_pp;
 # Initialization subroutine.
 sub _init 
 {
-    # Check for JSON::PP.
-    eval {
-        require JSON::PP;
-        1;
-    } or return 0;
 	# Create the CALC command.
 	cmd_add("CALC", 0, 0, \%M::Calc::HELP_CALC, \&M::Calc::calc) or return 0;
 
@@ -83,7 +78,7 @@ sub calc
 }
 
 # Start initialization.
-API::Std::mod_init("Calc", "Xelhua", "1.00", "3.0.0d", __PACKAGE__);
+API::Std::mod_init('Calc', 'Xelhua', '1.00', '3.0.0a4', __PACKAGE__);
 # vim: set ai sw=4 ts=4:
 # build: cpan=LWP::UserAgent,URI::Escape,JSON,JSON::PP perl=5.010000
 
@@ -124,6 +119,6 @@ Google Calculator.
 This module requires LWP::UserAgent, URI::Escape and JSON/JSON::PP. 
 All are obtainable from the CPAN <http://www.cpan.org>.
 
-This module is compatible with Auto version 3.0.0a2+.
+This module is compatible with Auto version 3.0.0a4+.
 
 =back

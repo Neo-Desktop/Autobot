@@ -36,6 +36,16 @@ sub hello
 
 
 # Start initialization.
-API::Std::mod_init("HelloChan", "Xelhua", "1.00", "3.0.0d", __PACKAGE__);
+API::Std::mod_init('HelloChan', 'Xelhua', '1.00', '3.0.0a4', __PACKAGE__);
 # vim: set ai sw=4 ts=4:
 # build: perl=5.010000
+
+__END__
+
+=head1 HelloChan
+
+=over
+
+This is an example module. Also, cows go moo.
+
+=back

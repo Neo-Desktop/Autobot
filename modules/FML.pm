@@ -12,7 +12,7 @@ use LWP::UserAgent;
 sub _init 
 {
     # Create the FML command.
-	cmd_add("FML", 0, 0, \%M::FML::HELP_FML, \&M::FML::fml) or return 0;
+	cmd_add('FML', 0, 0, \%M::FML::HELP_FML, \&M::FML::fml) or return 0;
 
     # Success.
     return 1;
@@ -22,7 +22,7 @@ sub _init
 sub _void 
 {
     # Delete the FML command.
-	cmd_del("FML") or return 0;
+	cmd_del('FML') or return 0;
 
     # Success.
 	return 1;
@@ -44,7 +44,7 @@ sub fml
 	$ua->timeout(2);
     
     # Get the random FML via HTTP.
-    my $rp = $ua->get("http://rscript.org/lookup.php?type=fml");
+    my $rp = $ua->get('http://rscript.org/lookup.php?type=fml');
 
 	if ($rp->is_success) {
         # If successful, decode the content.
@@ -67,7 +67,7 @@ sub fml
 }
 
 # Start initialization.
-API::Std::mod_init("FML", "Xelhua", "1.00", "3.0.0d", __PACKAGE__);
+API::Std::mod_init('FML', 'Xelhua', '1.00', '3.0.0a4', __PACKAGE__);
 # vim: set ai sw=4 ts=4:
 # build: cpan=LWP::UserAgent perl=5.010000
 
@@ -110,7 +110,7 @@ have my hand back?" FML
 This module adds an extra dependency: LWP::UserAgent. You can get it from
 the CPAN <http://www.cpan.org>.
 
-This module is compatible with Auto version 3.0.0a2+.
+This module is compatible with Auto version 3.0.0a4+.
 
 Ported from Auto 2.0.
 
