@@ -1,7 +1,7 @@
 # Module: Dictionary. See below for documentation.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-package m_Dictionary;
+package M::Dictionary;
 use strict;
 use warnings;
 use Net::Dict;
@@ -12,7 +12,7 @@ use API::IRC qw(notice privmsg);
 sub _init
 {
     # Create the DICT command.
-    cmd_add('DICT', 0, 0, \%m_Dictionary::HELP_DICT, \&m_Dictionary::cmd_dict) or return;
+    cmd_add('DICT', 0, 0, \%M::Dictionary::HELP_DICT, \&M::Dictionary::cmd_dict) or return;
 
     # Success.
     return 1;

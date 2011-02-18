@@ -1,7 +1,7 @@
 # Module: Greet. See below for documentation.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-package m_Greet;
+package M::Greet;
 use strict;
 use warnings;
 use feature qw(switch);
@@ -17,9 +17,9 @@ sub _init
     # Create the `greets` table.
     $Auto::DB->do('CREATE TABLE IF NOT EXISTS greets (nick TEXT, greet TEXT)') or return;
     # Create the GREET command.
-    cmd_add('GREET', 2, 'cmd.greet', \%m_Greet::HELP_GREET, \&m_Greet::cmd_greet) or return;
+    cmd_add('GREET', 2, 'cmd.greet', \%M::Greet::HELP_GREET, \&M::Greet::cmd_greet) or return;
     # Create the greet_onjoin hook.
-    hook_add('on_rcjoin', 'greet_onjoin', \&m_Greet::hook_rcjoin) or return;
+    hook_add('on_rcjoin', 'greet_onjoin', \&M::Greet::hook_rcjoin) or return;
 
     # Success.
     return 1;

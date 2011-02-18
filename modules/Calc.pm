@@ -1,7 +1,7 @@
 # Module: Calc. See below for documentation.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-package m_Calc;
+package M::Calc;
 use strict;
 use warnings;
 use API::Std qw(cmd_add cmd_del trans);
@@ -19,7 +19,7 @@ sub _init
         1;
     } or return 0;
 	# Create the CALC command.
-	cmd_add("CALC", 0, 0, \%m_Calc::HELP_CALC, \&m_Calc::calc) or return 0;
+	cmd_add("CALC", 0, 0, \%M::Calc::HELP_CALC, \&M::Calc::calc) or return 0;
 
 	# Success.
 	return 1;

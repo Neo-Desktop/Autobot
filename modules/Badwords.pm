@@ -1,7 +1,7 @@
 # Module: Badwords. See below for documentation.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-package m_Badwords;
+package M::Badwords;
 use strict;
 use warnings;
 use feature qw(switch);
@@ -17,7 +17,7 @@ sub _init
 		return;
 	}
     # Create the act_on_badword hook.
-	hook_add('on_cprivmsg', 'act_on_badword', \&m_Badwords::actonbadword) or return;
+	hook_add('on_cprivmsg', 'act_on_badword', \&M::Badwords::actonbadword) or return;
 
     # Success.
     return 1;

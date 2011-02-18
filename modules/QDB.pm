@@ -1,7 +1,7 @@
 # Module: QDB. See below for documentation.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-package m_QDB;
+package M::QDB;
 use strict;
 use warnings;
 use feature qw(switch);
@@ -11,7 +11,7 @@ use API::IRC qw(privmsg notice);
 sub _init
 {
     # Create the QDB command.
-    cmd_add('QDB', 0, 0, \%m_QDB::HELP_QDB, \&m_QDB::cmd_qdb) or return;
+    cmd_add('QDB', 0, 0, \%M::QDB::HELP_QDB, \&M::QDB::cmd_qdb) or return;
 
     # Check the database format. Fail to load if it's PostgreSQL.
     if ($Auto::ENFEAT =~ /pgsql/) { err(2, 'Unable to load QDB: PostgreSQL is not supported.', 0); return; }

@@ -1,7 +1,7 @@
 # Module: ChanTopics. See below for documentation.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-package m_ChanTopics;
+package M::ChanTopics;
 use strict;
 use warnings;
 use API::Std qw(cmd_add cmd_del trans);
@@ -17,21 +17,21 @@ sub _init
     $Auto::DB->do('CREATE TABLE IF NOT EXISTS topics (net TEXT, chan TEXT, topic TEXT, divider TEXT, owner TEXT, verb TEXT, status TEXT, other TEXT, static TEXT)') or print "$!\n" and return;
 
     # Create the TOPIC command.
-    cmd_add('TOPIC', 0, 'topic.topic', \%m_ChanTopics::HELP_TOPIC, \&m_ChanTopics::cmd_topic) or return;
+    cmd_add('TOPIC', 0, 'topic.topic', \%M::ChanTopics::HELP_TOPIC, \&M::ChanTopics::cmd_topic) or return;
     # Create the DIVIDER command.
-    cmd_add('DIVIDER', 0, 'topic.topic', \%m_ChanTopics::HELP_DIVIDER, \&m_ChanTopics::cmd_divider) or return;
+    cmd_add('DIVIDER', 0, 'topic.topic', \%M::ChanTopics::HELP_DIVIDER, \&M::ChanTopics::cmd_divider) or return;
     # Create the OWNER command.
-    cmd_add('OWNER', 0, 'topic.owner', \%m_ChanTopics::HELP_OWNER, \&m_ChanTopics::cmd_owner) or return;
+    cmd_add('OWNER', 0, 'topic.owner', \%M::ChanTopics::HELP_OWNER, \&M::ChanTopics::cmd_owner) or return;
     # Create the VERB command.
-    cmd_add('VERB', 0, 'topic.status', \%m_ChanTopics::HELP_VERB, \&m_ChanTopics::cmd_verb) or return;
+    cmd_add('VERB', 0, 'topic.status', \%M::ChanTopics::HELP_VERB, \&M::ChanTopics::cmd_verb) or return;
     # Create the STATUS command.
-    cmd_add('STATUS', 0, 'topic.status', \%m_ChanTopics::HELP_STATUS, \&m_ChanTopics::cmd_status) or return;
+    cmd_add('STATUS', 0, 'topic.status', \%M::ChanTopics::HELP_STATUS, \&M::ChanTopics::cmd_status) or return;
     # Create the OTHER command.
-    cmd_add('OTHER', 0, 'topic.static', \%m_ChanTopics::HELP_OTHER, \&m_ChanTopics::cmd_other) or return;
+    cmd_add('OTHER', 0, 'topic.static', \%M::ChanTopics::HELP_OTHER, \&M::ChanTopics::cmd_other) or return;
     # Create the STATIC command.
-    cmd_add('STATIC', 0, 'topic.static', \%m_ChanTopics::HELP_STATIC, \&m_ChanTopics::cmd_static) or return;
+    cmd_add('STATIC', 0, 'topic.static', \%M::ChanTopics::HELP_STATIC, \&M::ChanTopics::cmd_static) or return;
     # Create the TSYNC command.
-    cmd_add('TSYNC', 0, 'topic.topic', \%m_ChanTopics::HELP_TSYNC, \&m_ChanTopics::cmd_tsync) or return;
+    cmd_add('TSYNC', 0, 'topic.topic', \%M::ChanTopics::HELP_TSYNC, \&M::ChanTopics::cmd_tsync) or return;
 
     return 1;
 }

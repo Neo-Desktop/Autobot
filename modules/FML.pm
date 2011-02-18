@@ -1,7 +1,7 @@
 # Module: FML. See below for documentation.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-package m_FML;
+package M::FML;
 use strict;
 use warnings;
 use API::Std qw(cmd_add cmd_del trans);
@@ -12,7 +12,7 @@ use LWP::UserAgent;
 sub _init 
 {
     # Create the FML command.
-	cmd_add("FML", 0, 0, \%m_FML::HELP_FML, \&m_FML::fml) or return 0;
+	cmd_add("FML", 0, 0, \%M::FML::HELP_FML, \&M::FML::fml) or return 0;
 
     # Success.
     return 1;

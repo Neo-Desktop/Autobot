@@ -65,7 +65,7 @@ sub ircparse
 		# If it's AUTHENTICATE
 		elsif ($ex[0] eq 'AUTHENTICATE') {
 			if (API::Std::mod_exists("SASLAuth")) {
-				m_SASLAuth::handle_authenticate($svr, @ex);
+                M::SASLAuth::handle_authenticate($svr, @ex);
 			}
 		}
 		else {

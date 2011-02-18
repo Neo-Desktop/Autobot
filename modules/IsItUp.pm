@@ -1,7 +1,7 @@
 # Module: IsItUp. See below for documentation.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-package m_IsItUp;
+package M::IsItUp;
 use strict;
 use warnings;
 use API::Std qw(cmd_add cmd_del trans);
@@ -12,7 +12,7 @@ use LWP::UserAgent;
 sub _init 
 {
 	# Create the ISITUP command.
-	cmd_add("ISITUP", 0, 0, \%m_IsItUp::HELP_ISITUP, \&m_IsItUp::check) or return 0;
+	cmd_add("ISITUP", 0, 0, \%M::IsItUp::HELP_ISITUP, \&M::IsItUp::check) or return 0;
 
 	# Success.
 	return 1;

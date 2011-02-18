@@ -1,7 +1,7 @@
 # Module: HelloChan.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-package m_HelloChan;
+package M::HelloChan;
 use strict;
 use warnings;
 use API::Std qw(hook_add hook_del);
@@ -11,7 +11,7 @@ use API::IRC qw(privmsg);
 sub _init
 {
 	# Add a hook for when we join a channel.
-	hook_add("on_ucjoin", "HelloChan", \&m_HelloChan::hello) or return 0;
+	hook_add("on_ucjoin", "HelloChan", \&M::HelloChan::hello) or return 0;
 	return 1;
 }
 

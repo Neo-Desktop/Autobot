@@ -1,7 +1,7 @@
 # Module: Bitly. See below for documentation.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-package m_Bitly;
+package M::Bitly;
 use strict;
 use warnings;
 use API::Std qw(cmd_add cmd_del conf_get err trans);
@@ -18,8 +18,8 @@ sub _init
 		return 0;
 	}
     # Create the SHORTEN and REVERSE commands.
-	cmd_add("SHORTEN", 0, 0, \%m_Bitly::HELP_SHORTEN, \&m_Bitly::shorten) or return 0;
-	cmd_add("REVERSE", 0, 0, \%m_Bitly::HELP_REVERSE, \&m_Bitly::reverse) or return 0;
+	cmd_add("SHORTEN", 0, 0, \%M::Bitly::HELP_SHORTEN, \&M::Bitly::shorten) or return 0;
+	cmd_add("REVERSE", 0, 0, \%M::Bitly::HELP_REVERSE, \&M::Bitly::reverse) or return 0;
 
     # Success.
     return 1;

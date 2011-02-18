@@ -1,7 +1,7 @@
 # Module: SASLAuth. See below for documentation.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-package m_SASLAuth;
+package M::SASLAuth;
 use strict;
 use warnings;
 use feature qw(switch);
@@ -19,13 +19,13 @@ sub _init
     hook_add('on_preconnect', 'CAP', sub { my ($srv) = @_; Auto::socksnd($srv, 'CAP LS'); }
     ) or return 0;
     # Hook for parsing CAP.
-    rchook_add('CAP', \&m_SASLAuth::handle_cap) or return 0;
+    rchook_add('CAP', \&M::SASLAuth::handle_cap) or return 0;
     # Hook for parsing 903.
-    rchook_add('903', \&m_SASLAuth::handle_903) or return 0;
+    rchook_add('903', \&M::SASLAuth::handle_903) or return 0;
     # Hook for parsing 904.
-    rchook_add('904', \&m_SASLAuth::handle_904) or return 0;
+    rchook_add('904', \&M::SASLAuth::handle_904) or return 0;
     # Hook for parsing 906.
-    rchook_add('906', \&m_SASLAuth::handle_906) or return 0;
+    rchook_add('906', \&M::SASLAuth::handle_906) or return 0;
 	return 1;
 }
 

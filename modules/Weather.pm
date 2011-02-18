@@ -1,7 +1,7 @@
 # Module: Weather. See below for documentation.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-package m_Weather;
+package M::Weather;
 use strict;
 use warnings;
 use API::Std qw(cmd_add cmd_del trans);
@@ -13,7 +13,7 @@ use XML::Simple;
 sub _init 
 {
 	# Create the Weather command.
-	cmd_add("WEATHER", 0, 0, \%m_Weather::HELP_WEATHER, \&m_Weather::weather) or return 0;
+	cmd_add("WEATHER", 0, 0, \%M::Weather::HELP_WEATHER, \&M::Weather::weather) or return 0;
 
 	# Success.
 	return 1;
