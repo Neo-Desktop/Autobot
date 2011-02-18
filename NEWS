@@ -11,30 +11,17 @@
 The future of IRC bots is here! Xelhua gives to you, Auto 3.0, a new version of
 the popular Auto IRC bot.
 
-In this alpha4 release, we have added:
+In this alpha5 release, we have added:
 
-* MySQL support.
-* PostgreSQL support.
-* A Greet module for greeting users on join.
-* IRC logchan functionality.
-* Improved multilingual support.
-* A ChanTopics module for advanced management of channel topics.
-* buildmod now generates HTML and man(1) pages from a module's POD.
-* server:ajoin now supports channel keys by spacing the name and key.
-* A Dictionary module for looking up definitions of words.
-* Heavily improved module API.
+* LinkTitle module for returning the page title of links sent to a channel.
 
 Bug fixes:
 
-* Commands getting Permission denied even with incorrect prefix.
-* Program not properly shutting down if all IRC connections close.
+None
 
 Incompatibilities:
 
-* Database: Changed structure of the `qdb` table. Modify the configuration
-  values in upgrade.pl then run it to upgrade the database.
-* database:format is now required in the config.
-* bantype is now required in the config.
+None
 
 We thank you for choosing Auto. Please remember that he is still in early
 development stages. But we hope we've piqued your interest, as Auto's upcoming
@@ -44,4 +31,4 @@ there for everyone to use.
 Auto's goal is to create an efficient, stable and highly customizable IRC bot
 in Perl. To offer an alternative to other platforms.
 
-Enjoy Auto 3.0.0 Alpha 4!
+Enjoy Auto 3.0.0 Alpha 5!
