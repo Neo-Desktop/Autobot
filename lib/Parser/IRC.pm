@@ -308,7 +308,7 @@ sub cjoin
 	}
 	else {
 		# It isn't. Update chanusers and trigger on_rcjoin.
-        $chanusers{$svr}{lc(substr $ex[2], 1)}{$src{nick}} = 1;
+        $chanusers{$svr}{lc $chan}{$src{nick}} = 1;
         $src{svr} = $svr;
 		API::Std::event_run("on_rcjoin", (\%src, $chan));
 	}
