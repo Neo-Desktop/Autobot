@@ -4,11 +4,12 @@
 package Lib::Auto;
 use strict;
 use warnings;
+use feature qw(say);
 use English qw(-no_match_vars);
 use Sys::Hostname;
 use feature qw(switch);
 use API::Std qw(hook_add conf_get err);
-use API::Log qw(println dbug alog);
+use API::Log qw(dbug alog);
 our $VERSION = 3.000000;
 
 # Core events.
@@ -19,7 +20,7 @@ API::Std::event_add('on_rehash');
 sub checkver
 {
     if (!$Auto::NUC and Auto::RSTAGE ne 'd') {
-        println '* Connecting to update server...';
+        say '* Connecting to update server...';
         my $uss = IO::Socket::INET->new(
             'Proto'    => 'tcp',
             'PeerAddr' => 'dist.xelhua.org',
@@ -37,11 +38,11 @@ sub checkver
             }
             elsif ($v eq 'version') {
                 if (Auto::VER.q{.}.Auto::SVER.q{.}.Auto::REV.Auto::RSTAGE ne $c) {
-                    println('!!! NOTICE !!! Your copy of Auto is outdated. Current version: '.Auto::VER.q{.}.Auto::SVER.q{.}.Auto::REV.Auto::RSTAGE.' - Latest version: '.$c);
-                    println('!!! NOTICE !!! You can get the latest Auto by downloading '.$dll);
+                    say('!!! NOTICE !!! Your copy of Auto is outdated. Current version: '.Auto::VER.q{.}.Auto::SVER.q{.}.Auto::REV.Auto::RSTAGE.' - Latest version: '.$c);
+                    say('!!! NOTICE !!! You can get the latest Auto by downloading '.$dll);
                 }
                 else {
-                    println('* Auto is up-to-date.');
+                    say('* Auto is up-to-date.');
                 }
             }
         }
@@ -261,7 +262,7 @@ sub signal_perlwarn
     my ($warnmsg) = @_;
     $warnmsg =~ s/(\n|\r)//xsmg;
     alog 'Perl Warning: '.$warnmsg;
-    if ($Auto::DEBUG) { println 'Perl Warning: '.$warnmsg; }
+    if ($Auto::DEBUG) { say 'Perl Warning: '.$warnmsg; }
     return 1;
 }
 
@@ -276,7 +277,7 @@ sub signal_perldie
     foreach (keys %Auto::SOCKET) { API::IRC::quit($_, 'A fatal error occurred!'); }
     API::Std::event_run('on_shutdown');
     sleep 1;
-    println 'FATAL: '.$diemsg;
+    say 'FATAL: '.$diemsg;
     exit;
 }
 
