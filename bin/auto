@@ -434,6 +434,7 @@ undef $it;
 API::Std::cmd_add('MODLOAD', 1, 'cfunc.modules', \%Core::Cmd::HELP_MODLOAD, \&Core::Cmd::cmd_modload);
 API::Std::cmd_add('MODUNLOAD', 1, 'cfunc.modules', \%Core::Cmd::HELP_MODUNLOAD, \&Core::Cmd::cmd_modunload);
 API::Std::cmd_add('MODRELOAD', 1, 'cfunc.modules', \%Core::Cmd::HELP_MODRELOAD, \&Core::Cmd::cmd_modreload);
+API::Std::cmd_add('MODLIST', 1, 'cfunc.modules', \%Core::Cmd::HELP_MODLIST, \&Core::Cmd::cmd_modlist);
 API::Std::cmd_add('SHUTDOWN', 2, 'cmd.shutdown', \%Core::Cmd::HELP_SHUTDOWN, \&Core::Cmd::cmd_shutdown);
 API::Std::cmd_add('RESTART', 2, 'cmd.restart', \%Core::Cmd::HELP_RESTART, \&Core::Cmd::cmd_restart);
 API::Std::cmd_add('REHASH', 2, 'cmd.rehash', \%Core::Cmd::HELP_REHASH, \&Core::Cmd::cmd_rehash);

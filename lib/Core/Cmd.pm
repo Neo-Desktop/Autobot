@@ -125,9 +125,31 @@ sub cmd_modreload
     return 1;
 }
 
+# Help hash for MODLIST. Spanish, French and German needed.
+our %HELP_MODLIST = (
+    'en' => "This will return a list of all currently loaded modules. \2Syntax:\2 MODLIST",
+);
+# MODLIST callback.
+sub cmd_modlist
+{
+    my ($src, undef) = @_;
+
+    # Iterate through all loaded modules.
+    my $str;
+    foreach (keys %API::Std::MODULE) {
+        $str .= ", \2$_\2 (v".$API::Std::MODULE{$_}{version}.')';
+    }
+
+    # Return it.
+    $str = substr $str, 2;
+    notice($src->{svr}, $src->{nick}, "\2Module List:\2 $str");
+
+    return 1;
+}
+
 # Help hash for SHUTDOWN. Spanish, French and German needed.
 our %HELP_SHUTDOWN = (
-    'en' => 'This will send out shutdown notifications, quit all networks, flush the database then exit the program.',
+    'en' => "This will send out shutdown notifications, quit all networks, flush the database then exit the program. \2Syntax:\2 SHUTDOWN",
 );
 # SHUTDOWN callback.
 sub cmd_shutdown
