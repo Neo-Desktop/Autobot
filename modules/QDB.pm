@@ -54,12 +54,11 @@ sub cmd_qdb
                 notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
                 return;
             }
-            shift @argv;
 
             # Insert into database.
             my $dbq = $Auto::DB->prepare('INSERT INTO qdb (creator, time, quote) VALUES (?, ?, ?)') or 
                 notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
-            $dbq->execute($src->{nick}, time, join(q{ }, @argv) or
+            $dbq->execute($src->{nick}, time, join(q{ }, @argv[1..$#argv])) or
                 notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
 
             # Get ID.
