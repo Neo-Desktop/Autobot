@@ -303,7 +303,7 @@ sub cjoin
 	
 	# Check if this is coming from ourselves.
 	if ($src{nick} eq $botnick{$svr}{nick}) {
-		$botchans{$svr}{lc(substr $ex[2], 1)} = 1;
+		$botchans{$svr}{lc $chan} = 1;
 		API::Std::event_run("on_ucjoin", ($svr, $chan));
 	}
 	else {
