@@ -6,7 +6,6 @@
 
 PID=bin/auto.pid
 MODS="Mouse Class::Unload"
-EMODS="MIME::Base64 XML::Simple"
 
 if [ "$1" = "start" ] ; then
 	if [ -e $PID ]; then
@@ -47,11 +46,8 @@ elif [ "$1" = "status" ]; then
 elif [ "$1" = "getmodules" ]; then
 	cpan -i $MODS
 
-elif [ "$1" = "getextras" ]; then
-	cpan -i $EMODS
-
 else
-	echo "Usage: auto (start|stop|rehash|status|getmodules|getextras)"
+	echo "Usage: auto (start|stop|rehash|status|getmodules)"
 fi
 
 # vim: set ai sw=4 ts=4:
