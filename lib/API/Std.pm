@@ -115,12 +115,12 @@ sub cmd_add
 	$cmd = uc $cmd;
 
 	if (defined $API::Std::CMDS{$cmd}) { return; }
-	if ($lvl =~ m/[^0-2]/sm) { return; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+	if ($lvl =~ m/[^0-3]/sm) { return; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
 
 	$API::Std::CMDS{$cmd}{lvl}   = $lvl;
 	$API::Std::CMDS{$cmd}{help}  = $help;
 	$API::Std::CMDS{$cmd}{priv}  = $priv;
-	$API::Std::CMDS{$cmd}{sub}   = $sub;
+	$API::Std::CMDS{$cmd}{'sub'} = $sub;
 
 	return 1;
 }

@@ -603,17 +603,39 @@ sub privmsg
                             }
                             else {
                                 # Else give them the boot.
-                                API::IRC::notice($data{svr}, $data{nick}, API::Std::trans("Permission denied").".");
+                                API::IRC::notice($data{svr}, $data{nick}, API::Std::trans('Permission denied').q{.});
                             }
                         }
                         else {
                             # Else continue executing without any extra checks.
-                            &{ $API::Std::CMDS{$cmd}{'sub'} }(\%data, @argv) if $rprefix eq $cprefix;
+                            &{ $API::Std::CMDS{$cmd}{'sub'} }(\%data, @argv);
                         }
                     }
                     else {
                         # Send them a notice about their bad deed.
                         API::IRC::notice($data{svr}, $data{nick}, trans('Rate limit exceeded').q{.});
+                    }
+                }
+                elsif ($API::Std::CMDS{$cmd}{lvl} == 3) {
+                    # Or if it's a logchan command...
+                    my ($lcn, $lcc) = split '/', (conf_get('logchan'))[0][0];
+                    if ($lcn eq $data{svr} and lc $lcc eq lc $data{chan}) {
+                        # Check if it's being sent from the logchan.
+                        if ($API::Std::CMDS{$cmd}{priv}) {
+                            # If this command takes a privilege...
+                            if (API::Std::has_priv(API::Std::match_user(%data), $API::Std::CMDS{$cmd}{priv})) {
+                                # Make sure they have it.
+                                &{ $API::Std::CMDS{$cmd}{'sub'} }(\%data, @argv);
+                            }
+                            else {
+                                # Else give them the boot.
+                                API::IRC::notice($data{svr}, $data{nick}, API::Std::trans('Permission denied').q{.});
+                            }
+                        }
+                        else {
+                            # Else continue executing without any extra checks.
+                            &{ $API::Std::CMDS{$cmd}{'sub'} }(\%data, @argv);
+                        }
                     }
                 }
 		    }
