@@ -6,7 +6,6 @@
 package Install;
 use strict;
 use warnings;
-use feature qw(say);
 use English qw(-no_match_vars);
 use FindBin qw($Bin);
 our $Bin = $Bin;
@@ -22,11 +21,11 @@ my $features = 'base ssl sqlite';
 if (defined $ARGV[0]) {
 	foreach (@ARGV) {
 		if ($_ eq '-h' or $_ eq '--help') {
-			say '*** ./install help ***';
-			say ' --enable-sasl - Enable support for SASL.';
-            say ' --enable-ipv6 - Enable support for IPv6.';
-            say ' --disable-ssl - Disable support for SSL.';
-			say '*** End of Help ***';
+			println '*** ./install help ***';
+			println ' --enable-sasl - Enable support for SASL.';
+            println ' --enable-ipv6 - Enable support for IPv6.';
+            println ' --disable-ssl - Disable support for SSL.';
+			println '*** End of Help ***';
 			exit 1;
 		}
 		elsif ($_ eq '--enable-sasl') {
@@ -45,16 +44,16 @@ if (defined $ARGV[0]) {
             $features =~ s/(sqlite|mysql)/pgsql/g;
         }
         else {
-			say "Warning: Unknown option '$_'";
+			println "Warning: Unknown option '$_'";
 		}
 	}
 }
 
 # Check Perl version.
-say "Checking Perl version..... $^V";
+println "Checking Perl version..... $^V";
 eval {
     require 5.010_000;
-} or say "This version of Perl is too old. Upgrade to Perl 5.10.0 or later and try again." and exit;
+} or println "This version of Perl is too old. Upgrade to Perl 5.10.0 or later and try again." and exit;
 
 # Check operating system.
 print "Checking operating system..... $OSNAME - ";
@@ -87,21 +86,21 @@ else {
 }		
 
 # Check for Perl core modules.
-say "Checking for core Perl modules.....";
+println "Checking for core Perl modules.....";
 checkcore();
-say "\0";
+println "\0";
 if ($ERROR) {
-    say "This Perl install is missing some core modules. Consider reinstalling Perl.";
+    println "This Perl install is missing some core modules. Consider reinstalling Perl.";
     exit;
 }
 else {
-    say "All good.";
+    println "All good.";
 }
 
 # Check for required CPAN modules.
-say "\0";
-say 'Checking for required CPAN modules......';
-say "\0";
+println "\0";
+println 'Checking for required CPAN modules......';
+println "\0";
 #modfind("Mouse");
 modfind('DBI');
 modfind('DBD::SQLite') if $features =~ /sqlite/;
@@ -111,19 +110,19 @@ modfind('Class::Unload');
 modfind('IO::Socket::INET6') if $features =~ /ipv6/;
 modfind('IO::Socket::SSL') if $features =~ /ssl/;
 modfind('MIME::Base64') if $features =~ /sasl/;
-say "\0";
+println "\0";
 
 if ($ERROR) {
-    say "Failed to install. Please install the missing CPAN modules and try again.";
+    println "Failed to install. Please install the missing CPAN modules and try again.";
     exit;
 }
 else {
-    say "All good.";
+    println "All good.";
 }
 
 # Create build.
-say "\0";
-say "Building.....";
+println "\0";
+println "Building.....";
 if (!-d "$Bin/build") {
 	system "mkdir $Bin/build";
 }
@@ -141,13 +140,13 @@ if (!-e "$Bin/build/ver") {
 }
 
 build($features);
-say 'Done.';
+println 'Done.';
 
-say q{};
+println q{};
 installmods();
-say q{};
+println q{};
 
 # Success!
-say "Done. Auto successfully installed.";
+println "Done. Auto successfully installed.";
 
 # vim: set ai sw=4 ts=4:
