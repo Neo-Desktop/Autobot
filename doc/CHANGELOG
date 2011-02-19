@@ -3,7 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
-    * Killed EMODS in the starer script and updated MODS
+    * Killed EMODS in the starter script and updated MODS
     * Added core command MODLIST.
     * Added command level 3 for logchan-only command.
     * Added a LinkTitle module for getting the title of a web page posted in a
