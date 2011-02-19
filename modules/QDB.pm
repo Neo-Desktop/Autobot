@@ -7,12 +7,13 @@ use warnings;
 use feature qw(switch);
 use API::Std qw(cmd_add cmd_del trans has_priv match_user);
 use API::IRC qw(privmsg notice);
+our @BUFFER;
 
 sub _init
 {
     # Create the QDB command.
     cmd_add('QDB', 0, 0, \%M::QDB::HELP_QDB, \&M::QDB::cmd_qdb) or return;
-
+    
     # Check the database format. Fail to load if it's PostgreSQL.
     if ($Auto::ENFEAT =~ /pgsql/) { err(2, 'Unable to load QDB: PostgreSQL is not supported.', 0); return; }
 
@@ -34,7 +35,7 @@ sub _void
 
 # Help hash for QDB. Spanish, French and German translations needed.
 our %HELP_QDB = (
-    'en' => "This command allows you to add, read, and delete quotes. \002Syntax:\002 QDB (ADD|VIEW|COUNT|RAND|DEL) [quote]",
+    'en' => "This command allows you to add, read, and delete quotes. \002Syntax:\002 QDB (ADD|VIEW|COUNT|RAND|SEARCH|MORE|DEL) [quote|expression]",
 );
 sub cmd_qdb
 {
@@ -46,7 +47,7 @@ sub cmd_qdb
         return;
     }
     
-    # ADD|VIEW|COUNT|RAND|DEL.
+    # ADD|VIEW|COUNT|RAND|SEARCH|MORE|DEL.
     given (uc $argv[0]) {
         when ('ADD') {
             # QDB ADD.
@@ -111,6 +112,62 @@ sub cmd_qdb
             privmsg($src->{svr}, $src->{chan}, "\002ID:\002 $data[0] - \002Submitted by\002 $data[1] \002on\002 ".POSIX::strftime('%F', localtime($data[2]))." \002at\002 ".POSIX::strftime('%I:%M %p', localtime($data[2])));
             privmsg($src->{svr}, $src->{chan}, $data[3]);
         }
+        when ('SEARCH') {
+            # QDB SEARCH.
+
+            # Get all quotes.
+            my $dbq = $Auto::DB->prepare('SELECT * FROM qdb') or return;
+            $dbq->execute or return;
+            my $quotes = $dbq->fetchall_hashref('quoteid') or return;
+
+            # Set expression.
+            my $expr = join ' ', @argv[1 .. $#argv];
+
+            # Clear the buffer.
+            @BUFFER = ();
+
+            # Iterate through all quotes.
+            foreach my $qkt (keys %$quotes) {
+                # Check if we have a match.
+                if ($quotes->{$qkt}->{quote} =~ m/($expr)/xsm) {
+                    # Match. Add to buffer.
+                    push @BUFFER, "\2ID:\2 $qkt - ".$quotes->{$qkt}->{quote};
+                }
+            }
+
+            # Check if we had any matches.
+            if (!defined $BUFFER[0]) {
+                privmsg($src->{svr}, $src->{chan}, "No results for \2$expr\2.");
+                return;
+            }
+
+            # Return four quotes.
+            privmsg($src->{svr}, $src->{chan}, "Results for \2$expr\2:");
+            my $i = 0;
+            while ($i <= 3) {
+                if (!defined $BUFFER[0]) {
+                    last;
+                }
+
+                privmsg($src->{svr}, $src->{chan}, shift @BUFFER);
+                $i++;
+            }
+        }
+        when ('MORE') {
+            # Check if there's any quotes in the buffer.
+            if (!defined $BUFFER[0]) { return; }
+
+            # Return four quotes.
+            my $i = 0;
+            while ($i <= 3) {
+                if (!defined $BUFFER[0]) {
+                    last;
+                }
+
+                privmsg($src->{svr}, $src->{chan}, shift @BUFFER);
+                $i++;
+            }
+        }
         when ('DEL') {
             # Check for the cmd.qdbdel privilege.
             if (!has_priv(match_user(%$src), 'cmd.qdbdel')) {
@@ -156,9 +213,9 @@ Version 1.02.
 
 =head1 DESCRIPTION
 
-This module adds the QDB (ADD|VIEW|COUNT|RAND|DEL) command, for adding,
-viewing, listing number of, viewing a random, deleting a quote from the Auto
-database.
+This module adds the QDB (ADD|VIEW|COUNT|RAND|SEARCH|MORE|DEL) command, for
+adding, viewing, listing number of, viewing a random, deleting a quote from the
+Auto database.
 
 =head1 AUTHOR
 
