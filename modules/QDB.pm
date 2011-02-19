@@ -54,14 +54,12 @@ sub cmd_qdb
                 notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
                 return;
             }
-
-            # Get rid of the ADD part.
             shift @argv;
 
             # Insert into database.
             my $dbq = $Auto::DB->prepare('INSERT INTO qdb (creator, time, quote) VALUES (?, ?, ?)') or 
                 notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
-            $dbq->execute($src->{nick}, time, join(q{ }, @argv)) or
+            $dbq->execute($src->{nick}, time, join(q{ }, @argv) or
                 notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
 
             # Get ID.
@@ -138,37 +136,41 @@ sub cmd_qdb
 }
 
 
-API::Std::mod_init('QDB', 'Xelhua', '1.00', '3.0.0a4', __PACKAGE__);
+API::Std::mod_init('QDB', 'Xelhua', '1.02', '3.0.0a4', __PACKAGE__);
 # vim: set ai sw=4 ts=4:
 # build: perl=5.010000
 
 __END__
 
-=head1 QDB
+=head1 NAME
 
-=head2 Description
+QDB - Quote database module.
 
-=over
+=head1 VERSION
+
+Version 1.02.
+
+=head1 SYNOPSIS
+
+ <JohnSmith> !qdb add <JohnDoe> moocows
+ <Auto> Quote successfully submitted. ID: 732
+
+=head1 DESCRIPTION
 
 This module adds the QDB (ADD|VIEW|COUNT|RAND|DEL) command, for adding,
 viewing, listing number of, viewing a random, deleting a quote from the Auto
 database.
 
-=back
+=head1 AUTHOR
 
-=head2 Examples
+This module was written by Elijah Perrault.
 
-=over
+This module is maintained by Xelhua Development Group.
 
-<JohnSmith> !qdb add <JohnDoe> moocows
-<Auto> Quote successfully submitted. ID: 732
+=head1 LICENSE AND COPYRIGHT
 
-=back
+This module is Copyright 2010-2011 Xelhua Development Group.
 
-=head2 Technical
+Released under the same licensing terms as Auto itself.
 
-=over
-
-This module is compatible with Auto v3.0.0a4+.
-
-=back
+=cut
