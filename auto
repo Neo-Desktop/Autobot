@@ -5,11 +5,11 @@
 # Written in sh because the user may not have Perl...to run Auto....
 
 PID=bin/auto.pid
-MODS="Mouse Class::Unload"
+MODS="Class::Unload DBI"
 
 if [ "$1" = "start" ] ; then
 	if [ -e $PID ]; then
-		if [ "$2" = "force" ]; then    
+		if [ "$2" = "force" ]; then  
 		    echo "Starting Auto. . ."
 		    bin/auto
 		    sleep 2
