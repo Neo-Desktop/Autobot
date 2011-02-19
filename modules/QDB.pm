@@ -129,7 +129,7 @@ sub cmd_qdb
             # Iterate through all quotes.
             foreach my $qkt (keys %$quotes) {
                 # Check if we have a match.
-                if ($quotes->{$qkt}->{quote} =~ m/($expr)/xsm) {
+                if ($quotes->{$qkt}->{quote} =~ m/($expr)/ixsm) {
                     # Match. Add to buffer.
                     push @BUFFER, "\2ID:\2 $qkt - ".$quotes->{$qkt}->{quote};
                 }
