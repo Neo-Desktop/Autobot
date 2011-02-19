@@ -33,7 +33,7 @@ BEGIN {
 }
 use Lib::Auto;
 use API::Std qw(conf_get err);
-use API::Log qw(println alog dbug);
+use API::Log qw(alog dbug);
 #use DB::Flatfile;
 use Parser::Config;
 use Parser::Lang;
