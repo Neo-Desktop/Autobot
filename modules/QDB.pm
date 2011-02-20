@@ -121,7 +121,16 @@ sub cmd_qdb
             my $quotes = $dbq->fetchall_hashref('quoteid') or return;
 
             # Set expression.
-            my $expr = join ' ', @argv[1 .. $#argv];
+            my $expr = my $rexpr = join ' ', @argv[1 .. $#argv];
+            $rexpr =~ s{\(}{\\\(}g;
+            $rexpr =~ s{\)}{\\\)}g;
+            $rexpr =~ s{\?}{\\\?}g;
+            $rexpr =~ s{\*}{\\\*}g;
+            $rexpr =~ s{\[}{\\\[}g;
+            $rexpr =~ s{\]}{\\\]}g;
+            $rexpr =~ s{\.}{\\\.}g;
+            $rexpr =~ s{\$}{\\\$}g;
+            $rexpr =~ s{\^}{\\\^}g;
 
             # Clear the buffer.
             @BUFFER = ();
@@ -129,7 +138,7 @@ sub cmd_qdb
             # Iterate through all quotes.
             foreach my $qkt (keys %$quotes) {
                 # Check if we have a match.
-                if ($quotes->{$qkt}->{quote} =~ m{$expr}ixsm) {
+                if ($quotes->{$qkt}->{quote} =~ m/$rexpr/ixsm) {
                     # Match. Add to buffer.
                     push @BUFFER, "\2ID:\2 $qkt - ".$quotes->{$qkt}->{quote};
                 }
