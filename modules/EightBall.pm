@@ -13,7 +13,7 @@ our $ANSWER = 0;
 sub _init 
 {
     # Create the 8BALL and RIGBALL commands.
-	cmd_add('8BALL', 3, 0, \%M::EightBall::HELP_8BALL, \&M::EightBall::c_8ball) or return 0;
+	cmd_add('8BALL', 0, 0, \%M::EightBall::HELP_8BALL, \&M::EightBall::c_8ball) or return 0;
 	cmd_add('RIGBALL', 1, 'cmd.rigball', \%M::EightBall::HELP_RIGBALL, \&M::EightBall::rigball) or return 0;
 
     # Success.
