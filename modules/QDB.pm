@@ -164,7 +164,10 @@ sub cmd_qdb
         }
         when ('MORE') {
             # Check if there's any quotes in the buffer.
-            if (!defined $BUFFER[0]) { return; }
+            if (!defined $BUFFER[0]) { 
+                notice($src->{svr}, $src->{nick}, 'No quotes in buffer.');
+                return; 
+            }
 
             # Return four quotes.
             my $i = 0;
