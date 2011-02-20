@@ -5,7 +5,7 @@ package M::QDB;
 use strict;
 use warnings;
 use feature qw(switch);
-use API::Std qw(cmd_add cmd_del trans has_priv match_user);
+use API::Std qw(cmd_add cmd_del trans has_priv conf_get match_user);
 use API::IRC qw(privmsg notice);
 our @BUFFER;
 
@@ -151,9 +151,11 @@ sub cmd_qdb
             }
 
             # Return four quotes.
-            privmsg($src->{svr}, $src->{chan}, "Results for \2$expr\2:");
+            privmsg($src->{svr}, $src->{chan}, "\2$#BUFFER\2 results for \2$expr\2:");
             my $i = 0;
-            while ($i <= 3) {
+            my $si = 3;
+            if (conf_get('qdb_search_resnum')) { $si = (conf_get('qdb_search_resnum'))[0][0] - 1; }
+            while ($i <= $si) {
                 if (!defined $BUFFER[0]) {
                     last;
                 }
@@ -171,7 +173,9 @@ sub cmd_qdb
 
             # Return four quotes.
             my $i = 0;
-            while ($i <= 3) {
+            my $si = 3;
+            if (conf_get('qdb_search_resnum')) { $si = (conf_get('qdb_search_resnum'))[0][0] - 1; }
+            while ($i <= $si) {
                 if (!defined $BUFFER[0]) {
                     last;
                 }

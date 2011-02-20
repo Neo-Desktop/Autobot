@@ -4,7 +4,7 @@
 package M::LinkTitle;
 use strict;
 use warnings;
-use LWP::UserAgent;
+#use LWP::UserAgent;
 use HTML::Entities;
 use API::Std qw(hook_add hook_del);
 use API::IRC qw(privmsg);
@@ -40,6 +40,7 @@ sub gettitle
             # We've got a match, connect to the server.
             my $srv = $1;
             # Create an instance of LWP::UserAgent.
+            require LWP::UserAgent;
             my $ua = LWP::UserAgent->new();
             $ua->agent('Auto IRC Bot');
             $ua->timeout(3);
@@ -59,6 +60,7 @@ sub gettitle
                     privmsg($src->{svr}, $chan, "\2Title:\2 $title");
                 }
             }
+            Class::Unload->unload('LWP::UserAgent');
         }
     }
 

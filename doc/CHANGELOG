@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * You can now define how many results are returned by QDB SEARCH/MORE at a
+      time with qdb_search_resnum in the config.
     * Added SEARCH and MORE to QDB.
     * Killed EMODS in the starter script and updated MODS
     * Added core command MODLIST.

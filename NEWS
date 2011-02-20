@@ -15,7 +15,8 @@ In this alpha5 release, we have added:
 
 * LinkTitle module for returning the page title of links sent to a channel.
 * Added core command MODLIST.
-* Added SEARCH and MORE to QDB.
+* Added SEARCH and MORE to QDB. Amount of results returned at a time with
+  qdb_search_resnum in the config.
 
 Bug fixes:
 
