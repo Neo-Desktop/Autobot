@@ -151,7 +151,7 @@ sub cmd_qdb
             }
 
             # Return four quotes.
-            privmsg($src->{svr}, $src->{chan}, "\2$#BUFFER\2 results for \2$expr\2:");
+            privmsg($src->{svr}, $src->{chan}, "\2". $#BUFFER + 1 ."\2 results for \2$expr\2:");
             my $i = 0;
             my $si = 3;
             if (conf_get('qdb_search_resnum')) { $si = (conf_get('qdb_search_resnum'))[0][0] - 1; }
