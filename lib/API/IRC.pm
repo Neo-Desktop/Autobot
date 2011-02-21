@@ -48,68 +48,68 @@ sub ban
 # Join a channel.
 sub cjoin 
 {
-	my ($svr, $chan, $key) = @_;
-	
-	Auto::socksnd($svr, "JOIN ".((defined $key) ? "$chan $key" : "$chan"));
-	
-	return 1;
+ssssmy ($svr, $chan, $key) = @_;
+ssss
+ssssAuto::socksnd($svr, "JOIN ".((defined $key) ? "$chan $key" : "$chan"));
+ssss
+ssssreturn 1;
 }
 
 # Part a channel.
 sub cpart 
 {
-	my ($svr, $chan, $reason) = @_;
-	
-	if (defined $reason) {
-		Auto::socksnd($svr, "PART $chan :$reason");
-	}
-	else {
-		Auto::socksnd($svr, "PART $chan :Leaving");
-	}
+ssssmy ($svr, $chan, $reason) = @_;
+ssss
+ssssif (defined $reason) {
+ssss	Auto::socksnd($svr, "PART $chan :$reason");
+ssss}
+sssselse {
+ssss	Auto::socksnd($svr, "PART $chan :Leaving");
+ssss}
 
     if (defined $Parser::IRC::botchans{$svr}{$chan}) { delete $Parser::IRC::botchans{$svr}{$chan}; }
-	
-	return 1;
+ssss
+ssssreturn 1;
 }
 
 # Set mode(s) on a channel.
 sub cmode 
 {
-	my ($svr, $chan, $modes) = @_;
+ssssmy ($svr, $chan, $modes) = @_;
 
-	Auto::socksnd($svr, "MODE $chan $modes");
-	
-	return 1;
+ssssAuto::socksnd($svr, "MODE $chan $modes");
+ssss
+ssssreturn 1;
 }
 
 # Set mode(s) on us.
 sub umode 
 {
-	my ($svr, $modes) = @_;
-	
-	Auto::socksnd($svr, "MODE ".$Parser::IRC::botnick{$svr}{nick}." $modes");
-	
-	return 1;
+ssssmy ($svr, $modes) = @_;
+ssss
+ssssAuto::socksnd($svr, "MODE ".$Parser::IRC::botnick{$svr}{nick}." $modes");
+ssss
+ssssreturn 1;
 } 
 
 # Send a PRIVMSG.
 sub privmsg 
 {
-	my ($svr, $target, $message) = @_;
-	
-	Auto::socksnd($svr, "PRIVMSG $target :$message");
-	
-	return 1;
+ssssmy ($svr, $target, $message) = @_;
+ssss
+ssssAuto::socksnd($svr, "PRIVMSG $target :$message");
+ssss
+ssssreturn 1;
 }
 
 # Send a NOTICE.
 sub notice 
 {
-	my ($svr, $target, $message) = @_;
-	
-	Auto::socksnd($svr, "NOTICE $target :$message");
-	
-	return 1;
+ssssmy ($svr, $target, $message) = @_;
+ssss
+ssssAuto::socksnd($svr, "NOTICE $target :$message");
+ssss
+ssssreturn 1;
 }
 
 # Send an ACTION PRIVMSG.
@@ -125,33 +125,33 @@ sub act
 # Change bot nickname.
 sub nick 
 {
-	my ($svr, $newnick) = @_;
-	
-	Auto::socksnd($svr, "NICK $newnick");
-	
-	$Parser::IRC::botnick{$svr}{newnick} = $newnick;
-	
-	return 1;
+ssssmy ($svr, $newnick) = @_;
+ssss
+ssssAuto::socksnd($svr, "NICK $newnick");
+ssss
+ssss$Parser::IRC::botnick{$svr}{newnick} = $newnick;
+ssss
+ssssreturn 1;
 }
 
 # Request the users of a channel.
 sub names
 {
-	my ($svr, $chan) = @_;
-	
-	Auto::socksnd($svr, "NAMES $chan");
-	
-	return 1;
+ssssmy ($svr, $chan) = @_;
+ssss
+ssssAuto::socksnd($svr, "NAMES $chan");
+ssss
+ssssreturn 1;
 }
 
 # Send a topic to the channel.
 sub topic
 {
-	my ($svr, $chan, $topic) = @_;
-	
-	Auto::socksnd($svr, "TOPIC $chan :$topic");
-	
-	return 1;
+ssssmy ($svr, $chan, $topic) = @_;
+ssss
+ssssAuto::socksnd($svr, "TOPIC $chan :$topic");
+ssss
+ssssreturn 1;
 }
 
 # Kick a user.
@@ -167,54 +167,54 @@ sub kick
 # Quit IRC.
 sub quit 
 {
-	my ($svr, $reason) = @_;
-	
-	if (defined $reason) {
-		Auto::socksnd($svr, "QUIT :$reason");
-	}
-	else {
-		Auto::socksnd($svr, "QUIT :Leaving");
-	}
-	
-	delete $Parser::IRC::got_001{$svr} if (defined $Parser::IRC::got_001{$svr});
-	delete $Parser::IRC::botnick{$svr} if (defined $Parser::IRC::botnick{$svr});
-	
-	return 1;
+ssssmy ($svr, $reason) = @_;
+ssss
+ssssif (defined $reason) {
+ssss	Auto::socksnd($svr, "QUIT :$reason");
+ssss}
+sssselse {
+ssss	Auto::socksnd($svr, "QUIT :Leaving");
+ssss}
+ssss
+ssssdelete $Parser::IRC::got_001{$svr} if (defined $Parser::IRC::got_001{$svr});
+ssssdelete $Parser::IRC::botnick{$svr} if (defined $Parser::IRC::botnick{$svr});
+ssss
+ssssreturn 1;
 }
 
 
 # Get nick, ident and host from a <nick>!<ident>@<host>
 sub usrc
 {
-	my ($ex) = @_;
-	
-	my @si = split('!', $ex);
-	my @sii = split('@', $si[1]);
-	
-	return (
-		nick  => $si[0],
-		user => $sii[0],
-		host  => $sii[1]
-	);
+ssssmy ($ex) = @_;
+ssss
+ssssmy @si = split('!', $ex);
+ssssmy @sii = split('@', $si[1]);
+ssss
+ssssreturn (
+ssss	nick  => $si[0],
+ssss	user => $sii[0],
+ssss	host  => $sii[1]
+ssss);
 }
 
 # Match two IRC masks.
 sub match_mask
 {
-	my ($mu, $mh) = @_;
-	
-	# Prepare the regex.
-	$mh =~ s/\./\\\./g;
-	$mh =~ s/\?/\./g;
-	$mh =~ s/\*/\.\*/g;
-	$mh = '^'.$mh.'$';
-	
-	# Let's grep the user's mask.
-	if (grep(/$mh/, $mu)) {
-		return 1;
-	}
-	
-	return 0;
+ssssmy ($mu, $mh) = @_;
+ssss
+ssss# Prepare the regex.
+ssss$mh =~ s/\./\\\./g;
+ssss$mh =~ s/\?/\./g;
+ssss$mh =~ s/\*/\.\*/g;
+ssss$mh = '^'.$mh.'$';
+ssss
+ssss# Let's grep the user's mask.
+ssssif (grep(/$mh/, $mu)) {
+ssss	return 1;
+ssss}
+ssss
+ssssreturn 0;
 }
 
 

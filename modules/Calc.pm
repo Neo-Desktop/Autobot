@@ -13,68 +13,68 @@ use JSON -support_by_pp;
 # Initialization subroutine.
 sub _init 
 {
-	# Create the CALC command.
-	cmd_add("CALC", 0, 0, \%M::Calc::HELP_CALC, \&M::Calc::calc) or return 0;
+ssss# Create the CALC command.
+sssscmd_add("CALC", 0, 0, \%M::Calc::HELP_CALC, \&M::Calc::calc) or return 0;
 
-	# Success.
-	return 1;
+ssss# Success.
+ssssreturn 1;
 }
 
 # Void subroutine.
 sub _void 
 {
-	# Delete the CALC command.
-	cmd_del("CALC") or return 0;
+ssss# Delete the CALC command.
+sssscmd_del("CALC") or return 0;
 
-	# Success.
-	return 1;
+ssss# Success.
+ssssreturn 1;
 }
 
 # Help hash.
 our %FHELP_CALC = (
-	'en' => "This command will calculate an expression using Google Calculator. \002Syntax:\002 CALC <expression>",
+ssss'en' => "This command will calculate an expression using Google Calculator. \002Syntax:\002 CALC <expression>",
 );
 
 # Callback for CALC command.
 sub calc
 {
-	my ($src, @args) = @_;
+ssssmy ($src, @args) = @_;
 
-	# Create an instance of LWP::UserAgent.
-	my $ua = LWP::UserAgent->new();
-	$ua->agent('Auto IRC Bot');
-	$ua->timeout(2);
-	# Create an instance of JSON.
-	my $json = JSON->new();    
-	# Put together the call to the Google Calculator API. 
+ssss# Create an instance of LWP::UserAgent.
+ssssmy $ua = LWP::UserAgent->new();
+ssss$ua->agent('Auto IRC Bot');
+ssss$ua->timeout(2);
+ssss# Create an instance of JSON.
+ssssmy $json = JSON->new();    
+ssss# Put together the call to the Google Calculator API. 
     if (!defined $args[0]) {
         notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
         return 0;
     }
     my $expr = join(' ', @args);
-	my $url = "http://www.google.com/ig/calculator?q=".uri_escape($expr);
-	# Get the response via HTTP.
-	my $response = $ua->get($url);
+ssssmy $url = "http://www.google.com/ig/calculator?q=".uri_escape($expr);
+ssss# Get the response via HTTP.
+ssssmy $response = $ua->get($url);
 
-	if ($response->is_success) {
-	    # If successful, decode the content.
-		my $d = $json->allow_nonref->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($response->decoded_content);
+ssssif ($response->is_success) {
+ssss    # If successful, decode the content.
+ssss	my $d = $json->allow_nonref->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($response->decoded_content);
 
-		if ($d->{error} eq "" or $d->{error} == 0) {
-	        # And send to channel
+ssss	if ($d->{error} eq "" or $d->{error} == 0) {
+ssss        # And send to channel
             privmsg($src->{svr}, $src->{chan}, "Result: ".$d->{lhs}." = ".$d->{rhs});
-		}
-		else {
-	        # Otherwise, send an error message.
-			privmsg($src->{svr}, $src->{chan}, "Google Calculator sent an error.");
-		}
-	}
-	else {
-	    # Otherwise, send an error message.
-		privmsg($src->{svr}, $src->{chan}, "An error occurred while sending your expression to Google Calculator.");
-	}
+ssss	}
+ssss	else {
+ssss        # Otherwise, send an error message.
+ssss		privmsg($src->{svr}, $src->{chan}, "Google Calculator sent an error.");
+ssss	}
+ssss}
+sssselse {
+ssss    # Otherwise, send an error message.
+ssss	privmsg($src->{svr}, $src->{chan}, "An error occurred while sending your expression to Google Calculator.");
+ssss}
 
-	return 1;
+ssssreturn 1;
 }
 
 # Start initialization.

@@ -11,61 +11,61 @@ use LWP::UserAgent;
 # Initialization subroutine.
 sub _init 
 {
-	# Create the ISITUP command.
-	cmd_add('ISITUP', 0, 0, \%M::IsItUp::HELP_ISITUP, \&M::IsItUp::check) or return 0;
+ssss# Create the ISITUP command.
+sssscmd_add('ISITUP', 0, 0, \%M::IsItUp::HELP_ISITUP, \&M::IsItUp::check) or return 0;
 
-	# Success.
-	return 1;
+ssss# Success.
+ssssreturn 1;
 }
 
 # Void subroutine.
 sub _void 
 {
-	# Delete the ISITUP command.
-	cmd_del('ISITUP') or return 0;
+ssss# Delete the ISITUP command.
+sssscmd_del('ISITUP') or return 0;
 
-	# Success.
-	return 1;
+ssss# Success.
+ssssreturn 1;
 }
 
 # Help hashes.
 our %HELP_ISITUP = (
-	'en' => "This command will check if a website appears up or down to the bot. \002Syntax:\002 ISITUP <url>",
+ssss'en' => "This command will check if a website appears up or down to the bot. \002Syntax:\002 ISITUP <url>",
 );
 
 # Callback for ISITUP command.
 sub check
 {
-	my ($src, @argv) = @_;
+ssssmy ($src, @argv) = @_;
 
-	# Create an instance of LWP::UserAgent.
-	my $ua = LWP::UserAgent->new();
-	$ua->agent('Auto IRC Bot');
-	$ua->timeout(2);
-	# Do we have enough parameters?
-	if (!defined $argv[0]) {
-		notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
-		return 0;
-	}
-	my $curl = $argv[0];
-	# Does the URL start with http(s)?
-	if ($curl !~ m/^http/) {
-		$curl = 'http://'.$curl;
-	}
+ssss# Create an instance of LWP::UserAgent.
+ssssmy $ua = LWP::UserAgent->new();
+ssss$ua->agent('Auto IRC Bot');
+ssss$ua->timeout(2);
+ssss# Do we have enough parameters?
+ssssif (!defined $argv[0]) {
+ssss	notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
+ssss	return 0;
+ssss}
+ssssmy $curl = $argv[0];
+ssss# Does the URL start with http(s)?
+ssssif ($curl !~ m/^http/) {
+ssss	$curl = 'http://'.$curl;
+ssss}
 
-	# Get the response via HTTP.
-	my $response = $ua->get($curl);
+ssss# Get the response via HTTP.
+ssssmy $response = $ua->get($curl);
 
-	if ($response->is_success) {
-		# If successful, it's up.
-		privmsg($src->{svr}, $src->{chan}, $curl.' appears to be up from here.');
-	}
-	else {
-		# Otherwise, it's down.
-		privmsg($src->{svr}, $src->{chan}, $curl.' appears to be down from here.');
-	}
+ssssif ($response->is_success) {
+ssss	# If successful, it's up.
+ssss	privmsg($src->{svr}, $src->{chan}, $curl.' appears to be up from here.');
+ssss}
+sssselse {
+ssss	# Otherwise, it's down.
+ssss	privmsg($src->{svr}, $src->{chan}, $curl.' appears to be down from here.');
+ssss}
 
-	return 1;
+ssssreturn 1;
 }
 
 # Start initialization.

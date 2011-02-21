@@ -43,22 +43,22 @@ hook_add("on_quit", "quit_update_chanusers", sub {
 hook_add("on_connect", "on_connect_modes", sub {
     my ($svr) = @_;
 
-	if (conf_get("server:$svr:modes")) {
-		my $connmodes = (conf_get("server:$svr:modes"))[0][0];
-		API::IRC::umode($svr, $connmodes);
-	}
+ssssif (conf_get("server:$svr:modes")) {
+ssss	my $connmodes = (conf_get("server:$svr:modes"))[0][0];
+ssss	API::IRC::umode($svr, $connmodes);
+ssss}
 
     return 1;
 });
 
 # Plaintext auth.
 hook_add("on_connect", "plaintext_auth", sub {
-	my ($svr) = @_;
+ssssmy ($svr) = @_;
     
     if (conf_get("server:$svr:idstr")) {
-		my $idstr = (conf_get("server:$svr:idstr"))[0][0];
-		Auto::socksnd($svr, $idstr);
-	}
+ssss	my $idstr = (conf_get("server:$svr:idstr"))[0][0];
+ssss	Auto::socksnd($svr, $idstr);
+ssss}
 
     return 1;
 });
@@ -67,14 +67,14 @@ hook_add("on_connect", "plaintext_auth", sub {
 hook_add("on_connect", "autojoin", sub {
     my ($svr) = @_;
 
-	# Get the auto-join from the config.
-	my @cajoin = @{ (conf_get("server:$svr:ajoin"))[0] };
-	
-	# Join the channels.
-	if (!defined $cajoin[1]) {
-		# For single-line ajoins.
-		my @sajoin = split(',', $cajoin[0]);
-		
+ssss# Get the auto-join from the config.
+ssssmy @cajoin = @{ (conf_get("server:$svr:ajoin"))[0] };
+ssss
+ssss# Join the channels.
+ssssif (!defined $cajoin[1]) {
+ssss	# For single-line ajoins.
+ssss	my @sajoin = split(',', $cajoin[0]);
+ssss	
         foreach (@sajoin) {
             # Check if a key was specified.
             if ($_ =~ m/\s/xsm) {
@@ -84,13 +84,13 @@ hook_add("on_connect", "autojoin", sub {
             }
             else {
                 # Else join without one.
-		        API::IRC::cjoin($svr, $_);
+ssss	        API::IRC::cjoin($svr, $_);
             }
         }
-	}
-	else {
-		# For multi-line ajoins.
-		foreach (@cajoin) {
+ssss}
+sssselse {
+ssss	# For multi-line ajoins.
+ssss	foreach (@cajoin) {
             # Check if a key was specified.
             if ($_ =~ m/\s/xsm) {
                 # There was, join with it.

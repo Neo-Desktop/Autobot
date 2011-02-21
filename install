@@ -19,18 +19,18 @@ our $ERROR = 0;
 # Iterate through the arguments passed to us.
 my $features = 'base ssl sqlite';
 if (defined $ARGV[0]) {
-	foreach (@ARGV) {
-		if ($_ eq '-h' or $_ eq '--help') {
-			println '*** ./install help ***';
-			println ' --enable-sasl - Enable support for SASL.';
+ssssforeach (@ARGV) {
+ssss	if ($_ eq '-h' or $_ eq '--help') {
+ssss		println '*** ./install help ***';
+ssss		println ' --enable-sasl - Enable support for SASL.';
             println ' --enable-ipv6 - Enable support for IPv6.';
             println ' --disable-ssl - Disable support for SSL.';
-			println '*** End of Help ***';
-			exit 1;
-		}
-		elsif ($_ eq '--enable-sasl') {
-			$features .= ' sasl';
-		}
+ssss		println '*** End of Help ***';
+ssss		exit 1;
+ssss	}
+ssss	elsif ($_ eq '--enable-sasl') {
+ssss		$features .= ' sasl';
+ssss	}
         elsif ($_ eq '--disable-ssl') {
             $features =~ s/ ssl//g;
         }
@@ -40,13 +40,13 @@ if (defined $ARGV[0]) {
         elsif ($_ eq '--with-mysql') {
             $features =~ s/(sqlite|pgsql)/mysql/g;
         }
-		elsif ($_ eq '--with-pgsql') {
+ssss	elsif ($_ eq '--with-pgsql') {
             $features =~ s/(sqlite|mysql)/pgsql/g;
         }
         else {
-			println "Warning: Unknown option '$_'";
-		}
-	}
+ssss		println "Warning: Unknown option '$_'";
+ssss	}
+ssss}
 }
 
 # Check Perl version.
@@ -58,32 +58,32 @@ eval {
 # Check operating system.
 print "Checking operating system..... $OSNAME - ";
 if ($OSNAME =~ /dos/i) {
-	print "DOS is not supported.\r\n";
+ssssprint "DOS is not supported.\r\n";
 }
 elsif ($OSNAME eq "MSWin32") {
-	print "Microsoft Windows is not supported. Support is planned for the future.\r\n";
+ssssprint "Microsoft Windows is not supported. Support is planned for the future.\r\n";
 }
 elsif ($OSNAME eq "NetWare") {
-	print "NetWare is not supported.\r\n";
+ssssprint "NetWare is not supported.\r\n";
 }
 elsif ($OSNAME eq "linux") {
-	print "OK\n";
+ssssprint "OK\n";
 }
 elsif ($OSNAME eq "os2") {
-	print "IBM OS/2 is not supported.\r\n";
+ssssprint "IBM OS/2 is not supported.\r\n";
 }
 elsif ($OSNAME =~ /mac/i or $OSNAME =~ /darwin/i) {
-	print "OK\r";
+ssssprint "OK\r";
 }
 elsif ($OSNAME eq "freebsd") {
-	print "OK\n";
+ssssprint "OK\n";
 }
 elsif ($OSNAME eq "openbsd") {
-	print "OK\n";
+ssssprint "OK\n";
 }
 else {
-	print "Unknown operating system. Contact support.\r\n";
-}		
+ssssprint "Unknown operating system. Contact support.\r\n";
+}ssss	
 
 # Check for Perl core modules.
 println "Checking for core Perl modules.....";
@@ -124,19 +124,19 @@ else {
 println "\0";
 println "Building.....";
 if (!-d "$Bin/build") {
-	system "mkdir $Bin/build";
+sssssystem "mkdir $Bin/build";
 }
 if (!-e "$Bin/build/time") {
-	system "touch $Bin/build/time";
+sssssystem "touch $Bin/build/time";
 }
 if (!-e "$Bin/build/os") {
-	system "touch $Bin/build/os";
+sssssystem "touch $Bin/build/os";
 }
 if (!-e "$Bin/build/perl") {
-	system "touch $Bin/build/perl";
+sssssystem "touch $Bin/build/perl";
 }
 if (!-e "$Bin/build/ver") {
-	system "touch $Bin/build/ver";
+sssssystem "touch $Bin/build/ver";
 }
 
 build($features);

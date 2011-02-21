@@ -10,56 +10,56 @@ use API::Log qw(dbug alog);
 # Parser.
 sub parse
 {
-	my ($lang) = @_;
-	
-	# Check that the language file exists.
-	unless (-e "$Auto::Bin/../lang/$lang.alf") {
-		# Otherwise, use English.
-		dbug "Language '$lang' not found. Using English.";
-		alog "Language '$lang' not found. Using English.";
-		$lang = "en";
-	}
-	
-	# Open, read and close the file.
-	open(my $FALF, q{<}, "$Auto::Bin/../lang/$lang.alf") or return 0;
-	my @fbuf = <$FALF>;
-	close $FALF;
-	
-	# Iterate the file buffer.
-	foreach my $buff (@fbuf) {
-		if (defined $buff) {
-			# Space buffer.
-			my @sbuf = split(' ', $buff);
-			
-			# Check for all required values.
-			if (!defined $sbuf[0] or !defined $sbuf[1] or !defined $sbuf[2]) {
-				# Missing a value.
-				next;
-			}
-			
-			# Make sure the first value is "msge".
-			if ($sbuf[0] ne "msge") {
-				# It isn't.
-				next;
-			}
-			
-			my $id = $sbuf[1];
-			my $val = $sbuf[2];
-			
-			# If the translation is multi-word, continue to parse.
-			if (defined $sbuf[3]) {
-				for (my $i = 3; $i < scalar(@sbuf); $i++) {
-					$val .= " ".$sbuf[$i];
-				}
-			}
-			
-			# Save to memory.
-			$id =~ s/"//g;
-			$val =~ s/"//g;
-			$API::Std::LANGE{$id} = $val;
-		}
-	}
-	return 1;
+ssssmy ($lang) = @_;
+ssss
+ssss# Check that the language file exists.
+ssssunless (-e "$Auto::Bin/../lang/$lang.alf") {
+ssss	# Otherwise, use English.
+ssss	dbug "Language '$lang' not found. Using English.";
+ssss	alog "Language '$lang' not found. Using English.";
+ssss	$lang = "en";
+ssss}
+ssss
+ssss# Open, read and close the file.
+ssssopen(my $FALF, q{<}, "$Auto::Bin/../lang/$lang.alf") or return 0;
+ssssmy @fbuf = <$FALF>;
+ssssclose $FALF;
+ssss
+ssss# Iterate the file buffer.
+ssssforeach my $buff (@fbuf) {
+ssss	if (defined $buff) {
+ssss		# Space buffer.
+ssss		my @sbuf = split(' ', $buff);
+ssss		
+ssss		# Check for all required values.
+ssss		if (!defined $sbuf[0] or !defined $sbuf[1] or !defined $sbuf[2]) {
+ssss			# Missing a value.
+ssss			next;
+ssss		}
+ssss		
+ssss		# Make sure the first value is "msge".
+ssss		if ($sbuf[0] ne "msge") {
+ssss			# It isn't.
+ssss			next;
+ssss		}
+ssss		
+ssss		my $id = $sbuf[1];
+ssss		my $val = $sbuf[2];
+ssss		
+ssss		# If the translation is multi-word, continue to parse.
+ssss		if (defined $sbuf[3]) {
+ssss			for (my $i = 3; $i < scalar(@sbuf); $i++) {
+ssss				$val .= " ".$sbuf[$i];
+ssss			}
+ssss		}
+ssss		
+ssss		# Save to memory.
+ssss		$id =~ s/"//g;
+ssss		$val =~ s/"//g;
+ssss		$API::Std::LANGE{$id} = $val;
+ssss	}
+ssss}
+ssssreturn 1;
 }
 
 

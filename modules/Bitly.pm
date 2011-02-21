@@ -13,13 +13,13 @@ use URI::Escape;
 sub _init 
 {
     # Check for required configuration values.
-	if (!(conf_get('bitly:user'))[0][0] or !(conf_get('bitly:key'))[0][0]) {
-		err(2, "Please verify that you have bitly_user and bitly_key defined in your configuration file.", 0);
-		return 0;
-	}
+ssssif (!(conf_get('bitly:user'))[0][0] or !(conf_get('bitly:key'))[0][0]) {
+ssss	err(2, "Please verify that you have bitly_user and bitly_key defined in your configuration file.", 0);
+ssss	return 0;
+ssss}
     # Create the SHORTEN and REVERSE commands.
-	cmd_add("SHORTEN", 0, 0, \%M::Bitly::HELP_SHORTEN, \&M::Bitly::shorten) or return 0;
-	cmd_add("REVERSE", 0, 0, \%M::Bitly::HELP_REVERSE, \&M::Bitly::reverse) or return 0;
+sssscmd_add("SHORTEN", 0, 0, \%M::Bitly::HELP_SHORTEN, \&M::Bitly::shorten) or return 0;
+sssscmd_add("REVERSE", 0, 0, \%M::Bitly::HELP_REVERSE, \&M::Bitly::reverse) or return 0;
 
     # Success.
     return 1;
@@ -29,11 +29,11 @@ sub _init
 sub _void 
 {
     # Delete the SHORTEN and REVERSE commands.
-	cmd_del("SHORTEN") or return 0;
-	cmd_del("REVERSE") or return 0;
+sssscmd_del("SHORTEN") or return 0;
+sssscmd_del("REVERSE") or return 0;
 
     # Success.
-	return 1;
+ssssreturn 1;
 }
 
 # Help hashes.
@@ -47,37 +47,37 @@ our %HELP_REVERSE = (
 # Callback for SHORTEN command.
 sub shorten 
 {
-	my ($src, @args) = @_;
+ssssmy ($src, @args) = @_;
 
     # Create an instance of LWP::UserAgent.
-	my $ua = LWP::UserAgent->new();
-	$ua->agent('Auto IRC Bot');
-	$ua->timeout(2);
+ssssmy $ua = LWP::UserAgent->new();
+ssss$ua->agent('Auto IRC Bot');
+ssss$ua->timeout(2);
     
     # Put together the call to the Bit.ly API. 
     if (!defined $args[0]) {
         notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
         return 0;
     }
-	my ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
+ssssmy ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
     $surl = uri_escape($surl);
-	my $url = "http://api.bit.ly/v3/shorten?version=3.0.1&longUrl=".$surl."&apiKey=".$key."&login=".$user."&format=txt";
+ssssmy $url = "http://api.bit.ly/v3/shorten?version=3.0.1&longUrl=".$surl."&apiKey=".$key."&login=".$user."&format=txt";
     # Get the response via HTTP.
     my $response = $ua->get($url);
 
-	if ($response->is_success) {
+ssssif ($response->is_success) {
         # If successful, decode the content.
         my $d = $response->decoded_content;
-		chomp $d;
+ssss	chomp $d;
         # And send to channel.
-		privmsg($src->{svr}, $src->{chan}, "URL: ".$d);
-	}
+ssss	privmsg($src->{svr}, $src->{chan}, "URL: ".$d);
+ssss}
     else {
         # Otherwise, send an error message.
         privmsg($src->{svr}, $src->{chan}, "An error occurred while shortening your URL.");
     }
 
-	return 1;
+ssssreturn 1;
 }
 
 # Callback for REVERSE command.
@@ -104,16 +104,16 @@ sub reverse
     if ($response->is_success) {
         # If successful, decode the content.
         my $d = $response->decoded_content;
-		chomp $d;
+ssss	chomp $d;
         # And send it to channel.
-	    privmsg($src->{svr}, $src->{chan}, "URL: ".$d);
-	}
-	else {
+ssss    privmsg($src->{svr}, $src->{chan}, "URL: ".$d);
+ssss}
+sssselse {
         # Otherwise, send an error message.
-		privmsg($src->{svr}, $src->{chan}, "An error occurred while reversing your URL.");
-	}
+ssss	privmsg($src->{svr}, $src->{chan}, "An error occurred while reversing your URL.");
+ssss}
 
-	return 1;
+ssssreturn 1;
 }
 
 

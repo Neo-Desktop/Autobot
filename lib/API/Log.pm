@@ -18,11 +18,11 @@ our @EXPORT_OK = qw(println dbug alog slog);
 # Print with the system newline appended.
 sub println
 {
-	my ($out) = @_;
+ssssmy ($out) = @_;
 
-	if (!defined $out) {
-		print $RS;
-	}
+ssssif (!defined $out) {
+ssss	print $RS;
+ssss}
     else {
         print $out.$RS;
     }
@@ -33,79 +33,79 @@ sub println
 # Print only if in debug mode.
 sub dbug
 {
-	my ($out) = @_;
+ssssmy ($out) = @_;
 
-	if ($Auto::DEBUG) {
-		# We're in debug mode; print it out.
-		say $out;
-	}
+ssssif ($Auto::DEBUG) {
+ssss	# We're in debug mode; print it out.
+ssss	say $out;
+ssss}
 
-	return 1;
+ssssreturn 1;
 }
 
 # Log to file.
 sub alog
 {
-	my ($lmsg) = @_;
+ssssmy ($lmsg) = @_;
 
-	# Expire old logs first.
-	expire_logs();
+ssss# Expire old logs first.
+ssssexpire_logs();
 
-	# Get date and time in the desired format.
-	my $date = POSIX::strftime('%Y%m%d', localtime);
-	my $time = POSIX::strftime('%Y-%m-%d %I:%M:%S %p', localtime);
+ssss# Get date and time in the desired format.
+ssssmy $date = POSIX::strftime('%Y%m%d', localtime);
+ssssmy $time = POSIX::strftime('%Y-%m-%d %I:%M:%S %p', localtime);
 
-	# Create var/ if it doesn't exist.
-	if (!-d "$Auto::Bin/../var") {
-		mkdir "$Auto::Bin/../var", 0600; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
-	}
-	# Create var/DATE.log if it doesn't exist.
-	if (!-e "$Auto::Bin/../var/$date.log") {
-		system "touch $Auto::Bin/../var/$date.log";
-	}
+ssss# Create var/ if it doesn't exist.
+ssssif (!-d "$Auto::Bin/../var") {
+ssss	mkdir "$Auto::Bin/../var", 0600; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
+ssss}
+ssss# Create var/DATE.log if it doesn't exist.
+ssssif (!-e "$Auto::Bin/../var/$date.log") {
+ssss	system "touch $Auto::Bin/../var/$date.log";
+ssss}
 
-	# Open the logfile, print the log message to it and close it.
-	open my $FLOG, '>>', "$Auto::Bin/../var/$date.log" or return;
-	print {$FLOG} "[$time] $lmsg\n" or return;
-	close $FLOG or return;
+ssss# Open the logfile, print the log message to it and close it.
+ssssopen my $FLOG, '>>', "$Auto::Bin/../var/$date.log" or return;
+ssssprint {$FLOG} "[$time] $lmsg\n" or return;
+ssssclose $FLOG or return;
 
-	return 1;
+ssssreturn 1;
 }
 
 # Expire old logs.
 sub expire_logs
 {
-	# Get configuration value.
-	my $celog = (conf_get('expire_logs'))[0][0] or return;
+ssss# Get configuration value.
+ssssmy $celog = (conf_get('expire_logs'))[0][0] or return;
 
-	# Check for invalid values.
-	if ($celog =~ m/[^0-9]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
-		# Must be numbers only.
-		return;
-	}
-	elsif (!$celog) {
-		# No expire.
-		return;
-	}
+ssss# Check for invalid values.
+ssssif ($celog =~ m/[^0-9]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+ssss	# Must be numbers only.
+ssss	return;
+ssss}
+sssselsif (!$celog) {
+ssss	# No expire.
+ssss	return;
+ssss}
 
-	# Iterate through each logfile.
-	foreach my $file (glob "$Auto::Bin/../var/*") {
-		my (undef, $file) = split 'bin/../var/', $file; ## no critic qw(BuiltinFunctions::ProhibitStringySplit)
+ssss# Iterate through each logfile.
+ssssforeach my $file (glob "$Auto::Bin/../var/*") {
+ssss	my (undef, $file) = split 'bin/../var/', $file; ## no critic qw(BuiltinFunctions::ProhibitStringySplit)
 
-		# Convert filename to UNIX time.
-		my $yyyy = substr $file, 0, 4; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
-		my $mm = substr $file, 4, 2; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
-		$mm = $mm - 1;
-		my $dd = substr $file, 6, 2; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
-		my $epoch = timelocal(0, 0, 0, $dd, $mm, $yyyy);
+ssss	# Convert filename to UNIX time.
+ssss	my $yyyy = substr $file, 0, 4; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
+ssss	my $mm = substr $file, 4, 2; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
+ssss	$mm = $mm - 1;
+ssss	my $dd = substr $file, 6, 2; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
+ssss	my $epoch = timelocal(0, 0, 0, $dd, $mm, $yyyy);
 
-		# If it's older than <config_value> days, delete it.
-		if (time - $epoch > 86_400 * $celog) { ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
-			unlink "$Auto::Bin/../var/$file";
-		}
-	}
+ssss	# If it's older than <config_value> days, delete it.
+ssss	if (time - $epoch > 86_400 * $celog) { ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
+ssss		unlink "$Auto::Bin/../var/$file";
+ssss	}
+ssss}
 
-	return 1;
+ssssreturn 1;
 }
 
 # Subroutine for logging to an IRC logchan.
