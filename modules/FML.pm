@@ -12,7 +12,7 @@ use LWP::UserAgent;
 sub _init 
 {
     # Create the FML command.
-	cmd_add('FML', 0, 0, \%M::FML::HELP_FML, \&M::FML::fml) or return 0;
+    cmd_add('FML', 0, 0, \%M::FML::HELP_FML, \&M::FML::fml) or return 0;
 
     # Success.
     return 1;
@@ -22,10 +22,10 @@ sub _init
 sub _void 
 {
     # Delete the FML command.
-	cmd_del('FML') or return 0;
+    cmd_del('FML') or return 0;
 
     # Success.
-	return 1;
+    return 1;
 }
 
 # Help hash.
@@ -36,34 +36,34 @@ our %HELP_FML = (
 # Callback for FML command.
 sub fml
 {
-	my ($src, undef) = @_;
+    my ($src, undef) = @_;
 
     # Create an instance of LWP::UserAgent.
-	my $ua = LWP::UserAgent->new();
-	$ua->agent('Auto IRC Bot');
-	$ua->timeout(2);
+    my $ua = LWP::UserAgent->new();
+    $ua->agent('Auto IRC Bot');
+    $ua->timeout(2);
     
     # Get the random FML via HTTP.
     my $rp = $ua->get('http://rscript.org/lookup.php?type=fml');
 
-	if ($rp->is_success) {
+    if ($rp->is_success) {
         # If successful, decode the content.
         my $d = $rp->decoded_content;
-		$d =~ s/(\n|\r)//g;
+    	$d =~ s/(\n|\r)//g;
 
         # Get the FML.
         my (undef, $dfa) = split('Text: ', $d);
         my ($fml, undef) = split('Agree:', $dfa);
 
         # And send to channel.
-		privmsg($src->{svr}, $src->{chan}, "\002Random FML:\002 ".$fml);
-	}
+    	privmsg($src->{svr}, $src->{chan}, "\002Random FML:\002 ".$fml);
+    }
     else {
         # Otherwise, send an error message.
         privmsg($src->{svr}, $src->{chan}, "An error occurred while retrieving the FML.");
     }
 
-	return 1;
+    return 1;
 }
 
 # Start initialization.

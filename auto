@@ -8,46 +8,46 @@ PID=bin/auto.pid
 MODS="Class::Unload DBI"
 
 if [ "$1" = "start" ] ; then
-	if [ -e $PID ]; then
-		if [ "$2" = "force" ]; then  
-		    echo "Starting Auto. . ."
-		    bin/auto
-		    sleep 2
-		    if [ ! -r $PID ]; then
-		    	echo "Possible failed startup... check Auto logs for more information."
-		    fi
+    if [ -e $PID ]; then
+    	if [ "$2" = "force" ]; then  
+    	    echo "Starting Auto. . ."
+    	    bin/auto
+    	    sleep 2
+    	    if [ ! -r $PID ]; then
+    	    	echo "Possible failed startup... check Auto logs for more information."
+    	    fi
         else
             echo "Auto appears to be running already. Run ./auto start force to start anyway."
         fi
-	else
-		echo "Starting Auto. . ."
-		bin/auto
-		sleep 2
-		if [ ! -r $PID ]; then
-			echo "Possible failed startup... check Auto logs for more information"
-		fi
-	fi
+    else
+    	echo "Starting Auto. . ."
+    	bin/auto
+    	sleep 2
+    	if [ ! -r $PID ]; then
+    		echo "Possible failed startup... check Auto logs for more information"
+    	fi
+    fi
 
 elif [ "$1" = "stop" ]; then
-	echo "Stopping Auto. . ."
-	kill -TERM `cat $PID`
+    echo "Stopping Auto. . ."
+    kill -TERM `cat $PID`
 
 elif [ "$1" = "rehash" ]; then
-	echo "Rehashing Auto. . ."
-	kill -HUP `cat $PID`
+    echo "Rehashing Auto. . ."
+    kill -HUP `cat $PID`
 
 elif [ "$1" = "status" ]; then
-	if [ -e $PID ]; then
-		echo "Status: Auto appears to be running."
-	else
-		echo "Status: Auto appears to not be running."
-	fi
+    if [ -e $PID ]; then
+    	echo "Status: Auto appears to be running."
+    else
+    	echo "Status: Auto appears to not be running."
+    fi
 
 elif [ "$1" = "getmodules" ]; then
-	cpan -i $MODS
+    cpan -i $MODS
 
 else
-	echo "Usage: auto (start|stop|rehash|status|getmodules)"
+    echo "Usage: auto (start|stop|rehash|status|getmodules)"
 fi
 
 # vim: set ai sw=4 ts=4:

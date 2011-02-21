@@ -13,9 +13,9 @@ use API::IRC qw(privmsg);
 # Initialization subroutine.
 sub _init
 {
-	# Check if this Auto was built with SASL support.
-	err(2, "Auto was not built with SASL support. Aborting SASLAuth.", 0) and return 0 if $Auto::ENFEAT !~ /sasl/;
-	# Add a hook for before we connect.
+    # Check if this Auto was built with SASL support.
+    err(2, "Auto was not built with SASL support. Aborting SASLAuth.", 0) and return 0 if $Auto::ENFEAT !~ /sasl/;
+    # Add a hook for before we connect.
     hook_add('on_preconnect', 'CAP', sub { my ($srv) = @_; Auto::socksnd($srv, 'CAP LS'); }
     ) or return 0;
     # Hook for parsing CAP.
@@ -26,19 +26,19 @@ sub _init
     rchook_add('904', \&M::SASLAuth::handle_904) or return 0;
     # Hook for parsing 906.
     rchook_add('906', \&M::SASLAuth::handle_906) or return 0;
-	return 1;
+    return 1;
 }
 
 # Void subroutine.
 sub _void
 {
-	# Delete the hooks.
-	hook_del("on_preconnect", "CAP") or return 0;
+    # Delete the hooks.
+    hook_del("on_preconnect", "CAP") or return 0;
     rchook_del('CAP');
     rchook_del('903');
     rchook_del('904');
     rchook_del('906');
-	return 1;
+    return 1;
 }
 
 sub handle_cap {
@@ -123,8 +123,8 @@ sub handle_904
 # SASL authentication aborted.
 sub handle_906 
 {
-	my ($svr, undef) = @_;
-	Auto::socksnd($svr, 'CAP END');
+    my ($svr, undef) = @_;
+    Auto::socksnd($svr, 'CAP END');
     timer_del('auth_timeout');
     awarn(2, "SASL authentication aborted!");
 }
