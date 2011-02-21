@@ -12,18 +12,18 @@ sub new
     my ($file) = @_;
     my $self = bless {}, $class;
 
-ssss# Check to see if the configuration file exists.
-ssssif (!-e "$Auto::Bin/../etc/$file") {
-ssss	return 0;
-ssss}
-ssss
-ssss# Open, read and close the config.
-ssssopen(my $FCONF, q{<}, "$Auto::Bin/../etc/$file") or return 0;
-ssssmy @cosfl = <$FCONF> or return 0;
-ssssclose $FCONF or return 0;
-ssss
-ssss# Save it to self variable.
-ssss$self->{'config'}->{'path'} = "$Auto::Bin/../etc/$file";
+	# Check to see if the configuration file exists.
+	if (!-e "$Auto::Bin/../etc/$file") {
+		return 0;
+	}
+	
+	# Open, read and close the config.
+	open(my $FCONF, q{<}, "$Auto::Bin/../etc/$file") or return 0;
+	my @cosfl = <$FCONF> or return 0;
+	close $FCONF or return 0;
+	
+	# Save it to self variable.
+	$self->{'config'}->{'path'} = "$Auto::Bin/../etc/$file";
 
     return $self;
 }
@@ -31,148 +31,148 @@ ssss$self->{'config'}->{'path'} = "$Auto::Bin/../etc/$file";
 # Parse the configuration file.
 sub parse 
 {
-ssss# Get the path to the file.
-ssssmy $self = shift;
-ssssmy $file = $self->{'config'}->{'path'};
-ssssmy $blk = 0;
-ssssmy (%rs);
-ssss
-ssss# Open, read and close it.
-ssssopen(my $FCONF, q{<}, "$file") or return 0;
-ssssmy @fbuf = <$FCONF> or return 0;
-ssssclose $FCONF or return 0;
-ssss
-ssss# Iterate the file.
-ssssforeach my $buff (@fbuf) {
-ssss	# Main newline buffer.
-ssss	if (defined $buff) {
-ssss		# If the line begins with a #, it's a comment so ignore it.
-ssss		if (substr($buff, 0, 1) eq '#') {
-ssss			next;
-ssss		}
-ssss		
-ssss		if ($buff =~ m/;/) {
-ssss			# Semicolon buffer.
-ssss			my @asbuf = split(';', $buff);
-ssss			foreach my $asbuff (@asbuf) {
-ssss				if (defined $asbuff) {
-ssss					
-ssss					# Space buffer.
-ssss					my @ebuf = split(' ', $asbuff);
-ssss					if (!defined $ebuf[0] or !defined $ebuf[1]) {
-ssss						# Garbage. Ignoring.
-ssss						next;
-ssss					}
-ssss					my $param = $ebuf[1];
-ssss					
-ssss					if (substr($param, 0, 1) eq '"' and substr($param, length($param) - 1, 1) ne '"') {
-ssss						# Multi-word string.
-ssss						$param = substr($param, 1);
-ssss						
-ssss						for (my $i = 2; $i < scalar(@ebuf); $i++) {
-ssss							if (substr($ebuf[$i], length($ebuf[$i]) - 1, 1) eq '"') {
-ssss								$param .= " ".substr($ebuf[$i], 0, length($ebuf[$i]) - 1);
-ssss								last;
-ssss							}
-ssss							else {
-ssss								$param .= " ".$ebuf[$i];
-ssss							}
-ssss						}
-ssss					}
-ssss					elsif (substr($param, 0, 1) eq '"' and substr($param, length($param) - 1, 1) eq '"') {
-ssss						# Single-word string.
-ssss						$param = substr($param, 1, length($ebuf[1]) - 2);
-ssss					}
-ssss					elsif ($param =~ m/[0-9]/) {
-ssss						# Numeric.
-ssss						$param =~ s/[^0-9.]//g;
-ssss					}
-ssss					else {
-ssss						# Garbage.
-ssss						next;
-ssss					}
-ssss					
-ssss					my @param = ($param);
-ssss							
-ssss					unless (!$blk) {
-ssss						# We're inside a block.
-ssss						if ($blk =~ m/@@@/) {
-ssss							# We're inside a block with a parameter.
-ssss							my @sblk = split('@@@', $blk);
-ssss							
-ssss							# Check to see if this config option already exists.
-ssss							if (defined $rs{$sblk[0]}{$sblk[1]}{$ebuf[0]}) {
-ssss								# It does, so merely push this second one to the existing array.
-ssss								push(@{ $rs{$sblk[0]}{$sblk[1]}{$ebuf[0]} }, $param);
-ssss							}
-ssss							else {
-ssss								# It doesn't, create it as an array.
-ssss								@{ $rs{$sblk[0]}{$sblk[1]}{$ebuf[0]} } = @param;
-ssss							}
-ssss						}
-ssss						else {
-ssss							# We're inside a block with no parameter.
-ssss							
-ssss							# Check to see if this config option already exists.
-ssss							if (defined $rs{$blk}{$ebuf[0]}) {
-ssss								# It does, so merely push this second one to the existing array.
+	# Get the path to the file.
+	my $self = shift;
+	my $file = $self->{'config'}->{'path'};
+	my $blk = 0;
+	my (%rs);
+	
+	# Open, read and close it.
+	open(my $FCONF, q{<}, "$file") or return 0;
+	my @fbuf = <$FCONF> or return 0;
+	close $FCONF or return 0;
+	
+	# Iterate the file.
+	foreach my $buff (@fbuf) {
+		# Main newline buffer.
+		if (defined $buff) {
+			# If the line begins with a #, it's a comment so ignore it.
+			if (substr($buff, 0, 1) eq '#') {
+				next;
+			}
+			
+			if ($buff =~ m/;/) {
+				# Semicolon buffer.
+				my @asbuf = split(';', $buff);
+				foreach my $asbuff (@asbuf) {
+					if (defined $asbuff) {
+						
+						# Space buffer.
+						my @ebuf = split(' ', $asbuff);
+						if (!defined $ebuf[0] or !defined $ebuf[1]) {
+							# Garbage. Ignoring.
+							next;
+						}
+						my $param = $ebuf[1];
+						
+						if (substr($param, 0, 1) eq '"' and substr($param, length($param) - 1, 1) ne '"') {
+							# Multi-word string.
+							$param = substr($param, 1);
+							
+							for (my $i = 2; $i < scalar(@ebuf); $i++) {
+								if (substr($ebuf[$i], length($ebuf[$i]) - 1, 1) eq '"') {
+									$param .= " ".substr($ebuf[$i], 0, length($ebuf[$i]) - 1);
+									last;
+								}
+								else {
+									$param .= " ".$ebuf[$i];
+								}
+							}
+						}
+						elsif (substr($param, 0, 1) eq '"' and substr($param, length($param) - 1, 1) eq '"') {
+							# Single-word string.
+							$param = substr($param, 1, length($ebuf[1]) - 2);
+						}
+						elsif ($param =~ m/[0-9]/) {
+							# Numeric.
+							$param =~ s/[^0-9.]//g;
+						}
+						else {
+							# Garbage.
+							next;
+						}
+						
+						my @param = ($param);
+								
+						unless (!$blk) {
+							# We're inside a block.
+							if ($blk =~ m/@@@/) {
+								# We're inside a block with a parameter.
+								my @sblk = split('@@@', $blk);
+								
+								# Check to see if this config option already exists.
+								if (defined $rs{$sblk[0]}{$sblk[1]}{$ebuf[0]}) {
+									# It does, so merely push this second one to the existing array.
+									push(@{ $rs{$sblk[0]}{$sblk[1]}{$ebuf[0]} }, $param);
+								}
+								else {
+									# It doesn't, create it as an array.
+									@{ $rs{$sblk[0]}{$sblk[1]}{$ebuf[0]} } = @param;
+								}
+							}
+							else {
+								# We're inside a block with no parameter.
+								
+								# Check to see if this config option already exists.
+								if (defined $rs{$blk}{$ebuf[0]}) {
+									# It does, so merely push this second one to the existing array.
                                     push(@{ $rs{$blk}{$ebuf[0]} }, $param);
-ssss							}
-ssss							else {
-ssss								# It doesn't, create it as an array.
-ssss								@{ $rs{$blk}{$ebuf[0]} } = @param;
-ssss							}
-ssss						}
-ssss					}
-ssss					else {
-ssss						# We're not inside a block.
-ssss						
-ssss						# Check to see if this config option already exists.
-ssss						if (defined $rs{$ebuf[0]}) {
-ssss							# It does, so merely push this second one to the existing array.
-ssss							push(@{ $rs{$ebuf[0]} }, $param);
-ssss						}
-ssss						else {
-ssss							# It doesn't, create it as an array.
-ssss							@{ $rs{$ebuf[0]} } = @param;
-ssss						}
-ssss					}	
-ssss				}
-ssss			}
-ssss		}
-ssss		else {
-ssss			# No semicolon space buffer.
-ssss			my @ebuf = split(' ', $buff);
-ssss			
-ssss			if (!defined $ebuf[0]) {
-ssss				# Garbage. Ignoring.
-ssss				next;
-ssss			}
-ssss			
-ssss			if (defined $ebuf[1]) {
-ssss				if ($ebuf[1] eq '{') {
-ssss					# This is the beginning of a block with no parameter.
+								}
+								else {
+									# It doesn't, create it as an array.
+									@{ $rs{$blk}{$ebuf[0]} } = @param;
+								}
+							}
+						}
+						else {
+							# We're not inside a block.
+							
+							# Check to see if this config option already exists.
+							if (defined $rs{$ebuf[0]}) {
+								# It does, so merely push this second one to the existing array.
+								push(@{ $rs{$ebuf[0]} }, $param);
+							}
+							else {
+								# It doesn't, create it as an array.
+								@{ $rs{$ebuf[0]} } = @param;
+							}
+						}	
+					}
+				}
+			}
+			else {
+				# No semicolon space buffer.
+				my @ebuf = split(' ', $buff);
+				
+				if (!defined $ebuf[0]) {
+					# Garbage. Ignoring.
+					next;
+				}
+				
+				if (defined $ebuf[1]) {
+					if ($ebuf[1] eq '{') {
+						# This is the beginning of a block with no parameter.
                         $blk = $ebuf[0];
-ssss				}
-ssss				elsif (defined $ebuf[2]) {
-ssss					if ($ebuf[2] eq '{') {
-ssss						# This is the beginning of a block with a parameter.
-ssss						my $param = $ebuf[1];
-ssss						$param =~ s/"//g;
-ssss						$blk = $ebuf[0].'@@@'.$param;
-ssss					}
-ssss				}
-ssss			}
-ssss			if ($ebuf[0] eq '}') {
-ssss				# This is the end of a block.
-ssss				$blk = 0;
-ssss			}
-ssss		}
-ssss	}
-ssss}	
-ssss
-ssss# Return the configuration data.
-ssssreturn %rs;				
+					}
+					elsif (defined $ebuf[2]) {
+						if ($ebuf[2] eq '{') {
+							# This is the beginning of a block with a parameter.
+							my $param = $ebuf[1];
+							$param =~ s/"//g;
+							$blk = $ebuf[0].'@@@'.$param;
+						}
+					}
+				}
+				if ($ebuf[0] eq '}') {
+					# This is the end of a block.
+					$blk = 0;
+				}
+			}
+		}
+	}	
+	
+	# Return the configuration data.
+	return %rs;				
 }
 
 

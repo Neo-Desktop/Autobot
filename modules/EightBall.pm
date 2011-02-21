@@ -13,8 +13,8 @@ our $ANSWER = 0;
 sub _init 
 {
     # Create the 8BALL and RIGBALL commands.
-sssscmd_add('8BALL', 0, 0, \%M::EightBall::HELP_8BALL, \&M::EightBall::c_8ball) or return 0;
-sssscmd_add('RIGBALL', 1, 'cmd.rigball', \%M::EightBall::HELP_RIGBALL, \&M::EightBall::rigball) or return 0;
+	cmd_add('8BALL', 0, 0, \%M::EightBall::HELP_8BALL, \&M::EightBall::c_8ball) or return 0;
+	cmd_add('RIGBALL', 1, 'cmd.rigball', \%M::EightBall::HELP_RIGBALL, \&M::EightBall::rigball) or return 0;
 
     # Success.
     return 1;
@@ -24,11 +24,11 @@ sssscmd_add('RIGBALL', 1, 'cmd.rigball', \%M::EightBall::HELP_RIGBALL, \&M::Eigh
 sub _void 
 {
     # Delete the 8BALL and RIGBALL commands.
-sssscmd_del('8BALL') or return 0;
-sssscmd_del('RIGBALL') or return 0;
+	cmd_del('8BALL') or return 0;
+	cmd_del('RIGBALL') or return 0;
 
     # Success.
-ssssreturn 1;
+	return 1;
 }
 
 # Help hashes.
@@ -42,7 +42,7 @@ our %HELP_RIGBALL = (
 # Callback for 8BALL command.
 sub c_8ball
 {
-ssssmy ($src, @argv) = @_;
+	my ($src, @argv) = @_;
 
     if (!defined $argv[0]) {
         notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
@@ -77,7 +77,7 @@ ssssmy ($src, @argv) = @_;
 
     privmsg($src->{svr}, $src->{chan}, "\002Answer:\002 ".$a);
     
-ssssreturn 1;
+	return 1;
 }
 
 # Callback for RIGBALL command.
@@ -94,7 +94,7 @@ sub rigball
     $ANSWER = join(" ", @argv);
     privmsg($src->{svr}, $src->{nick}, "Answer set to: ".$ANSWER);
 
-ssssreturn 1;
+	return 1;
 }
 
 

@@ -23,11 +23,11 @@ BEGIN {
 
     # Set version information.
     use constant { ## no critic qw(ValuesAndExpressions::ProhibitConstantPragma)
-ssss    NAME   => 'Auto IRC Bot',
-ssss    VER    => 3,
-ssss    SVER   => 0,
-ssss    REV    => 0,
-ssss    RSTAGE => 'd',
+	    NAME   => 'Auto IRC Bot',
+	    VER    => 3,
+	    SVER   => 0,
+	    REV    => 0,
+	    RSTAGE => 'd',
         GR     => substr `cat $Bin/../.git/refs/heads/indev`, 0, 7
     };
 }
@@ -46,7 +46,7 @@ local $PROGRAM_NAME = 'auto';
 
 # Check for build files.
 if (!-e "$Bin/../build/os" or !-e "$Bin/../build/perl" or !-e "$Bin/../build/time" or !-e "$Bin/../build/ver") {
-sssssay 'Missing build file(s). Please build Auto before running it.' and exit;
+	say 'Missing build file(s). Please build Auto before running it.' and exit;
 }
 
 # Check build OS.
@@ -54,7 +54,7 @@ open my $BFOS, '<', "$Bin/../build/os" or say 'Cannot start: Broken build.' and 
 my @BFOS = <$BFOS>;
 close $BFOS or say 'Cannot start: Broken build.' and exit;
 if ($BFOS[0] ne $OSNAME."\n") {
-sssssay 'Cannot start: Broken build.' and exit;
+	say 'Cannot start: Broken build.' and exit;
 }
 undef @BFOS;
 
@@ -71,7 +71,7 @@ open my $BFPERL, '<', "$Bin/../build/perl" or say 'Cannot start: Broken build.' 
 my @BFPERL = <$BFPERL>;
 close $BFPERL or say 'Cannot start: Broken build.' and exit;
 if ($BFPERL[0] ne $]."\n") {
-sssssay 'Cannot start: Broken build.' and exit;
+	say 'Cannot start: Broken build.' and exit;
 }
 undef @BFPERL;
 
@@ -80,7 +80,7 @@ open my $BFVER, '<', "$Bin/../build/ver" or say 'Cannot start: Broken build.' an
 my @BFVER = <$BFVER>;
 close $BFVER or say 'Cannot start: Broken build.' and exit;
 if ($BFVER[0] ne VER.q{.}.SVER.q{.}.REV.RSTAGE."\n") {
-sssssay 'Cannot start: Broken build.' and exit;
+	say 'Cannot start: Broken build.' and exit;
 }
 undef @BFVER;
 
@@ -112,8 +112,8 @@ our ($APID, %TIMERS);
 our $DEBUG = 0;
 our $NUC = 0;
 if (defined $ARGV[0]) {
-ssssforeach (@ARGV) {
-ssss	given ($_) {
+	foreach (@ARGV) {
+		given ($_) {
             when ('-d') { $DEBUG = 1; }
             when ('-nuc') { $NUC = 1; }
         }
@@ -135,23 +135,23 @@ our %SETTINGS = $CONF->parse or err(1, 'Failed to parse configuration file!', 1)
 say ' Success';
 
 if (conf_get('die')) {
-ssssif ((conf_get('die'))[0][0] == 1) {
-ssss    say '!!! You didn\'t read the whole config.';
-ssss	say '!!! Insert new user then try again.';
-ssss	exit;
-ssss}
+	if ((conf_get('die'))[0][0] == 1) {
+	    say '!!! You didn\'t read the whole config.';
+		say '!!! Insert new user then try again.';
+		exit;
+	}
 }
 
 # Check for required configuration values.
 my @REQCVALS = qw(locale expire_logs server fantasy_pf ratelimit database:format bantype);
 foreach my $REQCVAL (@REQCVALS) {
-ssssif (!conf_get($REQCVAL)) {
-ssss	my $err = 2;
-ssss	if ($REQCVAL eq 'expire_logs') {
-ssss		$err = 1;
-ssss	}
-ssss	err($err, "Missing required configuration value: $REQCVAL", 1);
-ssss}
+	if (!conf_get($REQCVAL)) {
+		my $err = 2;
+		if ($REQCVAL eq 'expire_logs') {
+			$err = 1;
+		}
+		err($err, "Missing required configuration value: $REQCVAL", 1);
+	}
 }
 undef @REQCVALS;
 
@@ -253,49 +253,49 @@ Core::IRC::clear_usercmd_timer();
 our (%PRIVILEGES);
 # If there are any privsets.
 if (conf_get('privset')) {
-ssss# Get them.
-ssssmy %tcprivs = conf_get('privset');
+	# Get them.
+	my %tcprivs = conf_get('privset');
 
     foreach my $tckpriv (keys %tcprivs) {
-ssss	# For each privset, get the inner values.
-ssss	my %mcprivs = conf_get("privset:$tckpriv");
+		# For each privset, get the inner values.
+		my %mcprivs = conf_get("privset:$tckpriv");
 
         # Iterate through them.
-ssss	foreach my $mckpriv (keys %mcprivs) {
-ssss		# Switch statement for the values.
-ssss		given ($mckpriv) {
-ssss			# If it's 'priv', save it as a privilege.
-ssss			when ('priv') {
-ssss				if (defined $PRIVILEGES{$tckpriv}) {
-ssss					# If this privset exists, push to it.
-ssss					push @{ $PRIVILEGES{$tckpriv} }, ($mcprivs{$mckpriv})[0][0];
-ssss				}
-ssss				else {
-ssss					# Otherwise, create it.
-ssss					@{ $PRIVILEGES{$tckpriv} } = (($mcprivs{$mckpriv})[0][0]);
-ssss				}
-ssss			}
-ssss			# If it's 'inherit', inherit the privileges of another privset.
-ssss			when ('inherit') {
-ssss				# If the privset we're inheriting exists, continue.
-ssss				if (defined $PRIVILEGES{($mcprivs{$mckpriv})[0][0]}) {
-ssss					# Iterate through each privilege.
-ssss					foreach (@{ $PRIVILEGES{($mcprivs{$mckpriv})[0][0]} }) {
-ssss						# And save them to the privset inheriting them
-ssss						if (defined $PRIVILEGES{$tckpriv}) {
-ssss							# If this privset exists, push to it.
-ssss							push @{ $PRIVILEGES{$tckpriv} }, $_;
-ssss						}
-ssss						else {
-ssss							# Otherwise, create it.
-ssss							@{ $PRIVILEGES{$tckpriv} } = ($_);
-ssss						}
-ssss					}
-ssss				}
-ssss			}
-ssss		}
-ssss	}
-ssss}
+		foreach my $mckpriv (keys %mcprivs) {
+			# Switch statement for the values.
+			given ($mckpriv) {
+				# If it's 'priv', save it as a privilege.
+				when ('priv') {
+					if (defined $PRIVILEGES{$tckpriv}) {
+						# If this privset exists, push to it.
+						push @{ $PRIVILEGES{$tckpriv} }, ($mcprivs{$mckpriv})[0][0];
+					}
+					else {
+						# Otherwise, create it.
+						@{ $PRIVILEGES{$tckpriv} } = (($mcprivs{$mckpriv})[0][0]);
+					}
+				}
+				# If it's 'inherit', inherit the privileges of another privset.
+				when ('inherit') {
+					# If the privset we're inheriting exists, continue.
+					if (defined $PRIVILEGES{($mcprivs{$mckpriv})[0][0]}) {
+						# Iterate through each privilege.
+						foreach (@{ $PRIVILEGES{($mcprivs{$mckpriv})[0][0]} }) {
+							# And save them to the privset inheriting them
+							if (defined $PRIVILEGES{$tckpriv}) {
+								# If this privset exists, push to it.
+								push @{ $PRIVILEGES{$tckpriv} }, $_;
+							}
+							else {
+								# Otherwise, create it.
+								@{ $PRIVILEGES{$tckpriv} } = ($_);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 # Successful startup.
@@ -313,11 +313,11 @@ if (!$DEBUG) {
     if ($APID != 0) {
         alog '* Successfully forked into the background. Process ID: '.$APID;
         if (!-e "$Bin/auto.pid") {
-ssss		system "touch $Bin/auto.pid";
-ssss	}
-ssss	open my $FPID, '>', "$Bin/auto.pid" or exit;
-ssss	print {$FPID} "$APID\n" or exit;
-ssss	close $FPID or exit;
+			system "touch $Bin/auto.pid";
+		}
+		open my $FPID, '>', "$Bin/auto.pid" or exit;
+		print {$FPID} "$APID\n" or exit;
+		close $FPID or exit;
         exit;
     }
     POSIX::setsid() or err(2, "Can't start a new session: $ERRNO", 1);
@@ -331,11 +331,11 @@ API::Std::event_add('on_preconnect');
 
 # Load modules.
 if (conf_get('module')) {
-ssssalog '* Loading modules...';
-ssssdbug '* Loading modules...';
-ssssforeach (@{ (conf_get('module'))[0] }) {
-ssss	mod_load($_);
-ssss}
+	alog '* Loading modules...';
+	dbug '* Loading modules...';
+	foreach (@{ (conf_get('module'))[0] }) {
+		mod_load($_);
+	}
 }
 
 ## Create sockets.
@@ -351,13 +351,13 @@ my $it = 0;
 foreach my $cskey (keys %cservers) {
     # Prepare socket data.
     my %conndata = (
-ssss	Proto => 'tcp',
-    ssssLocalAddr => $cservers{$cskey}{'bind'}[0],
-ssss	PeerAddr  => $cservers{$cskey}{'host'}[0],
-ssss	PeerPort  => $cservers{$cskey}{'port'}[0],
+		Proto => 'tcp',
+    	LocalAddr => $cservers{$cskey}{'bind'}[0],
+		PeerAddr  => $cservers{$cskey}{'host'}[0],
+		PeerPort  => $cservers{$cskey}{'port'}[0],
         Timeout   => 20,
     );
-ssss# Set IPv6/SSL data.
+	# Set IPv6/SSL data.
     my $use6 = 0;
     my $usessl = 0;
     if (defined $cservers{$cskey}{'ipv6'}[0]) { $use6 = $cservers{$cskey}{'ipv6'}[0]; }
@@ -383,50 +383,50 @@ ssss# Set IPv6/SSL data.
 
     # Create the socket.
     if ($use6) {
-ssss    $SOCKET{$cskey} = IO::Socket::INET6->new(%conndata) or # Or error.
+	    $SOCKET{$cskey} = IO::Socket::INET6->new(%conndata) or # Or error.
         err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
         and delete $SOCKET{$cskey} and next;
     }
     else {
         if ($usessl) {
-ssss        $SOCKET{$cskey} = IO::Socket::SSL->new(%conndata) or # Or error.
+	        $SOCKET{$cskey} = IO::Socket::SSL->new(%conndata) or # Or error.
             err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
             and delete $SOCKET{$cskey} and next;
         }
         else {
-ssss        $SOCKET{$cskey} = IO::Socket::INET->new(%conndata) or # Or error.
+	        $SOCKET{$cskey} = IO::Socket::INET->new(%conndata) or # Or error.
             err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
             and delete $SOCKET{$cskey} and next;
         }
     }
 
     # Send PASS if we have one.
-ssssif (defined $cservers{$cskey}{'pass'}[0]) {
-ssss	socksnd($cskey, 'PASS :'.$cservers{$cskey}{'pass'}[0]) or
-ssss		err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
-ssss		and next;
-ssss}
-ssssAPI::Std::event_run('on_preconnect', $cskey);
-ssss# Send NICK/USER.
-ssssAPI::IRC::nick($cskey, $cservers{$cskey}{'nick'}[0]);
-sssssocksnd($cskey, 'USER '.$cservers{$cskey}{'ident'}[0].q{ }.hostname.q{ }.$cservers{$cskey}{'host'}[0].' :'.$cservers{$cskey}{'realname'}[0]) or
-ssss	err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
-ssss	and next;
-ssss# Add to select.
-ssss$SELECT->add($SOCKET{$cskey});
-ssss# Success!
-ssssalog '** Successfully connected to server: '.$cskey;
-ssssdbug '** Successfully connected to server: '.$cskey;
-ssss$it = 1;
+	if (defined $cservers{$cskey}{'pass'}[0]) {
+		socksnd($cskey, 'PASS :'.$cservers{$cskey}{'pass'}[0]) or
+			err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
+			and next;
+	}
+	API::Std::event_run('on_preconnect', $cskey);
+	# Send NICK/USER.
+	API::IRC::nick($cskey, $cservers{$cskey}{'nick'}[0]);
+	socksnd($cskey, 'USER '.$cservers{$cskey}{'ident'}[0].q{ }.hostname.q{ }.$cservers{$cskey}{'host'}[0].' :'.$cservers{$cskey}{'realname'}[0]) or
+		err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
+		and next;
+	# Add to select.
+	$SELECT->add($SOCKET{$cskey});
+	# Success!
+	alog '** Successfully connected to server: '.$cskey;
+	dbug '** Successfully connected to server: '.$cskey;
+	$it = 1;
 }
 
 # Success!
 if ($it) {
-ssssalog '** Success: Connected to server(s).';
-ssssdbug '** Success: Connected to server(s).';
+	alog '** Success: Connected to server(s).';
+	dbug '** Success: Connected to server(s).';
 }
 else {
-sssserr(2, 'No server connections.', 1);
+	err(2, 'No server connections.', 1);
 }
 undef $it;
 
@@ -442,40 +442,40 @@ API::Std::cmd_add('HELP', 2, 0, \%Core::Cmd::HELP_HELP, \&Core::Cmd::cmd_help);
 
 # Infinite while loop.
 while (1) {
-ssss# Timer check.
-ssssforeach my $tk (keys %TIMERS) {
-ssss	if ($TIMERS{$tk}{time} <= time) {
-ssss		&{ $TIMERS{$tk}{sub} }();
-ssss		if ($TIMERS{$tk}{type} == 1) {
-ssss			# If it's type 1, delete from memory.
-ssss			delete $TIMERS{$tk};
-ssss		}
-ssss		elsif ($TIMERS{$tk}{type} == 2) {
-ssss			# If it's type 2, reset timer.
-ssss			$TIMERS{$tk}{time} = time + $TIMERS{$tk}{secs};
-ssss		}
-ssss		else {
-ssss			# This should never happen.
-ssss			delete $TIMERS{$tk};
-ssss		}
-ssss	}
-ssss}
-ssss# Socket check.
-ssssforeach my $sock ($SELECT->can_read(1)) {
-ssss	# Figure out what network is sending us data.
-ssss	my $sockid;
-ssss	foreach (keys %SOCKET) {
-ssss		if ($SOCKET{$_} eq $sock) { $sockid = $_; }
-ssss	}
-ssss	# Read the data.
-ssss	my $idata;
-ssss	sysread $sock, $idata, POSIX::BUFSIZ, 0;
+	# Timer check.
+	foreach my $tk (keys %TIMERS) {
+		if ($TIMERS{$tk}{time} <= time) {
+			&{ $TIMERS{$tk}{sub} }();
+			if ($TIMERS{$tk}{type} == 1) {
+				# If it's type 1, delete from memory.
+				delete $TIMERS{$tk};
+			}
+			elsif ($TIMERS{$tk}{type} == 2) {
+				# If it's type 2, reset timer.
+				$TIMERS{$tk}{time} = time + $TIMERS{$tk}{secs};
+			}
+			else {
+				# This should never happen.
+				delete $TIMERS{$tk};
+			}
+		}
+	}
+	# Socket check.
+	foreach my $sock ($SELECT->can_read(1)) {
+		# Figure out what network is sending us data.
+		my $sockid;
+		foreach (keys %SOCKET) {
+			if ($SOCKET{$_} eq $sock) { $sockid = $_; }
+		}
+		# Read the data.
+		my $idata;
+		sysread $sock, $idata, POSIX::BUFSIZ, 0;
 
-ssss	# Check for the data.
-ssss	if (!defined $idata || length($idata) == 0) {
-ssss		# Got EOF, close socket
-ssss		err(2, "Lost connection to $sockid!", 0);
-ssss		$SELECT->remove($sock);
+		# Check for the data.
+		if (!defined $idata || length($idata) == 0) {
+			# Got EOF, close socket
+			err(2, "Lost connection to $sockid!", 0);
+			$SELECT->remove($sock);
             delete $SOCKET{$sockid};
             if (!keys %SOCKET) {
                 # No more connections, stop the program.
@@ -486,22 +486,22 @@ ssss		$SELECT->remove($sock);
                 exit;
             }
             next;
-ssss	}
+		}
 
         # Read the buffer.
-ssss	my $data .= $idata;
-ssss	while ($data =~ s/(.*\n)//) {
-ssss		my $line = $1;
+		my $data .= $idata;
+		while ($data =~ s/(.*\n)//) {
+			my $line = $1;
 
             # Remove the newlines.
-ssss		chomp $line;
-ssss		# Debug.
-ssss		dbug $sockid.' >> '.$line;
+			chomp $line;
+			# Debug.
+			dbug $sockid.' >> '.$line;
 
             # Parse data.
-ssss		Parser::IRC::ircparse($sockid, $line);
-ssss	}
-ssss}
+			Parser::IRC::ircparse($sockid, $line);
+		}
+	}
 }
 
 ###############
@@ -511,16 +511,16 @@ ssss}
 # Send data to socket.
 sub socksnd
 {
-ssssmy ($svr, $data) = @_;
+	my ($svr, $data) = @_;
 
     if (defined $SOCKET{$svr}) {
-ssss	syswrite $SOCKET{$svr}, $data."\n", POSIX::BUFSIZ, 0;
-ssss	dbug "$svr << $data";
-ssss	return 1;
-ssss}
-sssselse {
-ssss	return 0;
-ssss}
+		syswrite $SOCKET{$svr}, $data."\n", POSIX::BUFSIZ, 0;
+		dbug "$svr << $data";
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 # Load a module.

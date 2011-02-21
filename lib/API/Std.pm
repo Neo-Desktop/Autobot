@@ -11,237 +11,237 @@ use base qw(Exporter);
 
 our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
 our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add 
-ssss				cmd_del hook_add hook_del rchook_add rchook_del match_user
-ssss				has_priv mod_exists ratelimit_check);
+					cmd_del hook_add hook_del rchook_add rchook_del match_user
+					has_priv mod_exists ratelimit_check);
 
 
 # Initialize a module.
 sub mod_init
 {
-ssssmy ($name, $author, $version, $autover, $pkg) = @_;
+	my ($name, $author, $version, $autover, $pkg) = @_;
 
     # Log/debug.
-ssssAPI::Log::dbug('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...');
-ssssAPI::Log::alog('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...');
+	API::Log::dbug('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...');
+	API::Log::alog('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...');
     if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...'); }
 
     # Check if this module is compatible with this version of Auto.
-ssssif ($autover ne '3.0.0a4' and $autover ne '3.0.0a5') {
-ssss	API::Log::dbug('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.');
-ssss	API::Log::alog('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.');
+	if ($autover ne '3.0.0a4' and $autover ne '3.0.0a5') {
+		API::Log::dbug('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.');
+		API::Log::alog('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.');
         if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.'); }
-ssss	return;
-ssss}
+		return;
+	}
 
-ssss# Run the module's _init sub.
+	# Run the module's _init sub.
     my $mi = eval($pkg.'::_init();'); ## no critic qw(BuiltinFunctions::ProhibitStringyEval)
 
-ssssif ($mi) {
-ssss	# If successful, add to hash.
-ssss	$MODULE{$name}{name}    = $name;
-ssss	$MODULE{$name}{version} = $version;
-ssss	$MODULE{$name}{author}  = $author;
-ssss	$MODULE{$name}{pkg}     = $pkg;
+	if ($mi) {
+		# If successful, add to hash.
+		$MODULE{$name}{name}    = $name;
+		$MODULE{$name}{version} = $version;
+		$MODULE{$name}{author}  = $author;
+		$MODULE{$name}{pkg}     = $pkg;
 
-ssss	API::Log::dbug('MODULES: '.$name.' successfully loaded.');
-ssss	API::Log::alog('MODULES: '.$name.' successfully loaded.');
+		API::Log::dbug('MODULES: '.$name.' successfully loaded.');
+		API::Log::alog('MODULES: '.$name.' successfully loaded.');
         if (keys %Auto::SOCKET) { API::Log::slog('MODULES: '.$name.' successfully loaded.'); }
 
-ssss	return 1;
-ssss}
-sssselse {
-ssss	# Otherwise, return a failed to load message.
-ssss	API::Log::dbug('MODULES: Failed to load '.$name.q{.});
-ssss	API::Log::alog('MODULES: Failed to load '.$name.q{.});
+		return 1;
+	}
+	else {
+		# Otherwise, return a failed to load message.
+		API::Log::dbug('MODULES: Failed to load '.$name.q{.});
+		API::Log::alog('MODULES: Failed to load '.$name.q{.});
         if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to load '.$name.q{.}); }
 
-ssss	return;
-ssss}
+		return;
+	}
 }
 
 # Check if a module exists.
 sub mod_exists
 {
-ssssmy ($name) = @_;
+	my ($name) = @_;
 
-ssssif (defined $API::Std::MODULE{$name}) { return 1; }
+	if (defined $API::Std::MODULE{$name}) { return 1; }
 
-ssssreturn;
+	return;
 }
 
 # Void a module.
 sub mod_void
 {
-ssssmy ($module) = @_;
+	my ($module) = @_;
 
-ssss# Log/debug.
-ssssAPI::Log::dbug('MODULES: Attempting to unload module: '.$module.'...');
-ssssAPI::Log::alog('MODULES: Attempting to unload module: '.$module.'...');
+	# Log/debug.
+	API::Log::dbug('MODULES: Attempting to unload module: '.$module.'...');
+	API::Log::alog('MODULES: Attempting to unload module: '.$module.'...');
     if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Attempting to unload module: '.$module.'...'); }
 
-ssss# Check if this module exists.
-ssssif (!defined $MODULE{$module}) {
-ssss	API::Log::dbug('MODULES: Failed to unload '.$module.'. No such module?');
-ssss	API::Log::alog('MODULES: Failed to unload '.$module.'. No such module?');
+	# Check if this module exists.
+	if (!defined $MODULE{$module}) {
+		API::Log::dbug('MODULES: Failed to unload '.$module.'. No such module?');
+		API::Log::alog('MODULES: Failed to unload '.$module.'. No such module?');
         if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to unload '.$module.'. No such module?'); }
-ssss	return;
-ssss}
+		return;
+	}
 
-ssss# Run the module's _void sub.
+	# Run the module's _void sub.
     my $mi = eval($MODULE{$module}{pkg}.'::_void();'); ## no critic qw(BuiltinFunctions::ProhibitStringyEval)
 
-ssssif ($mi) {
-ssss	# If successful, delete class from program and delete module from hash.
-ssss	Class::Unload->unload($MODULE{$module}{pkg});
-ssss	delete $MODULE{$module};
-ssss	API::Log::dbug('MODULES: Successfully unloaded '.$module.q{.});
-ssss	API::Log::alog('MODULES: Successfully unloaded '.$module.q{.});
+	if ($mi) {
+		# If successful, delete class from program and delete module from hash.
+		Class::Unload->unload($MODULE{$module}{pkg});
+		delete $MODULE{$module};
+		API::Log::dbug('MODULES: Successfully unloaded '.$module.q{.});
+		API::Log::alog('MODULES: Successfully unloaded '.$module.q{.});
         if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Successfully unloaded '.$module.q{.}); }
-ssss	return 1;
-ssss}
-sssselse {
-ssss	# Otherwise, return a failed to unload message.
-ssss	API::Log::dbug('MODULES: Failed to unload '.$module.q{.});
-ssss	API::Log::alog('MODULES: Failed to unload '.$module.q{.});
+		return 1;
+	}
+	else {
+		# Otherwise, return a failed to unload message.
+		API::Log::dbug('MODULES: Failed to unload '.$module.q{.});
+		API::Log::alog('MODULES: Failed to unload '.$module.q{.});
         if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to unload '.$module.q{.}); }
-ssss	return;
-ssss}
+		return;
+	}
 }
 
 # Add a command to Auto.
 sub cmd_add
 {
-ssssmy ($cmd, $lvl, $priv, $help, $sub) = @_;
-ssss$cmd = uc $cmd;
+	my ($cmd, $lvl, $priv, $help, $sub) = @_;
+	$cmd = uc $cmd;
 
-ssssif (defined $API::Std::CMDS{$cmd}) { return; }
-ssssif ($lvl =~ m/[^0-3]/sm) { return; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+	if (defined $API::Std::CMDS{$cmd}) { return; }
+	if ($lvl =~ m/[^0-3]/sm) { return; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
 
-ssss$API::Std::CMDS{$cmd}{lvl}   = $lvl;
-ssss$API::Std::CMDS{$cmd}{help}  = $help;
-ssss$API::Std::CMDS{$cmd}{priv}  = $priv;
-ssss$API::Std::CMDS{$cmd}{'sub'} = $sub;
+	$API::Std::CMDS{$cmd}{lvl}   = $lvl;
+	$API::Std::CMDS{$cmd}{help}  = $help;
+	$API::Std::CMDS{$cmd}{priv}  = $priv;
+	$API::Std::CMDS{$cmd}{'sub'} = $sub;
 
-ssssreturn 1;
+	return 1;
 }
 
 
 # Delete a command from Auto.
 sub cmd_del
 {
-ssssmy ($cmd) = @_;
-ssss$cmd = uc $cmd;
+	my ($cmd) = @_;
+	$cmd = uc $cmd;
 
-ssssif (defined $API::Std::CMDS{$cmd}) {
-ssss	delete $API::Std::CMDS{$cmd};
-ssss}
-sssselse {
-ssss	return;
-ssss}
+	if (defined $API::Std::CMDS{$cmd}) {
+		delete $API::Std::CMDS{$cmd};
+	}
+	else {
+		return;
+	}
 
-ssssreturn 1;
+	return 1;
 }
 
 # Add an event to Auto.
 sub event_add
 {
-ssssmy ($name) = @_;
+	my ($name) = @_;
 
-ssssif (!defined $EVENTS{lc $name}) {
-ssss	$EVENTS{lc $name} = 1;
-ssss	return 1;
-ssss}
-sssselse {
-ssss	API::Log::dbug('DEBUG: Attempt to add a pre-existing event ('.lc $name.')! Ignoring...');
-ssss	return;
-ssss}
+	if (!defined $EVENTS{lc $name}) {
+		$EVENTS{lc $name} = 1;
+		return 1;
+	}
+	else {
+		API::Log::dbug('DEBUG: Attempt to add a pre-existing event ('.lc $name.')! Ignoring...');
+		return;
+	}
 }
 
 # Delete an event from Auto.
 sub event_del
 {
-ssssmy ($name) = @_;
+	my ($name) = @_;
 
-ssssif (defined $EVENTS{lc $name}) {
-ssss	delete $EVENTS{lc $name};
-ssss	delete $HOOKS{lc $name};
-ssss	return 1;
-ssss}
-sssselse {
-ssss	API::Log::dbug('DEBUG: Attempt to delete a non-existing event ('.lc $name.')! Ignoring...');
-ssss	return;
-ssss}
+	if (defined $EVENTS{lc $name}) {
+		delete $EVENTS{lc $name};
+		delete $HOOKS{lc $name};
+		return 1;
+	}
+	else {
+		API::Log::dbug('DEBUG: Attempt to delete a non-existing event ('.lc $name.')! Ignoring...');
+		return;
+	}
 }
 
 # Trigger an event.
 sub event_run
 {
-ssssmy ($event, @args) = @_;
+	my ($event, @args) = @_;
 
-ssssif (defined $EVENTS{lc $event} and defined $HOOKS{lc $event}) {
-ssss	foreach my $hk (keys %{ $HOOKS{lc $event} }) {
-ssss		my $ri = &{ $HOOKS{lc $event}{$hk} }(@args);
+	if (defined $EVENTS{lc $event} and defined $HOOKS{lc $event}) {
+		foreach my $hk (keys %{ $HOOKS{lc $event} }) {
+			my $ri = &{ $HOOKS{lc $event}{$hk} }(@args);
             if ($ri == -1) { last; }
-ssss	}
-ssss}
+		}
+	}
 
-ssssreturn 1;
+	return 1;
 }
 
 # Add a hook to Auto.
 sub hook_add
 {
-ssssmy ($event, $name, $sub) = @_;
+	my ($event, $name, $sub) = @_;
 
-ssssif (!defined $API::Std::HOOKS{lc $name}) {
-ssss	if (defined $API::Std::EVENTS{lc $event}) {
-ssss		$API::Std::HOOKS{lc $event}{lc $name} = $sub;
-ssss		return 1;
-ssss	}
-ssss	else {
-ssss		return;
-ssss	}
-ssss}
-sssselse {
-ssss	return;
-ssss}
+	if (!defined $API::Std::HOOKS{lc $name}) {
+		if (defined $API::Std::EVENTS{lc $event}) {
+			$API::Std::HOOKS{lc $event}{lc $name} = $sub;
+			return 1;
+		}
+		else {
+			return;
+		}
+	}
+	else {
+		return;
+	}
 }
 
 # Delete a hook from Auto.
 sub hook_del
 {
-ssssmy ($event, $name) = @_;
+	my ($event, $name) = @_;
 
-ssssif (defined $API::Std::HOOKS{lc $event}{lc $name}) {
-ssss	delete $API::Std::HOOKS{lc $event}{lc $name};
-ssss	return 1;
-ssss}
-sssselse {
-ssss	return;
-ssss}
+	if (defined $API::Std::HOOKS{lc $event}{lc $name}) {
+		delete $API::Std::HOOKS{lc $event}{lc $name};
+		return 1;
+	}
+	else {
+		return;
+	}
 }
 
 # Add a timer to Auto.
 sub timer_add
 {
-ssssmy ($name, $type, $time, $sub) = @_;
-ssss$name = lc $name;
+	my ($name, $type, $time, $sub) = @_;
+	$name = lc $name;
 
-ssss# Check for invalid type/time.
-ssssif ($type =~ m/[^1-2]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
-ssss	return;
-ssss}
-ssssif ($time =~ m/[^0-9]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
-ssss	return;
-ssss}
+	# Check for invalid type/time.
+	if ($type =~ m/[^1-2]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+		return;
+	}
+	if ($time =~ m/[^0-9]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+		return;
+	}
 
-ssssif (!defined $Auto::TIMERS{$name}) {
-ssss	$Auto::TIMERS{$name}{type} = $type;
-ssss	$Auto::TIMERS{$name}{time} = time + $time;
-ssss	if ($type == 2) { $Auto::TIMERS{$name}{secs} = $time; }
-ssss	$Auto::TIMERS{$name}{sub}  = $sub;
-ssss	return 1;
-ssss}
+	if (!defined $Auto::TIMERS{$name}) {
+		$Auto::TIMERS{$name}{type} = $type;
+		$Auto::TIMERS{$name}{time} = time + $time;
+		if ($type == 2) { $Auto::TIMERS{$name}{secs} = $time; }
+		$Auto::TIMERS{$name}{sub}  = $sub;
+		return 1;
+	}
 
     return 1;
 }
@@ -249,123 +249,123 @@ ssss}
 # Delete a timer from Auto.
 sub timer_del
 {
-ssssmy ($name) = @_;
-ssss$name = lc $name;
+	my ($name) = @_;
+	$name = lc $name;
 
-ssssif (defined $Auto::TIMERS{$name}) {
-ssss	delete $Auto::TIMERS{$name};
-ssss	return 1;
-ssss}
+	if (defined $Auto::TIMERS{$name}) {
+		delete $Auto::TIMERS{$name};
+		return 1;
+	}
 
-ssssreturn;
+	return;
 }
 
 # Hook onto a raw command.
 sub rchook_add
 {
-ssssmy ($cmd, $sub) = @_;
-ssss$cmd = uc $cmd;
+	my ($cmd, $sub) = @_;
+	$cmd = uc $cmd;
 
-ssssif (defined $Parser::IRC::RAWC{$cmd}) { return; }
+	if (defined $Parser::IRC::RAWC{$cmd}) { return; }
 
-ssss$Parser::IRC::RAWC{$cmd} = $sub;
+	$Parser::IRC::RAWC{$cmd} = $sub;
 
-ssssreturn 1;
+	return 1;
 }
 
 # Delete a raw command hook.
 sub rchook_del
 {
-ssssmy ($cmd) = @_;
-ssss$cmd = uc $cmd;
+	my ($cmd) = @_;
+	$cmd = uc $cmd;
 
-ssssif (!defined $Parser::IRC::RAWC{$cmd}) { return; }
+	if (!defined $Parser::IRC::RAWC{$cmd}) { return; }
 
-ssssdelete $Parser::IRC::RAWC{$cmd};
+	delete $Parser::IRC::RAWC{$cmd};
 
-ssssreturn 1;
+	return 1;
 }
 
 # Configuration value getter.
 sub conf_get
 {
-ssssmy ($value) = @_;
+	my ($value) = @_;
 
-ssss# Create an array out of the value.
-ssssmy @val;
-ssssif ($value =~ m/:/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
-ssss	@val = split m/[:]/sm, $value; ## no critic qw(RegularExpressions::RequireExtendedFormatting)
-ssss}
-sssselse {
-ssss	@val = ($value);
-ssss}
-ssss# Undefine this as it's unnecessary now.
-ssssundef $value;
+	# Create an array out of the value.
+	my @val;
+	if ($value =~ m/:/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+		@val = split m/[:]/sm, $value; ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+	}
+	else {
+		@val = ($value);
+	}
+	# Undefine this as it's unnecessary now.
+	undef $value;
 
-ssss# Get the count of elements in the array.
-ssssmy $count = scalar @val;
+	# Get the count of elements in the array.
+	my $count = scalar @val;
 
-ssss# Return the requested configuration value(s).
-ssssif ($count == 1) {
-ssss	if (ref $Auto::SETTINGS{$val[0]} eq 'HASH') {
-ssss		return %{ $Auto::SETTINGS{$val[0]} };
-ssss	}
-ssss	else {
-ssss		return $Auto::SETTINGS{$val[0]};
-ssss	}
-ssss}
-sssselsif ($count == 2) {
-ssss	if (ref $Auto::SETTINGS{$val[0]}{$val[1]} eq 'HASH') {
-ssss		return %{ $Auto::SETTINGS{$val[0]}{$val[1]} };
-ssss	}
-ssss	else {
-ssss		return $Auto::SETTINGS{$val[0]}{$val[1]};
-ssss	}
-ssss}
-sssselsif ($count == 3) {
-ssss	if (ref $Auto::SETTINGS{$val[0]}{$val[1]}{$val[2]} eq 'HASH') {
-ssss		return %{ $Auto::SETTINGS{$val[0]}{$val[1]}{$val[2]} };
-ssss	}
-ssss	else {
-ssss		return $Auto::SETTINGS{$val[0]}{$val[1]}{$val[2]};
-ssss	}
-ssss}
-sssselse {
-ssss	return;
-ssss}
+	# Return the requested configuration value(s).
+	if ($count == 1) {
+		if (ref $Auto::SETTINGS{$val[0]} eq 'HASH') {
+			return %{ $Auto::SETTINGS{$val[0]} };
+		}
+		else {
+			return $Auto::SETTINGS{$val[0]};
+		}
+	}
+	elsif ($count == 2) {
+		if (ref $Auto::SETTINGS{$val[0]}{$val[1]} eq 'HASH') {
+			return %{ $Auto::SETTINGS{$val[0]}{$val[1]} };
+		}
+		else {
+			return $Auto::SETTINGS{$val[0]}{$val[1]};
+		}
+	}
+	elsif ($count == 3) {
+		if (ref $Auto::SETTINGS{$val[0]}{$val[1]}{$val[2]} eq 'HASH') {
+			return %{ $Auto::SETTINGS{$val[0]}{$val[1]}{$val[2]} };
+		}
+		else {
+			return $Auto::SETTINGS{$val[0]}{$val[1]}{$val[2]};
+		}
+	}
+	else {
+		return;
+	}
 }
 
 # Translation subroutine.
 sub trans
 {
     my $id = shift;
-ssss$id =~ s/ /_/gsm;
+	$id =~ s/ /_/gsm;
 
-ssssif (defined $API::Std::LANGE{$id}) {
-ssss	return sprintf $API::Std::LANGE{$id}, @_;
-ssss}
-sssselse {
-ssss	$id =~ s/_/ /gsm;
-ssss	return $id;
-ssss}
+	if (defined $API::Std::LANGE{$id}) {
+		return sprintf $API::Std::LANGE{$id}, @_;
+	}
+	else {
+		$id =~ s/_/ /gsm;
+		return $id;
+	}
 }
 
 # Match user subroutine.
 sub match_user
 {
-ssssmy (%user) = @_;
+	my (%user) = @_;
 
-ssss# Get data from config.
+	# Get data from config.
     if (!conf_get('user')) { return; }
-ssssmy %uhp = conf_get('user');
+	my %uhp = conf_get('user');
 
-ssssforeach my $userkey (keys %uhp) {
-ssss	# For each user block.
-ssss	my %ulhp = %{ $uhp{$userkey} };
-ssss	foreach my $uhk (keys %ulhp) {
+	foreach my $userkey (keys %uhp) {
+		# For each user block.
+		my %ulhp = %{ $uhp{$userkey} };
+		foreach my $uhk (keys %ulhp) {
             # For each user.
 
-ssss		if ($uhk eq 'net') {
+			if ($uhk eq 'net') {
                 if (defined $user{svr}) {
                     if (lc $user{svr} ne lc(($ulhp{$uhk})[0][0])) {
                         # config.user:net conflicts with irc.user:svr.
@@ -374,13 +374,13 @@ ssss		if ($uhk eq 'net') {
                 }
             }
             elsif ($uhk eq 'mask') {
-ssss			# Put together the user information.
-ssss			my $mask = $user{nick}.q{!}.$user{user}.q{@}.$user{host};
-ssss			if (API::IRC::match_mask($mask, ($ulhp{$uhk})[0][0])) {
-ssss				# We've got a host match.
-ssss				return $userkey;
-ssss			}
-ssss		}
+				# Put together the user information.
+				my $mask = $user{nick}.q{!}.$user{user}.q{@}.$user{host};
+				if (API::IRC::match_mask($mask, ($ulhp{$uhk})[0][0])) {
+					# We've got a host match.
+					return $userkey;
+				}
+			}
             elsif ($uhk eq 'chanstatus' and defined $ulhp{'net'}) {
                 my ($ccst, $ccnm) = split m/[:]/sm, ($ulhp{$uhk})[0][0]; ## no critic qw(RegularExpressions::RequireExtendedFormatting)
                 my $svr = $ulhp{net}[0];
@@ -401,28 +401,28 @@ ssss		}
                     }
                 }
             }
-ssss	}
-ssss}
+		}
+	}
 
-ssssreturn;
+	return;
 }
 
 # Privilege subroutine.
 sub has_priv
 {
-ssssmy ($cuser, $cpriv) = @_;
+	my ($cuser, $cpriv) = @_;
 
-ssssif (conf_get("user:$cuser:privs")) {
-ssss	my $cups = (conf_get("user:$cuser:privs"))[0][0];
+	if (conf_get("user:$cuser:privs")) {
+		my $cups = (conf_get("user:$cuser:privs"))[0][0];
 
-ssss	if (defined $Auto::PRIVILEGES{$cups}) {
-ssss		foreach (@{ $Auto::PRIVILEGES{$cups} }) {
-ssss			if ($_ eq $cpriv or $_ eq 'ALL') { return 1; }
-ssss		}
-ssss	}
-ssss}
+		if (defined $Auto::PRIVILEGES{$cups}) {
+			foreach (@{ $Auto::PRIVILEGES{$cups} }) {
+				if ($_ eq $cpriv or $_ eq 'ALL') { return 1; }
+			}
+		}
+	}
 
-ssssreturn;
+	return;
 }
 
 # Ratelimit check subroutine.
@@ -461,59 +461,59 @@ sub ratelimit_check
 # Error subroutine.
 sub err ## no critic qw(Subroutines::ProhibitBuiltinHomonyms)
 {
-ssssmy ($lvl, $msg, $fatal) = @_;
+	my ($lvl, $msg, $fatal) = @_;
 
-ssss# Check for an invalid level.
-ssssif ($lvl =~ m/[^0-9]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
-ssss	return;
-ssss}
-ssssif ($fatal =~ m/[^0-1]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
-ssss	return;
-ssss}
+	# Check for an invalid level.
+	if ($lvl =~ m/[^0-9]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+		return;
+	}
+	if ($fatal =~ m/[^0-1]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+		return;
+	}
 
-ssss# Level 1: Print to screen.
-ssssif ($lvl >= 1) {
-ssss	say "ERROR: $msg";
-ssss}
-ssss# Level 2: Log to file.
-ssssif ($lvl >= 2) {
-ssss	API::Log::alog("ERROR: $msg");
-ssss}
+	# Level 1: Print to screen.
+	if ($lvl >= 1) {
+		say "ERROR: $msg";
+	}
+	# Level 2: Log to file.
+	if ($lvl >= 2) {
+		API::Log::alog("ERROR: $msg");
+	}
     # Level 3: Log to IRC.
     if ($lvl >= 3) {
         API::Log::slog("ERROR: $msg");
     }
 
-ssss# If it's a fatal error, exit the program.
-ssssif ($fatal) { exit; }
+	# If it's a fatal error, exit the program.
+	if ($fatal) { exit; }
 
-ssssreturn 1;
+	return 1;
 }
 
 # Warn subroutine.
 sub awarn
 {
-ssssmy ($lvl, $msg) = @_;
+	my ($lvl, $msg) = @_;
 
-ssss# Check for an invalid level.
-ssssif ($lvl =~ m/[^0-9]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
-ssss	return;
-ssss}
+	# Check for an invalid level.
+	if ($lvl =~ m/[^0-9]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+		return;
+	}
 
-ssss# Level 1: Print to screen.
-ssssif ($lvl >= 1) {
-ssss    say "WARNING: $msg";
-ssss}
-ssss# Level 2: Log to file.
-ssssif ($lvl >= 2) {
-ssss	API::Log::alog("WARNING: $msg");
-ssss}
+	# Level 1: Print to screen.
+	if ($lvl >= 1) {
+	    say "WARNING: $msg";
+	}
+	# Level 2: Log to file.
+	if ($lvl >= 2) {
+		API::Log::alog("WARNING: $msg");
+	}
     # Level 3: Log to IRC.
     if ($lvl >= 3) {
         API::Log::slog("WARNING: $msg");
     }
 
-ssssreturn 1;
+	return 1;
 }
 
 

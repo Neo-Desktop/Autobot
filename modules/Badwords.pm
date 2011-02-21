@@ -12,12 +12,12 @@ use API::IRC qw(privmsg notice kick ban);
 sub _init 
 {
     # Check for required configuration values.
-ssssif (!conf_get('badwords')) {
-ssss	err(2, 'Please verify that you have a badwords block with word entries defined in your configuration file.', 0);
-ssss	return;
-ssss}
+	if (!conf_get('badwords')) {
+		err(2, 'Please verify that you have a badwords block with word entries defined in your configuration file.', 0);
+		return;
+	}
     # Create the act_on_badword hook.
-sssshook_add('on_cprivmsg', 'act_on_badword', \&M::Badwords::actonbadword) or return;
+	hook_add('on_cprivmsg', 'act_on_badword', \&M::Badwords::actonbadword) or return;
 
     # Success.
     return 1;
@@ -27,16 +27,16 @@ sssshook_add('on_cprivmsg', 'act_on_badword', \&M::Badwords::actonbadword) or re
 sub _void 
 {
     # Delete the act_on_badword hook.
-sssshook_del('act_on_badword') or return 0;
+	hook_del('act_on_badword') or return 0;
 
     # Success.
-ssssreturn 1;
+	return 1;
 }
 
 # Callback for act_on_badword hook.
 sub actonbadword
 {
-ssssmy (($src, $chan, @msg)) = @_;
+	my (($src, $chan, @msg)) = @_;
 
     my $msg = join ' ', @msg;
 
