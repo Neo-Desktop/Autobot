@@ -530,9 +530,12 @@ sub part
 sub privmsg
 {
 	my ($svr, @ex) = @_;
-	my %data = API::IRC::usrc(substr($ex[0], 1));
+    my %data = API::IRC::usrc(substr($ex[0], 1));
 
-	my @argv;
+    # Ensure this is coming from a user rather than a server.
+    if ($ex[0] !~ m/!/xsm) { return; }
+
+    my @argv;
 	for (my $i = 4; $i < scalar(@ex); $i++) {
 		push(@argv, $ex[$i]);
 	}
