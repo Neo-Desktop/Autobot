@@ -81,6 +81,9 @@ sub cmd_qdb
             $dbq->execute($argv[1]) or notice($src->{svr}, $src->{nick}, trans('An error occurred').'. Quote might not exist.') and return;
             my @data = $dbq->fetchrow_array;
 
+            # Check for an unusual issue.
+            if (!defined $data[1]) { notice($src->{svr}, $src->{nick}, trans('An error occurred').'. Quote might not exist.'); return; }
+
             # Send it back.
             privmsg($src->{svr}, $src->{chan}, "\002Submitted by\002 $data[1] \002on\002 ".POSIX::strftime('%F', localtime($data[2]))." \002at\002 ".POSIX::strftime('%I:%M %p', localtime($data[2])));
             privmsg($src->{svr}, $src->{chan}, $data[3]);

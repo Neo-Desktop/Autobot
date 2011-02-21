@@ -20,7 +20,7 @@ In this alpha5 release, we have added:
 
 Bug fixes:
 
-None
+* Fixed a bug when viewing non-existent quotes.
 
 Incompatibilities:
 
