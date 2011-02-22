@@ -78,7 +78,7 @@ LinkTitle - A module for returning the page title of links.
 
 =head1 VERSION
 
-Version 1.00.
+ 1.00
 
 =head1 SYNOPSIS
 

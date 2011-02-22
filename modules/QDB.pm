@@ -223,7 +223,7 @@ QDB - Quote database module.
 
 =head1 VERSION
 
-Version 1.02.
+ 1.02
 
 =head1 SYNOPSIS
 
@@ -235,6 +235,17 @@ Version 1.02.
 This module adds the QDB (ADD|VIEW|COUNT|RAND|SEARCH|MORE|DEL) command, for
 adding, viewing, listing number of, viewing a random, deleting a quote from the
 Auto database.
+
+=head1 INSTALL
+
+Before using QDB, we'd recommend adding the following to your configuration
+file:
+
+ qdb_search_resnum <number>;
+
+Where <number> is the amount of results returned per SEARCH/MORE load.
+
+This is not required, 4 will be used if it is not specified.
 
 =head1 AUTHOR
 
