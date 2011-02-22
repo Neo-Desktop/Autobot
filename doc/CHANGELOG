@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Bug fix: Fixed broken rehash.
     * Ignore PRIVMSG's if they're from an invalid source.
     * Fixed an odd bug when viewing non-existent quotes.
     * You can now define how many results are returned by QDB SEARCH/MORE at a

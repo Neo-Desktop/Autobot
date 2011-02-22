@@ -21,6 +21,7 @@ In this alpha5 release, we have added:
 Bug fixes:
 
 * Fixed a bug when viewing non-existent quotes.
+* SEVERE: Fixed a bug that caused rehash to fail.
 
 Incompatibilities:
 
