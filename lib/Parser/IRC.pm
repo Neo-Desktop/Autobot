@@ -371,6 +371,7 @@ sub mode
         # Set data we'll need later.
         my $chan = $ex[2];
         my $modes = $ex[3];
+        $modes =~ s/^://xsm;
         # Get rid of the useless data, so the mode parser will work smoothly.
         shift @ex; shift @ex; shift @ex; shift @ex;
 
