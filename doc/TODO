@@ -42,7 +42,7 @@ Legend:
  [!] Features
      [X] Weather module
      [!] Urban Dictionary module
-     [ ] UNO module
+     [X] UNO module
      [ ] Google Search module
      [ ] IRC Relay module
      [ ] (Google?) News module
@@ -51,7 +51,7 @@ Legend:
      [X] Google Calculator module
      [ ] YouTube Search module
      [ ] Twitter module
-     [!] Advanced Topics module
+     [X] Advanced Topics module
      [ ] Custom Triggers module
      [X] Shorten URL (bit.ly?) module
      [?] Bot Talk module
