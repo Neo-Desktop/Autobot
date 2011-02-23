@@ -42,6 +42,7 @@ API::Std::event_add("on_ucjoin");
 API::Std::event_add("on_kick");
 API::Std::event_add("on_nick");
 API::Std::event_add("on_notice");
+API::Std::event_add('on_part');
 API::Std::event_add("on_cprivmsg");
 API::Std::event_add("on_uprivmsg");
 API::Std::event_add("on_quit");
@@ -456,7 +457,7 @@ sub mode
 sub nick
 {
     my ($svr, ($uex, undef, $nex)) = @_;
-    $nex = substr($nex, 1);
+    $nex =~ s/^://gxsm;
 
     my %src = API::IRC::usrc(substr($uex, 1));
     
