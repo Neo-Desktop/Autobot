@@ -13,6 +13,7 @@ my $UNO = 0;
 my $UNOW = 0;
 my ($UNOCHAN, $EDITION, $ORDER, $DEALER, $CURRTURN, $TOPCARD, %PLAYERS, %NICKS);
 my $DRAWN = 0;
+my $ANYEDITION = 0;
 
 # Initialization subroutine.
 sub _init {
@@ -25,10 +26,13 @@ sub _init {
     $EDITION = uc(substr $EDITION, 0, 1).substr $EDITION, 1;
 
     # Check if the edition is valid.
-    if ($EDITION !~ m/^(Original|Super|Advanced)$/xsm) {
+    if ($EDITION !~ m/^(Original|Super|Advanced|Any)$/xsm) {
         err(3, "Unable to load UNO: Invalid edition: $EDITION", 0);
         return;
     }
+
+    # If it's Any, set ANYEDITION.
+    if ($EDITION eq 'Any') { $ANYEDITION = 1; }
 
     # PostgreSQL is not supported, yet.
     if ($Auto::ENFEAT =~ /pgsql/) { err(3, 'Unable to load UNO: PostgreSQL is not supported.', 0); return; }
@@ -47,6 +51,8 @@ sub _init {
     hook_add('on_part', 'uno.updatedata.part', \&M::UNO::on_part) or return;
     # Create on_kick hook.
     hook_add('on_kick', 'uno.updatedata.kick', \&M::UNO::on_kick) or return;
+    # Create on_rehash hook.
+    hook_add('on_rehash', 'uno.updatedata.rehash', \&M::UNO::on_rehash) or return;
 
     # Success.
     return 1;
@@ -65,6 +71,8 @@ sub _void {
     hook_del('on_part', 'uno.updatedata.part') or return;
     # Delete on_kick hook.
     hook_del('on_kick', 'uno.updatedata.kick') or return;
+    # Delete on_rehash hook.
+    hook_del('on_rehash', 'uno.updatedata.rehash') or return;
 
     # Success.
     return 1;
@@ -102,6 +110,23 @@ sub cmd_uno {
                 if (lc $src->{svr} ne lc $net or lc $src->{chan} ne lc $chan) {
                     return;
                 }
+            }
+
+            # If it's ANYEDITION, do some extra stuff.
+            if ($ANYEDITION) {
+                # Require the second parameter.
+                if (!defined $argv[1]) {
+                    notice($src->{svr}, $src->{nick}, "This Auto is configured with Any Edition. You must specify the edition to play with as a second parameter. \2Syntax:\2 UNO START <edition>");
+                    return;
+                }
+                if ($argv[1] !~ m/^(original|super|advanced)$/ixsm) {
+                    notice($src->{svr}, $src->{nick}, "Invalid edition \2$argv[1]\2. Must be original, super or advanced.");
+                    return;
+                }
+                # Set the edition.
+                $argv[1] = lc $argv[1];
+                $EDITION = $argv[1];
+                $EDITION = uc(substr $EDITION, 0, 1).substr $EDITION, 1;
             }
 
             # Set variables.
@@ -1258,9 +1283,34 @@ sub on_kick {
     }
 }
 
+# Subroutine for when a rehash occurs.
+sub on_rehash {
+    # Ensure a game isn't running right now.
+    if ($UNO or $UNOW) { awarn(3, 'on_rehash: Unable to update UNO edition: A game is currently running.'); return; }
+
+    # Check if the edition is specified.
+    if (conf_get('uno:edition')) {
+        # Check if the edition is valid.
+        my $ce = (conf_get('uno:edition'))[0][0];
+        $ce = lc $ce;
+        if ($ce !~ m/^(original|super|advanced|any)$/xsm) {
+            awarn(3, 'on_rehash: Unable to update UNO edition: Invalid edition \''.$ce.'\'');
+            return;
+        }
+        
+        # Set new edition.
+        $ce = uc(substr $ce, 0, 1).substr $ce, 1;
+        if ($ce eq 'Any') { $ANYEDITION = 1 }
+        else { $ANYEDITION = 0 }
+        $EDITION = $ce;
+    }
+
+    return 1;
+}
+
 
 # Start initialization.
-API::Std::mod_init('UNO', 'Xelhua', '1.01', '3.0.0a5', __PACKAGE__);
+API::Std::mod_init('UNO', 'Xelhua', '1.02', '3.0.0a5', __PACKAGE__);
 # vim: set ai sw=4 ts=4:
 # build: perl=5.010000
 
@@ -1272,7 +1322,7 @@ UNO - Three editions of the UNO card game
 
 =head1 VERSION
 
- 1.01
+ 1.02
 
 =head1 SYNOPSIS
 
@@ -1303,7 +1353,7 @@ See DIFFERENCES BETWEEN EDITIONS for the differences between the editions.
 
 The commands this adds are:
 
- UNO START|S
+ UNO START|S [edition]
  UNO JOIN|J
  UNO DEAL
  UNO PLAY|P <color (or wildcard)> <card (or color if wildcard)> [player if Trade Hands card]
@@ -1328,7 +1378,9 @@ You must add the following to your configuration file:
      edition "edition here";
  }
 
-Edition can be "original", "super" or "advanced".
+Edition can be "original", "super", "advanced" or "any".
+
+If any, edition must be specified per-game in START.
 
 You may also add the reschan option to the block, like so:
 
