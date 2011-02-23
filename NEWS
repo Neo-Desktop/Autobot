@@ -11,23 +11,19 @@
 The future of IRC bots is here! Xelhua gives to you, Auto 3.0, a new version of
 the popular Auto IRC bot.
 
-In this alpha5 release, we have added:
+In this alpha6 release, we have added:
 
-* LinkTitle module for returning the page title of links sent to a channel.
-* Added core command MODLIST.
-* Added SEARCH and MORE to QDB. Amount of results returned at a time with
-  qdb_search_resnum in the config.
+* Added an UNO module for playing the classic game of UNO.
 
 Bug fixes:
 
-* Fixed a bug when viewing non-existent quotes.
-* SEVERE: Fixed a bug that caused rehash to fail.
+None
 
 Incompatibilities:
 
 None
 
-We thank you for choosing Auto. Please remember that he is still in early
+We thank you for choosing Auto. Please remember that he is still in mid-
 development stages. But we hope we've piqued your interest, as Auto's upcoming
 module repository will allow modules to be created by anyone and uploaded
 there for everyone to use.
@@ -35,4 +31,4 @@ there for everyone to use.
 Auto's goal is to create an efficient, stable and highly customizable IRC bot
 in Perl. To offer an alternative to other platforms.
 
-Enjoy Auto 3.0.0 Alpha 5!
+Enjoy Auto 3.0.0 Alpha 6!

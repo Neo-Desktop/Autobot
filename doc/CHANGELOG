@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Added an UNO module.
     * Added on_part hook.
     
 3.0 Alpha 5
