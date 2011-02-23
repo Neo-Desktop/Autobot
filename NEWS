@@ -14,6 +14,7 @@ the popular Auto IRC bot.
 In this alpha6 release, we have added:
 
 * Added an UNO module for playing the classic game of UNO.
+* Added an Eval module for evaluating Perl code.
 
 Bug fixes:
 
