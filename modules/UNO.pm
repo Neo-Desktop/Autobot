@@ -1303,20 +1303,20 @@ See DIFFERENCES BETWEEN EDITIONS for the differences between the editions.
 
 The commands this adds are:
 
-UNO START|S
-UNO JOIN|J
-UNO DEAL
-UNO PLAY|P <color (or wildcard)> <card (or color if wildcard)> [player if Trade Hands card]
-UNO DRAW|D
-UNO PASS
-UNO CARDS|C
-UNO TOPCARD|TC
-UNO STATS|CARDCOUNT|CC
-UNO KICK|K <player>
-UNO QUIT|Q
-UNO STOP
-UNO TOPTEN|TOP10|T10
-UNO SCORE <user>
+ UNO START|S
+ UNO JOIN|J
+ UNO DEAL
+ UNO PLAY|P <color (or wildcard)> <card (or color if wildcard)> [player if Trade Hands card]
+ UNO DRAW|D
+ UNO PASS
+ UNO CARDS|C
+ UNO TOPCARD|TC
+ UNO STATS|CARDCOUNT|CC
+ UNO KICK|K <player>
+ UNO QUIT|Q
+ UNO STOP
+ UNO TOPTEN|TOP10|T10
+ UNO SCORE <user>
 
 All of which describe themselves quite well with just the name.
 
