@@ -4,13 +4,14 @@
 package M::Eval;
 use strict;
 use warnings;
+use English qw(-no_match_vars);
 use API::Std qw(cmd_add cmd_del trans);
-use API::IRC qw(notice);
+use API::IRC qw(privmsg notice);
 
 # Initialization subroutine.
 sub _init {
     # Create the EVAL command.
-    cmd_add('EVAL', 1, 'cmd.eval', \%M::Eval::HELP_EVAL, \&M::Eval::cmd_eval) or return;
+    cmd_add('EVAL', 2, 'cmd.eval', \%M::Eval::HELP_EVAL, \&M::Eval::cmd_eval) or return;
 
     # Success.
     return 1;
@@ -44,16 +45,25 @@ sub cmd_eval {
     my $expr = join ' ', @argv;
     my $result = eval($expr);
     if (!defined $result) { $result = 'None'; }
+    if ($EVAL_ERROR) {
+        $result = $EVAL_ERROR;
+        $result =~ s/(\r|\n)//gxsm;
+    }
 
     # Return the result.
-    notice($src->{svr}, $src->{nick}, "Output: $result");
+    if (!defined $src->{chan}) {
+        notice($src->{svr}, $src->{nick}, "Output: $result");
+    }
+    else {
+        privmsg($src->{svr}, $src->{chan}, "$src->{nick}: $result");
+    }
 
     return 1;
 }
 
 
 # Start initialization.
-API::Std::mod_init('Eval', 'Xelhua', '1.00', '3.0.0a6', __PACKAGE__);
+API::Std::mod_init('Eval', 'Xelhua', '1.01', '3.0.0a6', __PACKAGE__);
 # vim: set ai sw=4 ts=4:
 # build: perl=5.010000
 
@@ -65,7 +75,7 @@ Eval - Allows you to evaluate Perl code from IRC
 
 =head1 VERSION
 
- 1.00
+ 1.01
 
 =head1 SYNOPSIS
 
@@ -77,7 +87,7 @@ Eval - Allows you to evaluate Perl code from IRC
 This module adds the EVAL command which allows you to evaluate Perl code from
 IRC, returning the output via notice.
 
-This command may only be used in PM and requires the cmd.eval privilege.
+This command requires the cmd.eval privilege.
 
 This module is compatible with Auto v3.0.0a6+.
 
