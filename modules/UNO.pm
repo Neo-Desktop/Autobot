@@ -240,6 +240,16 @@ sub cmd_uno {
                 return;
             }
 
+            # Fix color.
+            $argv[1] =~ s/blue/B/ixsm;
+            $argv[1] =~ s/red/R/ixsm;
+            $argv[1] =~ s/green/G/ixsm;
+            $argv[1] =~ s/yellow/Y/ixsm;
+            $argv[2] =~ s/blue/B/ixsm;
+            $argv[2] =~ s/red/R/ixsm;
+            $argv[2] =~ s/green/G/ixsm;
+            $argv[2] =~ s/yellow/Y/ixsm;
+
             # Check if they have this card.
             if (!_hascard(lc $src->{nick}, uc $argv[1].':'.uc $argv[2])) {
                 notice($src->{svr}, $src->{nick}, 'You don\'t have that card.');
@@ -270,6 +280,15 @@ sub cmd_uno {
                 # Ensure the player they're trading with is playing.
                 if (!defined $PLAYERS{lc $argv[3]}) {
                     notice($src->{svr}, $src->{nick}, "No such user \2$argv[3]\2 is playing.");
+                    return;
+                }
+            }
+
+            # If it's a wildcard...
+            if ($argv[1] =~ m/^W/ixsm) {
+                # Ensure the third argument is a valid color.
+                if ($argv[2] !~ m/^(R|B|G|Y)$/ixsm) {
+                    notice($src->{svr}, $src->{nick}, "Invalid color \2$argv[2]\2.");
                     return;
                 }
             }
@@ -1241,7 +1260,7 @@ sub on_kick {
 
 
 # Start initialization.
-API::Std::mod_init('UNO', 'Xelhua', '1.00', '3.0.0a5', __PACKAGE__);
+API::Std::mod_init('UNO', 'Xelhua', '1.01', '3.0.0a5', __PACKAGE__);
 # vim: set ai sw=4 ts=4:
 # build: perl=5.010000
 
@@ -1253,7 +1272,7 @@ UNO - Three editions of the UNO card game
 
 =head1 VERSION
 
- 1.00
+ 1.01
 
 =head1 SYNOPSIS
 
