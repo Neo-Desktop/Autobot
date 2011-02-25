@@ -79,7 +79,7 @@ sub calc
 
 # Start initialization.
 API::Std::mod_init('Calc', 'Xelhua', '1.00', '3.0.0a4', __PACKAGE__);
-# vim: set ai sw=4 ts=4:
+# vim: set ai et sw=4 ts=4:
 # build: cpan=LWP::UserAgent,URI::Escape,JSON,JSON::PP perl=5.010000
 
 __END__

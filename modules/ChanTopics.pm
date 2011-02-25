@@ -283,7 +283,7 @@ sub _getdata
 
 
 API::Std::mod_init('ChanTopics', 'Xelhua', '1.00', '3.0.0a4', __PACKAGE__);
-# vim: set ai sw=4 ts=4:
+# vim: set ai et sw=4 ts=4:
 # build: perl=5.010000
 
 __END__

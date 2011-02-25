@@ -1311,7 +1311,7 @@ sub on_rehash {
 
 # Start initialization.
 API::Std::mod_init('UNO', 'Xelhua', '1.02', '3.0.0a6', __PACKAGE__);
-# vim: set ai sw=4 ts=4:
+# vim: set ai et sw=4 ts=4:
 # build: perl=5.010000
 
 __END__
