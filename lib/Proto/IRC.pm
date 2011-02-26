@@ -220,7 +220,7 @@ sub num438
     
     if (defined $botnick{$svr}{newnick}) {
     	API::Std::timer_add("num438_".$botnick{$svr}{newnick}, 1, $ex[11], sub { 
-    		API::IRC::nick($Parser::IRC::botnick{$svr}{newnick});
+    		API::IRC::nick($Proto::IRC::botnick{$svr}{newnick});
     		delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
     	 });
     }

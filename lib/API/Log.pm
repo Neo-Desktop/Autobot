@@ -129,7 +129,7 @@ sub slog
         }
 
         # Check if we're in the channel.
-        if (!defined $Parser::IRC::botchans{$net}{$chan}) {
+        if (!defined $Proto::IRC::botchans{$net}{$chan}) {
             dbug 'WARNING: slog(): Unable to log to IRC: Not in channel.';
             alog 'WARNING: slog(): Unable to log to IRC: Not in channel.';
             return;

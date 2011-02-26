@@ -266,9 +266,9 @@ sub rchook_add
     my ($cmd, $sub) = @_;
     $cmd = uc $cmd;
 
-    if (defined $Parser::IRC::RAWC{$cmd}) { return; }
+    if (defined $Proto::IRC::RAWC{$cmd}) { return; }
 
-    $Parser::IRC::RAWC{$cmd} = $sub;
+    $Proto::IRC::RAWC{$cmd} = $sub;
 
     return 1;
 }
@@ -279,9 +279,9 @@ sub rchook_del
     my ($cmd) = @_;
     $cmd = uc $cmd;
 
-    if (!defined $Parser::IRC::RAWC{$cmd}) { return; }
+    if (!defined $Proto::IRC::RAWC{$cmd}) { return; }
 
-    delete $Parser::IRC::RAWC{$cmd};
+    delete $Proto::IRC::RAWC{$cmd};
 
     return 1;
 }
@@ -386,15 +386,15 @@ sub match_user
                 my $svr = $ulhp{net}[0];
                 if (defined $Auto::SOCKET{$svr}) {
                     if ($ccnm eq 'CURRENT' and defined $user{chan}) {
-                        if (defined $Parser::IRC::chanusers{$svr}{$user{chan}}{$user{nick}}) {
-                            if ($Parser::IRC::chanusers{$svr}{$user{chan}}{$user{nick}} =~ m/($ccst)/sm) { return $userkey; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+                        if (defined $Proto::IRC::chanusers{$svr}{$user{chan}}{$user{nick}}) {
+                            if ($Proto::IRC::chanusers{$svr}{$user{chan}}{$user{nick}} =~ m/($ccst)/sm) { return $userkey; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
                         }
                     }
                     else {
-                        foreach my $bcj (keys %{ $Parser::IRC::botchans{$svr} }) {
+                        foreach my $bcj (keys %{ $Proto::IRC::botchans{$svr} }) {
                             if (API::IRC::match_mask($bcj, $ccnm)) {
-                                if (defined $Parser::IRC::chanusers{$svr}{$bcj}{$user{nick}}) {
-                                    if ($Parser::IRC::chanusers{$svr}{$bcj}{$user{nick}} =~ m/($ccst)/sm) { return $userkey; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+                                if (defined $Proto::IRC::chanusers{$svr}{$bcj}{$user{nick}}) {
+                                    if ($Proto::IRC::chanusers{$svr}{$bcj}{$user{nick}} =~ m/($ccst)/sm) { return $userkey; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
                                 }
                             }
                         }

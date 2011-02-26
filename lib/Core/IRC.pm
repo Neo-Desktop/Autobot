@@ -32,8 +32,8 @@ hook_add("on_quit", "quit_update_chanusers", sub {
     my %src = %{ $src };
 
     # Delete the user from all channels.
-    foreach my $ccu (keys %{ $Parser::IRC::chanusers{$svr} }) {
-        if (defined $Parser::IRC::chanusers{$svr}{$ccu}{$src{nick}}) { delete $Parser::IRC::chanusers{$svr}{$ccu}{$src{nick}}; }
+    foreach my $ccu (keys %{ $Proto::IRC::chanusers{$svr} }) {
+        if (defined $Proto::IRC::chanusers{$svr}{$ccu}{$src{nick}}) { delete $Proto::IRC::chanusers{$svr}{$ccu}{$src{nick}}; }
     }
 
     return 1;
