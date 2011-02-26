@@ -681,19 +681,12 @@ sub quit {
 sub topic {
     my ($svr, @ex) = @_;
     my %src = API::IRC::usrc(substr($ex[0], 1));
+    $src{svr} = $svr;
+    $src{chan} = $ex[2];
+    $ex[3] = substr $ex[3], 1;
     
-    # Ignore it if it's coming from us.
-    if (lc($src{nick}) ne lc($botinfo{$svr}{nick})) {
-    	$src{chan} = $ex[2];
-    	my (@argv);
-    	$argv[0] = substr($ex[3], 1);
-    	if (defined $ex[4]) {
-    		for (my $i = 4; $i < scalar(@ex); $i++) {
-    			push(@argv, $ex[$i]);
-    		}
-    	}
-    	API::Std::event_run("on_topic", ($svr, \%src, @argv));
-    }
+    # Trigger on_topic.
+    API::Std::event_run('on_topic', (\%src, @ex[3..$#ex]));
     
     return 1;
 }
