@@ -139,7 +139,7 @@ hook_add('on_whoreply', 'selfwho.getdata', sub {
 
 # ISUPPORT - Set prefixes and channel modes.
 hook_add('on_isupport', 'core.prefixchanmode.getdata', sub {
-    my (($svr, $isc, @ex)) = @_;
+    my (($svr, @ex)) = @_;
 
     # Find PREFIX and CHANMODES.
     foreach my $ex (@ex) {
