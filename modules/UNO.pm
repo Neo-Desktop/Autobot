@@ -603,14 +603,14 @@ sub cmd_uno {
             # Get data.
             my $dbq = $Auto::DB->prepare('SELECT * FROM unoscores') or notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
             $dbq->execute or notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
-            my $data = $dbq->fetchall_hashref('score') or notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
+            my $data = $dbq->fetchall_hashref('player') or notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
             # Check if there's any scores.
             if (keys %$data) {
                 my $str;
                 my $i = 0;
-                foreach (sort {$b <=> $a} keys %$data) {
+                foreach (sort {$data->{$b}->{score} <=> $data->{$a}->{score}} keys %$data) {
                     if ($i > 10) { last; }
-                    $str .= ", \2".$data->{$_}->{player}.":$_\2";
+                    $str .= ", \2$_:".$data->{$_}->{score}."\2";
                     $i++;
                 }
                 $str = substr $str, 2;
@@ -1310,7 +1310,7 @@ sub on_rehash {
 
 
 # Start initialization.
-API::Std::mod_init('UNO', 'Xelhua', '1.02', '3.0.0a6', __PACKAGE__);
+API::Std::mod_init('UNO', 'Xelhua', '1.03', '3.0.0a6', __PACKAGE__);
 # vim: set ai et sw=4 ts=4:
 # build: perl=5.010000
 
@@ -1322,7 +1322,7 @@ UNO - Three editions of the UNO card game
 
 =head1 VERSION
 
- 1.02
+ 1.03
 
 =head1 SYNOPSIS
 
