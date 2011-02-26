@@ -36,7 +36,7 @@ sub hello
 
 
 # Start initialization.
-API::Std::mod_init('HelloChan', 'Xelhua', '1.00', '3.0.0a4', __PACKAGE__);
+API::Std::mod_init('HelloChan', 'Xelhua', '1.00', '3.0.0a6', __PACKAGE__);
 # vim: set ai et sw=4 ts=4:
 # build: perl=5.010000
 

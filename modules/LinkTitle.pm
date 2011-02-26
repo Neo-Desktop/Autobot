@@ -66,7 +66,7 @@ sub gettitle
 }
 
 # Start initialization.
-API::Std::mod_init('LinkTitle', 'Xelhua', '1.00', '3.0.0a5', __PACKAGE__);
+API::Std::mod_init('LinkTitle', 'Xelhua', '1.00', '3.0.0a6', __PACKAGE__);
 # vim: set ai et sw=4 ts=4:
 # build: cpan=LWP::UserAgent,HTML::Entities perl=5.010000
 

@@ -26,7 +26,7 @@ sub mod_init
     if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...'); }
 
     # Check if this module is compatible with this version of Auto.
-    if ($autover !~ m/^3\.0\.0a(4|5|6)$/xsm) {
+    if ($autover !~ m/^3\.0\.0a(6)$/xsm) {
     	API::Log::dbug('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.');
     	API::Log::alog('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.');
         if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.'); }

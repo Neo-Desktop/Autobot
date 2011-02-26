@@ -282,7 +282,7 @@ sub _getdata
 }
 
 
-API::Std::mod_init('ChanTopics', 'Xelhua', '1.00', '3.0.0a4', __PACKAGE__);
+API::Std::mod_init('ChanTopics', 'Xelhua', '1.00', '3.0.0a6', __PACKAGE__);
 # vim: set ai et sw=4 ts=4:
 # build: perl=5.010000
 
@@ -338,7 +338,7 @@ This module adds no extra dependencies.
 
 This module is not compatible with PostgreSQL, yet.
 
-This module is compatible with Auto v3.0.0a4+.
+This module is compatible with Auto v3.0.0a6+.
 
 Ported from v1.0.
 
