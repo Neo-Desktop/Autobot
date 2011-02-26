@@ -133,4 +133,4 @@ sub clear_usercmd_timer
 
 
 1;
-# vim: set ai sw=4 ts=4:
+# vim: set ai et sw=4 ts=4:

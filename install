@@ -149,4 +149,4 @@ println q{};
 # Success!
 println "Done. Auto successfully installed.";
 
-# vim: set ai sw=4 ts=4:
+# vim: set ai et sw=4 ts=4:
