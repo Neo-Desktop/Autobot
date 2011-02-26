@@ -66,7 +66,7 @@ sub stats {
     }
 
     # Return network/channel data.
-    privmsg($src->{svr}, $target, "I am on \2$chans\2 channels, across \2$nets\2 networks.");
+    privmsg($src->{svr}, $target, "I am on \2$chans\2 channels across \2$nets\2 networks.");
 
     return 1;
 }
