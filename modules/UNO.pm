@@ -927,13 +927,16 @@ sub _runcard {
                     # Delete all the cards.
                     my $delres;
                     foreach (@xcards) { $delres = _delcard($CURRTURN, $_); }
-                    my $str;
-                    for (my $i = $#xcards; $i >= 0; $i--) { $str .= ' '._fmtcard($xcards[$i]); }
-                    $str = substr $str, 1;
-                    if ($delres != -1) { 
-                        notice($net, $NICKS{$CURRTURN}, "You discarded: $str");
-                        _nextturn(0); 
+                    if (defined $delres) {
+                        my $str;
+                        for (my $i = $#xcards; $i >= 0; $i--) { $str .= ' '._fmtcard($xcards[$i]); }
+                        $str = substr $str, 1;
+                        if ($delres != -1) { 
+                            notice($net, $NICKS{$CURRTURN}, "You discarded: $str");
+                            _nextturn(0); 
+                        }
                     }
+                    else { _nextturn(0); }
                 }
                 when ('T') {
                     # Get cards.
