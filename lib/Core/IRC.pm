@@ -137,6 +137,40 @@ hook_add('on_whoreply', 'selfwho.getdata', sub {
     return 1;
 });
 
+# ISUPPORT - Set prefixes and channel modes.
+hook_add('on_isupport', 'core.prefixchanmode.getdata', sub {
+    my (($svr, $isc, @ex)) = @_;
+
+    # Find PREFIX and CHANMODES.
+    foreach my $ex (@ex) {
+    	if ($ex =~ m/^PREFIX/xsm) {
+    		# Found PREFIX.
+    		my $rpx = substr($ex, 8);
+    		my ($pm, $pp) = split('\)', $rpx);
+    		my @apm = split(//, $pm);
+    		my @app = split(//, $pp);
+    		foreach my $ppm (@apm) {
+    			# Store data.
+    			$Proto::IRC::csprefix{$svr}{$ppm} = shift(@app);
+    		}
+    	}
+        elsif ($ex =~ m/^CHANMODES/xsm) {
+            # Found CHANMODES.
+            my ($mtl, $mtp, $mtpp, $mts) = split m/[,]/xsm, substr($ex, 10);
+            # List modes.
+            foreach (split(//, $mtl)) { $Proto::IRC::chanmodes{$svr}{$_} = 1; }
+            # Modes with parameter.
+            foreach (split(//, $mtp)) { $Proto::IRC::chanmodes{$svr}{$_} = 2; }
+            # Modes with parameter when +.
+            foreach (split(//, $mtpp)) { $Proto::IRC::chanmodes{$svr}{$_} = 3; }
+            # Modes without parameter.
+            foreach (split(//, $mts)) { $Proto::IRC::chanmodes{$svr}{$_} = 4; }
+        }
+    }
+
+    return 1;
+});
+
 sub clear_usercmd_timer 
 {
     # If ratelimit is set to 1 in config, add this timer.

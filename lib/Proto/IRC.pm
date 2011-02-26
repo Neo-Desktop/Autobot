@@ -10,6 +10,7 @@ use API::IRC;
 # Raw parsing hash.
 our %RAWC = (
     '001'      => \&num001,
+    '004'      => \&num004,
     '005'      => \&num005,
     '352'      => \&num352,
     '353'      => \&num353,
@@ -38,17 +39,18 @@ our %RAWC = (
 our (%got_001, %botinfo, %botchans, %csprefix, %chanusers, %chanmodes);
 
 # Events.
-API::Std::event_add("on_connect");
-API::Std::event_add("on_rcjoin");
-API::Std::event_add("on_ucjoin");
-API::Std::event_add("on_kick");
-API::Std::event_add("on_nick");
-API::Std::event_add("on_notice");
+API::Std::event_add('on_connect');
+API::Std::event_add('on_rcjoin');
+API::Std::event_add('on_ucjoin');
+API::Std::event_add('on_isupport');
+API::Std::event_add('on_kick');
+API::Std::event_add('on_nick');
+API::Std::event_add('on_notice');
 API::Std::event_add('on_part');
-API::Std::event_add("on_cprivmsg");
-API::Std::event_add("on_uprivmsg");
-API::Std::event_add("on_quit");
-API::Std::event_add("on_topic");
+API::Std::event_add('on_cprivmsg');
+API::Std::event_add('on_uprivmsg');
+API::Std::event_add('on_quit');
+API::Std::event_add('on_topic');
 API::Std::event_add('on_whoreply');
 
 # Parse raw data.
@@ -100,44 +102,36 @@ sub num001 {
     	delete $botinfo{$svr}{newnick};
     }
 
+    # Log.
+    API::Log::alog "! Successfully connected to $svr as $botinfo{$svr}{nick}";
+    API::Log::dbug "! Successfully connected to $svr as $botinfo{$svr}{nick}";
+
     # Trigger on_connect.
-    API::Std::event_run("on_connect", $svr);
+    API::Std::event_run('on_connect', $svr);
     	
     return 1;
 }
 
+# Parse: Numeric:004
+# Server information.
+sub num004 {
+    my ($svr, @ex) = @_;
+
+    # Log server name and version.
+    API::Log::alog "! $svr: $ex[3] running version $ex[4]";
+    API::Log::dbug "! $svr: $ex[3] running version $ex[4]";
+
+    return 1;
+}
+
 # Parse: Numeric:005
-# Prefixes and channel modes.
+# Server ISUPPORT.
 sub num005 {
     my ($svr, @ex) = @_;
-    
-    # Find PREFIX and CHANMODES.
-    foreach my $ex (@ex) {
-    	if ($ex =~ m/^PREFIX/xsm) {
-    		# Found PREFIX.
-    		my $rpx = substr($ex, 8);
-    		my ($pm, $pp) = split('\)', $rpx);
-    		my @apm = split(//, $pm);
-    		my @app = split(//, $pp);
-    		foreach my $ppm (@apm) {
-    			# Store data.
-    			$csprefix{$svr}{$ppm} = shift(@app);
-    		}
-    	}
-        elsif ($ex =~ m/^CHANMODES/xsm) {
-            # Found CHANMODES.
-            my ($mtl, $mtp, $mtpp, $mts) = split m/[,]/xsm, substr($ex, 10);
-            # List modes.
-            foreach (split(//, $mtl)) { $chanmodes{$svr}{$_} = 1; }
-            # Modes with parameter.
-            foreach (split(//, $mtp)) { $chanmodes{$svr}{$_} = 2; }
-            # Modes with parameter when +.
-            foreach (split(//, $mtpp)) { $chanmodes{$svr}{$_} = 3; }
-            # Modes without parameter.
-            foreach (split(//, $mts)) { $chanmodes{$svr}{$_} = 4; }
-        }
-    }
-    			
+
+    # Trigger on_isupport.
+    API::Std::event_run('on_isupport', ($svr, @ex[3..$#ex]));
+
     return 1;
 }
 

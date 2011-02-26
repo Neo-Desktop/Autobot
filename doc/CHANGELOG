@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Now parsing numeric 004.
+    * Added hook on_isupport.
     * Added a BotStats module for returning statistics about the bot.
     * Now parsing numeric 396.
     * Added who() to API::IRC.
