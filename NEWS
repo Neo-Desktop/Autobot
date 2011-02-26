@@ -15,10 +15,11 @@ In this alpha6 release, we have added:
 
 * Added an UNO module for playing the classic game of UNO.
 * Added an Eval module for evaluating Perl code.
+* Added a BotStats module for returning statistics about the bot.
 
 Bug fixes:
 
-None
+* Fixed a bug that occurs when our configured nickname is in use.
 
 Incompatibilities:
 

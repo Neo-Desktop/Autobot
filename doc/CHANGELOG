@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Added a BotStats module for returning statistics about the bot.
     * Now parsing numeric 396.
     * Added who() to API::IRC.
     * Added hook on_whoreply.
