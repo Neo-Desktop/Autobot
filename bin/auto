@@ -509,12 +509,11 @@ while (1) {
 ###############
 
 # Send data to socket.
-sub socksnd
-{
+sub socksnd {
     my ($svr, $data) = @_;
 
     if (defined $SOCKET{$svr}) {
-    	syswrite $SOCKET{$svr}, $data."\n", POSIX::BUFSIZ, 0;
+    	syswrite $SOCKET{$svr}, $data."\r\n", POSIX::BUFSIZ, 0;
     	dbug "$svr << $data";
     	return 1;
     }

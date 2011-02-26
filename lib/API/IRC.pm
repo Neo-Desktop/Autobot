@@ -9,7 +9,7 @@ use Exporter;
 
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(ban cjoin cpart cmode umode kick privmsg notice quit nick names
-                    topic usrc match_mask);
+                    topic who usrc match_mask);
 
 
 # Set a ban, based on config bantype value.
@@ -87,7 +87,7 @@ sub umode
 {
     my ($svr, $modes) = @_;
     
-    Auto::socksnd($svr, "MODE ".$Proto::IRC::botnick{$svr}{nick}." $modes");
+    Auto::socksnd($svr, "MODE ".$Proto::IRC::botinfo{$svr}{nick}." $modes");
     
     return 1;
 } 
@@ -97,7 +97,15 @@ sub privmsg
 {
     my ($svr, $target, $message) = @_;
     
-    Auto::socksnd($svr, "PRIVMSG $target :$message");
+    # Get maximum length.
+    my $maxlen = 510 - length q{:}.$Proto::IRC::botinfo{$svr}{nick}.q{!}.$Proto::IRC::botinfo{$svr}{user}.q{@}.$Proto::IRC::botinfo{$svr}{mask}." PRIVMSG $target :";
+
+    # Divide message if it surpasses the maximum length.
+    while (length $message >= $maxlen) {
+        my $submsg = substr $message, 0, $maxlen, q{};
+        Auto::socksnd($svr, "PRIVMSG $target :$submsg");
+    }
+    if (length $message) { Auto::socksnd($svr, "PRIVMSG $target :$message") }
     
     return 1;
 }
@@ -107,7 +115,15 @@ sub notice
 {
     my ($svr, $target, $message) = @_;
     
-    Auto::socksnd($svr, "NOTICE $target :$message");
+    # Get maximum length.
+    my $maxlen = 510 - length q{:}.$Proto::IRC::botinfo{$svr}{nick}.q{!}.$Proto::IRC::botinfo{$svr}{user}.q{@}.$Proto::IRC::botinfo{$svr}{mask}." NOTICE $target :";
+
+    # Divide message if it surpasses the maximum length.
+    while (length $message >= $maxlen) {
+        my $submsg = substr $message, 0, $maxlen, q{};
+        Auto::socksnd($svr, "NOTICE $target :$submsg");
+    }
+    if (length $message) { Auto::socksnd($svr, "NOTICE $target :$message") }
     
     return 1;
 }
@@ -129,8 +145,8 @@ sub nick
     
     Auto::socksnd($svr, "NICK $newnick");
     
-    $Proto::IRC::botnick{$svr}{newnick} = $newnick;
-    
+    $Proto::IRC::botinfo{$svr}{newnick} = $newnick;
+
     return 1;
 }
 
@@ -165,8 +181,7 @@ sub kick
 }
 
 # Quit IRC.
-sub quit 
-{
+sub quit {
     my ($svr, $reason) = @_;
     
     if (defined $reason) {
@@ -177,11 +192,19 @@ sub quit
     }
     
     delete $Proto::IRC::got_001{$svr} if (defined $Proto::IRC::got_001{$svr});
-    delete $Proto::IRC::botnick{$svr} if (defined $Proto::IRC::botnick{$svr});
+    delete $Proto::IRC::botinfo{$svr} if (defined $Proto::IRC::botinfo{$svr});
     
     return 1;
 }
 
+# Send a WHO.
+sub who {
+    my ($svr, $nick) = @_;
+
+    Auto::socksnd($svr, "WHO $nick");
+
+    return 1;
+}
 
 # Get nick, ident and host from a <nick>!<ident>@<host>
 sub usrc

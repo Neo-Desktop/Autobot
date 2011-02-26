@@ -51,6 +51,15 @@ hook_add("on_connect", "on_connect_modes", sub {
     return 1;
 });
 
+# Self-WHO on connect.
+hook_add('on_connect', 'on_connect_selfwho', sub {
+    my ($svr) = @_;
+
+    API::IRC::who($svr, $Proto::IRC::botinfo{$svr}{nick});
+
+    return 1;
+});
+
 # Plaintext auth.
 hook_add("on_connect", "plaintext_auth", sub {
     my ($svr) = @_;
@@ -109,6 +118,20 @@ hook_add("on_connect", "autojoin", sub {
         if ($lcn eq $svr) {
             API::IRC::cjoin($svr, $lcc);
         }
+    }
+
+    return 1;
+});
+
+# WHO reply.
+hook_add('on_whoreply', 'selfwho.getdata', sub {
+    my (($svr, $nick, undef, $user, $mask, undef, undef, undef, undef, undef)) = @_;
+
+    # Check if it's for us.
+    if ($nick eq $Proto::IRC::botinfo{$svr}{nick}) {
+        # It is. Set data.
+        $Proto::IRC::botinfo{$svr}{user} = $user;
+        $Proto::IRC::botinfo{$svr}{mask} = $mask;
     }
 
     return 1;

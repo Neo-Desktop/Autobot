@@ -11,6 +11,7 @@ use API::IRC;
 our %RAWC = (
     '001'      => \&num001,
     '005'      => \&num005,
+    '352'      => \&num352,
     '353'      => \&num353,
     '432'      => \&num432,
     '433'      => \&num433,
@@ -33,7 +34,7 @@ our %RAWC = (
 );
 
 # Variables for various functions.
-our (%got_001, %botnick, %botchans, %csprefix, %chanusers, %chanmodes);
+our (%got_001, %botinfo, %botchans, %csprefix, %chanusers, %chanmodes);
 
 # Events.
 API::Std::event_add("on_connect");
@@ -47,6 +48,7 @@ API::Std::event_add("on_cprivmsg");
 API::Std::event_add("on_uprivmsg");
 API::Std::event_add("on_quit");
 API::Std::event_add("on_topic");
+API::Std::event_add('on_whoreply');
 
 # Parse raw data.
 sub ircparse
@@ -86,16 +88,15 @@ sub ircparse
 
 # Parse: Numeric:001
 # Successful connection.
-sub num001
-{
+sub num001 {
     my ($svr, @ex) = @_;
     
     $got_001{$svr} = 1;
-    
+
     # In case we don't get NICK from the server.
-    if (defined $botnick{$svr}{newnick}) {
-    	$botnick{$svr}{nick} = $botnick{$svr}{newnick};
-    	delete $botnick{$svr}{newnick};
+    if (!defined $botinfo{$svr}{nick}) {
+    	$botinfo{$svr}{nick} = $botinfo{$svr}{newnick};
+    	delete $botinfo{$svr}{newnick};
     }
 
     # Trigger on_connect.
@@ -106,8 +107,7 @@ sub num001
 
 # Parse: Numeric:005
 # Prefixes and channel modes.
-sub num005
-{
+sub num005 {
     my ($svr, @ex) = @_;
     
     # Find PREFIX and CHANMODES.
@@ -140,10 +140,20 @@ sub num005
     return 1;
 }
 
+# Parse: Numeric:352
+# WHO reply.
+sub num352 {
+    my ($svr, @ex) = @_;
+
+    # Trigger on_whoreply.
+    API::Std::event_run('on_whoreply', ($svr, $ex[2], $ex[3], $ex[4], $ex[5], $ex[6], @ex[7..$#ex]));
+
+    return 1;
+}
+
 # Parse: Numeric:353
 # NAMES reply.
-sub num353
-{
+sub num353 {
     my ($svr, @ex) = @_;
     
     # Get rid of the colon.
@@ -181,8 +191,7 @@ sub num353
 
 # Parse: Numeric:432
 # Erroneous nickname.
-sub num432
-{
+sub num432 {
     my ($svr, undef) = @_;
     
     if ($got_001{$svr}) {
@@ -193,20 +202,18 @@ sub num432
     	API::IRC::quit($svr, "An error occurred.");
     }
     
-    delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
+    delete $botinfo{$svr}{newnick} if (defined $botinfo{$svr}{newnick});
     
     return 1;
 }
 
 # Parse: Numeric:433
 # Nickname is already in use.
-sub num433
-{
+sub num433 {
     my ($svr, undef) = @_;
     
-    if (defined $botnick{$svr}{newnick}) {
-    	API::IRC::nick($svr, $botnick{$svr}{newnick}."_");
-    	delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
+    if (defined $botinfo{$svr}{newnick}) {
+    	API::IRC::nick($svr, $botinfo{$svr}{newnick}."_");
     }
     
     return 1;
@@ -214,14 +221,13 @@ sub num433
 
 # Parse: Numeric:438
 # Nick change too fast.
-sub num438
-{
+sub num438 {
     my ($svr, @ex) = @_;
     
-    if (defined $botnick{$svr}{newnick}) {
-    	API::Std::timer_add("num438_".$botnick{$svr}{newnick}, 1, $ex[11], sub { 
-    		API::IRC::nick($Proto::IRC::botnick{$svr}{newnick});
-    		delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
+    if (defined $botinfo{$svr}{newnick}) {
+    	API::Std::timer_add("num438_".$botinfo{$svr}{newnick}, 1, $ex[11], sub { 
+    		API::IRC::nick($Proto::IRC::botinfo{$svr}{newnick});
+    		delete $botinfo{$svr}{newnick} if (defined $botinfo{$svr}{newnick});
     	 });
     }
     
@@ -230,8 +236,7 @@ sub num438
 
 # Parse: Numeric:465
 # You're banned creep!
-sub num465
-{
+sub num465 {
     my ($svr, undef) = @_;
     
     err(3, "Banned from ".$svr."! Closing link...", 0);
@@ -241,8 +246,7 @@ sub num465
 
 # Parse: Numeric:471
 # Cannot join channel: Channel is full.
-sub num471
-{
+sub num471 {
     my ($svr, (undef, undef, undef, $chan)) = @_;
     
     err(3, "Cannot join channel ".$chan." on ".$svr.": Channel is full.", 0);
@@ -252,8 +256,7 @@ sub num471
 
 # Parse: Numeric:473
 # Cannot join channel: Channel is invite-only.
-sub num473
-{
+sub num473 {
     my ($svr, (undef, undef, undef, $chan)) = @_;
     
     err(3, "Cannot join channel ".$chan." on ".$svr.": Channel is invite-only.", 0);
@@ -263,8 +266,7 @@ sub num473
 
 # Parse: Numeric:474
 # Cannot join channel: Banned from channel.
-sub num474
-{
+sub num474 {
     my ($svr, (undef, undef, undef, $chan)) = @_;
     
     err(3, "Cannot join channel ".$chan." on ".$svr.": Banned from channel.", 0);
@@ -274,8 +276,7 @@ sub num474
 
 # Parse: Numeric:475
 # Cannot join channel: Bad key.
-sub num475
-{
+sub num475 {
     my ($svr, (undef, undef, undef, $chan)) = @_;
     
     err(3, "Cannot join channel ".$chan." on ".$svr.": Bad key.", 0);
@@ -285,8 +286,7 @@ sub num475
 
 # Parse: Numeric:477
 # Cannot join channel: Need registered nickname.
-sub num477
-{
+sub num477 {
     my ($svr, (undef, undef, undef, $chan)) = @_;
     
     err(3, "Cannot join channel ".$chan." on ".$svr.": Need registered nickname.", 0);
@@ -295,15 +295,14 @@ sub num477
 }
 
 # Parse: JOIN
-sub cjoin
-{
+sub cjoin {
     my ($svr, @ex) = @_;
     my %src = API::IRC::usrc(substr($ex[0], 1));
     my $chan = $ex[2];
     $chan =~ s/^://gxsm;
     
     # Check if this is coming from ourselves.
-    if ($src{nick} eq $botnick{$svr}{nick}) {
+    if ($src{nick} eq $botinfo{$svr}{nick}) {
     	$botchans{$svr}{lc $chan} = 1;
     	API::Std::event_run("on_ucjoin", ($svr, $chan));
     }
@@ -318,8 +317,7 @@ sub cjoin
 }
 
 # Parse: KICK
-sub kick
-{
+sub kick {
     my ($svr, @ex) = @_;
     my %src = API::IRC::usrc(substr($ex[0], 1));
 
@@ -338,7 +336,7 @@ sub kick
     }
 
     # Check if we were the ones kicked.
-    if (lc($ex[3]) eq lc($botnick{$svr}{nick})) {
+    if (lc($ex[3]) eq lc($botinfo{$svr}{nick})) {
         # We were kicked!
 
         # Delete channel from botchans.
@@ -364,11 +362,10 @@ sub kick
 }
 
 # Parse: MODE
-sub mode
-{
+sub mode {
     my ($svr, @ex) = @_;
 
-    if ($ex[2] ne $botnick{$svr}{nick}) {
+    if ($ex[2] ne $botinfo{$svr}{nick}) {
         # Set data we'll need later.
         my $chan = $ex[2];
         my $modes = $ex[3];
@@ -454,18 +451,17 @@ sub mode
 }
 
 # Parse: NICK
-sub nick
-{
+sub nick {
     my ($svr, ($uex, undef, $nex)) = @_;
     $nex =~ s/^://gxsm;
 
     my %src = API::IRC::usrc(substr($uex, 1));
     
     # Check if this is coming from ourselves.
-    if ($src{nick} eq $botnick{$svr}{nick}) {
+    if ($src{nick} eq $botinfo{$svr}{nick}) {
     	# It is. Update bot nick hash.
-    	$botnick{$svr}{nick} = $nex;
-    	delete $botnick{$svr}{newnick} if (defined $botnick{$svr}{newnick});
+    	$botinfo{$svr}{nick} = $nex;
+    	delete $botinfo{$svr}{newnick} if (defined $botinfo{$svr}{newnick});
     }
     else {
     	# It isn't. Update chanusers and trigger on_nick.
@@ -482,8 +478,7 @@ sub nick
 }
 
 # Parse: NOTICE
-sub notice
-{
+sub notice {
     my ($svr, @ex) = @_;
 
     # Ensure this is coming from a user rather than a server.
@@ -503,8 +498,7 @@ sub notice
 }
 
 # Parse: PART
-sub part
-{
+sub part {
     my ($svr, @ex) = @_;
     my %src = API::IRC::usrc(substr($ex[0], 1));
 
@@ -529,8 +523,7 @@ sub part
 }
 
 # Parse: PRIVMSG
-sub privmsg
-{
+sub privmsg {
     my ($svr, @ex) = @_;
     my %data = API::IRC::usrc(substr($ex[0], 1));
 
@@ -545,7 +538,7 @@ sub privmsg
     
     my ($cmd, $cprefix, $rprefix);
     # Check if it's to a channel or to us.
-    if (lc($ex[2]) eq lc($botnick{$svr}{nick})) {
+    if (lc($ex[2]) eq lc($botinfo{$svr}{nick})) {
     	# It is coming to us in a private message.
         
         # Ensure it's a valid length.
@@ -657,8 +650,7 @@ sub privmsg
 }
 
 # Parse: QUIT
-sub quit
-{
+sub quit {
     my ($svr, @ex) = @_;
     my %src = API::IRC::usrc(substr($ex[0], 1));
 
@@ -680,13 +672,12 @@ sub quit
 }
 
 # Parse: TOPIC
-sub topic
-{
+sub topic {
     my ($svr, @ex) = @_;
     my %src = API::IRC::usrc(substr($ex[0], 1));
     
     # Ignore it if it's coming from us.
-    if (lc($src{nick}) ne lc($botnick{$svr}{nick})) {
+    if (lc($src{nick}) ne lc($botinfo{$svr}{nick})) {
     	$src{chan} = $ex[2];
     	my (@argv);
     	$argv[0] = substr($ex[3], 1);

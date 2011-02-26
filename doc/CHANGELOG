@@ -3,6 +3,11 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Added who() to API::IRC.
+    * Added hook on_whoreply.
+    * PRIVMSGs and NOTICEs that would cause a >512 bytes resulting message are
+      now divided into multiple messages.
+    * Renamed botnick to botinfo.
     * Renamed Parser::IRC to Proto::IRC.
     * Added an Eval module.
     * Added an UNO module.
