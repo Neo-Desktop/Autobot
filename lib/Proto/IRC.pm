@@ -13,6 +13,7 @@ our %RAWC = (
     '005'      => \&num005,
     '352'      => \&num352,
     '353'      => \&num353,
+    '396'      => \&num396,
     '432'      => \&num432,
     '433'      => \&num433,
     '438'      => \&num438,
@@ -186,6 +187,17 @@ sub num353 {
     	}
     }
     
+    return 1;
+}
+
+# Parse: Numeric:396
+# Hidden host changed.
+sub num396 {
+    my ($svr, @ex) = @_;
+
+    # Update our mask.
+    $botinfo{$svr}{mask} = $ex[3];
+
     return 1;
 }
 

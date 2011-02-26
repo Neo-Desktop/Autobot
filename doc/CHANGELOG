@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Now parsing numeric 396.
     * Added who() to API::IRC.
     * Added hook on_whoreply.
     * PRIVMSGs and NOTICEs that would cause a >512 bytes resulting message are
