@@ -1,7 +1,7 @@
-# lib/Parser/IRC.pm - Subroutines for parsing incoming data from IRC.
+# lib/Proto/IRC.pm - Subroutines for parsing incoming data from IRC.
 # Copyright (C) 2010-2011 Xelhua Development Group, et al.
 # This program is free software; rights to this code are stated in doc/LICENSE.
-package Parser::IRC;
+package Proto::IRC;
 use strict;
 use warnings;
 use API::Std qw(conf_get err awarn trans);

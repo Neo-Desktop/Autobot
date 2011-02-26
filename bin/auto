@@ -37,7 +37,7 @@ use API::Log qw(alog dbug);
 #use DB::Flatfile;
 use Parser::Config;
 use Parser::Lang;
-use Parser::IRC;
+use Proto::IRC;
 use Core::IRC;
 use Core::Cmd;
 
@@ -499,7 +499,7 @@ while (1) {
     		dbug $sockid.' >> '.$line;
 
             # Parse data.
-    		Parser::IRC::ircparse($sockid, $line);
+    		Proto::IRC::ircparse($sockid, $line);
     	}
     }
 }

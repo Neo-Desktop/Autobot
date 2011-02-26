@@ -67,7 +67,7 @@ sub cpart
     	Auto::socksnd($svr, "PART $chan :Leaving");
     }
 
-    if (defined $Parser::IRC::botchans{$svr}{$chan}) { delete $Parser::IRC::botchans{$svr}{$chan}; }
+    if (defined $Proto::IRC::botchans{$svr}{$chan}) { delete $Proto::IRC::botchans{$svr}{$chan}; }
     
     return 1;
 }
@@ -87,7 +87,7 @@ sub umode
 {
     my ($svr, $modes) = @_;
     
-    Auto::socksnd($svr, "MODE ".$Parser::IRC::botnick{$svr}{nick}." $modes");
+    Auto::socksnd($svr, "MODE ".$Proto::IRC::botnick{$svr}{nick}." $modes");
     
     return 1;
 } 
@@ -129,7 +129,7 @@ sub nick
     
     Auto::socksnd($svr, "NICK $newnick");
     
-    $Parser::IRC::botnick{$svr}{newnick} = $newnick;
+    $Proto::IRC::botnick{$svr}{newnick} = $newnick;
     
     return 1;
 }
@@ -176,8 +176,8 @@ sub quit
     	Auto::socksnd($svr, "QUIT :Leaving");
     }
     
-    delete $Parser::IRC::got_001{$svr} if (defined $Parser::IRC::got_001{$svr});
-    delete $Parser::IRC::botnick{$svr} if (defined $Parser::IRC::botnick{$svr});
+    delete $Proto::IRC::got_001{$svr} if (defined $Proto::IRC::got_001{$svr});
+    delete $Proto::IRC::botnick{$svr} if (defined $Proto::IRC::botnick{$svr});
     
     return 1;
 }
