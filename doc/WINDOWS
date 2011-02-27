@@ -6,6 +6,8 @@ When running Auto on Microsoft Windows, you should be aware of the following:
 * Windows support has not been thoroughly tested, some scripts/features may not
   function correctly.
 * Forking into the background is disabled.
+* Some file system operations may fail if Auto is installed to a path with
+  spaces. Please report these.
 
 For the full power of Auto; run him in a UNIX environment.
 
