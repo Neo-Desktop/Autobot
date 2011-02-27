@@ -1,0 +1,16 @@
+Auto IRC Bot 3.0: Microsoft Windows Notes
+===============================================================================
+
+When running Auto on Microsoft Windows, you should be aware of the following:
+
+* Windows support has not been thoroughly tested, some scripts/features may not
+  function correctly.
+* Forking into the background is disabled.
+
+For the full power of Auto; run him in a UNIX environment.
+
+Since Windows support can be considered experimental, testers are welcome and
+you should report anything you find to malfunction.
+
+At some point in the future, we hope to achieve Windows support with no core
+caveats. Again, reporting issues in Auto on Windows is highly appreciated.
