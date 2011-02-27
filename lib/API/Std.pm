@@ -12,7 +12,7 @@ use base qw(Exporter);
 our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
 our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add 
     				cmd_del hook_add hook_del rchook_add rchook_del match_user
-    				has_priv mod_exists ratelimit_check);
+    				has_priv mod_exists ratelimit_check fpfmt);
 
 
 # Initialize a module.
@@ -514,6 +514,14 @@ sub awarn
     }
 
     return 1;
+}
+
+# Formatting a file path.
+sub fpfmt {
+    my ($path) = @_;
+
+    if ($path =~ m/\s/xsm) { return "\"$path\""; }
+    else { return $path; }
 }
 
 
