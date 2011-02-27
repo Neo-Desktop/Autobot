@@ -59,10 +59,6 @@ sub alog
     if (!-d "$Auto::Bin/../var") {
     	mkdir "$Auto::Bin/../var", 0600; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
     }
-    # Create var/DATE.log if it doesn't exist.
-    if (!-e "$Auto::Bin/../var/$date.log") {
-    	system "touch $Auto::Bin/../var/$date.log";
-    }
 
     # Open the logfile, print the log message to it and close it.
     open my $FLOG, '>>', "$Auto::Bin/../var/$date.log" or return;

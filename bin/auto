@@ -179,8 +179,9 @@ given (lc((conf_get('database:format'))[0][0])) {
 
         if (!-e "$Bin/../etc/".(conf_get('database:filename'))[0][0]) {
             # Create <database:filename> if it's missing.
-            system "touch $Bin/../etc/".(conf_get('database:filename'))[0][0];
-            system "chmod a+x $Bin/../etc/".(conf_get('database:filename'))[0][0];
+            open my $dbfh, '>', "$Bin/../etc/".(conf_get('database:filename'))[0][0];
+            close $dbfh;
+            chmod 0755, "$Bin/../etc/".(conf_get('database:filename'))[0][0];
         }
         # Connect to database.
         $DB = DBI->connect("dbi:SQLite:dbname=$Bin/../etc/".(conf_get('database:filename'))[0][0]) or err(2, 'Failed to connect to database!', 1);
@@ -312,9 +313,6 @@ if (!$DEBUG) {
     $APID = fork;
     if ($APID != 0) {
         alog '* Successfully forked into the background. Process ID: '.$APID;
-        if (!-e "$Bin/auto.pid") {
-    		system "touch $Bin/auto.pid";
-    	}
     	open my $FPID, '>', "$Bin/auto.pid" or exit;
     	print {$FPID} "$APID\n" or exit;
     	close $FPID or exit;
