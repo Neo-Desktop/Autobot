@@ -19,6 +19,7 @@ use Class::Unload;
 use FindBin qw($Bin);
 our $Bin = $Bin; ## no critic qw(NamingConventions::Capitalization Variables::ProhibitPackageVars)
 BEGIN {
+    $Bin =~ s/\s/%20/gxsm;
     unshift @INC, "$Bin/../lib";
 
     open my $gitfh, '<', "$Bin/../.git/refs/heads/indev";
