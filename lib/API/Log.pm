@@ -10,7 +10,7 @@ use POSIX;
 use Time::Local;
 use Exporter;
 use base qw(Exporter);
-use API::Std qw(conf_get);
+use API::Std qw(conf_get fpfmt);
 
 our @EXPORT_OK = qw(println dbug alog slog);
 
@@ -85,7 +85,7 @@ sub expire_logs
     }
 
     # Iterate through each logfile.
-    foreach my $file (glob "$Auto::Bin/../var/*") {
+    foreach my $file (glob fpfmt("$Auto::Bin/../var/*")) {
     	my (undef, $file) = split 'bin/../var/', $file; ## no critic qw(BuiltinFunctions::ProhibitStringySplit)
 
     	# Convert filename to UNIX time.
