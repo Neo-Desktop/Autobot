@@ -307,6 +307,14 @@ our $STARTTIME = time;
 say '* Auto successfully started at '.POSIX::strftime('%Y-%m-%d %I:%M:%S %p', localtime).q{.};
 alog 'Auto successfully started.';
 
+# If we're on Windows, disable forking.
+if ($OSNAME =~ /win/i) {
+    if (!$DEBUG) {
+        say '!!! Forking unavailable (OS is Microsoft Windows), continuing in debug mode.';
+        $DEBUG = 1;
+    }
+}
+
 # Fork into the background if not in debug mode.
 if (!$DEBUG) {
     say '*** Becoming a daemon...';

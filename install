@@ -62,8 +62,7 @@ if ($OSNAME =~ /dos/i) {
     exit;
 }
 elsif ($OSNAME eq "MSWin32") {
-    print "Microsoft Windows is not supported. Support is planned for the future.\r\n";
-    exit;
+    print "OK\r\n";
 }
 elsif ($OSNAME eq "NetWare") {
     print "NetWare is not supported.\r\n";
