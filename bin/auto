@@ -21,6 +21,10 @@ our $Bin = $Bin; ## no critic qw(NamingConventions::Capitalization Variables::Pr
 BEGIN {
     unshift @INC, "$Bin/../lib";
 
+    open my $gitfh, '<', "$Bin/../.git/refs/heads/indev";
+    our $VERGITREV = substr readline $gitfh, 0, 7;
+    close $gitfh;
+
     # Set version information.
     use constant { ## no critic qw(ValuesAndExpressions::ProhibitConstantPragma)
         NAME   => 'Auto IRC Bot',
@@ -28,7 +32,6 @@ BEGIN {
         SVER   => 0,
         REV    => 0,
         RSTAGE => 'd',
-        GR     => substr `cat $Bin/../.git/refs/heads/indev`, 0, 7
     };
 }
 use Lib::Auto;

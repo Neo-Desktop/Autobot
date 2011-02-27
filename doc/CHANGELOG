@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Auto::GR renamed to $Auto::VERGITREV.
     * Bumped minimum version for API to 3.0.0a6.
     * Changed on_topic args to: full source hashref, new topic array
     * on_topic is now triggered for any topic change, regardless of source.
