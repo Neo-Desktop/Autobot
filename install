@@ -59,18 +59,22 @@ eval {
 print "Checking operating system..... $OSNAME - ";
 if ($OSNAME =~ /dos/i) {
     print "DOS is not supported.\r\n";
+    exit;
 }
 elsif ($OSNAME eq "MSWin32") {
     print "Microsoft Windows is not supported. Support is planned for the future.\r\n";
+    exit;
 }
 elsif ($OSNAME eq "NetWare") {
     print "NetWare is not supported.\r\n";
+    exit;
 }
 elsif ($OSNAME eq "linux") {
     print "OK\n";
 }
 elsif ($OSNAME eq "os2") {
     print "IBM OS/2 is not supported.\r\n";
+    exit;
 }
 elsif ($OSNAME =~ /mac/i or $OSNAME =~ /darwin/i) {
     print "OK\r";
@@ -83,6 +87,7 @@ elsif ($OSNAME eq "openbsd") {
 }
 else {
     print "Unknown operating system. Contact support.\r\n";
+    exit;
 }    	
 
 # Check for Perl core modules.
