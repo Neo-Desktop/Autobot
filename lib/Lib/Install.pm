@@ -125,7 +125,7 @@ sub installmods
         $modules =~ s/ //g;
         my @modst = split ',', $modules;
         foreach (@modst) {
-            system "$Bin/bin/buildmod $_";
+            system "perl $Bin/bin/buildmod $_";
         }
     }
 }
