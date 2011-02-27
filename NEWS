@@ -20,6 +20,7 @@ In this alpha6 release, we have added:
 Bug fixes:
 
 * Fixed a bug that occurs when our configured nickname is in use.
+* Fixed a bug with multi-prefix support.
 
 Incompatibilities:
 

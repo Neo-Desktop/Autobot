@@ -158,21 +158,27 @@ sub num353 {
     # Iterate through each user.
     for (my $i = 5; $i < scalar(@ex); $i++) {
     	my $fi = 0;
-    	foreach (keys %{ $csprefix{$svr} }) {
+        PFITER: foreach (keys %{ $csprefix{$svr} }) {
     		# Check if the user has status in the channel.
     		if (substr($ex[$i], 0, 1) eq $csprefix{$svr}{$_}) {
     			# He/she does. Lets set that.
-    			if (defined $chanusers{$svr}{$ex[4]}{lc(substr($ex[$i], 1))}) {
+    			if (defined $chanusers{$svr}{$ex[4]}{lc $ex[$i]}) {
     				# If the user has multiple statuses.
-    				$chanusers{$svr}{$ex[4]}{lc(substr($ex[$i], 1))} .= $_;
+    				$chanusers{$svr}{$ex[4]}{lc(substr($ex[$i], 1))} = $chanusers{$svr}{$ex[4]}{lc $ex[$i]}.$_;
+                    delete $chanusers{$svr}{$ex[4]}{lc $ex[$i]};
     			}
     			else {
     				# Or not.
     				$chanusers{$svr}{$ex[4]}{lc(substr($ex[$i], 1))} = $_;
     			}
     			$fi = 1;
+                $ex[$i] = substr $ex[$i], 1;
     		}
     	}
+        # Check if there's still a prefix.
+        foreach (keys %{$csprefix{$svr}}) {
+            if (substr($ex[$i], 0, 1) eq $csprefix{$svr}{$_}) { goto 'PFITER' }
+        }
     	# They had status, so go to the next user.
     	next if $fi;
     	# They didn't, set them as a normal user.
