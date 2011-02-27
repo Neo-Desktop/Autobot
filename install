@@ -84,6 +84,9 @@ elsif ($OSNAME eq "freebsd") {
 elsif ($OSNAME eq "openbsd") {
     print "OK\n";
 }
+elsif ($OSNAME eq "solaris") {
+    print "OK\n";
+}
 else {
     print "Unknown operating system. Contact support.\r\n";
     exit;
