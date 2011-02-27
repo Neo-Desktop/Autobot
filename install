@@ -124,19 +124,7 @@ else {
 println "\0";
 println "Building.....";
 if (!-d "$Bin/build") {
-    system "mkdir $Bin/build";
-}
-if (!-e "$Bin/build/time") {
-    system "touch $Bin/build/time";
-}
-if (!-e "$Bin/build/os") {
-    system "touch $Bin/build/os";
-}
-if (!-e "$Bin/build/perl") {
-    system "touch $Bin/build/perl";
-}
-if (!-e "$Bin/build/ver") {
-    system "touch $Bin/build/ver";
+    mkdir "$Bin/build";
 }
 
 build($features);
