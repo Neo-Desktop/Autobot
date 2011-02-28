@@ -21,6 +21,7 @@ Bug fixes:
 
 * Fixed a bug that occurs when our configured nickname is in use.
 * Fixed a bug with multi-prefix support.
+* Fixed a bug with SASL timeout.
 
 Incompatibilities:
 
