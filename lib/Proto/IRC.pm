@@ -4,6 +4,7 @@
 package Proto::IRC;
 use strict;
 use warnings;
+use feature qw(switch);
 use API::Std qw(conf_get err awarn trans);
 use API::IRC;
 
@@ -24,6 +25,7 @@ our %RAWC = (
     '474'      => \&num474,
     '475'      => \&num475,
     '477'      => \&num477,
+    'CAP'      => \&cap,
     'JOIN'     => \&cjoin,
     'KICK'     => \&kick,
     'MODE'     => \&mode,
@@ -36,9 +38,10 @@ our %RAWC = (
 );
 
 # Variables for various functions.
-our (%got_001, %botinfo, %botchans, %csprefix, %chanusers, %chanmodes);
+our (%got_001, %botinfo, %botchans, %csprefix, %chanusers, %chanmodes, %cap);
 
 # Events.
+API::Std::event_add('on_capack');
 API::Std::event_add('on_connect');
 API::Std::event_add('on_rcjoin');
 API::Std::event_add('on_ucjoin');
@@ -303,6 +306,57 @@ sub num477 {
     
     err(3, "Cannot join channel ".$chan." on ".$svr.": Need registered nickname.", 0);
     
+    return 1;
+}
+
+# Parse: CAP
+sub cap {
+    my ($svr, @ex) = @_;
+    my $capout;
+
+    # Iterate ex[3].
+    given ($ex[3]) {
+        when ('LS') {
+            # Get our CAP REQ list.
+            my @capreq = ();
+            if ($cap{$svr} =~ m/\s/xsm) { @capreq = split ' ', $cap{$svr} }
+            else { push @capreq, $cap{$svr} }
+
+            # Iterate through what we received from the server.
+            $ex[4] =~ s/^://xsm;
+            foreach my $scap (@ex[4..$#ex]) {
+                # Check if we support this.
+                foreach my $icap (@capreq) {
+                    if ($icap eq $scap) {
+                        $capout .= " $scap";
+                    }
+                }
+            }
+            
+            # Send CAP REQ/CAP END based on what both we and the server support.
+            if (!$capout) { Auto::socksnd($svr, 'CAP END'); }
+            else {
+                $capout = substr $capout, 1;
+                Auto::socksnd($svr, "CAP REQ :$capout");
+            }
+        }
+        when ('ACK') {
+            # Iterate through the ACK arguments.
+            $ex[4] =~ s/^://xsm;
+            my $sasl = 0;
+            foreach (@ex[4..$#ex]) {
+                if ($_ eq 'sasl') { $sasl++ }
+                API::Std::event_run('on_capack', ($svr, $_));
+            }
+            Auto::socksnd($svr, 'CAP END') unless $sasl;
+        }
+        when ('NAK') {
+            # This should never happen, but just in case...
+            API::Log::awarn(2, "$svr: CAP failed: Server refused '$capout'");
+            Auto::socksnd($svr, 'CAP END');
+        }
+    }
+
     return 1;
 }
 

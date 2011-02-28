@@ -14,18 +14,20 @@ use API::IRC qw(privmsg);
 sub _init
 {
     # Check if this Auto was built with SASL support.
-    err(2, "Auto was not built with SASL support. Aborting SASLAuth.", 0) and return 0 if $Auto::ENFEAT !~ /sasl/;
-    # Add a hook for before we connect.
-    hook_add('on_preconnect', 'CAP', sub { my ($srv) = @_; Auto::socksnd($srv, 'CAP LS'); }
-    ) or return 0;
-    # Hook for parsing CAP.
-    rchook_add('CAP', \&M::SASLAuth::handle_cap) or return 0;
+    if ($Auto::ENFEAT !~ m/sasl/xsm) { err(2, 'Auto was not built with SASL support. Aborting SASLAuth.', 0) and return; }
+    # Add sasl to supported CAP for servers configured with SASL.
+    my %servers = conf_get('server');
+    foreach my $svr (keys %servers) {
+        if (conf_get("server:$svr:sasl_username")) { $Proto::IRC::cap{$svr} .= ' sasl'; }
+    }
+    # Hook for when CAP ACK sasl is received.
+    hook_add('on_capack', 'sasl.cap', \&M::SASLAuth::handle_capack) or return;
     # Hook for parsing 903.
-    rchook_add('903', \&M::SASLAuth::handle_903) or return 0;
+    rchook_add('903', \&M::SASLAuth::handle_903) or return;
     # Hook for parsing 904.
-    rchook_add('904', \&M::SASLAuth::handle_904) or return 0;
+    rchook_add('904', \&M::SASLAuth::handle_904) or return;
     # Hook for parsing 906.
-    rchook_add('906', \&M::SASLAuth::handle_906) or return 0;
+    rchook_add('906', \&M::SASLAuth::handle_906) or return;
     return 1;
 }
 
@@ -33,42 +35,21 @@ sub _init
 sub _void
 {
     # Delete the hooks.
-    hook_del("on_preconnect", "CAP") or return 0;
-    rchook_del('CAP');
-    rchook_del('903');
-    rchook_del('904');
-    rchook_del('906');
+    hook_del('on_capack') or return;
+    rchook_del('903') or return;
+    rchook_del('904') or return;
+    rchook_del('906') or return;
     return 1;
 }
 
-sub handle_cap {
-    my ($srv, @parv) = @_;
-    my $line = join(' ',@parv);
-    my ($tosend);
-    
-    given ($line) {
-        when (/ LS /) {
-            $tosend .= 'multi-prefix ' if $line =~ /multi-prefix/i;
-            $tosend .= 'sasl ' if $line =~ /sasl/ and conf_get("server:$srv:sasl_username");
-            awarn(2, "SASL is unavailable on this server.") if $tosend !~ /sasl/;
-            if ($tosend eq '') { Auto::socksnd($srv, 'CAP END') }
-            else { Auto::socksnd($srv, "CAP REQ :$tosend"); }
-        }
-        when (/ ACK /) {
-            if ( $line =~ /sasl/) {
-                Auto::socksnd($srv, 'AUTHENTICATE PLAIN');
-                timer_add('auth_timeout', 1, (conf_get("server:$srv:sasl_timeout"))[0][0], sub { Auto::socksnd($srv, 'CAP END'); });
-            }
-            else {
-                Auto::socksnd($srv, 'CAP END');
-                awarn(2, "SASL authentication failed at ACK");
-            }
-        }
-        when (/ NAK /) {
-            Auto::socksnd($srv, 'CAP END');
-            awarn(2, "SASL authentication failed. Server refused ".$tosend);
-        }
+sub handle_capack {
+    my (($svr, $sacap)) = @_;
+ 
+    if ($sacap eq 'sasl') {
+        Auto::socksnd($svr, 'AUTHENTICATE PLAIN');
+        timer_add('auth_timeout_'.$svr, 1, (conf_get("server:$svr:sasl_timeout"))[0][0], sub { Auto::socksnd($svr, 'CAP END'); });
     }
+    
     return 1;
 }
 
@@ -105,8 +86,8 @@ sub handle_authenticate
 sub handle_903 
 { 
     my ($srv, undef) = @_; 
-    Auto::socksnd($srv, 'CAP END');
-    timer_del('auth_timeout');
+    timer_add('cap_end_'.$srv, 1, 2, sub { Auto::socksnd($srv, 'CAP END') });
+    timer_del('auth_timeout_'.$srv);
 }
 
 # Parse: Numeric:904
@@ -114,8 +95,8 @@ sub handle_903
 sub handle_904 
 { 
     my ($srv, undef) = @_; 
-    Auto::socksnd($srv, 'CAP END');
-    timer_del('auth_timeout');
+    timer_add('cap_end_'.$srv, 1, 2, sub { Auto::socksnd($srv, 'CAP END') });
+    timer_del('auth_timeout_'.$srv);
     awarn(2, "SASL authentication failed!");
 }
 
@@ -124,8 +105,8 @@ sub handle_904
 sub handle_906 
 {
     my ($svr, undef) = @_;
-    Auto::socksnd($svr, 'CAP END');
-    timer_del('auth_timeout');
+    timer_add('cap_end_'.$svr, 1, 2, sub { Auto::socksnd($svr, 'CAP END') });
+    timer_del('auth_timeout_'.$svr);
     awarn(2, "SASL authentication aborted!");
 }
 

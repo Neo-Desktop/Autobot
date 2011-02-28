@@ -337,6 +337,12 @@ else {
 
 # Events.
 API::Std::event_add('on_preconnect');
+# CAP.
+my %tcsvrs = conf_get('server');
+foreach my $svr (keys %tcsvrs) {
+    $Proto::IRC::cap{$svr} = 'multi-prefix';
+}
+undef %tcsvrs;
 
 # Load modules.
 if (conf_get('module')) {

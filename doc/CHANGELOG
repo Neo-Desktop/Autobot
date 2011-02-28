@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Added hook on_capack.
+    * CAP is now core.
     * Fixed a bug with multi-prefix support.
     * Added fpfmt() to API::Std.
     * Auto::GR renamed to $Auto::VERGITREV.

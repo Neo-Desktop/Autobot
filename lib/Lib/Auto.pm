@@ -218,6 +218,9 @@ sub ircsock {
     if (defined $cdata->{'pass'}[0]) {
         Auto::socksnd($svrname, 'PASS :'.$cdata->{'pass'}[0]) or return;
     }
+    # Send CAP LS.
+    Auto::socksnd($svrname, 'CAP LS');
+    # Trigger on_preconnect.
     API::Std::event_run('on_preconnect', $svrname);
     # Send NICK/USER.
     API::IRC::nick($svrname, $cdata->{'nick'}[0]);
