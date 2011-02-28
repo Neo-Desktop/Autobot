@@ -3,6 +3,10 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+
+
+3.0 Alpha 6
+===============================================================================
     * Bug fix: Fixed an issue with SASL timeout.
     * Added hook on_capack.
     * CAP is now core.
