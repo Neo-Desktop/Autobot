@@ -134,79 +134,99 @@ sub rehash
     # Iterate through each configured server.
     foreach my $cskey (keys %cservers) {
         if (!defined $Auto::SOCKET{$cskey}) {
-            # Prepare socket data.
-            my %conndata = (
-                Proto => 'tcp',
-                LocalAddr => $cservers{$cskey}{'bind'}[0],
-                PeerAddr  => $cservers{$cskey}{'host'}[0],
-                PeerPort  => $cservers{$cskey}{'port'}[0],
-                Timeout   => 20,
-            );
-            # Set IPv6/SSL data.
-            my $use6 = 0;
-            my $usessl = 0;
-            if (defined $cservers{$cskey}{'ipv6'}[0]) { $use6 = $cservers{$cskey}{'ipv6'}[0]; }
-            if (defined $cservers{$cskey}{'ssl'}[0]) { $usessl = $cservers{$cskey}{'ssl'}[0]; }
-
-            # CertFP.
-            if ($usessl) {
-                if (defined $cservers{$cskey}{'certfp'}[0]) {
-                    if ($cservers{$cskey}{'certfp'}[0] eq 1) {
-                        $conndata{'SSL_use_cert'} = 1;
-                        if (defined $cservers{$cskey}{'certfp_cert'}[0]) {
-                            $conndata{'SSL_cert_file'} = "$Auto::Bin/../etc/certs/".$cservers{$cskey}{'certfp_cert'}[0];
-                        }
-                        if (defined $cservers{$cskey}{'certfp_key'}[0]) {
-                            $conndata{'SSL_key_file'} = "$Auto::Bin/../etc/certs/".$cservers{$cskey}{'certfp_key'}[0];
-                        }
-                        if (defined $cservers{$cskey}{'certfp_pass'}[0]) {
-                            $conndata{'SSL_passwd_cb'} = sub { return $cservers{$cskey}{'certfp_pass'}[0]; };
-                        }
-                    }
-                }
-            }
-
-            # Create the socket.
-            if ($use6) {
-                $Auto::SOCKET{$cskey} = IO::Socket::INET6->new(%conndata) or # Or error.
-                err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
-                    and delete $Auto::SOCKET{$cskey} and next;
-            }
-            else {
-                if ($usessl) {
-                    $Auto::SOCKET{$cskey} = IO::Socket::SSL->new(%conndata) or # Or error.
-                    err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
-                        and delete $Auto::SOCKET{$cskey} and next;
-                }
-                else {
-                    $Auto::SOCKET{$cskey} = IO::Socket::INET->new(%conndata) or # Or error.
-                    err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
-                        and delete $Auto::SOCKET{$cskey} and next;
-                }
-            }
-
-            # Send PASS if we have one.
-            if (defined $cservers{$cskey}{'pass'}[0]) {
-                Auto::socksnd($cskey, 'PASS :'.$cservers{$cskey}{'pass'}[0]) or
-                err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
-                    and next;
-            }
-            API::Std::event_run('on_preconnect', $cskey);
-            # Send NICK/USER.
-            API::IRC::nick($cskey, $cservers{$cskey}{'nick'}[0]);
-            Auto::socksnd($cskey, 'USER '.$cservers{$cskey}{'ident'}[0].q{ }.hostname.q{ }.$cservers{$cskey}{'host'}[0].' :'.$cservers{$cskey}{'realname'}[0]) or
-            err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
-                and next;
-            # Add to select.
-            $Auto::SELECT->add($Auto::SOCKET{$cskey});
-            # Success!
-            alog '** Successfully connected to server: '.$cskey;
-            dbug '** Successfully connected to server: '.$cskey;
+            ircsock(\%{$cservers{$cskey}}, $cskey);
         }
+    }
+
+    # Check for server connections.
+    if (!keys %Auto::SOCKET) {
+        err(2, 'No IRC connections -- Exiting program.', 0);
+        API::Std::event_run('on_shutdown');
+        exit 1;
     }
 
     # Now trigger on_rehash.
     API::Std::event_run('on_rehash');
+
+    return 1;
+}
+
+# Socket creation.
+sub ircsock {
+    my ($cdata, $svrname) = @_;
+
+    # Prepare socket data.
+    my %conndata = (
+    	Proto => 'tcp',
+        LocalAddr => $cdata->{'bind'}[0],
+    	PeerAddr  => $cdata->{'host'}[0],
+    	PeerPort  => $cdata->{'port'}[0],
+        Timeout   => 20,
+    );
+    # Set IPv6/SSL data.
+    my $use6 = 0;
+    my $usessl = 0;
+    if (defined $cdata->{'ipv6'}[0]) { $use6 = $cdata->{'ipv6'}[0]; }
+    if (defined $cdata->{'ssl'}[0]) { $usessl = $cdata->{'ssl'}[0]; }
+
+    # Check for appropriate build data.
+    if ($usessl) {
+        if ($Auto::ENFEAT !~ m/ssl/ixsm) { err(2, '** Auto not built with SSL support: Aborting connection to '.$svrname, 0); return; }
+    }
+    if ($use6) {
+        if ($Auto::ENFEAT !~ m/ipv6/ixsm) { err(2, '** Auto not built with IPv6 support: Aborting connection to '.$svrname, 0); return; }
+    }
+
+    # CertFP.
+    if ($usessl) {
+        if (defined $cdata->{'certfp'}[0]) {
+            if ($cdata->{'certfp'}[0] eq 1) {
+                $conndata{'SSL_use_cert'} = 1;
+                if (defined $cdata->{'certfp_cert'}[0]) {
+                    $conndata{'SSL_cert_file'} = "$Auto::Bin/../etc/certs/".$cdata->{'certfp_cert'}[0];
+                }
+                if (defined $cdata->{'certfp_key'}[0]) {
+                    $conndata{'SSL_key_file'} = "$Auto::Bin/../etc/certs/".$cdata->{'certfp_key'}[0];
+                }
+                if (defined $cdata->{'certfp_pass'}[0]) {
+                    $conndata{'SSL_passwd_cb'} = sub { return $cdata->{'certfp_pass'}[0]; };
+                }
+            }
+        }
+    }
+
+    # Create the socket.
+    if ($use6) {
+        $Auto::SOCKET{$svrname} = IO::Socket::INET6->new(%conndata) or # Or error.
+        err(2, 'Failed to connect to server ('.$ERRNO.'): '.$svrname.' ['.$cdata->{'host'}[0].q{:}.$cdata->{'port'}[0].']', 0)
+            and delete $Auto::SOCKET{$svrname} and return;
+    }
+    else {
+        if ($usessl) {
+            $Auto::SOCKET{$svrname} = IO::Socket::SSL->new(%conndata) or # Or error.
+            err(2, 'Failed to connect to server ('.$ERRNO.'): '.$svrname.' ['.$cdata->{'host'}[0].q{:}.$cdata->{'port'}[0].']', 0)
+            and delete $Auto::SOCKET{$svrname} and next;
+        }
+        else {
+            $Auto::SOCKET{$svrname} = IO::Socket::INET->new(%conndata) or # Or error.
+            err(2, 'Failed to connect to server ('.$ERRNO.'): '.$svrname.' ['.$cdata->{'host'}[0].q{:}.$cdata->{'port'}[0].']', 0)
+            and delete $Auto::SOCKET{$svrname} and next;
+        }
+    }
+
+    # Send PASS if we have one.
+    if (defined $cdata->{'pass'}[0]) {
+        Auto::socksnd($svrname, 'PASS :'.$cdata->{'pass'}[0]) or return;
+    }
+    API::Std::event_run('on_preconnect', $svrname);
+    # Send NICK/USER.
+    API::IRC::nick($svrname, $cdata->{'nick'}[0]);
+    Auto::socksnd($svrname, 'USER '.$cdata->{'ident'}[0].q{ }.hostname.q{ }.$cdata->{'host'}[0].' :'.$cdata->{'realname'}[0]) or return;
+    # Add to select.
+    $Auto::SELECT->add($Auto::SOCKET{$svrname});
+    # Success!
+    alog '** Successfully connected to server: '.$svrname;
+    dbug '** Successfully connected to server: '.$svrname;
 
     return 1;
 }

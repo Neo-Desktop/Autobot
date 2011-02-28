@@ -355,89 +355,19 @@ my %cservers = conf_get('server');
 # Set the socket hash and select instance.
 our (%SOCKET, $SELECT);
 $SELECT = IO::Select->new();
-my $it = 0;
 # Iterate through each configured server.
 foreach my $cskey (keys %cservers) {
-    # Prepare socket data.
-    my %conndata = (
-    	Proto => 'tcp',
-        LocalAddr => $cservers{$cskey}{'bind'}[0],
-    	PeerAddr  => $cservers{$cskey}{'host'}[0],
-    	PeerPort  => $cservers{$cskey}{'port'}[0],
-        Timeout   => 20,
-    );
-    # Set IPv6/SSL data.
-    my $use6 = 0;
-    my $usessl = 0;
-    if (defined $cservers{$cskey}{'ipv6'}[0]) { $use6 = $cservers{$cskey}{'ipv6'}[0]; }
-    if (defined $cservers{$cskey}{'ssl'}[0]) { $usessl = $cservers{$cskey}{'ssl'}[0]; }
-
-    # CertFP.
-    if ($usessl) {
-        if (defined $cservers{$cskey}{'certfp'}[0]) {
-            if ($cservers{$cskey}{'certfp'}[0] eq 1) {
-                $conndata{'SSL_use_cert'} = 1;
-                if (defined $cservers{$cskey}{'certfp_cert'}[0]) {
-                    $conndata{'SSL_cert_file'} = "$Bin/../etc/certs/".$cservers{$cskey}{'certfp_cert'}[0];
-                }
-                if (defined $cservers{$cskey}{'certfp_key'}[0]) {
-                    $conndata{'SSL_key_file'} = "$Bin/../etc/certs/".$cservers{$cskey}{'certfp_key'}[0];
-                }
-                if (defined $cservers{$cskey}{'certfp_pass'}[0]) {
-                    $conndata{'SSL_passwd_cb'} = sub { return $cservers{$cskey}{'certfp_pass'}[0]; };
-                }
-            }
-        }
-    }
-
-    # Create the socket.
-    if ($use6) {
-        $SOCKET{$cskey} = IO::Socket::INET6->new(%conndata) or # Or error.
-        err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
-        and delete $SOCKET{$cskey} and next;
-    }
-    else {
-        if ($usessl) {
-            $SOCKET{$cskey} = IO::Socket::SSL->new(%conndata) or # Or error.
-            err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
-            and delete $SOCKET{$cskey} and next;
-        }
-        else {
-            $SOCKET{$cskey} = IO::Socket::INET->new(%conndata) or # Or error.
-            err(2, 'Failed to connect to server ('.$ERRNO.'): '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
-            and delete $SOCKET{$cskey} and next;
-        }
-    }
-
-    # Send PASS if we have one.
-    if (defined $cservers{$cskey}{'pass'}[0]) {
-    	socksnd($cskey, 'PASS :'.$cservers{$cskey}{'pass'}[0]) or
-    		err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
-    		and next;
-    }
-    API::Std::event_run('on_preconnect', $cskey);
-    # Send NICK/USER.
-    API::IRC::nick($cskey, $cservers{$cskey}{'nick'}[0]);
-    socksnd($cskey, 'USER '.$cservers{$cskey}{'ident'}[0].q{ }.hostname.q{ }.$cservers{$cskey}{'host'}[0].' :'.$cservers{$cskey}{'realname'}[0]) or
-    	err(2, 'Failed to connect to server: '.$cskey.' ['.$cservers{$cskey}{'host'}[0].q{:}.$cservers{$cskey}{'port'}[0].']', 0)
-    	and next;
-    # Add to select.
-    $SELECT->add($SOCKET{$cskey});
-    # Success!
-    alog '** Successfully connected to server: '.$cskey;
-    dbug '** Successfully connected to server: '.$cskey;
-    $it = 1;
+    Lib::Auto::ircsock(\%{$cservers{$cskey}}, $cskey);
 }
 
 # Success!
-if ($it) {
+if (keys %SOCKET) {
     alog '** Success: Connected to server(s).';
     dbug '** Success: Connected to server(s).';
 }
 else {
-    err(2, 'No server connections.', 1);
+    err(2, 'No IRC connections -- Exiting program.', 1);
 }
-undef $it;
 
 # Create core commands.
 API::Std::cmd_add('MODLOAD', 1, 'cfunc.modules', \%Core::Cmd::HELP_MODLOAD, \&Core::Cmd::cmd_modload);
