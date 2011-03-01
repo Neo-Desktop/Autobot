@@ -11,24 +11,17 @@
 The future of IRC bots is here! Xelhua gives to you, Auto 3.0, a new version of
 the popular Auto IRC bot.
 
-In this alpha6 release, we have added:
+In this alpha7 release, we have added:
 
-* Support for Microsoft Windows. See doc/WINDOWS if running on Windows.
-* Added an UNO module for playing the classic game of UNO.
-* Added an Eval module for evaluating Perl code.
-* Added a BotStats module for returning statistics about the bot.
-* PRIVMSG's and NOTICE's that would create a resulting message of >512 bytes are
-  now divided into multiple messages.
+None
 
 Bug fixes:
 
-* Fixed a bug that occurs when our configured nickname is in use.
-* Fixed a bug with multi-prefix support.
-* Fixed a bug with SASL timeouts.
+None
 
 Incompatibilities:
 
-* Module API changes. Minimum version is now 3.0.0a6 from 3.0.0a4.
+None
 
 We thank you for choosing Auto. Please remember that he is still in mid-
 development stages. But we hope we've piqued your interest, as Auto's upcoming
@@ -38,4 +31,4 @@ there for everyone to use.
 Auto's goal is to create an efficient, stable and highly customizable IRC bot
 in Perl. To offer an alternative to other platforms.
 
-Enjoy Auto 3.0.0 Alpha 6!
+Enjoy Auto 3.0.0 Alpha 7!
