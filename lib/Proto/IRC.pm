@@ -144,7 +144,8 @@ sub num352 {
     my ($svr, @ex) = @_;
 
     # Trigger on_whoreply.
-    API::Std::event_run('on_whoreply', ($svr, $ex[2], $ex[3], $ex[4], $ex[5], $ex[6], @ex[7..$#ex]));
+    $ex[9] =~ s/^://xsm;
+    API::Std::event_run('on_whoreply', ($svr, $ex[7], $ex[3], $ex[4], $ex[5], $ex[6], $ex[8], $ex[9], @ex[10..$#ex]));
 
     return 1;
 }
