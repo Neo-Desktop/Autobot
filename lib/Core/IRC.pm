@@ -125,7 +125,7 @@ hook_add("on_connect", "autojoin", sub {
 
 # WHO reply.
 hook_add('on_whoreply', 'selfwho.getdata', sub {
-    my (($svr, $nick, undef, $user, $mask, undef, undef, undef, undef, undef)) = @_;
+    my (($svr, $nick, undef, $user, $mask, undef, undef, undef, undef)) = @_;
 
     # Check if it's for us.
     if ($nick eq $Proto::IRC::botinfo{$svr}{nick}) {
