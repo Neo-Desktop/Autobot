@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Bumped minimum API version to 3.0.0a7.
     * Fixed the arguments on_whoreply passes.
     * Changed on_nick, on_quit, on_part, and on_kick source hashrefs to include server, removing svr.
 
