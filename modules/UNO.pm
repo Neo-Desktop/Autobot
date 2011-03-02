@@ -1194,7 +1194,7 @@ sub _gameover {
 
 # Subroutine for when someone changes their nick.
 sub on_nick {
-    my (($svr, $src, $newnick)) = @_;
+    my (($src, $newnick)) = @_;
 
     # Check if a game is currently running.
     if ($UNO or $UNOW) {
@@ -1227,7 +1227,7 @@ sub on_nick {
 
 # Subroutine for when someone disconnects.
 sub on_quit {
-    my (($svr, $src, undef)) = @_;
+    my (($src, undef)) = @_;
 
     # Check if a game is currently running.
     if ($UNO or $UNOW) {
@@ -1246,7 +1246,7 @@ sub on_quit {
 
 # Subroutine for when someone parts.
 sub on_part {
-    my (($svr, $src, $chan, undef)) = @_;
+    my (($src, $chan, undef)) = @_;
 
     # Check if a game is currently running.
     if ($UNO or $UNOW) {
@@ -1254,7 +1254,7 @@ sub on_part {
         
         # Check if this is the channel UNO is in.
         my ($net, $uchan) = split '/', $UNOCHAN;
-        if ($svr eq $net and lc $chan eq $uchan) {
+        if ($src->{svr} eq $net and lc $chan eq $uchan) {
             # Check if the user is playing.
             if (defined $PLAYERS{lc $src->{nick}}) {
                 privmsg($net, $uchan, "\2$src->{nick}\2 left the game.");
@@ -1268,7 +1268,7 @@ sub on_part {
 
 # Subroutine for when someone is kicked.
 sub on_kick {
-    my (($svr, undef, $chan, $user, undef)) = @_;
+    my (($src, $chan, $user, undef)) = @_;
 
     # Check if a game is currently running.
     if ($UNO or $UNOW) {
@@ -1276,7 +1276,7 @@ sub on_kick {
         
         # Check if this is the channel UNO is in.
         my ($net, $uchan) = split '/', $UNOCHAN;
-        if ($svr eq $net and lc $chan eq $uchan) {
+        if ($src->{svr} eq $net and lc $chan eq $uchan) {
             # Check if the user is playing.
             if (defined $PLAYERS{lc $user}) {
                 privmsg($net, $uchan, "\2$user\2 left the game.");

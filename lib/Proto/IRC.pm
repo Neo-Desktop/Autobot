@@ -386,7 +386,9 @@ sub cjoin {
 # Parse: KICK
 sub kick {
     my ($svr, @ex) = @_;
+
     my %src = API::IRC::usrc(substr($ex[0], 1));
+    $src{svr} = $svr;
 
     # Update chanusers.
     delete $chanusers{$svr}{$ex[2]}{$ex[3]} if defined $chanusers{$svr}{$ex[2]}{$ex[3]};
@@ -422,7 +424,7 @@ sub kick {
     else {
         # We weren't. Update chanusers and trigger on_kick.
         if (defined $chanusers{$svr}{$ex[2]}{$ex[3]}) { delete $chanusers{$svr}{$ex[2]}{$ex[3]}; }
-        API::Std::event_run("on_kick", ($svr, \%src, $ex[2], $ex[3], $msg));
+        API::Std::event_run("on_kick", (\%src, $ex[2], $ex[3], $msg));
     }
 
     return 1;
@@ -523,7 +525,8 @@ sub nick {
     $nex =~ s/^://gxsm;
 
     my %src = API::IRC::usrc(substr($uex, 1));
-    
+    $src{svr} = $svr;
+ 
     # Check if this is coming from ourselves.
     if ($src{nick} eq $botinfo{$svr}{nick}) {
     	# It is. Update bot nick hash.
@@ -538,7 +541,7 @@ sub nick {
                 delete $chanusers{$svr}{$chk}{$src{nick}};
             }
         }
-    	API::Std::event_run("on_nick", ($svr, \%src, $nex));
+    	API::Std::event_run("on_nick", (\%src, $nex));
     }
     
     return 1;	
@@ -567,7 +570,9 @@ sub notice {
 # Parse: PART
 sub part {
     my ($svr, @ex) = @_;
+
     my %src = API::IRC::usrc(substr($ex[0], 1));
+    $src{svr} = $svr;
 
     # Delete them from chanusers.
     delete $chanusers{$svr}{$ex[2]}{$src{nick}} if defined $chanusers{$svr}{$ex[2]}{$src{nick}};
@@ -584,7 +589,7 @@ sub part {
     }
 
     # Trigger on_part.
-    API::Std::event_run("on_part", ($svr, \%src, $ex[2], $msg));
+    API::Std::event_run("on_part", (\%src, $ex[2], $msg));
 
     return 1;
 }
@@ -719,7 +724,9 @@ sub privmsg {
 # Parse: QUIT
 sub quit {
     my ($svr, @ex) = @_;
+
     my %src = API::IRC::usrc(substr($ex[0], 1));
+    $src{svr} = $svr;
 
     # Set $msg to the quit message.
     my $msg = 0;
@@ -733,7 +740,7 @@ sub quit {
     }
 
     # Trigger on_quit.
-    API::Std::event_run("on_quit", ($svr, \%src, $msg));
+    API::Std::event_run("on_quit", (\%src, $msg));
     
     return 1;
 }

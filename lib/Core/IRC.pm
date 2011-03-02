@@ -28,12 +28,12 @@ hook_add("on_uprivmsg", "ctcp_version_reply", sub {
 
 # QUIT hook; delete user from chanusers.
 hook_add("on_quit", "quit_update_chanusers", sub {
-    my (($svr, $src, undef)) = @_;
+    my (($src, undef)) = @_;
     my %src = %{ $src };
 
     # Delete the user from all channels.
-    foreach my $ccu (keys %{ $Proto::IRC::chanusers{$svr} }) {
-        if (defined $Proto::IRC::chanusers{$svr}{$ccu}{$src{nick}}) { delete $Proto::IRC::chanusers{$svr}{$ccu}{$src{nick}}; }
+    foreach my $ccu (keys %{ $Proto::IRC::chanusers{$src{svr}}}) {
+        if (defined $Proto::IRC::chanusers{$src{svr}}{$ccu}{$src{nick}}) { delete $Proto::IRC::chanusers{$src{svr}}{$ccu}{$src{nick}}; }
     }
 
     return 1;
