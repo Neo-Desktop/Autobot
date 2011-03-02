@@ -67,7 +67,7 @@ sub fml
 }
 
 # Start initialization.
-API::Std::mod_init('FML', 'Xelhua', '1.00', '3.0.0a6', __PACKAGE__);
+API::Std::mod_init('FML', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
 # vim: set ai et sw=4 ts=4:
 # build: cpan=LWP::UserAgent perl=5.010000
 
@@ -110,7 +110,7 @@ have my hand back?" FML
 This module adds an extra dependency: LWP::UserAgent. You can get it from
 the CPAN <http://www.cpan.org>.
 
-This module is compatible with Auto version 3.0.0a6+.
+This module is compatible with Auto version 3.0.0a7+.
 
 Ported from Auto 2.0.
 

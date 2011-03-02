@@ -99,7 +99,7 @@ sub rigball
 
 
 # Start initialization.
-API::Std::mod_init('EightBall', 'Xelhua', '1.00', '3.0.0a6', __PACKAGE__);
+API::Std::mod_init('EightBall', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
 # vim: set ai et sw=4 ts=4:
 # build: perl=5.010000
 
@@ -143,7 +143,7 @@ command for setting ("rigging") the 8-Ball's next answer.
 
 =over
 
-This module is compatible with Auto version 3.0.0a6+.
+This module is compatible with Auto version 3.0.0a7+.
 
 Ported from Auto 1.0.
 

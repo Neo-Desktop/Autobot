@@ -211,7 +211,7 @@ sub cmd_qdb
 }
 
 
-API::Std::mod_init('QDB', 'Xelhua', '1.02', '3.0.0a6', __PACKAGE__);
+API::Std::mod_init('QDB', 'Xelhua', '1.02', '3.0.0a7', __PACKAGE__);
 # vim: set ai et sw=4 ts=4:
 # build: perl=5.010000
 

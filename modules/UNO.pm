@@ -1313,7 +1313,7 @@ sub on_rehash {
 
 
 # Start initialization.
-API::Std::mod_init('UNO', 'Xelhua', '1.03', '3.0.0a6', __PACKAGE__);
+API::Std::mod_init('UNO', 'Xelhua', '1.03', '3.0.0a7', __PACKAGE__);
 # vim: set ai et sw=4 ts=4:
 # build: perl=5.010000
 
@@ -1373,7 +1373,7 @@ The commands this adds are:
 
 All of which describe themselves quite well with just the name.
 
-This module is compatible with Auto v3.0.0a6+.
+This module is compatible with Auto v3.0.0a7+.
 
 =head1 INSTALL
 
