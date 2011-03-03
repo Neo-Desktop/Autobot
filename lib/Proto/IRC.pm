@@ -60,7 +60,7 @@ API::Std::event_add('on_whoreply');
 sub ircparse
 {
     my ($svr, $data) = @_;
-    
+
     # Split spaces into @ex.
     my @ex = split /\s+/, $data;
 
@@ -69,11 +69,11 @@ sub ircparse
     	# If it's a ping...
     	if ($ex[0] eq 'PING') {
     		# send a PONG.
-    		Auto::socksnd($svr, "PONG ".$ex[1]);
+    		Auto::socksnd($svr, "PONG $ex[1]");
     	}
     	# If it's AUTHENTICATE
     	elsif ($ex[0] eq 'AUTHENTICATE') {
-    		if (API::Std::mod_exists("SASLAuth")) {
+    		if (API::Std::mod_exists('SASLAuth')) {
                 M::SASLAuth::handle_authenticate($svr, @ex);
     		}
     	}
@@ -84,7 +84,7 @@ sub ircparse
     		}
     	}
     }
-    
+
     return 1;
 }
 
@@ -96,7 +96,7 @@ sub ircparse
 # Successful connection.
 sub num001 {
     my ($svr, @ex) = @_;
-    
+
     $got_001{$svr} = 1;
 
     # In case we don't get NICK from the server.
@@ -111,7 +111,7 @@ sub num001 {
 
     # Trigger on_connect.
     API::Std::event_run('on_connect', $svr);
-    	
+
     return 1;
 }
 
@@ -154,43 +154,43 @@ sub num352 {
 # NAMES reply.
 sub num353 {
     my ($svr, @ex) = @_;
-    
+
     # Get rid of the colon.
-    $ex[5] = substr($ex[5], 1);
+    $ex[5] = substr $ex[5], 1;
     # Delete the old chanusers hash if it exists.
-    delete $chanusers{$svr}{$ex[4]} if (defined $chanusers{$svr}{$ex[4]});
+    if (defined $chanusers{$svr}{$ex[4]}) { delete $chanusers{$svr}{$ex[4]} }
     # Iterate through each user.
-    for (my $i = 5; $i < scalar(@ex); $i++) {
+    for (5..$#ex) {
     	my $fi = 0;
-        PFITER: foreach (keys %{ $csprefix{$svr} }) {
+        PFITER: foreach my $spfx (keys %{ $csprefix{$svr} }) {
     		# Check if the user has status in the channel.
-    		if (substr($ex[$i], 0, 1) eq $csprefix{$svr}{$_}) {
+    		if (substr($ex[$_], 0, 1) eq $csprefix{$svr}{$spfx}) {
     			# He/she does. Lets set that.
-    			if (defined $chanusers{$svr}{$ex[4]}{lc $ex[$i]}) {
+    			if (defined $chanusers{$svr}{$ex[4]}{lc $ex[$_]}) {
     				# If the user has multiple statuses.
-    				$chanusers{$svr}{$ex[4]}{lc(substr($ex[$i], 1))} = $chanusers{$svr}{$ex[4]}{lc $ex[$i]}.$_;
-                    delete $chanusers{$svr}{$ex[4]}{lc $ex[$i]};
+    				$chanusers{$svr}{$ex[4]}{lc substr $ex[$_], 1} = $chanusers{$svr}{$ex[4]}{lc $ex[$_]}.$spfx;
+                    delete $chanusers{$svr}{$ex[4]}{lc $ex[$_]};
     			}
     			else {
     				# Or not.
-    				$chanusers{$svr}{$ex[4]}{lc(substr($ex[$i], 1))} = $_;
+    				$chanusers{$svr}{$ex[4]}{lc substr $ex[$_], 1} = $spfx;
     			}
     			$fi = 1;
-                $ex[$i] = substr $ex[$i], 1;
+                $ex[$_] = substr $ex[$_], 1;
     		}
     	}
         # Check if there's still a prefix.
-        foreach (keys %{$csprefix{$svr}}) {
-            if (substr($ex[$i], 0, 1) eq $csprefix{$svr}{$_}) { goto 'PFITER' }
+        foreach my $spfx (keys %{$csprefix{$svr}}) {
+            if (substr($ex[$_], 0, 1) eq $csprefix{$svr}{$spfx}) { goto 'PFITER' }
         }
     	# They had status, so go to the next user.
     	next if $fi;
     	# They didn't, set them as a normal user.
-    	if (!defined $chanusers{$svr}{$ex[4]}{lc($ex[$i])}) {
-    		$chanusers{$svr}{$ex[4]}{lc($ex[$i])} = 1;
+    	if (!defined $chanusers{$svr}{$ex[4]}{lc $ex[$_]}) {
+    		$chanusers{$svr}{$ex[4]}{lc $ex[$_]} = 1;
     	}
     }
-    
+
     return 1;
 }
 
@@ -209,17 +209,17 @@ sub num396 {
 # Erroneous nickname.
 sub num432 {
     my ($svr, undef) = @_;
-    
+
     if ($got_001{$svr}) {
-    	err(3, "Got error from server[".$svr."]: Erroneous nickname.", 0);
+    	err(3, "Got error from server[$svr]: Erroneous nickname.", 0);
     }
     else {
-    	err(2, "Got error from server[".$svr."] before 001: Erroneous nickname. Closing connection.", 0);
-    	API::IRC::quit($svr, "An error occurred.");
+    	err(2, "Got error from server[$svr] before connection complete: Erroneous nickname. Closing connection.", 0);
+    	API::IRC::quit($svr, 'An error occurred.');
     }
-    
-    delete $botinfo{$svr}{newnick} if (defined $botinfo{$svr}{newnick});
-    
+
+    if (defined $botinfo{$svr}{newnick}) { delete $botinfo{$svr}{newnick} }
+
     return 1;
 }
 
@@ -227,11 +227,11 @@ sub num432 {
 # Nickname is already in use.
 sub num433 {
     my ($svr, undef) = @_;
-    
+
     if (defined $botinfo{$svr}{newnick}) {
-    	API::IRC::nick($svr, $botinfo{$svr}{newnick}."_");
+    	API::IRC::nick($svr, $botinfo{$svr}{newnick}.'_');
     }
-    
+
     return 1;
 }
 
@@ -239,14 +239,14 @@ sub num433 {
 # Nick change too fast.
 sub num438 {
     my ($svr, @ex) = @_;
-    
+
     if (defined $botinfo{$svr}{newnick}) {
-    	API::Std::timer_add("num438_".$botinfo{$svr}{newnick}, 1, $ex[11], sub { 
+    	API::Std::timer_add('num438_'.$botinfo{$svr}{newnick}, 1, $ex[11], sub {
     		API::IRC::nick($Proto::IRC::botinfo{$svr}{newnick});
-    		delete $botinfo{$svr}{newnick} if (defined $botinfo{$svr}{newnick});
+    		if (defined $botinfo{$svr}{newnick}) { delete $botinfo{$svr}{newnick} }
     	 });
     }
-    
+
     return 1;
 }
 
@@ -254,9 +254,9 @@ sub num438 {
 # You're banned creep!
 sub num465 {
     my ($svr, undef) = @_;
-    
-    err(3, "Banned from ".$svr."! Closing link...", 0);
-    
+
+    err(3, "Banned from $svr.! Closing link...", 0);
+
     return 1;
 }
 
@@ -264,9 +264,9 @@ sub num465 {
 # Cannot join channel: Channel is full.
 sub num471 {
     my ($svr, (undef, undef, undef, $chan)) = @_;
-    
-    err(3, "Cannot join channel ".$chan." on ".$svr.": Channel is full.", 0);
-    
+
+    err(3, "Cannot join channel $chan on $svr: Channel is full.", 0);
+
     return 1;
 }
 
@@ -274,9 +274,9 @@ sub num471 {
 # Cannot join channel: Channel is invite-only.
 sub num473 {
     my ($svr, (undef, undef, undef, $chan)) = @_;
-    
-    err(3, "Cannot join channel ".$chan." on ".$svr.": Channel is invite-only.", 0);
-    
+
+    err(3, "Cannot join channel $chan on $svr: Channel is invite-only.", 0);
+
     return 1;
 }
 
@@ -284,8 +284,8 @@ sub num473 {
 # Cannot join channel: Banned from channel.
 sub num474 {
     my ($svr, (undef, undef, undef, $chan)) = @_;
-    
-    err(3, "Cannot join channel ".$chan." on ".$svr.": Banned from channel.", 0);
+
+    err(3, "Cannot join channel $chan on $svr: Banned from channel.", 0);
     
     return 1;
 }
@@ -294,8 +294,8 @@ sub num474 {
 # Cannot join channel: Bad key.
 sub num475 {
     my ($svr, (undef, undef, undef, $chan)) = @_;
-    
-    err(3, "Cannot join channel ".$chan." on ".$svr.": Bad key.", 0);
+
+    err(3, "Cannot join channel $chan on $svr: Bad key.", 0);
     
     return 1;
 }
@@ -305,7 +305,7 @@ sub num475 {
 sub num477 {
     my ($svr, (undef, undef, undef, $chan)) = @_;
     
-    err(3, "Cannot join channel ".$chan." on ".$svr.": Need registered nickname.", 0);
+    err(3, "Cannot join channel $chan on $svr: Need registered nickname.", 0);
     
     return 1;
 }
