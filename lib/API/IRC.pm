@@ -11,6 +11,8 @@ our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(ban cjoin cpart cmode umode kick privmsg notice quit nick names
                     topic who usrc match_mask);
 
+# Create the on_disconnect event.
+API::Std::event_add('on_disconnect');
 
 # Set a ban, based on config bantype value.
 sub ban
@@ -188,12 +190,12 @@ sub quit {
     	Auto::socksnd($svr, "QUIT :$reason");
     }
     else {
-    	Auto::socksnd($svr, "QUIT :Leaving");
+    	Auto::socksnd($svr, 'QUIT :Leaving');
     }
-    
-    delete $Proto::IRC::got_001{$svr} if (defined $Proto::IRC::got_001{$svr});
-    delete $Proto::IRC::botinfo{$svr} if (defined $Proto::IRC::botinfo{$svr});
-    
+
+    # Trigger on_disconnect.
+    API::Std::event_run('on_disconnect', $svr);
+
     return 1;
 }
 
