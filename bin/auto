@@ -14,6 +14,7 @@ use English qw(-no_match_vars);
 use Sys::Hostname;
 use IO::Socket;
 use IO::Select;
+use Getopt::Long;
 use DBI;
 use Class::Unload;
 use FindBin qw($Bin);
@@ -44,7 +45,7 @@ use Proto::IRC;
 use Core::IRC;
 use Core::Cmd;
 
-our $VERSION = 3.0.0;
+our $VERSION = 3.000000;
 local $PROGRAM_NAME = 'auto';
 
 # Check for build files.
@@ -97,6 +98,62 @@ API::Std::event_add('on_sigterm');
 API::Std::event_add('on_sigint');
 API::Std::event_add('on_sighup');
 
+# Get arguments.
+our ($USECONFIG, $DEBUG);
+my ($opt_help, $opt_version);
+GetOptions(
+    'c=s'      => \$USECONFIG,
+    'config=s' => \$USECONFIG,
+    'h'        => \$opt_help,
+    'help'     => \$opt_help,
+    'd'        => \$DEBUG,
+    'debug'    => \$DEBUG,
+    'v'        => \$opt_version,
+    'version'  => \$opt_version
+);
+
+# If we were passed -h, print help.
+if ($opt_help) {
+    print <<HELP;
+
+Usage: $PROGRAM_NAME [options]
+    --help, -h     Prints this help.
+    --version, -v  Prints the version of this Auto.
+    --debug, -d    Runs Auto in debug mode. Debug mode will print out debug
+                   messages, including IRC raw data, to screen. This will also
+                   stop Auto from forking into the background.
+
+    --config=FILENAME, -c  Uses etc/FILENAME for the configuration file.
+
+HELP
+    exit 1;
+}
+
+# If we were passed -v, print version.
+if ($opt_version) {
+    say q{};
+    say NAME.' version '.VER.', subversion '.SVER.', revision '.REV.' ('.VER.q{.}.SVER.q{.}.REV.RSTAGE.').';
+    print <<VERINFO;
+
+Copyright (C) 2010-2011, Xelhua Development Group. All rights reserved.
+
+Auto is released under the licensing terms of the New (3-Clause) BSD License,
+which may be found in doc/LICENSE.
+
+For documentation, you might refer to README, doc/*, and the Xelhua Wiki at
+http://wiki.xelhua.org. Documentation for modules is stored in Man Page and
+HTML form in autodoc/.
+
+For support, visit the Xelhua Forums at http://forums.xelhua.org, or drop by
+the official IRC chatroom at irc.xelhua.org #xelhua. Please report bugs and
+request new features at http://rm.xelhua.org.
+
+VERINFO
+    exit 1;
+}
+
+undef $opt_help;
+undef $opt_version;
 
 # Print startup message.
 say <<'EOF';
@@ -111,18 +168,6 @@ say '* '.NAME.' (version '.VER.q{.}.SVER.q{.}.REV.RSTAGE.') is starting up...';
 
 our ($APID, %TIMERS);
 
-# Get arguments.
-our $DEBUG = 0;
-our $NUC = 0;
-if (defined $ARGV[0]) {
-    foreach (@ARGV) {
-    	given ($_) {
-            when ('-d') { $DEBUG = 1; }
-            when ('-nuc') { $NUC = 1; }
-        }
-    }
-}
-
 # Check for updates.
 Lib::Auto::checkver();
 
@@ -132,10 +177,14 @@ if ($ENFEAT =~ /ipv6/) { require IO::Socket::INET6; }
 if ($ENFEAT =~ /ssl/) { require IO::Socket::SSL; }
 
 # Parse configuration file.
-say '* Parsing configuration file auto.conf...';
-our $CONF = Parser::Config->new('auto.conf') or err(1, 'Failed to parse configuration file!', 1);
+my $configfile = 'auto.conf';
+if ($USECONFIG) { $configfile = $USECONFIG; }
+say "* Parsing configuration file $configfile...";
+our $CONF = Parser::Config->new($configfile) or err(1, 'Failed to parse configuration file!', 1);
 our %SETTINGS = $CONF->parse or err(1, 'Failed to parse configuration file!', 1);
 say ' Success';
+undef $configfile;
+undef $USECONFIG;
 
 if (conf_get('die')) {
     if ((conf_get('die'))[0][0] == 1) {
