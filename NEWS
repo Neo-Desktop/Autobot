@@ -18,7 +18,7 @@ In this alpha7 release, we have added:
 
 Bug fixes:
 
-None
+* Fixed a bug where a CAP entry for a network was not recreated on a reconnect.
 
 Incompatibilities:
 

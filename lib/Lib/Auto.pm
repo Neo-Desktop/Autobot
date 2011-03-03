@@ -214,6 +214,8 @@ sub ircsock {
         }
     }
 
+    # Create a CAP entry if it doesn't already exist.
+    if (!$Proto::IRC::cap{$svrname}) { $Proto::IRC::cap{$svrname} = 'multi-prefix' }
     # Send PASS if we have one.
     if (defined $cdata->{'pass'}[0]) {
         Auto::socksnd($svrname, 'PASS :'.$cdata->{'pass'}[0]) or return;
