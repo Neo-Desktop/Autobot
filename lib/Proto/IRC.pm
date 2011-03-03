@@ -47,6 +47,7 @@ API::Std::event_add('on_rcjoin');
 API::Std::event_add('on_ucjoin');
 API::Std::event_add('on_isupport');
 API::Std::event_add('on_kick');
+API::Std::event_add('on_namesreply');
 API::Std::event_add('on_nick');
 API::Std::event_add('on_notice');
 API::Std::event_add('on_part');
@@ -156,7 +157,7 @@ sub num353 {
     my ($svr, @ex) = @_;
 
     # Get rid of the colon.
-    $ex[5] = substr $ex[5], 1;
+    $ex[5] =~ s/^://xsm;
     # Delete the old chanusers hash if it exists.
     if (defined $chanusers{$svr}{$ex[4]}) { delete $chanusers{$svr}{$ex[4]} }
     # Iterate through each user.
@@ -190,6 +191,9 @@ sub num353 {
     		$chanusers{$svr}{$ex[4]}{lc $ex[$_]} = 1;
     	}
     }
+
+    # Trigger on_namesreply.
+    API::Std::event_run('on_namesreply', ($svr, $ex[4], @ex[5..$#ex]));
 
     return 1;
 }

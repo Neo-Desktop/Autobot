@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Added hook on_namesreply.
     * All data related to a network is now deleted on disconnect.
     * Added hook on_disconnect.
     * Added various options to bin/auto, including support for multiple config
