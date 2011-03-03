@@ -99,9 +99,10 @@ API::Std::event_add('on_sigint');
 API::Std::event_add('on_sighup');
 
 # Get arguments.
-our ($USECONFIG, $DEBUG);
-my ($opt_help, $opt_version);
+our ($DEBUG, $NUC);
+my ($opt_help, $opt_version, $USECONFIG);
 GetOptions(
+    'nuc'      => \$NUC,
     'c=s'      => \$USECONFIG,
     'config=s' => \$USECONFIG,
     'h'        => \$opt_help,
