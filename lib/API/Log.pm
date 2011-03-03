@@ -114,7 +114,7 @@ sub slog
         # It is, continue.
 
         # Split the network and channel.
-        my ($net, $chan) = split '/', (conf_get('logchan'))[0][0];
+        my ($net, $chan) = split m/[\/]/, (conf_get('logchan'))[0][0];
         $chan = lc $chan;
 
         # Check if we're connected to the network.
