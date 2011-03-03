@@ -13,7 +13,8 @@ the popular Auto IRC bot.
 
 In this alpha7 release, we have added:
 
-None
+* Support for multiple configuration files using bin/auto -c=FILENAME. See
+  bin/auto -h for details.
 
 Bug fixes:
 
