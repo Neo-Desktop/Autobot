@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * All data related to a network is now deleted on disconnect.
+    * Added hook on_disconnect.
     * Added various options to bin/auto, including support for multiple config
       files. See bin/auto -h for details.
     * Changed on_nick, on_quit, on_part, and on_kick source hashrefs to include

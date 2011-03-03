@@ -471,6 +471,7 @@ while (1) {
     		err(2, "Lost connection to $sockid!", 0);
     		$SELECT->remove($sock);
             delete $SOCKET{$sockid};
+            API::Std::event_run('on_disconnect', $sockid);
             if (!keys %SOCKET) {
                 # No more connections, stop the program.
                 API::Std::event_run('on_shutdown');
