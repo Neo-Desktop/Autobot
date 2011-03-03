@@ -43,8 +43,8 @@ use Parser::Config;
 use Parser::Lang;
 use Proto::IRC;
 use Core::IRC;
+use Core::IRC::Users;
 use Core::Cmd;
-use Lib::Users;
 
 our $VERSION = 3.000000;
 local $PROGRAM_NAME = 'auto';
