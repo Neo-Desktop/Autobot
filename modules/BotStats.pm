@@ -73,7 +73,6 @@ sub stats {
 
 
 API::Std::mod_init('BotStats', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
-# vim: set ai et sw=4 ts=4:
 # build: perl=5.010000
 
 __END__
@@ -113,3 +112,5 @@ This module is Copyright 2010-2011 Xelhua Development Group.
 This module is released under the same licensing terms as Auto itself.
 
 =cut
+
+# vim: set ai et sw=4 ts=4:

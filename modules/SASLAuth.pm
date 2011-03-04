@@ -112,7 +112,6 @@ sub handle_906
 
 # Start initialization.
 API::Std::mod_init('SASLAuth', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
-# vim: set ai et sw=4 ts=4:
 # build: perl=5.010000
 
 __END__
@@ -172,3 +171,5 @@ This adds an extra dependency: You must build Auto with the
 This module is compatible with Auto v3.0.0a7+.
 
 =back
+
+# vim: set ai et sw=4 ts=4:

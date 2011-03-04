@@ -283,7 +283,6 @@ sub _getdata
 
 
 API::Std::mod_init('ChanTopics', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
-# vim: set ai et sw=4 ts=4:
 # build: perl=5.010000
 
 __END__
@@ -343,3 +342,5 @@ This module is compatible with Auto v3.0.0a7+.
 Ported from v1.0.
 
 =back
+
+# vim: set ai et sw=4 ts=4:

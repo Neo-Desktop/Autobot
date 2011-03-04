@@ -3,8 +3,9 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
-    * Renamed Lib::User to Core::IRC::Users.
-    * Added Lib::User, for network-wide user tracking. This brings many new
+    * Vim modelines must be at the bottom of files. Modules updated.
+    * Renamed Lib::Users to Core::IRC::Users.
+    * Added Lib::Users, for network-wide user tracking. This brings many new
       possibilities to modules, including an account system.
     * Added hook on_namesreply.
     * All data related to a network is now deleted on disconnect.

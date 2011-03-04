@@ -67,7 +67,6 @@ sub gettitle
 
 # Start initialization.
 API::Std::mod_init('LinkTitle', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
-# vim: set ai et sw=4 ts=4:
 # build: cpan=LWP::UserAgent,HTML::Entities perl=5.010000
 
 __END__
@@ -120,3 +119,5 @@ This module is Copyright 2010-2011 Xelhua Development Group. All rights
 reserved.
 
 This module is released under the same licensing terms as Auto itself.
+
+# vim: set ai et sw=4 ts=4:

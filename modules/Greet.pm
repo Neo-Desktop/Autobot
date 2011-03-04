@@ -126,7 +126,6 @@ sub hook_rcjoin
 
 # Start initialization.
 API::Std::mod_init('Greet', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
-# vim: set ai et sw=4 ts=4:
 # build: perl=5.010000
 
 __END__
@@ -157,3 +156,5 @@ user that has a greet in the database joins a channel the bot is in.
 This module is compatible with Auto version 3.0.0a7+.
 
 =back
+
+# vim: set ai et sw=4 ts=4:

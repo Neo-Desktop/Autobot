@@ -126,7 +126,7 @@ foreach my $line (@MPBUF) {
         $got_end = 1;
     }
 
-    if ($got_end and $line ne '__END__') {
+    if ($got_end and $line ne '__END__' and $line !~ m/^# vim:/sm) {
         $podbuf .= $line."\n";
     }
 }

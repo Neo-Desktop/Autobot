@@ -119,7 +119,6 @@ sub reverse
 
 # Start initialization.
 API::Std::mod_init('Bitly', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
-# vim: set ai et sw=4 ts=4:
 # build: cpan=LWP::UserAgent,URI::Escape perl=5.010000
 
 __END__
@@ -182,3 +181,5 @@ get it from the CPAN <http://www.cpan.org>.
 This module is compatible with Auto version 3.0.0a7+.
 
 =back
+
+# vim: set ai et sw=4 ts=4:

@@ -76,7 +76,6 @@ sub cmd_dict
 
 # Start initialization.
 API::Std::mod_init('Dictionary', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
-# vim: set ai et sw=4 ts=4:
 # build: cpan=Net::Dict perl=5.010000
 
 __END__
@@ -102,3 +101,5 @@ This module adds an extra dependency: Net::Dict. You can get it from the CPAN
 This module is compatible with Auto v3.0.0a7+.
 
 =back
+
+# vim: set ai et sw=4 ts=4:
