@@ -116,7 +116,7 @@ GetOptions(
 
 # If we were passed -h, print help.
 if ($opt_help) {
-    print <<HELP;
+    print <<'HELP';
 
 Usage: $PROGRAM_NAME [options]
     --help, -h     Prints this help.
@@ -135,7 +135,7 @@ HELP
 if ($opt_version) {
     say q{};
     say NAME.' version '.VER.', subversion '.SVER.', revision '.REV.' ('.VER.q{.}.SVER.q{.}.REV.RSTAGE.').';
-    print <<VERINFO;
+    print <<'VERINFO';
 
 Copyright (C) 2010-2011, Xelhua Development Group. All rights reserved.
 
