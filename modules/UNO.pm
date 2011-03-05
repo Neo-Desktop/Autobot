@@ -5,7 +5,7 @@ package M::UNO;
 use strict;
 use warnings;
 use feature qw(switch);
-use API::Std qw(cmd_add cmd_del hook_add hook_del trans conf_get err has_priv match_user);
+use API::Std qw(cmd_add cmd_del hook_add hook_del trans conf_get err has_priv match_user awarn);
 use API::IRC qw(notice privmsg);
 
 # Set various variables we'll need throughout runtime.

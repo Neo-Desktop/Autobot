@@ -20,6 +20,7 @@ Bug fixes:
 
 * Fixed a bug where a CAP entry for a network was not recreated on a reconnect.
 * Fixed a bug where incoming PART's from ourselves were not parsed.
+* Fixed a bug in UNO where rehashing during a game caused a crash.
 
 Incompatibilities:
 
