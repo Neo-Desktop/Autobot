@@ -42,6 +42,8 @@ our (%got_001, %botinfo, %botchans, %csprefix, %chanusers, %chanmodes, %cap);
 
 # Events.
 API::Std::event_add('on_capack');
+API::Std::event_add('on_cmode');
+API::Std::event_add('on_umode');
 API::Std::event_add('on_connect');
 API::Std::event_add('on_rcjoin');
 API::Std::event_add('on_ucjoin');
@@ -451,7 +453,9 @@ sub mode {
     if ($ex[2] ne $botinfo{$svr}{nick}) {
         # Set data we'll need later.
         my $chan = $ex[2];
+        $ex[3] =~ s/^://xsm;
         my $modes = $ex[3];
+        my $fmodes = join ' ', @ex[3..$#ex];
         $modes =~ s/^://xsm;
         # Get rid of the useless data, so the mode parser will work smoothly.
         shift @ex; shift @ex; shift @ex; shift @ex;
@@ -528,8 +532,14 @@ sub mode {
                 }
             }   
         }
+        # Trigger on_cmode.
+        API::Std::event_run('on_cmode', ($svr, $chan, $fmodes));
     }
-
+    else {
+        # User mode change; trigger on_umode.
+        $ex[3] =~ s/^://xsm;
+        API::Std::event_run('on_umode', ($svr, @ex[3..$#ex]));
+    }
     return 1;
 }
 
