@@ -6,28 +6,21 @@ use strict;
 use warnings;
 use API::Std qw(hook_add hook_del rchook_add rchook_del conf_get);
 use API::Log qw(alog);
-my %opered = ();
 
 # Initialization subroutine.
 sub _init
 {
     # Add a hook for when we join a channel.
     hook_add("on_connect", "Oper.onconnect", \&M::Oper::on_connect) or return 0;
-    # Add a hook for when we get numeric 381 (RPL_YOUREOPER)
-    rchook_add("381", "Oper.on381", \&M::Oper::on_num381) or return 0;
-    # Add a hook for when we get numeric 313 (RPL_WHOISOPERATOR)
-    rchook_add("313", "Oper.on381", \&M::Oper::on_num313) or return 0;
     # Add a hook for when we get numeric 491 (ERR_NOOPERHOST)
     rchook_add("491", "Oper.on381", \&M::Oper::on_num491) or return 0;
-    foreach (keys %Auto::SOCKET) {
-        $opered{$_} = 0;
-    }
     return 1;
 }
 
 # Void subroutine.
 sub _void
 {
+    return 1;
     # Delete the hooks.
     hook_del("on_connect", "Oper.onconnect") or return 0;
     rchook_del("381", "Oper.on381") or return 0;
@@ -40,7 +33,6 @@ sub _void
 sub on_connect
 {
     my ($svr) = @_;
-    Auto::socksnd("WHOIS ".$Proto::IRC::botinfo{$svr}{nick});
     # Get the configuration values.
     my $u = (conf_get("server:$svr:oper_username"))[0][0] if conf_get("server:$svr:oper_username");
     my $p = (conf_get("server:$svr:oper_password"))[0][0] if conf_get("server:$svr:oper_password");
@@ -48,22 +40,6 @@ sub on_connect
     return if !$u or !$p;
     # Send the OPER command.
     Auto::socksnd($svr, "OPER $u $p");
-    return 1;
-}
-
-# On 313 subroutine
-sub on_num313 {
-    my ($svr, @ex) = @_;
-    # It's us - set ourselves as opered.
-    $opered{$svr} = 1 if $ex[3] eq $Proto::IRC::botinfo{$svr}{nick};
-    return 1;
-}
-
-# On 381 subroutine
-sub on_num381 {
-    my ($svr, @ex) = @_;
-    # We just opered.
-    $opered{$svr} = 1;
     return 1;
 }
 
@@ -76,18 +52,18 @@ sub on_num491 {
     return 1;
 }
 
-# A subroutine to check if Auto is opered on a server
+# A subroutine to check if we are opered on a server
 sub is_opered {
     my ($svr) = @_;
     # Auto is not opered.
-    return 0 if !$opered{$svr};
+    return 0 if $Proto::IRC::botinfo{$svr}{modes} !~ m/o/xsm;
     # Auto is opered.
-    return 1 if $opered{$svr};
+    return 1 if $Proto::IRC::botinfo{$svr}{modes} =~ m/o/xsm;
     return;
 }
 
 # Start initialization.
-API::Std::mod_init('Oper', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
+API::Std::mod_init('Oper', 'Xelhua', '1.01', '3.0.0a7', __PACKAGE__);
 # build: perl=5.010000
 
 __END__
@@ -98,7 +74,7 @@ Oper - Auto oper-on-connect module.
 
 =head1 VERSION
 
- 1.00
+ 1.01
 
 =head1 SYNOPSIS
 
