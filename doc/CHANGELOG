@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Proto::IRC::umodes renamed to Proto::IRC::botinfo{svr}{modes}.
     * Fixed a bug where incoming PART's from ourselves were not parsed.
     * Our usermodes are now tracked in Proto::IRC::umodes.
     * Added events on_cmode and on_umode.

@@ -38,7 +38,7 @@ our %RAWC = (
 );
 
 # Variables for various functions.
-our (%got_001, %botinfo, %botchans, %csprefix, %chanusers, %chanmodes, %cap, %umodes);
+our (%got_001, %botinfo, %botchans, %csprefix, %chanusers, %chanmodes, %cap);
 
 # Events.
 API::Std::event_add('on_capack');

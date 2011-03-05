@@ -223,10 +223,10 @@ hook_add('on_umode', 'core.irc.state.umode', sub {
         else {
             # Adjust our modes.
             if ($op) {
-                $Proto::IRC::umodes{$svr} .= $_;
+                $Proto::IRC::botinfo{$svr}{modes} .= $_;
             }
             else {
-                $Proto::IRC::umodes{$svr} =~ s/($_)//xsm;
+                $Proto::IRC::botinfo{$svr}{modes} =~ s/($_)//xsm;
             }
         }
     }
