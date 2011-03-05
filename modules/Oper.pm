@@ -38,7 +38,7 @@ sub on_connect
     # They don't exist - don't continue.
     return if !$u or !$p;
     # Send the OPER command.
-    Auto::socksnd($svr, "OPER $u $p");
+    oper($svr, $u, $p);
     return 1;
 }
 
@@ -59,6 +59,15 @@ sub is_opered {
     # Auto is opered.
     return 1 if $Proto::IRC::botinfo{$svr}{modes} =~ m/o/xsm;
     return;
+}
+
+# Start of the API
+
+# Sends the OPER command to the specified server.
+sub oper {
+    my ($svr, $user, $pass) = @_;
+    Auto::socksnd($svr, "OPER $user $pass");
+    return 1;
 }
 
 # Start initialization.
