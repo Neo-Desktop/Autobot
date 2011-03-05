@@ -21,15 +21,15 @@ my $features = 'base ssl sqlite';
 if (defined $ARGV[0]) {
     foreach (@ARGV) {
     	if ($_ eq '-h' or $_ eq '--help') {
-    		println '*** ./install help ***';
-    		println ' --enable-sasl - Enable support for SASL.';
+            println '*** ./install help ***';
+            println ' --enable-sasl - Enable support for SASL.';
             println ' --enable-ipv6 - Enable support for IPv6.';
             println ' --disable-ssl - Disable support for SSL.';
-    		println '*** End of Help ***';
-    		exit 1;
+            println '*** End of Help ***';
+            exit 1;
     	}
     	elsif ($_ eq '--enable-sasl') {
-    		$features .= ' sasl';
+            $features .= ' sasl';
     	}
         elsif ($_ eq '--disable-ssl') {
             $features =~ s/ ssl//g;
@@ -44,7 +44,7 @@ if (defined $ARGV[0]) {
             $features =~ s/(sqlite|mysql)/pgsql/g;
         }
         else {
-    		println "Warning: Unknown option '$_'";
+            println "Warning: Unknown option '$_'";
     	}
     }
 }
