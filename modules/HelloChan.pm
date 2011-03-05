@@ -12,7 +12,7 @@ sub _init
 {
     # Add a hook for when we join a channel.
     hook_add("on_ucjoin", "HelloChan", \&M::HelloChan::hello) or return 0;
-    return 0;
+    return 1;
 }
 
 # Void subroutine.
