@@ -104,48 +104,46 @@ API::Std::mod_init('EightBall', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
 
 __END__
 
-=head1 EightBall
+=head1 NAME
 
-=head2 Description
+Eightball - A magic eightball module.
 
-=over
+=head1 VERSION
+
+ 1.00
+
+=head1 SYNOPSIS
+
+ <JohnSmith> !8ball Will I be rich?
+ <Auto> Question: Will I be rich?
+ <Auto> Answer: Heck no!
+ >Auto< rigball Of course!
+ <JohnSmith> !8ball Will I be famous?
+ <Auto> Question: Will I be famous?
+ <Auto> Answer: Of course!
+
+=head1 DESCRIPTION
 
 This module adds the 8BALL and RIGBALL commands, 8BALL is a channel
 command for asking the magic 8-Ball a question, RIGBALL is a private
 command for setting ("rigging") the 8-Ball's next answer.
 
-=back
+=head1 INSTALL
 
-=head2 Examples
+No additonal steps need to be taking to use this module.
 
-=over
+=head1 AUTHOR
 
-<JohnSmith> !8ball Will I be rich?
-<Auto> Question: Will I be rich?
-<Auto> Answer: Heck no!
->Auto< rigball Of course!
-<JohnSmith> !8ball Will I be famous?
-<Auto> Question: Will I be famous?
-<Auto> Answer: Of course!
+This module was written by Elijah Perrault.
 
-=back
+This module is maintained by Xelhua Development Group.
 
-=head2 To Do
+=head1 LICENSE AND COPYRIGHT
 
-=over
+This module is Copyright 2010-2011 Xelhua Development Group.
 
-* Add Spanish, French and German translations for the help hashes.
+Released under the same licensing terms as Auto itself.
 
-=back
-
-=head2 Technical
-
-=over
-
-This module is compatible with Auto version 3.0.0a7+.
-
-Ported from Auto 1.0.
-
-=back
+=cut
 
 # vim: set ai et sw=4 ts=4:
