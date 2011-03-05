@@ -18,7 +18,7 @@ sub _init
     # Add sasl to supported CAP for servers configured with SASL.
     my %servers = conf_get('server');
     foreach my $svr (keys %servers) {
-        if (conf_get("server:$svr:sasl_username")) { $Proto::IRC::cap{$svr} .= ' sasl'; }
+        if (conf_get("server:$svr:sasl_username") and conf_get("server:$svr:sasl_password")) { $Proto::IRC::cap{$svr} .= ' sasl'; }
     }
     # Hook for when CAP ACK sasl is received.
     hook_add('on_capack', 'sasl.cap', \&M::SASLAuth::handle_capack) or return;
