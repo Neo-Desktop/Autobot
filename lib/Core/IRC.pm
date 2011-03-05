@@ -204,6 +204,36 @@ hook_add('on_disconnect', 'core.irc.deldata', sub {
     return 1;
 });
 
+# Track our usermodes.
+hook_add('on_umode', 'core.irc.state.umode', sub {
+    my (($svr, $modes)) = @_;
+
+    # Remove anything after a space.
+    $modes =~ s/(\s.*)//xsm;
+
+    # Split the modes.
+    my @modes = split //, $modes;
+
+    # Set operator to 1.
+    my $op = 1;
+    # Iterate through the modes.
+    foreach (@modes) {
+        if ($_ eq '-') { $op = 0 }
+        elsif ($_ eq '+') { $op = 1 }
+        else {
+            # Adjust our modes.
+            if ($op) {
+                $Proto::IRC::umodes{$svr} .= $_;
+            }
+            else {
+                $Proto::IRC::umodes{$svr} =~ s/($_)//xsm;
+            }
+        }
+    }
+
+    return 1;
+});
+
 
 1;
 # vim: set ai et sw=4 ts=4:

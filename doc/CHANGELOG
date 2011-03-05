@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Our usermodes are now tracked in Proto::IRC::umodes.
     * Added events on_cmode and on_umode.
     * Added event on_myinfo for RPL_MYINFO (numeric 004).
     * Raw hooks now take hook names and support multiple hooks. This changes
