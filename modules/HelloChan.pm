@@ -12,7 +12,7 @@ sub _init
 {
     # Add a hook for when we join a channel.
     hook_add("on_ucjoin", "HelloChan", \&M::HelloChan::hello) or return 0;
-    return 1;
+    return 0;
 }
 
 # Void subroutine.
@@ -41,12 +41,40 @@ API::Std::mod_init('HelloChan', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
 
 __END__
 
-=head1 HelloChan
+=head1 NAME
 
-=over
+HelloChan - An example module. Also, cows go moo.
 
-This is an example module. Also, cows go moo.
+=head1 VERSION
 
-=back
+ 1.00
+
+=head1 SYNOPSIS
+
+ * Auto has joined #moocows
+ <Auto> Hello channel! I am a bot!
+
+=head1 DESCRIPTION
+
+This module sends "Hello channel! I am a bot!" whenever it 
+joins a channel.
+
+=head1 INSTALL
+
+No additonal steps need to be taking to use this module.
+
+=head1 AUTHOR
+
+This module was written by Elijah Perrault.
+
+This module is maintained by Xelhua Development Group.
+
+=head1 LICENSE AND COPYRIGHT
+
+This module is Copyright 2010-2011 Xelhua Development Group.
+
+Released under the same licensing terms as Auto itself.
+
+=cut
 
 # vim: set ai et sw=4 ts=4:
