@@ -120,4 +120,6 @@ reserved.
 
 This module is released under the same licensing terms as Auto itself.
 
+=cut
+
 # vim: set ai et sw=4 ts=4:
