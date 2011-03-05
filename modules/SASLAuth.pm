@@ -23,11 +23,11 @@ sub _init
     # Hook for when CAP ACK sasl is received.
     hook_add('on_capack', 'sasl.cap', \&M::SASLAuth::handle_capack) or return;
     # Hook for parsing 903.
-    rchook_add('903', \&M::SASLAuth::handle_903) or return;
+    rchook_add('903', 'sasl.903', \&M::SASLAuth::handle_903) or return;
     # Hook for parsing 904.
-    rchook_add('904', \&M::SASLAuth::handle_904) or return;
+    rchook_add('904', 'sasl.904', \&M::SASLAuth::handle_904) or return;
     # Hook for parsing 906.
-    rchook_add('906', \&M::SASLAuth::handle_906) or return;
+    rchook_add('906', 'sasl.906', \&M::SASLAuth::handle_906) or return;
     return 1;
 }
 
@@ -36,9 +36,9 @@ sub _void
 {
     # Delete the hooks.
     hook_del('on_capack') or return;
-    rchook_del('903') or return;
-    rchook_del('904') or return;
-    rchook_del('906') or return;
+    rchook_del('903', 'sasl.903') or return;
+    rchook_del('904', 'sasl.904') or return;
+    rchook_del('906', 'sasl.906') or return;
     return 1;
 }
 

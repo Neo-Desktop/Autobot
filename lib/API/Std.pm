@@ -9,7 +9,7 @@ use Exporter;
 use base qw(Exporter);
 
 
-our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS);
+our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS, %RAWHOOKS);
 our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add 
     				cmd_del hook_add hook_del rchook_add rchook_del match_user
     				has_priv mod_exists ratelimit_check fpfmt);
@@ -263,12 +263,16 @@ sub timer_del
 # Hook onto a raw command.
 sub rchook_add
 {
-    my ($cmd, $sub) = @_;
+    my ($cmd, $name, $sub) = @_;
     $cmd = uc $cmd;
 
-    if (defined $Proto::IRC::RAWC{$cmd}) { return; }
-
-    $Proto::IRC::RAWC{$cmd} = $sub;
+    # Make sure core doesn't already handle this.
+    if (defined $Proto::IRC::RAWC{$cmd}) { return }
+    # If the hook already exists, ignore it.
+    if (defined $RAWHOOKS{$cmd}{$name}) { return }
+    
+    # Create the hook.
+    $RAWHOOKS{$cmd}{$name} = $sub;
 
     return 1;
 }
@@ -276,12 +280,14 @@ sub rchook_add
 # Delete a raw command hook.
 sub rchook_del
 {
-    my ($cmd) = @_;
+    my ($cmd, $name) = @_;
     $cmd = uc $cmd;
 
-    if (!defined $Proto::IRC::RAWC{$cmd}) { return; }
+    # Make sure the hook exists.
+    if (!defined $RAWHOOKS{$cmd}{$name}) { return }
 
-    delete $Proto::IRC::RAWC{$cmd};
+    # Delete it.
+    delete $RAWHOOKS{$cmd}{$name};
 
     return 1;
 }

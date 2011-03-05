@@ -78,10 +78,16 @@ sub ircparse
                 M::SASLAuth::handle_authenticate($svr, @ex);
     		}
     	}
+        # Check if it's handled by core.
+        elsif (defined $RAWC{$ex[1]}) {
+            &{ $RAWC{$ex[1]} }($svr, @ex);
+        }
     	else {
-    		# otherwise, check %RAWC for ex[1].
-    		if (defined $RAWC{$ex[1]}) {
-    			&{ $RAWC{$ex[1]} }($svr, @ex);
+    		# otherwise, check for a raw hook.
+    		if (defined $API::Std::RAWHOOKS{$ex[1]}) {
+    			foreach (keys %{$API::Std::RAWHOOKS{$ex[1]}}) {
+                    &{ $API::Std::RAWHOOKS{$ex[1]}{$_} }($svr, @ex);
+                }
     		}
     	}
     }

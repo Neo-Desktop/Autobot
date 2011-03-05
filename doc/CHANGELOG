@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Raw hooks now take hook names and support multiple hooks. This changes
+      rchook_add and rchook_del.
     * Vim modelines must be at the bottom of files. Modules updated.
     * Renamed Lib::Users to Core::IRC::Users.
     * Added Lib::Users, for network-wide user tracking. This brings many new
