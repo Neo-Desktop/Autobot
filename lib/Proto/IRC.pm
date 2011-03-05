@@ -38,7 +38,7 @@ our %RAWC = (
 );
 
 # Variables for various functions.
-our (%got_001, %botinfo, %botchans, %csprefix, %chanusers, %chanmodes, %cap);
+our (%got_001, %botinfo, %botchans, %csprefix, %chanusers, %chanmodes, %cap, %umodes);
 
 # Events.
 API::Std::event_add('on_capack');
@@ -54,6 +54,7 @@ API::Std::event_add('on_namesreply');
 API::Std::event_add('on_nick');
 API::Std::event_add('on_notice');
 API::Std::event_add('on_part');
+API::Std::event_add('on_upart');
 API::Std::event_add('on_cprivmsg');
 API::Std::event_add('on_uprivmsg');
 API::Std::event_add('on_quit');
@@ -597,23 +598,32 @@ sub part {
 
     my %src = API::IRC::usrc(substr($ex[0], 1));
     $src{svr} = $svr;
-
-    # Delete them from chanusers.
-    delete $chanusers{$svr}{$ex[2]}{$src{nick}} if defined $chanusers{$svr}{$ex[2]}{$src{nick}};
     
-    # Set $msg to the part message.
-    my $msg = 0;
-    if (defined $ex[3]) {
-        $msg = substr($ex[3], 1);
-        if (defined $ex[4]) {
-            for (my $i = 4; $i < scalar(@ex); $i++) {
-                $msg .= " ".$ex[$i];
+    # Check if it's from us or someone else.
+    if ($src{nick} eq $botinfo{$svr}{nick}) {
+        # Delete this channel from botchans.
+        if ($botchans{$svr}{$ex[2]}) { delete $botchans{$svr}{$ex[2]}; }
+        # Trigger on_upart.
+        API::Std::event_run('on_upart', ($svr, $ex[2]));
+    }
+    else {
+        # Delete them from chanusers.
+        delete $chanusers{$svr}{$ex[2]}{$src{nick}} if defined $chanusers{$svr}{$ex[2]}{$src{nick}};
+    
+        # Set $msg to the part message.
+        my $msg = 0;
+        if (defined $ex[3]) {
+            $msg = substr($ex[3], 1);
+            if (defined $ex[4]) {
+                for (my $i = 4; $i < scalar(@ex); $i++) {
+                    $msg .= " ".$ex[$i];
+                }
             }
         }
-    }
 
-    # Trigger on_part.
-    API::Std::event_run("on_part", (\%src, $ex[2], $msg));
+        # Trigger on_part.
+        API::Std::event_run("on_part", (\%src, $ex[2], $msg));
+    }
 
     return 1;
 }

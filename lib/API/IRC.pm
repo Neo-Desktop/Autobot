@@ -69,8 +69,6 @@ sub cpart
     	Auto::socksnd($svr, "PART $chan :Leaving");
     }
 
-    if (defined $Proto::IRC::botchans{$svr}{$chan}) { delete $Proto::IRC::botchans{$svr}{$chan}; }
-    
     return 1;
 }
 

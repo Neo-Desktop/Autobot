@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Fixed a bug where incoming PART's from ourselves were not parsed.
     * Our usermodes are now tracked in Proto::IRC::umodes.
     * Added events on_cmode and on_umode.
     * Added event on_myinfo for RPL_MYINFO (numeric 004).
