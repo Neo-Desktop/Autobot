@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Added event on_myinfo for RPL_MYINFO (numeric 004).
     * Raw hooks now take hook names and support multiple hooks. This changes
       rchook_add and rchook_del.
     * Vim modelines must be at the bottom of files. Modules updated.

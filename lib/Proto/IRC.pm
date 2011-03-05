@@ -47,6 +47,7 @@ API::Std::event_add('on_rcjoin');
 API::Std::event_add('on_ucjoin');
 API::Std::event_add('on_isupport');
 API::Std::event_add('on_kick');
+API::Std::event_add('on_myinfo');
 API::Std::event_add('on_namesreply');
 API::Std::event_add('on_nick');
 API::Std::event_add('on_notice');
@@ -130,6 +131,9 @@ sub num004 {
     # Log server name and version.
     API::Log::alog "! $svr: $ex[3] running version $ex[4]";
     API::Log::dbug "! $svr: $ex[3] running version $ex[4]";
+
+    # Trigger on_myinfo.
+    API::Std::event_run('on_myinfo', ($svr, @ex[3..$#ex]));
 
     return 1;
 }
