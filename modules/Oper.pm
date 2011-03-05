@@ -19,9 +19,8 @@ sub _init
     rchook_add("313", "Oper.on381", \&M::Oper::on_num313) or return 0;
     # Add a hook for when we get numeric 491 (ERR_NOOPERHOST)
     rchook_add("491", "Oper.on381", \&M::Oper::on_num491) or return 0;
-    foreach (%Auto::SOCKET) {
+    foreach (keys %Auto::SOCKET) {
         $opered{$_} = 0;
-        Auto::socksnd($_, "WHOIS ".$Proto::IRC::botnick{$_}{nick});
     }
     return 1;
 }
@@ -41,6 +40,7 @@ sub _void
 sub on_connect
 {
     my ($svr) = @_;
+    Auto::socksnd("WHOIS ".$Proto::IRC::botinfo{$svr}{nick});
     # Get the configuration values.
     my $u = (conf_get("server:$svr:oper_username"))[0][0] if conf_get("server:$svr:oper_username");
     my $p = (conf_get("server:$svr:oper_password"))[0][0] if conf_get("server:$svr:oper_password");
