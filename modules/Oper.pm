@@ -20,7 +20,6 @@ sub _init
 # Void subroutine.
 sub _void
 {
-    return 1;
     # Delete the hooks.
     hook_del("on_connect", "Oper.onconnect") or return 0;
     rchook_del("381", "Oper.on381") or return 0;
