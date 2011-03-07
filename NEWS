@@ -16,6 +16,7 @@ In this alpha7 release, we have added:
 * Support for multiple configuration files using bin/auto -c=FILENAME. See
   bin/auto -h for details.
 * Added network-wide user tracking through Core::IRC::Users.
+* Added an Oper module.
 
 Bug fixes:
 
