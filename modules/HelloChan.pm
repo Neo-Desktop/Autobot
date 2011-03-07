@@ -11,7 +11,7 @@ use API::IRC qw(privmsg);
 sub _init
 {
     # Add a hook for when we join a channel.
-    hook_add("on_ucjoin", "HelloChan", \&M::HelloChan::hello) or return 0;
+    hook_add('on_ucjoin', 'HelloChan', \&M::HelloChan::hello) or return 0;
     return 1;
 }
 
@@ -19,7 +19,7 @@ sub _init
 sub _void
 {
     # Delete the hook.
-    hook_del("on_ucjoin", "HelloChan") or return 0;
+    hook_del('on_ucjoin', 'HelloChan') or return 0;
     return 1;
 }
 
@@ -29,7 +29,7 @@ sub hello
     my (($svr, $chan)) = @_;
     
     # Send a PRIVMSG.
-    privmsg($svr, $chan, "Hello channel! I am a bot!");
+    privmsg($svr, $chan, 'Hello channel! I am a bot!');
     
     return 1;
 }

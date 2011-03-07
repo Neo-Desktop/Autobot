@@ -11,9 +11,9 @@ use API::Log qw(alog);
 sub _init
 {
     # Add a hook for when we join a channel.
-    hook_add("on_connect", "Oper.onconnect", \&M::Oper::on_connect) or return 0;
+    hook_add('on_connect', 'Oper.onconnect', \&M::Oper::on_connect) or return 0;
     # Add a hook for when we get numeric 491 (ERR_NOOPERHOST)
-    rchook_add("491", "Oper.on381", \&M::Oper::on_num491) or return 0;
+    rchook_add('491', 'Oper.on381', \&M::Oper::on_num491) or return 0;
     return 1;
 }
 
@@ -21,10 +21,10 @@ sub _init
 sub _void
 {
     # Delete the hooks.
-    hook_del("on_connect", "Oper.onconnect") or return 0;
-    rchook_del("381", "Oper.on381") or return 0;
-    rchook_del("313", "Oper.on313") or return 0;
-    rchook_del("491", "Oper.on491") or return 0;
+    hook_del('on_connect', 'Oper.onconnect') or return 0;
+    rchook_del('381', 'Oper.on381') or return 0;
+    rchook_del('313', 'Oper.on313') or return 0;
+    rchook_del('491', 'Oper.on491') or return 0;
     return 1;
 }
 
