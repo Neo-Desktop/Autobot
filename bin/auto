@@ -22,9 +22,11 @@ our $Bin = $Bin; ## no critic qw(NamingConventions::Capitalization Variables::Pr
 BEGIN {
     unshift @INC, "$Bin/../lib";
 
-    open my $gitfh, '<', "$Bin/../.git/refs/heads/indev";
-    our $VERGITREV = substr readline $gitfh, 0, 7;
-    close $gitfh;
+    if (-d "$Bin/../.git") {
+        open my $gitfh, '<', "$Bin/../.git/refs/heads/indev";
+        our $VERGITREV = substr readline $gitfh, 0, 7;
+        close $gitfh;
+    }
 
     # Set version information.
     use constant { ## no critic qw(ValuesAndExpressions::ProhibitConstantPragma)
