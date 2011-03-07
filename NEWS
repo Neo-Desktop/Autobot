@@ -15,16 +15,19 @@ In this alpha7 release, we have added:
 
 * Support for multiple configuration files using bin/auto -c=FILENAME. See
   bin/auto -h for details.
+* Added network-wide user tracking through Core::IRC::Users.
 
 Bug fixes:
 
 * Fixed a bug where a CAP entry for a network was not recreated on a reconnect.
 * Fixed a bug where incoming PART's from ourselves were not parsed.
 * Fixed a bug in UNO where rehashing during a game caused a crash.
+* Fixed a bug where appropriate data was not cleared after a disconnect.
+* Fixed a bug where Vim modelines were in an incorrect spot in modules.
 
 Incompatibilities:
 
-None
+* Many API changes - Minimum version bumped to 3.0.0a7.
 
 We thank you for choosing Auto. Please remember that he is still in mid-
 development stages. But we hope we've piqued your interest, as Auto's upcoming
