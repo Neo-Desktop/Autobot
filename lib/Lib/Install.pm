@@ -6,8 +6,6 @@ use strict;
 use warnings;
 use Exporter;
 use English qw(-no_match_vars);
-use FindBin qw($Bin);
-our $Bin = $Bin;
 
 our $VERSION = 1.00;
 our @ISA = qw(Exporter);
@@ -39,27 +37,32 @@ sub modfind
 
 sub build
 {
-    my ($features) = @_;
+    my ($features, $Bin, $syswide) = @_;
+    if (!defined $syswide) { $syswide = 0 }
 
-    open(my $FTIME, q{>}, "$Bin/build/time") or println "Failed to install." and exit;
+    open(my $FTIME, q{>}, "$Bin/time") or println "Failed to install." and exit;
     print $FTIME time."\n" or println "Failed to install." and exit;
     close $FTIME or println "Failed to install." and exit;
 
-    open(my $FOS, q{>}, "$Bin/build/os") or println "Failed to install." and exit;
+    open(my $FOS, q{>}, "$Bin/os") or println "Failed to install." and exit;
     print $FOS $OSNAME."\n" or println "Failed to install." and exit;
     close $FOS or println "Failed to install." and exit;
 
-    open(my $FFEAT, q{>}, "$Bin/build/feat") or println "Failed to install." and exit;
+    open(my $FFEAT, q{>}, "$Bin/feat") or println "Failed to install." and exit;
     print $FFEAT $features."\n" or println "Failed to install." and exit;
     close $FFEAT or println "Failed to install." and exit;
 
-    open(my $FPERL, q{>}, "$Bin/build/perl") or println "Failed to install." and exit;
+    open(my $FPERL, q{>}, "$Bin/perl") or println "Failed to install." and exit;
     print $FPERL "$]\n" or println "Failed to install." and exit;
     close $FPERL or println "Failed to install." and exit;
 
-    open(my $FVER, q{>}, "$Bin/build/ver") or println "Failed to install." and exit;
+    open(my $FVER, q{>}, "$Bin/ver") or println "Failed to install." and exit;
     print $FVER "3.0.0d\n" or println "Failed to install." and exit;
     close $FVER or println "Failed to install." and exit;
+
+    open my $FSYS, '>', "$Bin/syswide" or println "Failed to install." and exit;
+    print {$FSYS} "$syswide\n" or println "Failed to install." and exit;
+    close $FSYS or println "Failed to install." and exit;
 
     return 1;
 }
@@ -114,6 +117,7 @@ sub checkcore
 
 sub installmods
 {
+    my ($prefix) = @_;
     print 'Would you like to install any official modules? [y/n] ';
     my $response = <STDIN>;
     chomp $response;
@@ -125,7 +129,7 @@ sub installmods
         $modules =~ s/ //g;
         my @modst = split ',', $modules;
         foreach (@modst) {
-            system "perl \"$Bin/bin/buildmod\" $_";
+            system "perl \"$prefix/bin/buildmod\" $_";
         }
     }
 }
