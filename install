@@ -185,9 +185,16 @@ if ($upref) {
     if (!-d $langdir) { make_path($langdir) }
     if (!-d $moddir) { make_path($moddir) }
 
+    my $bgenssl = 'genssl';
+    my $bbuildmod = 'buildmod';
+    if ($libbuild) {
+        $bgenssl = "auto-$bgenssl";
+        $bbuildmod = "auto-$bbuildmod";
+    }
     copy("$Bin/bin/auto", "$PREFIX/bin/auto");
-    copy("$Bin/bin/buildmod", "$PREFIX/bin/auto-buildmod");
-    copy("$Bin/bin/genssl", "$PREFIX/bin/auto-genssl");
+    copy("$Bin/bin/buildmod", "$PREFIX/bin/$bbuildmod");
+    copy("$Bin/bin/genssl", "$PREFIX/bin/$bgenssl");
+    chmod 0755, "$PREFIX/bin/auto", "$PREFIX/bin/$bgenssl", "$PREFIX/bin/$bbuildmod";
     rcopy("$Bin/lib/*", "$libdir/");
     remove_tree("$libdir/File");
 }
