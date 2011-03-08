@@ -13,7 +13,7 @@ use XML::Simple;
 sub _init 
 {
     # Create the Weather command.
-    cmd_add("WEATHER", 0, 0, \%M::Weather::HELP_WEATHER, \&M::Weather::weather) or return 0;
+    cmd_add('WEATHER', 0, 0, \%M::Weather::HELP_WEATHER, \&M::Weather::weather) or return 0;
 
     # Success.
     return 1;
@@ -23,7 +23,7 @@ sub _init
 sub _void 
 {
     # Delete the Weather command.
-    cmd_del("WEATHER") or return 0;
+    cmd_del('WEATHER') or return 0;
 
     # Success.
     return 1;
@@ -45,7 +45,7 @@ sub weather
     $ua->timeout(2);
     # Put together the call to the Wunderground API. 
     if (!defined $args[0]) {
-    	notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
+    	notice($src->{svr}, $src->{nick}, trans('Not enough parameters').".");
     	return 0;
     }
     my $loc = join(' ', @args);
@@ -66,12 +66,12 @@ sub weather
     	}
     	else {
     	# Otherwise, send an error message.
-    		privmsg($src->{svr}, $src->{chan}, "Location not found.");
+    		privmsg($src->{svr}, $src->{chan}, 'Location not found.');
     	}
     }
     else {
     # Otherwise, send an error message.
-    	privmsg($src->{svr}, $src->{chan}, "An error occurred while retrieving your weather.");
+    	privmsg($src->{svr}, $src->{chan}, 'An error occurred while retrieving your weather.');
     }
 
     return 1;

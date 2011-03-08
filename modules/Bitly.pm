@@ -14,12 +14,12 @@ sub _init
 {
     # Check for required configuration values.
     if (!(conf_get('bitly:user'))[0][0] or !(conf_get('bitly:key'))[0][0]) {
-    	err(2, "Please verify that you have bitly_user and bitly_key defined in your configuration file.", 0);
+    	err(2, 'Please verify that you have bitly_user and bitly_key defined in your configuration file.', 0);
     	return 0;
     }
     # Create the SHORTEN and REVERSE commands.
-    cmd_add("SHORTEN", 0, 0, \%M::Bitly::HELP_SHORTEN, \&M::Bitly::shorten) or return 0;
-    cmd_add("REVERSE", 0, 0, \%M::Bitly::HELP_REVERSE, \&M::Bitly::reverse) or return 0;
+    cmd_add('SHORTEN', 0, 0, \%M::Bitly::HELP_SHORTEN, \&M::Bitly::shorten) or return 0;
+    cmd_add('REVERSE', 0, 0, \%M::Bitly::HELP_REVERSE, \&M::Bitly::reverse) or return 0;
 
     # Success.
     return 1;
@@ -29,8 +29,8 @@ sub _init
 sub _void 
 {
     # Delete the SHORTEN and REVERSE commands.
-    cmd_del("SHORTEN") or return 0;
-    cmd_del("REVERSE") or return 0;
+    cmd_del('SHORTEN') or return 0;
+    cmd_del('REVERSE') or return 0;
 
     # Success.
     return 1;
@@ -56,7 +56,7 @@ sub shorten
     
     # Put together the call to the Bit.ly API. 
     if (!defined $args[0]) {
-        notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
+        notice($src->{svr}, $src->{nick}, trans('Not enough parameters').".");
         return 0;
     }
     my ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
@@ -74,7 +74,7 @@ sub shorten
     }
     else {
         # Otherwise, send an error message.
-        privmsg($src->{svr}, $src->{chan}, "An error occurred while shortening your URL.");
+        privmsg($src->{svr}, $src->{chan}, 'An error occurred while shortening your URL.');
     }
 
     return 1;
@@ -92,7 +92,7 @@ sub reverse
 
     # Put together the call to the Bit.ly API.
     if (!defined $args[0]) {
-        notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
+        notice($src->{svr}, $src->{nick}, trans('Not enough parameters').".");
         return 0;
     }
     my ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
@@ -110,7 +110,7 @@ sub reverse
     }
     else {
         # Otherwise, send an error message.
-    	privmsg($src->{svr}, $src->{chan}, "An error occurred while reversing your URL.");
+    	privmsg($src->{svr}, $src->{chan}, 'An error occurred while reversing your URL.');
     }
 
     return 1;
