@@ -6,8 +6,11 @@
 package Install;
 use strict;
 use warnings;
+use Getopt::Long;
 use English qw(-no_match_vars);
 use FindBin qw($Bin);
+use File::Copy;
+use File::Path qw(make_path remove_tree);
 our $Bin = $Bin;
 BEGIN { unshift(@INC, "$Bin/lib"); }
 use Lib::Install;
@@ -16,38 +19,64 @@ use Lib::Install;
 our $VERSION = 1.00;
 our $ERROR = 0;
 
-# Iterate through the arguments passed to us.
-my $features = 'base ssl sqlite';
-if (defined $ARGV[0]) {
-    foreach (@ARGV) {
-    	if ($_ eq '-h' or $_ eq '--help') {
-            println '*** ./install help ***';
-            println ' --enable-sasl - Enable support for SASL.';
-            println ' --enable-ipv6 - Enable support for IPv6.';
-            println ' --disable-ssl - Disable support for SSL.';
-            println '*** End of Help ***';
-            exit 1;
-    	}
-    	elsif ($_ eq '--enable-sasl') {
-            $features .= ' sasl';
-    	}
-        elsif ($_ eq '--disable-ssl') {
-            $features =~ s/ ssl//g;
-        }
-        elsif ($_ eq '--enable-ipv6') {
-            $features .= ' ipv6';
-        }
-        elsif ($_ eq '--with-mysql') {
-            $features =~ s/(sqlite|pgsql)/mysql/g;
-        }
-    	elsif ($_ eq '--with-pgsql') {
-            $features =~ s/(sqlite|mysql)/pgsql/g;
-        }
-        else {
-            println "Warning: Unknown option '$_'";
-    	}
-    }
+# Store the arguments passed to us.
+my ($opt_help, $opt_syswide, $PREFIX, $feature_nossl, $feature_sasl, $feature_ipv6, $feature_mysql, $feature_pgsql);
+GetOptions(
+    '--disable-ssl'    => \$feature_nossl,
+    '--enable-sasl'    => \$feature_sasl,
+    '--enable-ipv6'    => \$feature_ipv6,
+    '--with-mysql'     => \$feature_mysql,
+    '--with-pgsql'     => \$feature_pgsql,
+    '--prefix=s'       => \$PREFIX,
+    '--syswide'        => \$opt_syswide,
+    '--help'           => \$opt_help,
+);
+
+# If --help was passed.
+if ($opt_help) {
+    print <<"HELP";
+
+Auto IRC Bot Installation Wizard (v1.00).
+Usage: perl install [options]
+
+Options:
+    --disable-ssl  Disables SSL support.
+    --enable-sasl  Enables SASL support.
+    --enable-ipv6  Enables IPv6 support.
+    --with-mysql   Uses MySQL instead of SQLite.
+    --with-pgsql   Uses PostgreSQL instead of SQLite.
+    --syswide      Prefixes bin/ files with auto- (excluding `auto` itself), as
+                   well as installs build/ to lib/ instead. Always use this
+                   when installing to /usr.
+
+    --prefix=PREFIX  Installs files to PREFIX
+                     [$Bin]
+
+HELP
+    exit 1;
 }
+
+# Set features.
+my $features = 'base';
+$features .= ' ssl' unless $feature_nossl;
+$features .= ' sasl' if $feature_sasl;
+$features .= ' ipv6' if $feature_ipv6;
+if ($feature_mysql) { $features .= ' mysql' }
+elsif ($feature_pgsql) { $features .= ' pgsql' }
+else { $features .= ' sqlite' }
+
+# Where to install.
+my $upref;
+if (!$PREFIX) {
+    $PREFIX = $Bin;
+    $upref = 0;
+}
+else { $upref = 1 }
+
+# Adjust installation to be more appropriate for system-wide installs.
+my $libbuild = 0;
+if ($opt_syswide) { $libbuild = 1 }
+
 
 # Check Perl version.
 println "Checking Perl version..... $^V";
@@ -130,15 +159,46 @@ else {
 # Create build.
 println "\0";
 println "Building.....";
-if (!-d "$Bin/build") {
-    mkdir "$Bin/build";
+if (!-d $PREFIX) { make_path($PREFIX) }
+my $libdir;
+if ($libbuild) { $libdir = "$PREFIX/lib/autobot/3.0.0" }
+else { $libdir = "$PREFIX/lib" }
+my $builddir;
+if ($libbuild) { $builddir = "$libdir/build" }
+else { $builddir = "$PREFIX/build" }
+if (!-d $builddir) { make_path($builddir) }
+build($features, $builddir, $opt_syswide);
+
+# Install.
+if ($upref) {
+    require File::Copy::Recursive;
+    File::Copy::Recursive->import('rcopy');
+    my $langdir;
+    if ($libbuild) { $langdir = "$libdir/lang" }
+    else { $langdir = "$PREFIX/lang" }
+    my $moddir;
+    if ($libbuild) { $moddir = "$libdir/modules" }
+    else { $moddir = "$PREFIX/modules" }
+    println "Installing.....";
+    if (!-d "$PREFIX/bin") { make_path("$PREFIX/bin") }
+    if (!-d $libdir) { make_path($libdir) }
+    if (!-d $langdir) { make_path($langdir) }
+    if (!-d $moddir) { make_path($moddir) }
+
+    copy("$Bin/bin/auto", "$PREFIX/bin/auto");
+    copy("$Bin/bin/buildmod", "$PREFIX/bin/auto-buildmod");
+    copy("$Bin/bin/genssl", "$PREFIX/bin/auto-genssl");
+    rcopy("$Bin/lib/*", "$libdir/");
+    remove_tree("$libdir/File");
 }
 
-build($features);
 println 'Done.';
 
 println q{};
-installmods();
+if ($libbuild) {
+    println 'To install modules, run the auto-buildmod utility on a module.';
+}
+else { installmods($PREFIX) }
 println q{};
 
 # Success!
