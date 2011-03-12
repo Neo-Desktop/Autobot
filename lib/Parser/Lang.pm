@@ -13,15 +13,15 @@ sub parse
     my ($lang) = @_;
     
     # Check that the language file exists.
-    unless (-e "$Auto::Bin/../lang/$lang.alf") {
+    if (!-e "$Auto::bin{lng}/$lang.alf") {
     	# Otherwise, use English.
     	dbug "Language '$lang' not found. Using English.";
     	alog "Language '$lang' not found. Using English.";
-    	$lang = "en";
+    	$lang = 'en';
     }
     
     # Open, read and close the file.
-    open(my $FALF, q{<}, "$Auto::Bin/../lang/$lang.alf") or return 0;
+    open(my $FALF, '<', "$Auto::bin{lng}/$lang.alf") or return 0;
     my @fbuf = <$FALF>;
     close $FALF;
     

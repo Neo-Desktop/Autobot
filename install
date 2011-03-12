@@ -200,6 +200,7 @@ if ($upref) {
     copy("$Bin/bin/genssl", "$PREFIX/bin/$bgenssl");
     chmod 0755, "$PREFIX/bin/auto", "$PREFIX/bin/$bgenssl", "$PREFIX/bin/$bbuildmod";
     rcopy("$Bin/lib/*", "$libdir/");
+    rcopy("$Bin/lang/*", "$langdir/");
     copy("$Bin/etc/example.conf", "$distdir/");
     remove_tree("$libdir/File");
 }

@@ -24,8 +24,8 @@ BEGIN {
     $bin{cwd} = getcwd;
     if (!-e "$Bin/../build/syswide") {
         # Must be a custom PREFIX install.
-        $bin{etc} = "$bin{cwd}/../etc";
-        $bin{var} = "$bin{cwd}/../var";
+        $bin{etc} = "$bin{cwd}/etc";
+        $bin{var} = "$bin{cwd}/var";
         if (!-e "$Bin/lib/Lib/Auto.pm") {
             # Must be a system wide install.
             $bin{lib} = "$Bin/../lib/autobot/3.0.0";    

@@ -13,17 +13,17 @@ sub new
     my $self = bless {}, $class;
 
     # Check to see if the configuration file exists.
-    if (!-e "$Auto::Bin/../etc/$file") {
+    if (!-e "$Auto::bin{etc}/$file") {
     	return 0;
     }
     
     # Open, read and close the config.
-    open(my $FCONF, q{<}, "$Auto::Bin/../etc/$file") or return 0;
+    open(my $FCONF, q{<}, "$Auto::bin{etc}/$file") or return 0;
     my @cosfl = <$FCONF> or return 0;
     close $FCONF or return 0;
     
     # Save it to self variable.
-    $self->{'config'}->{'path'} = "$Auto::Bin/../etc/$file";
+    $self->{'config'}->{'path'} = "$Auto::bin{etc}/$file";
 
     return $self;
 }
