@@ -29,12 +29,15 @@ BEGIN {
         if (!-e "$Bin/lib/Lib/Auto.pm") {
             # Must be a system wide install.
             $bin{lib} = "$Bin/../lib/autobot/3.0.0";    
+            $bin{bld} = "$bin{lib}/build";
+            $bin{lng} = "$bin{lib}/lang";
         }
         else {
             # Or not.
             $bin{lib} = "$Bin/../lib";
+            $bin{bld} = "$Bin/../build";
+            $bin{lng} = "$Bin/../lang";
         }
-        $bin{bld} = "$bin{lib}/build";
     }
     else {
         # Must be a standard install.
@@ -42,6 +45,7 @@ BEGIN {
         $bin{var} = "$Bin/../var";
         $bin{lib} = "$Bin/../lib";
         $bin{bld} = "$Bin/../build";
+        $bin{lng} = "$Bin/../lang";
     }
 
     unshift @INC, $bin{lib};
@@ -257,14 +261,14 @@ given (lc((conf_get('database:format'))[0][0])) {
         # Import DBD::SQLite.
         require DBD::SQLite;
 
-        if (!-e "$Bin/../etc/".(conf_get('database:filename'))[0][0]) {
+        if (!-e "$bin{etc}/".(conf_get('database:filename'))[0][0]) {
             # Create <database:filename> if it's missing.
-            open my $dbfh, '>', "$Bin/../etc/".(conf_get('database:filename'))[0][0];
+            open my $dbfh, '>', "$bin{etc}/".(conf_get('database:filename'))[0][0];
             close $dbfh;
-            chmod 0755, "$Bin/../etc/".(conf_get('database:filename'))[0][0];
+            chmod 0755, "$bin{etc}/".(conf_get('database:filename'))[0][0];
         }
         # Connect to database.
-        $DB = DBI->connect("dbi:SQLite:dbname=$Bin/../etc/".(conf_get('database:filename'))[0][0]) or err(2, 'Failed to connect to database!', 1);
+        $DB = DBI->connect("dbi:SQLite:dbname=$bin{etc}/".(conf_get('database:filename'))[0][0]) or err(2, 'Failed to connect to database!', 1);
     }
     when ('mysql') {
         # MySQL.
@@ -298,7 +302,7 @@ given (lc((conf_get('database:format'))[0][0])) {
     #    require DBD::CSV;
     #
     #    # Connect to database.
-    #    $DB = DBI->connect("dbi:CSV:f_dir=$Bin/../etc/".(conf_get('database:dir'))[0][0]) or err(2, 'Failed to connect to database!', 1);
+    #    $DB = DBI->connect("dbi:CSV:f_dir=$bin{etc}/".(conf_get('database:dir'))[0][0]) or err(2, 'Failed to connect to database!', 1);
     #}
     when ('pgsql') {
         # PostgreSQL.
