@@ -56,12 +56,12 @@ sub alog
     my $time = POSIX::strftime('%Y-%m-%d %I:%M:%S %p', localtime);
 
     # Create var/ if it doesn't exist.
-    if (!-d "$Auto::Bin/../var") {
-    	mkdir "$Auto::Bin/../var", 0600; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
+    if (!-d "$Auto::bin{var}") {
+    	mkdir "$Auto::bin{var}", 0600; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
     }
 
     # Open the logfile, print the log message to it and close it.
-    open my $FLOG, '>>', "$Auto::Bin/../var/$date.log" or return;
+    open my $FLOG, '>>', "$Auto::bin{var}/$date.log" or return;
     print {$FLOG} "[$time] $lmsg\n" or return;
     close $FLOG or return;
 
@@ -85,7 +85,7 @@ sub expire_logs
     }
 
     # Iterate through each logfile.
-    foreach my $file (glob fpfmt("$Auto::Bin/../var/*")) {
+    foreach my $file (glob fpfmt("$Auto::bin{var}/*")) {
     	my (undef, $file) = split 'bin/../var/', $file; ## no critic qw(BuiltinFunctions::ProhibitStringySplit)
 
     	# Convert filename to UNIX time.
@@ -97,7 +97,7 @@ sub expire_logs
 
     	# If it's older than <config_value> days, delete it.
     	if (time - $epoch > 86_400 * $celog) { ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
-    		unlink "$Auto::Bin/../var/$file";
+    		unlink "$Auto::bin{var}/$file";
     	}
     }
 
