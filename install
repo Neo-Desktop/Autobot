@@ -179,11 +179,15 @@ if ($upref) {
     my $moddir;
     if ($libbuild) { $moddir = "$libdir/modules" }
     else { $moddir = "$PREFIX/modules" }
+    my $distdir;
+    if ($libbuild) { $distdir = "$libdir/dist" }
+    else { $distdir = "$PREFIX/dist" }
     println "Installing.....";
     if (!-d "$PREFIX/bin") { make_path("$PREFIX/bin") }
     if (!-d $libdir) { make_path($libdir) }
     if (!-d $langdir) { make_path($langdir) }
     if (!-d $moddir) { make_path($moddir) }
+    if (!-d $distdir) { make_path($distdir) }
 
     my $bgenssl = 'genssl';
     my $bbuildmod = 'buildmod';
@@ -196,6 +200,7 @@ if ($upref) {
     copy("$Bin/bin/genssl", "$PREFIX/bin/$bgenssl");
     chmod 0755, "$PREFIX/bin/auto", "$PREFIX/bin/$bgenssl", "$PREFIX/bin/$bbuildmod";
     rcopy("$Bin/lib/*", "$libdir/");
+    copy("$Bin/etc/example.conf", "$distdir/");
     remove_tree("$libdir/File");
 }
 
