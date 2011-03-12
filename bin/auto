@@ -19,8 +19,32 @@ use DBI;
 use Class::Unload;
 use FindBin qw($Bin);
 our $Bin = $Bin; ## no critic qw(NamingConventions::Capitalization Variables::ProhibitPackageVars)
+our %bin;
 BEGIN {
-    unshift @INC, "$Bin/../lib";
+    $bin{cwd} = getcwd;
+    if (!-e "$Bin/../build/syswide") {
+        # Must be a custom PREFIX install.
+        $bin{etc} = "$bin{cwd}/../etc";
+        $bin{var} = "$bin{cwd}/../var";
+        if (!-e "$Bin/lib/Lib/Auto.pm") {
+            # Must be a system wide install.
+            $bin{lib} = "$Bin/../lib/autobot/3.0.0";    
+        }
+        else {
+            # Or not.
+            $bin{lib} = "$Bin/../lib";
+        }
+        $bin{bld} = "$bin{lib}/build";
+    }
+    else {
+        # Must be a standard install.
+        $bin{etc} = "$Bin/../etc";
+        $bin{var} = "$Bin/../var";
+        $bin{lib} = "$Bin/../lib";
+        $bin{bld} = "$Bin/../build";
+    }
+
+    unshift @INC, $bin{lib};
 
     if (-d "$Bin/../.git") {
         open my $gitfh, '<', "$Bin/../.git/refs/heads/indev";
@@ -52,12 +76,12 @@ our $VERSION = 3.000000;
 local $PROGRAM_NAME = 'auto';
 
 # Check for build files.
-if (!-e "$Bin/../build/os" or !-e "$Bin/../build/perl" or !-e "$Bin/../build/time" or !-e "$Bin/../build/ver") {
+if (!-e "$bin{bld}/os" or !-e "$bin{bld}/perl" or !-e "$bin{bld}/time" or !-e "$bin{bld}/ver") {
     say 'Missing build file(s). Please build Auto before running it.' and exit;
 }
 
 # Check build OS.
-open my $BFOS, '<', "$Bin/../build/os" or say 'Cannot start: Broken build.' and exit;
+open my $BFOS, '<', "$bin{bld}/os" or say 'Cannot start: Broken build.' and exit;
 my @BFOS = <$BFOS>;
 close $BFOS or say 'Cannot start: Broken build.' and exit;
 if ($BFOS[0] ne $OSNAME."\n") {
@@ -67,14 +91,14 @@ undef @BFOS;
 
 # Check build features.
 our $ENFEAT;
-open my $BFFEAT, '<', "$Bin/../build/feat" or say 'Cannot start: Broken build.' and exit;
+open my $BFFEAT, '<', "$bin{bld}/feat" or say 'Cannot start: Broken build.' and exit;
 my @BFFEAT = <$BFFEAT>;
 close $BFFEAT or say 'Cannot start: Broken build.' and exit;
 $ENFEAT = substr $BFFEAT[0], 0, length($BFFEAT[0]) - 1;
 undef @BFFEAT;
 
 # Check build Perl version.
-open my $BFPERL, '<', "$Bin/../build/perl" or say 'Cannot start: Broken build.' and exit;
+open my $BFPERL, '<', "$bin{bld}/perl" or say 'Cannot start: Broken build.' and exit;
 my @BFPERL = <$BFPERL>;
 close $BFPERL or say 'Cannot start: Broken build.' and exit;
 if ($BFPERL[0] ne $]."\n") {
@@ -83,7 +107,7 @@ if ($BFPERL[0] ne $]."\n") {
 undef @BFPERL;
 
 # Check build Auto version.
-open my $BFVER, '<', "$Bin/../build/ver" or say 'Cannot start: Broken build.' and exit;
+open my $BFVER, '<', "$bin{bld}/ver" or say 'Cannot start: Broken build.' and exit;
 my @BFVER = <$BFVER>;
 close $BFVER or say 'Cannot start: Broken build.' and exit;
 if ($BFVER[0] ne VER.q{.}.SVER.q{.}.REV.RSTAGE."\n") {
@@ -118,7 +142,7 @@ GetOptions(
 
 # If we were passed -h, print help.
 if ($opt_help) {
-    print <<'HELP';
+    print <<"HELP";
 
 Usage: $PROGRAM_NAME [options]
     --help, -h     Prints this help.
