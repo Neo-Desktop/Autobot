@@ -183,10 +183,10 @@ sub ircsock {
             if ($cdata->{'certfp'}[0] eq 1) {
                 $conndata{'SSL_use_cert'} = 1;
                 if (defined $cdata->{'certfp_cert'}[0]) {
-                    $conndata{'SSL_cert_file'} = "$Auto::Bin/../etc/certs/".$cdata->{'certfp_cert'}[0];
+                    $conndata{'SSL_cert_file'} = "$Auto::bin{etc}/certs/".$cdata->{'certfp_cert'}[0];
                 }
                 if (defined $cdata->{'certfp_key'}[0]) {
-                    $conndata{'SSL_key_file'} = "$Auto::Bin/../etc/certs/".$cdata->{'certfp_key'}[0];
+                    $conndata{'SSL_key_file'} = "$Auto::bin{etc}/certs/".$cdata->{'certfp_key'}[0];
                 }
                 if (defined $cdata->{'certfp_pass'}[0]) {
                     $conndata{'SSL_passwd_cb'} = sub { return $cdata->{'certfp_pass'}[0]; };
@@ -239,7 +239,8 @@ sub ircsock {
 # Shutdown.
 hook_add('on_shutdown', 'shutdown.core_cleanup', sub {
     if (defined $Auto::DB) { $Auto::DB->disconnect; }
-    if (-e "$Auto::Bin/auto.pid") { unlink "$Auto::Bin/auto.pid"; }
+    if ($Auto::UPREFIX) { if (-e "$Auto::bin{cwd}/auto.pid") { unlink "$Auto::bin{cwd}/auto.pid"; } }
+    else { if (-e "$Auto::Bin/auto.pid") { unlink "$Auto::Bin/auto.pid"; } }
     return 1;
 });
 

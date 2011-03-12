@@ -19,7 +19,7 @@ use DBI;
 use Class::Unload;
 use FindBin qw($Bin);
 our $Bin = $Bin; ## no critic qw(NamingConventions::Capitalization Variables::ProhibitPackageVars)
-our %bin;
+our (%bin, $UPREFIX);
 BEGIN {
     $bin{cwd} = getcwd;
     if (!-e "$Bin/../build/syswide") {
@@ -38,6 +38,7 @@ BEGIN {
             $bin{bld} = "$Bin/../build";
             $bin{lng} = "$Bin/../lang";
         }
+        $UPREFIX = 1;
     }
     else {
         # Must be a standard install.
@@ -46,6 +47,7 @@ BEGIN {
         $bin{lib} = "$Bin/../lib";
         $bin{bld} = "$Bin/../build";
         $bin{lng} = "$Bin/../lang";
+        $UPREFIX = 0;
     }
 
     unshift @INC, $bin{lib};
@@ -118,6 +120,14 @@ if ($BFVER[0] ne VER.q{.}.SVER.q{.}.REV.RSTAGE."\n") {
     say 'Cannot start: Broken build.' and exit;
 }
 undef @BFVER;
+
+# Check build path setup.
+our $SYSWIDE;
+open my $BFPATH, '<', "$bin{bld}/syswide" or say 'Cannot start: Broken build.' and exit;
+my @BFPATH = <$BFPATH>;
+close $BFPATH or say 'Cannot start: Broken build.' and exit;
+if ($BFPATH[0] eq "1\n") { $SYSWIDE = 1 }
+else { $SYSWIDE = 0 }
 
 # Set signal handlers.
 local $SIG{TERM}       = \&Lib::Auto::signal_term;
@@ -405,7 +415,11 @@ if (!$DEBUG) {
     $APID = fork;
     if ($APID != 0) {
         alog '* Successfully forked into the background. Process ID: '.$APID;
-    	open my $FPID, '>', "$Bin/auto.pid" or exit;
+        # Figure out where to throw auto.pid.
+        my $pidfile;
+        if ($UPREFIX) { $pidfile = "$bin{cwd}/auto.pid" }
+        else { $pidfile = "$Bin/auto.pid" }
+    	open my $FPID, '>', $pidfile or exit;
     	print {$FPID} "$APID\n" or exit;
     	close $FPID or exit;
         exit;
