@@ -11,31 +11,25 @@
 The future of IRC bots is here! Xelhua gives to you, Auto 3.0, a new version of
 the popular Auto IRC bot.
 
-In this alpha7 release, we have added:
+In this alpha8 release, we have added:
 
-* Support for multiple configuration files using bin/auto -c=FILENAME. See
-  bin/auto -h for details.
-* Added network-wide user tracking through Core::IRC::Users.
-* Added an Oper module.
+* Support for installs to custom locations.
+* Support for system-wide installs. (/usr or /usr/local)
 
 Bug fixes:
 
-* Fixed a bug where a CAP entry for a network was not recreated on a reconnect.
-* Fixed a bug where incoming PART's from ourselves were not parsed.
-* Fixed a bug in UNO where rehashing during a game caused a crash.
-* Fixed a bug where appropriate data was not cleared after a disconnect.
-* Fixed a bug where Vim modelines were in an incorrect spot in modules.
+* Fixed an issue in auto --help that incorrectly displayed the binary name.
 
 Incompatibilities:
 
-* Many API changes - Minimum version bumped to 3.0.0a7.
+None
 
-We thank you for choosing Auto. Please remember that he is still in mid-
-development stages. But we hope we've piqued your interest, as Auto's upcoming
-module repository will allow modules to be created by anyone and uploaded
-there for everyone to use.
+We thank you for choosing Auto. Please remember that he is coming to late
+development stages soon, and testers are needed! But we hope we've piqued
+your interest, as Auto's upcoming module repository will allow modules to be
+created by anyone and uploaded there for everyone to use.
 
 Auto's goal is to create an efficient, stable and highly customizable IRC bot
 in Perl. To offer an alternative to other platforms.
 
-Enjoy Auto 3.0.0 Alpha 7!
+Enjoy Auto 3.0.0 Alpha 8!
