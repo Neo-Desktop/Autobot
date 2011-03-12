@@ -31,12 +31,14 @@ BEGIN {
             $bin{lib} = "$Bin/../lib/autobot/3.0.0";    
             $bin{bld} = "$bin{lib}/build";
             $bin{lng} = "$bin{lib}/lang";
+            $bin{mod} = "$bin{lib}/modules";
         }
         else {
             # Or not.
             $bin{lib} = "$Bin/../lib";
             $bin{bld} = "$Bin/../build";
             $bin{lng} = "$Bin/../lang";
+            $bin{mod} = "$Bin/../modules";
         }
         $UPREFIX = 1;
     }
@@ -47,6 +49,7 @@ BEGIN {
         $bin{lib} = "$Bin/../lib";
         $bin{bld} = "$Bin/../build";
         $bin{lng} = "$Bin/../lang";
+        $bin{mod} = "$Bin/../modules";
         $UPREFIX = 0;
     }
 
@@ -567,12 +570,12 @@ sub socksnd {
 sub mod_load {
     my ($module) = @_;
 
-    if (-e "$Bin/../modules/$module.pm") {
-        do "$Bin/../modules/$module.pm" and return 1;
+    if (-e "$bin{mod}/$module.pm") {
+        do "$bin{mod}/$module.pm" and return 1;
     }
     else {
-        if (-e "$Bin/../modules/$module/main.pm") {
-            do "$Bin/../modules/$module/main.pm" and return 1;
+        if (-e "$bin{mod}/$module/main.pm") {
+            do "$bin{mod}/$module/main.pm" and return 1;
         }
     }
 
