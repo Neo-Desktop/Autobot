@@ -9,8 +9,7 @@ use API::Std qw(cmd_add cmd_del trans);
 use API::IRC qw(notice privmsg);
 
 # Initialization subroutine.
-sub _init
-{
+sub _init {
     # Create the AUR command.
     cmd_add('AUR', 0, 0, \%M::AUR::HELP_AUR, \&M::AUR::cmd_aur) or return;
     # Success.
@@ -18,8 +17,7 @@ sub _init
 }
 
 # Void subroutine.
-sub _void
-{
+sub _void {
     # Delete the AUR command.
     cmd_del('AUR') or return;
 
@@ -34,8 +32,7 @@ our %HELP_AUR = (
 );
 
 # Callback for AUR command.
-sub cmd_aur
-{
+sub cmd_aur {
     my ($src, ($mod)) = @_;
 
     # Check for needed parameters.
@@ -81,20 +78,28 @@ AUR - AUR package information module.
 
 =head1 SYNOPSIS
 
-<JohnSmith> !aur google-chrome
-<Auto> Results for google-chrome:
-<Auto> ID: 37469 Name: google-chrome Version: 10.0.648.133-1
-<Auto> Maintainer: t3ddy
-<Auto> URL: https://aur.archlinux.org/packages.php?ID=37469
+ <JohnSmith> !aur autobot-git
+ <Auto> Results for autobot-git:
+ <Auto> ID: 47329 Name: autobot-git Version: 20110311-1
+ <Auto> Maintainer: iElijah101
+ <Auto> URL: https://aur.archlinux.org/packages.php?ID=47329
 
 =head1 DESCRIPTION
 
-This module adds a command to allow getting information on a package
-in AUR.
+This module adds a command to allow getting information on a package in the
+Arch User Repository at https://aur.archlinux.org.
 
-=head1 INSTALL
+=head1 DEPENDENCIES
 
-Before using this module, you will need to get WWW::AUR from cpan.
+This module is dependent on the following modules from CPAN:
+
+=over
+
+=item L<WWW::AUR>
+
+Interface to the Arch User Repository.
+
+=back
 
 =head1 AUTHOR
 
