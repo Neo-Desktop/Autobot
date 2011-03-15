@@ -764,11 +764,11 @@ sub _fmtcard {
     if ($color eq 'W' or $color eq 'WD4' or $color eq 'WAH' or $color eq 'WHF') { $val = $color; }
 
     given ($color) {
-        when ('R') { $fmt = "\00304[$val]\003"; }
-        when ('B') { $fmt = "\00312[$val]\003"; }
-        when ('G') { $fmt = "\00303[$val]\003"; }
-        when ('Y') { $fmt = "\00308[$val]\003"; }
-        default { $fmt = "\002\00301[$val]\003\002"; }
+        when ('R') { $fmt = "\00301,04[$val]\003"; }
+        when ('B') { $fmt = "\00300,12[$val]\003"; }
+        when ('G') { $fmt = "\00300,03[$val]\003"; }
+        when ('Y') { $fmt = "\00301,08[$val]\003"; }
+        default { $fmt = "\002\00300,01[$val]\003\002"; }
     }
 
     return $fmt;
@@ -1313,7 +1313,7 @@ sub on_rehash {
 
 
 # Start initialization.
-API::Std::mod_init('UNO', 'Xelhua', '1.03', '3.0.0a7', __PACKAGE__);
+API::Std::mod_init('UNO', 'Xelhua', '1.04', '3.0.0a7', __PACKAGE__);
 # build: perl=5.010000
 
 __END__
@@ -1324,7 +1324,7 @@ UNO - Three editions of the UNO card game
 
 =head1 VERSION
 
- 1.03
+ 1.04
 
 =head1 SYNOPSIS
 
