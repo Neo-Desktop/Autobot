@@ -54,8 +54,7 @@ sub cmd_aur
         # Return the results.
         privmsg($src->{svr}, $src->{chan}, "Results for \2$mod\2:");
         privmsg($src->{svr}, $src->{chan}, "ID: ".$pkg->id." Name: ".$pkg->name." Version: ".$pkg->version);
-        my $man = $pkg->maintainer;   
-        privmsg($src->{svr}, $src->{chan}, "Maintainer: ".$man->name);
+        privmsg($src->{svr}, $src->{chan}, "Maintainer: ".$pkg->maintainer->name);
         privmsg($src->{svr}, $src->{chan}, "URL: https://aur.archlinux.org/packages.php?ID=".$pkg->id);
     }
     else {
