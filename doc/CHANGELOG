@@ -7,6 +7,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Alpha 7
 ===============================================================================
+    * Added an AUR module.
     * Fixed a bug in UNO where rehashing during a game caused a crash.
     * Proto::IRC::umodes renamed to Proto::IRC::botinfo{svr}{modes}.
     * Fixed a bug where incoming PART's from ourselves were not parsed.
