@@ -13,6 +13,7 @@ the popular Auto IRC bot.
 
 In this alpha8 release, we have added:
 
+* A module to get information on a package in AUR.
 * Support for installs to custom locations.
 * Support for system-wide installs. (/usr or /usr/local)
 
