@@ -20,6 +20,8 @@ In this alpha8 release, we have added:
 Bug fixes:
 
 * Fixed an issue in auto --help that incorrectly displayed the binary name.
+* Fixed an exploit in QDB that allowed users to use services fantasy commands
+  with the bot's account.
 
 Incompatibilities:
 

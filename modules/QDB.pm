@@ -86,7 +86,7 @@ sub cmd_qdb
 
             # Send it back.
             privmsg($src->{svr}, $src->{chan}, "\002Submitted by\002 $data[1] \002on\002 ".POSIX::strftime('%F', localtime($data[2]))." \002at\002 ".POSIX::strftime('%I:%M %p', localtime($data[2])));
-            privmsg($src->{svr}, $src->{chan}, $data[3]);
+            privmsg($src->{svr}, $src->{chan}, '> '.$data[3]);
         }
         when ('COUNT') {
             # Get count.
@@ -211,7 +211,7 @@ sub cmd_qdb
 }
 
 
-API::Std::mod_init('QDB', 'Xelhua', '1.02', '3.0.0a7', __PACKAGE__);
+API::Std::mod_init('QDB', 'Xelhua', '1.03', '3.0.0a7', __PACKAGE__);
 # build: perl=5.010000
 
 __END__
@@ -222,7 +222,7 @@ QDB - Quote database module.
 
 =head1 VERSION
 
- 1.02
+ 1.03
 
 =head1 SYNOPSIS
 
