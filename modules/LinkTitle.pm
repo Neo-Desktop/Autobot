@@ -50,6 +50,9 @@ sub gettitle
             if ($res->is_success) {
                 # We were, decode the data.
                 my $data = $res->decoded_content;
+
+                # Strip newlines.
+                $data =~ s/(\n|\r)//gxsm;
                 
                 # Check for <title>
                 if ($data =~ m{<title>(.*)</title>}ixsm) {

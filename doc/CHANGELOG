@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Fixed a bug in LinkTitle that caused multi-line <title>'s to display
+      wrong.
     * Added `wizard`, for creating local Auto config directories.
     * Made Auto respond properly to PRIVMSGs received before connection.
     * Added an AUR module.

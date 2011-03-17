@@ -23,6 +23,7 @@ Bug fixes:
 * Fixed an issue in auto --help that incorrectly displayed the binary name.
 * Fixed an exploit in QDB that allowed users to use services fantasy commands
   with the bot's account.
+* Fixed a bug in LinkTitle that caused multi-line <title>'s to display wrong.
 
 Incompatibilities:
 
