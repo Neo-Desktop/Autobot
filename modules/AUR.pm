@@ -63,7 +63,7 @@ sub cmd_aur {
 }
 
 # Start initialization.
-API::Std::mod_init('AUR', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
+API::Std::mod_init('AUR', 'Xelhua', '1.00', '3.0.0a8', __PACKAGE__);
 # build: cpan=WWW::AUR perl=5.010000
 
 __END__
@@ -74,7 +74,7 @@ AUR - AUR package information module.
 
 =head1 VERSION
 
-1.00
+ 1.00
 
 =head1 SYNOPSIS
 

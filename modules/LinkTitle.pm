@@ -69,7 +69,7 @@ sub gettitle
 }
 
 # Start initialization.
-API::Std::mod_init('LinkTitle', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
+API::Std::mod_init('LinkTitle', 'Xelhua', '1.01', '3.0.0a8', __PACKAGE__);
 # build: cpan=LWP::UserAgent,HTML::Entities perl=5.010000
 
 __END__
@@ -80,7 +80,7 @@ LinkTitle - A module for returning the page title of links.
 
 =head1 VERSION
 
- 1.00
+ 1.01
 
 =head1 SYNOPSIS
 
