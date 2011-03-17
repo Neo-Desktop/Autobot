@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Made Auto respond properly to PRIVMSGs received before connection.
     * Fixed an exploit in QDB that allowed users to use services fantasy
       commands with the bot's account.
     * Heavily improved ./install.

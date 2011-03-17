@@ -631,10 +631,17 @@ sub part {
 # Parse: PRIVMSG
 sub privmsg {
     my ($svr, @ex) = @_;
-    my %data = API::IRC::usrc(substr($ex[0], 1));
+    my %data;
 
     # Ensure this is coming from a user rather than a server.
-    if ($ex[0] !~ m/!/xsm) { return; }
+    if ($ex[0] !~ m/!/xsm) { 
+        %data = (
+                'nick' => substr($ex[0], 1),
+                'user' => '*',
+                'host' => '*'
+                );
+    }
+    else { %data = API::IRC::usrc(substr($ex[0], 1)) }
 
     my @argv;
     for (my $i = 4; $i < scalar(@ex); $i++) {
