@@ -5,13 +5,13 @@ Auto IRC Bot 3.0: Change Log
 ===============================================================================
     * Added `wizard`, for creating local Auto config directories.
     * Made Auto respond properly to PRIVMSGs received before connection.
+    * Added an AUR module.
     * Fixed an exploit in QDB that allowed users to use services fantasy
       commands with the bot's account.
     * Heavily improved ./install.
 
 3.0 Alpha 7
 ===============================================================================
-    * Added an AUR module.
     * Fixed a bug in UNO where rehashing during a game caused a crash.
     * Proto::IRC::umodes renamed to Proto::IRC::botinfo{svr}{modes}.
     * Fixed a bug where incoming PART's from ourselves were not parsed.
