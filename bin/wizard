@@ -1,0 +1,53 @@
+#!/usr/bin/env perl
+# bin/wizard - Wizard for creating local Auto configuration directories.
+# Copyright (C) 2010-2011 Xelhua Development Group, et al.
+# This program is free software; rights to this code are stated in doc/LICENSE.
+use 5.010_000;
+use strict;
+use warnings;
+use Cwd;
+use FindBin qw($Bin);
+use File::Copy;
+our $VERSION = 1.00;
+my $Bin = $Bin;
+
+# Get current working directory.
+my $cwd = getcwd();
+
+# One argument required.
+if (!defined $ARGV[0]) {
+    say 'ERROR: Missing arguments.';
+    say 'Usage: auto-wizard <directory>';
+    exit;
+}
+
+# Strip trailing slash.
+my $installdir = $ARGV[0];
+$installdir =~ s/\/$//xsm;
+
+# Create missing directories.
+if (!-d "$cwd/$installdir") { mkdir "$cwd/$installdir" }
+if (!-d "$cwd/$installdir/etc") { mkdir "$cwd/$installdir/etc" }
+if (!-d "$cwd/$installdir/var") { mkdir "$cwd/$installdir/var" }
+
+# Copy over example.conf.
+copy("$Bin/../lib/autobot/3.0.0/dist/example.conf", "$cwd/$installdir/etc/example.conf");
+chmod 0644, "$cwd/$installdir/etc/example.conf";
+
+# Our work is done.
+print <<"MSG";
+Successfully installed to "$cwd/$installdir"!
+
+I've also created an example.conf for you and left it in etc/, configure it and
+rename it to auto.conf or any name of your choice.
+
+See the Xelhua Wiki at http://wiki.xelhua.org for complete documentation.
+
+After that, change directory to "$cwd/$installdir" and run `$Bin/auto` (or if
+"$Bin" is in your PATH; just `auto`).
+
+If you gave your config file a name other than auto.conf, pass -c=FILENAME to
+`auto`, like so, if your config is etc/foo.conf: $Bin/auto -c=foo.conf
+
+Enjoy.
+MSG

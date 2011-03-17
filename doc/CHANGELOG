@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Added `wizard`, for creating local Auto config directories.
     * Made Auto respond properly to PRIVMSGs received before connection.
     * Fixed an exploit in QDB that allowed users to use services fantasy
       commands with the bot's account.

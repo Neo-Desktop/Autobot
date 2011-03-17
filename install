@@ -191,14 +191,17 @@ if ($upref) {
 
     my $bgenssl = 'genssl';
     my $bbuildmod = 'buildmod';
+    my $bwizard = 'wizard';
     if ($libbuild) {
         $bgenssl = "auto-$bgenssl";
         $bbuildmod = "auto-$bbuildmod";
+        $bwizard = "auto-$bwizard";
     }
     copy("$Bin/bin/auto", "$PREFIX/bin/auto");
     copy("$Bin/bin/buildmod", "$PREFIX/bin/$bbuildmod");
     copy("$Bin/bin/genssl", "$PREFIX/bin/$bgenssl");
-    chmod 0755, "$PREFIX/bin/auto", "$PREFIX/bin/$bgenssl", "$PREFIX/bin/$bbuildmod";
+    copy("$Bin/bin/wizard", "$PREFIX/bin/$bwizard");
+    chmod 0755, "$PREFIX/bin/auto", "$PREFIX/bin/$bgenssl", "$PREFIX/bin/$bbuildmod", "$PREFIX/bin/$bwizard";
     rcopy("$Bin/lib/*", "$libdir/");
     rcopy("$Bin/lang/*", "$langdir/");
     rcopy("$Bin/modules/*", "$moddir/");
