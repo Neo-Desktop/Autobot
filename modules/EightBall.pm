@@ -106,7 +106,7 @@ __END__
 
 =head1 NAME
 
-Eightball - A magic eightball module.
+EightBall - A magic eightball module.
 
 =head1 VERSION
 
@@ -127,10 +127,6 @@ Eightball - A magic eightball module.
 This module adds the 8BALL and RIGBALL commands, 8BALL is a channel
 command for asking the magic 8-Ball a question, RIGBALL is a private
 command for setting ("rigging") the 8-Ball's next answer.
-
-=head1 INSTALL
-
-No additonal steps need to be taking to use this module.
 
 =head1 AUTHOR
 
