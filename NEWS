@@ -17,6 +17,7 @@ In this alpha8 release, we have added:
 * Support for installs to custom locations.
 * Support for system-wide installs. (/usr or /usr/local)
 * The `wizard` utility, for creating local Auto config directories.
+* EightBall rewritten to be much nicer.
 
 Bug fixes:
 

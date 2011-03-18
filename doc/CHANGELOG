@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * EightBall module rewritten.
     * Fixed a bug in LinkTitle that caused multi-line <title>'s to display
       wrong.
     * Added `wizard`, for creating local Auto config directories.
