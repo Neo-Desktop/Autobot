@@ -15,8 +15,7 @@ our @EXPORT_OK = qw(ban cjoin cpart cmode umode kick privmsg notice quit nick na
 API::Std::event_add('on_disconnect');
 
 # Set a ban, based on config bantype value.
-sub ban
-{
+sub ban {
     my ($svr, $chan, $type, $user) = @_;
     my $cbt = (API::Std::conf_get('bantype'))[0][0];
 
@@ -48,8 +47,7 @@ sub ban
 }
 
 # Join a channel.
-sub cjoin 
-{
+sub cjoin {
     my ($svr, $chan, $key) = @_;
     
     Auto::socksnd($svr, "JOIN ".((defined $key) ? "$chan $key" : "$chan"));
@@ -58,8 +56,7 @@ sub cjoin
 }
 
 # Part a channel.
-sub cpart 
-{
+sub cpart {
     my ($svr, $chan, $reason) = @_;
     
     if (defined $reason) {
@@ -73,8 +70,7 @@ sub cpart
 }
 
 # Set mode(s) on a channel.
-sub cmode 
-{
+sub cmode {
     my ($svr, $chan, $modes) = @_;
 
     Auto::socksnd($svr, "MODE $chan $modes");
@@ -83,8 +79,7 @@ sub cmode
 }
 
 # Set mode(s) on us.
-sub umode 
-{
+sub umode {
     my ($svr, $modes) = @_;
     
     Auto::socksnd($svr, "MODE ".$Proto::IRC::botinfo{$svr}{nick}." $modes");
@@ -93,8 +88,7 @@ sub umode
 } 
 
 # Send a PRIVMSG.
-sub privmsg 
-{
+sub privmsg {
     my ($svr, $target, $message) = @_;
     
     # Get maximum length.
@@ -111,8 +105,7 @@ sub privmsg
 }
 
 # Send a NOTICE.
-sub notice 
-{
+sub notice {
     my ($svr, $target, $message) = @_;
     
     # Get maximum length.
@@ -129,8 +122,7 @@ sub notice
 }
 
 # Send an ACTION PRIVMSG.
-sub act
-{
+sub act {
     my ($svr, $target, $message) = @_;
 
     Auto::socksnd($svr, "PRIVMSG $target :\001ACTION $message\001");
@@ -139,8 +131,7 @@ sub act
 }
 
 # Change bot nickname.
-sub nick 
-{
+sub nick {
     my ($svr, $newnick) = @_;
     
     Auto::socksnd($svr, "NICK $newnick");
@@ -151,8 +142,7 @@ sub nick
 }
 
 # Request the users of a channel.
-sub names
-{
+sub names {
     my ($svr, $chan) = @_;
     
     Auto::socksnd($svr, "NAMES $chan");
@@ -161,8 +151,7 @@ sub names
 }
 
 # Send a topic to the channel.
-sub topic
-{
+sub topic {
     my ($svr, $chan, $topic) = @_;
     
     Auto::socksnd($svr, "TOPIC $chan :$topic");
@@ -171,8 +160,7 @@ sub topic
 }
 
 # Kick a user.
-sub kick
-{
+sub kick {
     my ($svr, $chan, $nick, $msg) = @_;
 
     Auto::socksnd($svr, "KICK $chan $nick :".((defined $msg) ? $msg : 'No reason'));
@@ -207,8 +195,7 @@ sub who {
 }
 
 # Get nick, ident and host from a <nick>!<ident>@<host>
-sub usrc
-{
+sub usrc {
     my ($ex) = @_;
     
     my @si = split('!', $ex);
@@ -222,8 +209,7 @@ sub usrc
 }
 
 # Match two IRC masks.
-sub match_mask
-{
+sub match_mask {
     my ($mu, $mh) = @_;
     
     # Prepare the regex.
