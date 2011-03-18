@@ -21,13 +21,13 @@ sub cmd_modload
     # Check for the needed parameters.
     if (!defined $argv[0]) {
         notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
-        return 0;
+        return;
     }
 
     # Check if the module is already loaded.
     if (API::Std::mod_exists($argv[0])) {
         notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 is already loaded.");
-        return 0;
+        return;
     }
 
     # Go for it!
@@ -41,7 +41,7 @@ sub cmd_modload
     else {
         # We weren't.
         notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 failed to load.");
-        return 0;
+        return;
     }
 
     return 1;
@@ -59,13 +59,13 @@ sub cmd_modunload
     # Check for the needed parameters.
     if (!defined $argv[0]) {
         notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
-        return 0;
+        return;
     }
 
     # Check if the module exists.
     if (!API::Std::mod_exists($argv[0])) {
         notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 is not loaded.");
-        return 0;
+        return;
     }
 
     # Go for it!
@@ -79,7 +79,7 @@ sub cmd_modunload
     else {
         # We weren't.
         notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 failed to unload.");
-        return 0;
+        return;
     }
 
     return 1;
@@ -97,13 +97,13 @@ sub cmd_modreload
     # Check for the needed parameters.
     if (!defined $argv[0]) {
         notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
-        return 0;
+        return;
     }
 
     # Check if the module exists.
     if (!API::Std::mod_exists($argv[0])) {
         notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 is not loaded.");
-        return 0;
+        return;
     }
 
     # Go for it!
@@ -119,7 +119,7 @@ sub cmd_modreload
     else {
         # We weren't.
         notice($src->{svr}, $src->{nick}, "Module \002".$argv[0]."\002 failed to reload.");
-        return 0;
+        return;
     }
 
     return 1;

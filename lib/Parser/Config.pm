@@ -14,13 +14,13 @@ sub new
 
     # Check to see if the configuration file exists.
     if (!-e "$Auto::bin{etc}/$file") {
-    	return 0;
+    	return;
     }
     
     # Open, read and close the config.
-    open(my $FCONF, q{<}, "$Auto::bin{etc}/$file") or return 0;
-    my @cosfl = <$FCONF> or return 0;
-    close $FCONF or return 0;
+    open(my $FCONF, q{<}, "$Auto::bin{etc}/$file") or return;
+    my @cosfl = <$FCONF> or return;
+    close $FCONF or return;
     
     # Save it to self variable.
     $self->{'config'}->{'path'} = "$Auto::bin{etc}/$file";
@@ -38,9 +38,9 @@ sub parse
     my (%rs);
     
     # Open, read and close it.
-    open(my $FCONF, q{<}, "$file") or return 0;
-    my @fbuf = <$FCONF> or return 0;
-    close $FCONF or return 0;
+    open(my $FCONF, q{<}, "$file") or return;
+    my @fbuf = <$FCONF> or return;
+    close $FCONF or return;
     
     # Iterate the file.
     foreach my $buff (@fbuf) {

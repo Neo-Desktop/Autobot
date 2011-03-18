@@ -432,9 +432,9 @@ sub ratelimit_check {
             return 1;
         }
         else {
-            # Increment their uses and return 0.
+            # Increment their uses and return false.
             $Core::IRC::usercmd{$src{nick}.'@'.$src{host}.'/'.$src{svr}}++;
-            return 0;
+            return;
         }
     }
     else {

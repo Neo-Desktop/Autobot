@@ -21,7 +21,7 @@ sub parse
     }
     
     # Open, read and close the file.
-    open(my $FALF, '<', "$Auto::bin{lng}/$lang.alf") or return 0;
+    open(my $FALF, '<', "$Auto::bin{lng}/$lang.alf") or return;
     my @fbuf = <$FALF>;
     close $FALF;
     

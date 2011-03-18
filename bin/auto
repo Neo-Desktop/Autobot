@@ -77,6 +77,7 @@ use API::Log qw(alog dbug);
 use Parser::Config;
 use Parser::Lang;
 use Proto::IRC;
+use State::IRC;
 use Core::IRC;
 use Core::IRC::Users;
 use Core::Cmd;
@@ -562,7 +563,7 @@ sub socksnd {
     	return 1;
     }
     else {
-    	return 0;
+    	return;
     }
 }
 
