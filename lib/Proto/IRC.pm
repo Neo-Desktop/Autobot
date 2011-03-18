@@ -38,7 +38,7 @@ our %RAWC = (
 );
 
 # Variables for various functions.
-our (%got_001, %botinfo, %botchans, %csprefix, %chanusers, %chanmodes, %cap);
+our (%got_001, %botinfo, %botchans, %csprefix, %chanmodes, %cap);
 
 # Events.
 API::Std::event_add('on_capack');
@@ -171,43 +171,9 @@ sub num353 {
 
     # Get rid of the colon.
     $ex[5] =~ s/^://xsm;
-    # Delete the old chanusers hash if it exists.
-    if (defined $chanusers{$svr}{$ex[4]}) { delete $chanusers{$svr}{$ex[4]} }
-    # Iterate through each user.
-    for (5..$#ex) {
-    	my $fi = 0;
-        PFITER: foreach my $spfx (keys %{ $csprefix{$svr} }) {
-    		# Check if the user has status in the channel.
-    		if (substr($ex[$_], 0, 1) eq $csprefix{$svr}{$spfx}) {
-    			# He/she does. Lets set that.
-    			if (defined $chanusers{$svr}{$ex[4]}{lc $ex[$_]}) {
-    				# If the user has multiple statuses.
-    				$chanusers{$svr}{$ex[4]}{lc substr $ex[$_], 1} = $chanusers{$svr}{$ex[4]}{lc $ex[$_]}.$spfx;
-                    delete $chanusers{$svr}{$ex[4]}{lc $ex[$_]};
-    			}
-    			else {
-    				# Or not.
-    				$chanusers{$svr}{$ex[4]}{lc substr $ex[$_], 1} = $spfx;
-    			}
-    			$fi = 1;
-                $ex[$_] = substr $ex[$_], 1;
-    		}
-    	}
-        # Check if there's still a prefix.
-        foreach my $spfx (keys %{$csprefix{$svr}}) {
-            if (substr($ex[$_], 0, 1) eq $csprefix{$svr}{$spfx}) { goto 'PFITER' }
-        }
-    	# They had status, so go to the next user.
-    	next if $fi;
-    	# They didn't, set them as a normal user.
-    	if (!defined $chanusers{$svr}{$ex[4]}{lc $ex[$_]}) {
-    		$chanusers{$svr}{$ex[4]}{lc $ex[$_]} = 1;
-    	}
-    }
-
     # Trigger on_namesreply.
     API::Std::event_run('on_namesreply', ($svr, $ex[4], @ex[5..$#ex]));
-
+    
     return 1;
 }
 
@@ -392,7 +358,7 @@ sub cjoin {
     }
     else {
     	# It isn't. Update chanusers and trigger on_rcjoin.
-        $chanusers{$svr}{lc $chan}{$src{nick}} = 1;
+        $State::IRC::chanusers{$svr}{lc $chan}{$src{nick}} = 1;
         $src{svr} = $svr;
     	API::Std::event_run("on_rcjoin", (\%src, $chan));
     }
@@ -408,7 +374,7 @@ sub kick {
     $src{svr} = $svr;
 
     # Update chanusers.
-    delete $chanusers{$svr}{$ex[2]}{$ex[3]} if defined $chanusers{$svr}{$ex[2]}{$ex[3]};
+    delete $State::IRC::chanusers{$svr}{$ex[2]}{$ex[3]} if defined $State::IRC::chanusers{$svr}{$ex[2]}{$ex[3]};
 
     # Set $msg to the kick message.
     my $msg = 0;
@@ -440,7 +406,7 @@ sub kick {
     }
     else {
         # We weren't. Update chanusers and trigger on_kick.
-        if (defined $chanusers{$svr}{$ex[2]}{$ex[3]}) { delete $chanusers{$svr}{$ex[2]}{$ex[3]}; }
+        if (defined $State::IRC::chanusers{$svr}{$ex[2]}{$ex[3]}) { delete $State::IRC::chanusers{$svr}{$ex[2]}{$ex[3]}; }
         API::Std::event_run("on_kick", (\%src, $ex[2], $ex[3], $msg));
     }
 
@@ -499,26 +465,26 @@ sub mode {
                         # It is a status mode, lets parse changes.
                         my $user = shift(@ex);
 
-                        if (defined $chanusers{$svr}{$chan}{$user}) {
+                        if (defined $State::IRC::chanusers{$svr}{$chan}{$user}) {
                             if ($op == 1) {
-                                if ($chanusers{$svr}{$chan}{$user} eq 1) {
-                                    $chanusers{$svr}{$chan}{$user} = $maf;
+                                if ($State::IRC::chanusers{$svr}{$chan}{$user} eq 1) {
+                                    $State::IRC::chanusers{$svr}{$chan}{$user} = $maf;
                                 }
                                 else {
-                                    $chanusers{$svr}{$chan}{$user} .= $maf;
+                                    $State::IRC::chanusers{$svr}{$chan}{$user} .= $maf;
                                 }
                             }
                             elsif ($op == 2) {
-                                if (length($chanusers{$svr}{$chan}{$user}) == 1) {
-                                    $chanusers{$svr}{$chan}{$user} = 1;
+                                if (length($State::IRC::chanusers{$svr}{$chan}{$user}) == 1) {
+                                    $State::IRC::chanusers{$svr}{$chan}{$user} = 1;
                                 }
                                 else {
-                                    $chanusers{$svr}{$chan}{$user} =~ s/($maf)//gxsm;
+                                    $State::IRC::chanusers{$svr}{$chan}{$user} =~ s/($maf)//gxsm;
                                 }
                             }
                         }
                         else {
-                            $chanusers{$svr}{$chan}{$user} = $maf;
+                            $State::IRC::chanusers{$svr}{$chan}{$user} = $maf;
                         }
                     }
                     else {
@@ -560,10 +526,10 @@ sub nick {
     }
     else {
     	# It isn't. Update chanusers and trigger on_nick.
-        foreach my $chk (keys %{ $chanusers{$svr} }) {
-            if (defined $chanusers{$svr}{$chk}{$src{nick}}) {
-                $chanusers{$svr}{$chk}{$nex} = $chanusers{$svr}{$chk}{$src{nick}};
-                delete $chanusers{$svr}{$chk}{$src{nick}};
+        foreach my $chk (keys %{ $State::IRC::chanusers{$svr} }) {
+            if (defined $State::IRC::chanusers{$svr}{$chk}{$src{nick}}) {
+                $State::IRC::chanusers{$svr}{$chk}{$nex} = $State::IRC::chanusers{$svr}{$chk}{$src{nick}};
+                delete $State::IRC::chanusers{$svr}{$chk}{$src{nick}};
             }
         }
     	API::Std::event_run("on_nick", (\%src, $nex));
@@ -608,7 +574,7 @@ sub part {
     }
     else {
         # Delete them from chanusers.
-        delete $chanusers{$svr}{$ex[2]}{$src{nick}} if defined $chanusers{$svr}{$ex[2]}{$src{nick}};
+        delete $State::IRC::chanusers{$svr}{$ex[2]}{$src{nick}} if defined $State::IRC::chanusers{$svr}{$ex[2]}{$src{nick}};
     
         # Set $msg to the part message.
         my $msg = 0;

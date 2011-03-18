@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Moved chanusers to State::IRC.
+    * Created State::IRC.
     * UNO now keeps game duration and cards played count.
     * Added a LOLCAT module for translating English to LOLCAT.
     * EightBall module rewritten.

@@ -32,8 +32,8 @@ hook_add("on_quit", "quit_update_chanusers", sub {
     my %src = %{ $src };
 
     # Delete the user from all channels.
-    foreach my $ccu (keys %{ $Proto::IRC::chanusers{$src{svr}}}) {
-        if (defined $Proto::IRC::chanusers{$src{svr}}{$ccu}{$src{nick}}) { delete $Proto::IRC::chanusers{$src{svr}}{$ccu}{$src{nick}}; }
+    foreach my $ccu (keys %{ $State::IRC::chanusers{$src{svr}}}) {
+        if (defined $State::IRC::chanusers{$src{svr}}{$ccu}{$src{nick}}) { delete $State::IRC::chanusers{$src{svr}}{$ccu}{$src{nick}}; }
     }
 
     return 1;
@@ -196,7 +196,7 @@ hook_add('on_disconnect', 'core.irc.deldata', sub {
     if (defined $Proto::IRC::got_001{$svr}) { delete $Proto::IRC::got_001{$svr} }
     if (defined $Proto::IRC::botinfo{$svr}) { delete $Proto::IRC::botinfo{$svr} }
     if (defined $Proto::IRC::botchans{$svr}) { delete $Proto::IRC::botchans{$svr} }
-    if (defined $Proto::IRC::chanusers{$svr}) { delete $Proto::IRC::chanusers{$svr} }
+    if (defined $State::IRC::chanusers{$svr}) { delete $State::IRC::chanusers{$svr} }
     if (defined $Proto::IRC::csprefix{$svr}) { delete $Proto::IRC::csprefix{$svr} }
     if (defined $Proto::IRC::chanmodes{$svr}) { delete $Proto::IRC::chanmodes{$svr} }
     if (defined $Proto::IRC::cap{$svr}) { delete $Proto::IRC::cap{$svr} }

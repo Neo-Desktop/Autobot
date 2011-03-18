@@ -29,7 +29,7 @@ hook_add('on_namesreply', 'ircusers.names', sub {
     my ($svr, $chan, undef) = @_;
 
     # Iterate through the users for this channel.
-    foreach (keys %{$Proto::IRC::chanusers{$svr}{$chan}}) {
+    foreach (keys %{$State::IRC::chanusers{$svr}{$chan}}) {
         # Check if the user already exists.
         if (!$users{$svr}{$_}) {
             # They do not; WHO them.
@@ -77,9 +77,9 @@ hook_add('on_kick', 'ircusers.onkick', sub {
     if ($users{$src->{svr}}{lc $user}) {
         # Figure out if the user is in any other channel we're in.
         my $ri = 0;
-        foreach my $chan (keys %{$Proto::IRC::chanusers{$src->{svr}}}) {
+        foreach my $chan (keys %{$State::IRC::chanusers{$src->{svr}}}) {
             if ($chan ne $kchan) {
-                if (defined $Proto::IRC::chanusers{$src->{svr}}{$chan}{lc $user}) { $ri++; last; }
+                if (defined $State::IRC::chanusers{$src->{svr}}{$chan}{lc $user}) { $ri++; last; }
             }
         }
         if (!$ri) {
@@ -100,9 +100,9 @@ hook_add('on_part', 'ircusers.onpart', sub {
     if ($users{$src->{svr}}{lc $src->{nick}}) {
         # Figure out if the user is in any other channel we're in.
         my $ri = 0;
-        foreach my $chan (keys %{$Proto::IRC::chanusers{$src->{svr}}}) {
+        foreach my $chan (keys %{$State::IRC::chanusers{$src->{svr}}}) {
             if ($chan ne $pchan) {
-                if (defined $Proto::IRC::chanusers{$src->{svr}}{$chan}{lc $src->{nick}}) { $ri++; last; }
+                if (defined $State::IRC::chanusers{$src->{svr}}{$chan}{lc $src->{nick}}) { $ri++; last; }
             }
         }
         if (!$ri) {
