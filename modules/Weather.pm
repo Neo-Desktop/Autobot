@@ -13,7 +13,7 @@ use XML::Simple;
 sub _init 
 {
     # Create the Weather command.
-    cmd_add('WEATHER', 0, 0, \%M::Weather::HELP_WEATHER, \&M::Weather::weather) or return 0;
+    cmd_add('WEATHER', 0, 0, \%M::Weather::HELP_WEATHER, \&M::Weather::weather) or return;
 
     # Success.
     return 1;
@@ -23,7 +23,7 @@ sub _init
 sub _void 
 {
     # Delete the Weather command.
-    cmd_del('WEATHER') or return 0;
+    cmd_del('WEATHER') or return;
 
     # Success.
     return 1;
@@ -46,7 +46,7 @@ sub weather
     # Put together the call to the Wunderground API. 
     if (!defined $args[0]) {
     	notice($src->{svr}, $src->{nick}, trans('Not enough parameters').".");
-    	return 0;
+    	return;
     }
     my $loc = join(' ', @args);
     $loc =~ s/ /%20/g;

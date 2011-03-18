@@ -14,7 +14,7 @@ use JSON -support_by_pp;
 sub _init 
 {
     # Create the CALC command.
-    cmd_add("CALC", 0, 0, \%M::Calc::HELP_CALC, \&M::Calc::calc) or return 0;
+    cmd_add("CALC", 0, 0, \%M::Calc::HELP_CALC, \&M::Calc::calc) or return;
 
     # Success.
     return 1;
@@ -24,7 +24,7 @@ sub _init
 sub _void 
 {
     # Delete the CALC command.
-    cmd_del("CALC") or return 0;
+    cmd_del("CALC") or return;
 
     # Success.
     return 1;
@@ -49,7 +49,7 @@ sub calc
     # Put together the call to the Google Calculator API. 
     if (!defined $args[0]) {
         notice($src->{svr}, $src->{nick}, trans("Not enough parameters").".");
-        return 0;
+        return;
     }
     my $expr = join(' ', @args);
     my $url = "http://www.google.com/ig/calculator?q=".uri_escape($expr);

@@ -12,7 +12,7 @@ use LWP::UserAgent;
 sub _init 
 {
     # Create the ISITUP command.
-    cmd_add('ISITUP', 0, 0, \%M::IsItUp::HELP_ISITUP, \&M::IsItUp::check) or return 0;
+    cmd_add('ISITUP', 0, 0, \%M::IsItUp::HELP_ISITUP, \&M::IsItUp::check) or return;
 
     # Success.
     return 1;
@@ -22,7 +22,7 @@ sub _init
 sub _void 
 {
     # Delete the ISITUP command.
-    cmd_del('ISITUP') or return 0;
+    cmd_del('ISITUP') or return;
 
     # Success.
     return 1;
@@ -45,7 +45,7 @@ sub check
     # Do we have enough parameters?
     if (!defined $argv[0]) {
     	notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
-    	return 0;
+    	return;
     }
     my $curl = $argv[0];
     # Does the URL start with http(s)?

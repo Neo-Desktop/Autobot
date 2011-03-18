@@ -27,7 +27,7 @@ sub _init
 sub _void 
 {
     # Delete the act_on_badword hook.
-    hook_del('act_on_badword') or return 0;
+    hook_del('act_on_badword') or return;
 
     # Success.
     return 1;

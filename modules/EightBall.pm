@@ -26,8 +26,8 @@ my @responses = (
 # Initialization subroutine.
 sub _init {
     # Create the 8BALL and RIGBALL commands.
-    cmd_add('8BALL', 0, 0, \%M::EightBall::HELP_8BALL, \&M::EightBall::c_8ball) or return 0;
-    cmd_add('RIGBALL', 1, 'cmd.rigball', \%M::EightBall::HELP_RIGBALL, \&M::EightBall::rigball) or return 0;
+    cmd_add('8BALL', 0, 0, \%M::EightBall::HELP_8BALL, \&M::EightBall::c_8ball) or return;
+    cmd_add('RIGBALL', 1, 'cmd.rigball', \%M::EightBall::HELP_RIGBALL, \&M::EightBall::rigball) or return;
 
     # Success.
     return 1;
@@ -36,8 +36,8 @@ sub _init {
 # Void subroutine.
 sub _void {
     # Delete the 8BALL and RIGBALL commands.
-    cmd_del('8BALL') or return 0;
-    cmd_del('RIGBALL') or return 0;
+    cmd_del('8BALL') or return;
+    cmd_del('RIGBALL') or return;
 
     # Success.
     return 1;

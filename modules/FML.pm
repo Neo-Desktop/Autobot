@@ -12,7 +12,7 @@ use LWP::UserAgent;
 sub _init 
 {
     # Create the FML command.
-    cmd_add('FML', 0, 0, \%M::FML::HELP_FML, \&M::FML::fml) or return 0;
+    cmd_add('FML', 0, 0, \%M::FML::HELP_FML, \&M::FML::fml) or return;
 
     # Success.
     return 1;
@@ -22,7 +22,7 @@ sub _init
 sub _void 
 {
     # Delete the FML command.
-    cmd_del('FML') or return 0;
+    cmd_del('FML') or return;
 
     # Success.
     return 1;

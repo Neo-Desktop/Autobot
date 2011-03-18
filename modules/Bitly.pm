@@ -15,11 +15,11 @@ sub _init
     # Check for required configuration values.
     if (!(conf_get('bitly:user'))[0][0] or !(conf_get('bitly:key'))[0][0]) {
     	err(2, 'Please verify that you have bitly_user and bitly_key defined in your configuration file.', 0);
-    	return 0;
+    	return;
     }
     # Create the SHORTEN and REVERSE commands.
-    cmd_add('SHORTEN', 0, 0, \%M::Bitly::HELP_SHORTEN, \&M::Bitly::shorten) or return 0;
-    cmd_add('REVERSE', 0, 0, \%M::Bitly::HELP_REVERSE, \&M::Bitly::reverse) or return 0;
+    cmd_add('SHORTEN', 0, 0, \%M::Bitly::HELP_SHORTEN, \&M::Bitly::shorten) or return;
+    cmd_add('REVERSE', 0, 0, \%M::Bitly::HELP_REVERSE, \&M::Bitly::reverse) or return;
 
     # Success.
     return 1;
@@ -29,8 +29,8 @@ sub _init
 sub _void 
 {
     # Delete the SHORTEN and REVERSE commands.
-    cmd_del('SHORTEN') or return 0;
-    cmd_del('REVERSE') or return 0;
+    cmd_del('SHORTEN') or return;
+    cmd_del('REVERSE') or return;
 
     # Success.
     return 1;
@@ -57,7 +57,7 @@ sub shorten
     # Put together the call to the Bit.ly API. 
     if (!defined $args[0]) {
         notice($src->{svr}, $src->{nick}, trans('Not enough parameters').".");
-        return 0;
+        return;
     }
     my ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
     $surl = uri_escape($surl);
@@ -93,7 +93,7 @@ sub reverse
     # Put together the call to the Bit.ly API.
     if (!defined $args[0]) {
         notice($src->{svr}, $src->{nick}, trans('Not enough parameters').".");
-        return 0;
+        return;
     }
     my ($surl, $user, $key) = ($args[0], (conf_get('bitly:user'))[0][0], (conf_get('bitly:key'))[0][0]);
     $surl = uri_escape($surl);
