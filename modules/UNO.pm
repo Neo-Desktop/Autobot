@@ -11,7 +11,7 @@ use API::IRC qw(notice privmsg);
 # Set various variables we'll need throughout runtime.
 my $UNO = 0;
 my $UNOW = 0;
-my ($UNOCHAN, $EDITION, $ORDER, $DEALER, $CURRTURN, $TOPCARD, %PLAYERS, %NICKS);
+my ($UNOCHAN, $UNOTIME, $UNOGCC, $EDITION, $ORDER, $DEALER, $CURRTURN, $TOPCARD, %PLAYERS, %NICKS);
 my $DRAWN = 0;
 my $ANYEDITION = 0;
 
@@ -112,7 +112,7 @@ sub cmd_uno {
                 }
             }
 
-            # If it's ANYEDITION, do some extra stuff.
+            # If it's Any Edition, do some extra stuff.
             if ($ANYEDITION) {
                 # Require the second parameter.
                 if (!defined $argv[1]) {
@@ -219,6 +219,7 @@ sub cmd_uno {
 
             $UNO = 1;
             $UNOW = 0;
+            $UNOTIME = time;
             $TOPCARD = _givecard();
             my ($tccol, $tcval) = split m/[:]/, $TOPCARD;
             while ($tcval eq 'T' || $tccol =~ m/^W/xsm) {
@@ -332,6 +333,7 @@ sub cmd_uno {
                 _runcard(uc $argv[1].':'.uc $argv[2], 0, undef);
             }
             $DRAWN = 0;
+            $UNOGCC++;
         }
         when (/^(DRAW|D)$/) {
             # UNO DRAW
@@ -567,7 +569,7 @@ sub cmd_uno {
 
             # Stop the game.
             my ($net, $chan) = split '/', $UNOCHAN;
-            $UNO = $UNOW = $UNOCHAN = $ORDER = $DEALER = $CURRTURN = $TOPCARD = $DRAWN = 0;
+            $UNO = $UNOW = $UNOCHAN = $ORDER = $DEALER = $CURRTURN = $TOPCARD = $DRAWN = $UNOTIME = $UNOGCC = 0;
             %PLAYERS = ();
             %NICKS = ();
             privmsg($net, $chan, "\2$src->{nick}\2 has stopped the game.");
@@ -1136,7 +1138,7 @@ sub _delplyr {
 
     # If there is only one player left, end the game.
     if (keys %PLAYERS < 2) {
-        $UNO = $UNOW = $UNOCHAN = $ORDER = $DEALER = $CURRTURN = $TOPCARD = $DRAWN = 0;
+        $UNO = $UNOW = $UNOCHAN = $ORDER = $DEALER = $CURRTURN = $TOPCARD = $DRAWN = $UNOTIME = $UNOGCC = 0;
         %PLAYERS = ();
         %NICKS = ();
         privmsg($net, $chan, 'There is only one player left. Game over.');
@@ -1183,9 +1185,15 @@ sub _gameover {
     # Declare their victory.
     my ($net, $chan) = split '/', $UNOCHAN;
     privmsg($net, $chan, "Game over. \2".$NICKS{$player}."\2 is victorious! Bringing his/her score to \2$score\2! Congratulations!");
+    my ($hours, $mins, $secs);
+    my $durtime = time - $UNOTIME;
+    while ($durtime >= 3600) { $hours++; $durtime -= 3600 }
+    while ($durtime >= 60) { $mins++; $durtime -= 60 }
+    while ($durtime >= 1) { $secs++; $durtime -= 1 }
+    privmsg($net, $chan, "Game lasted $hours:$mins:$secs; $UNOGCC cards were played.");
 
     # Reset variables.
-    $UNO = $UNOW = $UNOCHAN = $ORDER = $DEALER = $CURRTURN = $TOPCARD = $DRAWN = 0;
+    $UNO = $UNOW = $UNOCHAN = $ORDER = $DEALER = $CURRTURN = $TOPCARD = $DRAWN = $UNOTIME = $UNOGCC = 0;
     %PLAYERS = ();
     %NICKS = ();
 
