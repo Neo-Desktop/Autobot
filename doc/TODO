@@ -18,6 +18,7 @@ Legend:
      [X] Add English strings
      [X] Add Spanish strings
      [X] Add French strings
+     [ ] Add Spanish, French and German translations to all official command help hashes.
 
  [!] API
      [X] Create basic modular functions
