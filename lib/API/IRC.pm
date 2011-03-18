@@ -60,10 +60,10 @@ sub cpart {
     my ($svr, $chan, $reason) = @_;
 
     if (defined $reason) {
-    	Auto::socksnd($svr, "PART $chan :$reason");
+        Auto::socksnd($svr, "PART $chan :$reason");
     }
     else {
-    	Auto::socksnd($svr, "PART $chan :Leaving");
+        Auto::socksnd($svr, "PART $chan :Leaving");
     }
 
     return 1;
@@ -173,10 +173,10 @@ sub quit {
     my ($svr, $reason) = @_;
 
     if (defined $reason) {
-    	Auto::socksnd($svr, "QUIT :$reason");
+        Auto::socksnd($svr, "QUIT :$reason");
     }
     else {
-    	Auto::socksnd($svr, 'QUIT :Leaving');
+        Auto::socksnd($svr, 'QUIT :Leaving');
     }
 
     # Trigger on_disconnect.
@@ -202,9 +202,9 @@ sub usrc {
     my @sii = split m/[@]/xsm, $si[1];
 
     return (
-    	nick  => $si[0],
-    	user => $sii[0],
-    	host  => $sii[1]
+        nick  => $si[0],
+        user => $sii[0],
+        host  => $sii[1]
     );
 }
 
@@ -220,7 +220,7 @@ sub match_mask {
 
     # Let's grep the user's mask.
     if ($mu =~ m/$mh/xsm) {
-    	return 1;
+        return 1;
     }
 
     return;

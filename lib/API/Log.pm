@@ -21,7 +21,7 @@ sub println
     my ($out) = @_;
 
     if (!defined $out) {
-    	print $RS;
+        print $RS;
     }
     else {
         print $out.$RS;
@@ -36,8 +36,8 @@ sub dbug
     my ($out) = @_;
 
     if ($Auto::DEBUG) {
-    	# We're in debug mode; print it out.
-    	say $out;
+        # We're in debug mode; print it out.
+        say $out;
     }
 
     return 1;
@@ -57,7 +57,7 @@ sub alog
 
     # Create var/ if it doesn't exist.
     if (!-d "$Auto::bin{var}") {
-    	mkdir "$Auto::bin{var}", 0600; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
+        mkdir "$Auto::bin{var}", 0600; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
     }
 
     # Open the logfile, print the log message to it and close it.
@@ -76,29 +76,29 @@ sub expire_logs
 
     # Check for invalid values.
     if ($celog =~ m/[^0-9]/sm) { ## no critic qw(RegularExpressions::RequireExtendedFormatting)
-    	# Must be numbers only.
-    	return;
+        # Must be numbers only.
+        return;
     }
     elsif (!$celog) {
-    	# No expire.
-    	return;
+        # No expire.
+        return;
     }
 
     # Iterate through each logfile.
     foreach my $file (glob fpfmt("$Auto::bin{var}/*")) {
-    	my (undef, $file) = split 'bin/../var/', $file; ## no critic qw(BuiltinFunctions::ProhibitStringySplit)
+        my (undef, $file) = split 'bin/../var/', $file; ## no critic qw(BuiltinFunctions::ProhibitStringySplit)
 
-    	# Convert filename to UNIX time.
-    	my $yyyy = substr $file, 0, 4; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
-    	my $mm = substr $file, 4, 2; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
-    	$mm = $mm - 1;
-    	my $dd = substr $file, 6, 2; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
-    	my $epoch = timelocal(0, 0, 0, $dd, $mm, $yyyy);
+        # Convert filename to UNIX time.
+        my $yyyy = substr $file, 0, 4; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
+        my $mm = substr $file, 4, 2; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
+        $mm = $mm - 1;
+        my $dd = substr $file, 6, 2; ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
+        my $epoch = timelocal(0, 0, 0, $dd, $mm, $yyyy);
 
-    	# If it's older than <config_value> days, delete it.
-    	if (time - $epoch > 86_400 * $celog) { ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
-    		unlink "$Auto::bin{var}/$file";
-    	}
+        # If it's older than <config_value> days, delete it.
+        if (time - $epoch > 86_400 * $celog) { ## no critic qw(ValuesAndExpressions::ProhibitMagicNumbers)
+            unlink "$Auto::bin{var}/$file";
+        }
     }
 
     return 1;
