@@ -16,8 +16,7 @@ our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add
 
 
 # Initialize a module.
-sub mod_init
-{
+sub mod_init {
     my ($name, $author, $version, $autover, $pkg) = @_;
 
     # Log/debug.
@@ -60,8 +59,7 @@ sub mod_init
 }
 
 # Check if a module exists.
-sub mod_exists
-{
+sub mod_exists {
     my ($name) = @_;
 
     if (defined $API::Std::MODULE{$name}) { return 1; }
@@ -70,8 +68,7 @@ sub mod_exists
 }
 
 # Void a module.
-sub mod_void
-{
+sub mod_void {
     my ($module) = @_;
 
     # Log/debug.
@@ -109,8 +106,7 @@ sub mod_void
 }
 
 # Add a command to Auto.
-sub cmd_add
-{
+sub cmd_add {
     my ($cmd, $lvl, $priv, $help, $sub) = @_;
     $cmd = uc $cmd;
 
@@ -127,8 +123,7 @@ sub cmd_add
 
 
 # Delete a command from Auto.
-sub cmd_del
-{
+sub cmd_del {
     my ($cmd) = @_;
     $cmd = uc $cmd;
 
@@ -143,8 +138,7 @@ sub cmd_del
 }
 
 # Add an event to Auto.
-sub event_add
-{
+sub event_add {
     my ($name) = @_;
 
     if (!defined $EVENTS{lc $name}) {
@@ -158,8 +152,7 @@ sub event_add
 }
 
 # Delete an event from Auto.
-sub event_del
-{
+sub event_del {
     my ($name) = @_;
 
     if (defined $EVENTS{lc $name}) {
@@ -174,8 +167,7 @@ sub event_del
 }
 
 # Trigger an event.
-sub event_run
-{
+sub event_run {
     my ($event, @args) = @_;
 
     if (defined $EVENTS{lc $event} and defined $HOOKS{lc $event}) {
@@ -189,8 +181,7 @@ sub event_run
 }
 
 # Add a hook to Auto.
-sub hook_add
-{
+sub hook_add {
     my ($event, $name, $sub) = @_;
 
     if (!defined $API::Std::HOOKS{lc $name}) {
@@ -208,8 +199,7 @@ sub hook_add
 }
 
 # Delete a hook from Auto.
-sub hook_del
-{
+sub hook_del {
     my ($event, $name) = @_;
 
     if (defined $API::Std::HOOKS{lc $event}{lc $name}) {
@@ -222,8 +212,7 @@ sub hook_del
 }
 
 # Add a timer to Auto.
-sub timer_add
-{
+sub timer_add {
     my ($name, $type, $time, $sub) = @_;
     $name = lc $name;
 
@@ -247,8 +236,7 @@ sub timer_add
 }
 
 # Delete a timer from Auto.
-sub timer_del
-{
+sub timer_del {
     my ($name) = @_;
     $name = lc $name;
 
@@ -261,8 +249,7 @@ sub timer_del
 }
 
 # Hook onto a raw command.
-sub rchook_add
-{
+sub rchook_add {
     my ($cmd, $name, $sub) = @_;
     $cmd = uc $cmd;
 
@@ -278,8 +265,7 @@ sub rchook_add
 }
 
 # Delete a raw command hook.
-sub rchook_del
-{
+sub rchook_del {
     my ($cmd, $name) = @_;
     $cmd = uc $cmd;
 
@@ -293,8 +279,7 @@ sub rchook_del
 }
 
 # Configuration value getter.
-sub conf_get
-{
+sub conf_get {
     my ($value) = @_;
 
     # Create an array out of the value.
@@ -342,8 +327,7 @@ sub conf_get
 }
 
 # Translation subroutine.
-sub trans
-{
+sub trans {
     my $id = shift;
     $id =~ s/ /_/gsm;
 
@@ -357,8 +341,7 @@ sub trans
 }
 
 # Match user subroutine.
-sub match_user
-{
+sub match_user {
     my (%user) = @_;
 
     # Get data from config.
@@ -414,8 +397,7 @@ sub match_user
 }
 
 # Privilege subroutine.
-sub has_priv
-{
+sub has_priv {
     my ($cuser, $cpriv) = @_;
 
     if (conf_get("user:$cuser:privs")) {
@@ -432,8 +414,7 @@ sub has_priv
 }
 
 # Ratelimit check subroutine.
-sub ratelimit_check
-{
+sub ratelimit_check {
     my (%src) = @_;
 
     # Check if ratelimit is set to on.
@@ -465,8 +446,7 @@ sub ratelimit_check
 }
 
 # Error subroutine.
-sub err ## no critic qw(Subroutines::ProhibitBuiltinHomonyms)
-{
+sub err { ## no critic qw(Subroutines::ProhibitBuiltinHomonyms)
     my ($lvl, $msg, $fatal) = @_;
 
     # Check for an invalid level.
@@ -500,8 +480,7 @@ sub err ## no critic qw(Subroutines::ProhibitBuiltinHomonyms)
 }
 
 # Warn subroutine.
-sub awarn
-{
+sub awarn {
     my ($lvl, $msg) = @_;
 
     # Check for an invalid level.
