@@ -1186,6 +1186,7 @@ sub _gameover {
     my ($net, $chan) = split '/', $UNOCHAN;
     privmsg($net, $chan, "Game over. \2".$NICKS{$player}."\2 is victorious! Bringing his/her score to \2$score\2! Congratulations!");
     my ($hours, $mins, $secs);
+    $hours = $mins = $secs = 0;
     my $durtime = time - $UNOTIME;
     while ($durtime >= 3600) { $hours++; $durtime -= 3600 }
     while ($durtime >= 60) { $mins++; $durtime -= 60 }
