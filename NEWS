@@ -18,6 +18,7 @@ In this alpha8 release, we have added:
 * Support for system-wide installs. (/usr or /usr/local)
 * The `wizard` utility, for creating local Auto config directories.
 * EightBall rewritten to be much nicer.
+* A module to translate English into LOLCAT (LOLCAT).
 
 Bug fixes:
 
