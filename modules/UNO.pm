@@ -1321,7 +1321,7 @@ sub on_rehash {
 
 
 # Start initialization.
-API::Std::mod_init('UNO', 'Xelhua', '1.04', '3.0.0a7', __PACKAGE__);
+API::Std::mod_init('UNO', 'Xelhua', '1.05', '3.0.0a8', __PACKAGE__);
 # build: perl=5.010000
 
 __END__
@@ -1332,7 +1332,7 @@ UNO - Three editions of the UNO card game
 
 =head1 VERSION
 
- 1.04
+ 1.05
 
 =head1 SYNOPSIS
 
@@ -1380,7 +1380,7 @@ The commands this adds are:
 
 All of which describe themselves quite well with just the name.
 
-This module is compatible with Auto v3.0.0a7+.
+This module is compatible with Auto v3.0.0a8+.
 
 =head1 INSTALL
 
