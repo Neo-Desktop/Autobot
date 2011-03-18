@@ -6,8 +6,8 @@ use strict;
 use warnings;
 use feature qw(switch);
 use Exporter;
+use base qw(Exporter);
 
-our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(ban cjoin cpart cmode umode kick privmsg notice quit nick names
                     topic who usrc match_mask);
 
@@ -24,12 +24,12 @@ sub ban {
     given ($cbt) {
         when (1) { $mask = '*!*@'.$user->{host}; }
         when (2) { $mask = $user->{nick}.'!*@*'; }
-        when (3) { $mask = '*!'.$user->{user}.'@'.$user->{host}; }
-        when (4) { $mask = $user->{nick}.'!*'.$user->{user}.'@'.$user->{host}; }
+        when (3) { $mask = q{*!}.$user->{user}.q{@}.$user->{host}; }
+        when (4) { $mask = $user->{nick}.q{!*}.$user->{user}.q{@}.$user->{host}; }
         when (5) {
             my @hd = split m/[\.]/, $user->{host};
             shift @hd;
-            $mask = '*!*@*.'.join ' ', @hd;
+            $mask = '*!*@*.'.join q{ }, @hd;
         }
     }
 
@@ -49,16 +49,16 @@ sub ban {
 # Join a channel.
 sub cjoin {
     my ($svr, $chan, $key) = @_;
-    
-    Auto::socksnd($svr, "JOIN ".((defined $key) ? "$chan $key" : "$chan"));
-    
+
+    Auto::socksnd($svr, 'JOIN '.((defined $key) ? "$chan $key" : $chan));
+
     return 1;
 }
 
 # Part a channel.
 sub cpart {
     my ($svr, $chan, $reason) = @_;
-    
+
     if (defined $reason) {
     	Auto::socksnd($svr, "PART $chan :$reason");
     }
@@ -74,23 +74,23 @@ sub cmode {
     my ($svr, $chan, $modes) = @_;
 
     Auto::socksnd($svr, "MODE $chan $modes");
-    
+
     return 1;
 }
 
 # Set mode(s) on us.
 sub umode {
     my ($svr, $modes) = @_;
-    
-    Auto::socksnd($svr, "MODE ".$Proto::IRC::botinfo{$svr}{nick}." $modes");
-    
+
+    Auto::socksnd($svr, 'MODE '.$Proto::IRC::botinfo{$svr}{nick}." $modes");
+
     return 1;
-} 
+}
 
 # Send a PRIVMSG.
 sub privmsg {
     my ($svr, $target, $message) = @_;
-    
+
     # Get maximum length.
     my $maxlen = 510 - length q{:}.$Proto::IRC::botinfo{$svr}{nick}.q{!}.$Proto::IRC::botinfo{$svr}{user}.q{@}.$Proto::IRC::botinfo{$svr}{mask}." PRIVMSG $target :";
 
@@ -100,14 +100,14 @@ sub privmsg {
         Auto::socksnd($svr, "PRIVMSG $target :$submsg");
     }
     if (length $message) { Auto::socksnd($svr, "PRIVMSG $target :$message") }
-    
+
     return 1;
 }
 
 # Send a NOTICE.
 sub notice {
     my ($svr, $target, $message) = @_;
-    
+
     # Get maximum length.
     my $maxlen = 510 - length q{:}.$Proto::IRC::botinfo{$svr}{nick}.q{!}.$Proto::IRC::botinfo{$svr}{user}.q{@}.$Proto::IRC::botinfo{$svr}{mask}." NOTICE $target :";
 
@@ -117,7 +117,7 @@ sub notice {
         Auto::socksnd($svr, "NOTICE $target :$submsg");
     }
     if (length $message) { Auto::socksnd($svr, "NOTICE $target :$message") }
-    
+
     return 1;
 }
 
@@ -133,9 +133,9 @@ sub act {
 # Change bot nickname.
 sub nick {
     my ($svr, $newnick) = @_;
-    
+
     Auto::socksnd($svr, "NICK $newnick");
-    
+
     $Proto::IRC::botinfo{$svr}{newnick} = $newnick;
 
     return 1;
@@ -144,18 +144,18 @@ sub nick {
 # Request the users of a channel.
 sub names {
     my ($svr, $chan) = @_;
-    
+
     Auto::socksnd($svr, "NAMES $chan");
-    
+
     return 1;
 }
 
 # Send a topic to the channel.
 sub topic {
     my ($svr, $chan, $topic) = @_;
-    
+
     Auto::socksnd($svr, "TOPIC $chan :$topic");
-    
+
     return 1;
 }
 
@@ -171,7 +171,7 @@ sub kick {
 # Quit IRC.
 sub quit {
     my ($svr, $reason) = @_;
-    
+
     if (defined $reason) {
     	Auto::socksnd($svr, "QUIT :$reason");
     }
@@ -197,10 +197,10 @@ sub who {
 # Get nick, ident and host from a <nick>!<ident>@<host>
 sub usrc {
     my ($ex) = @_;
-    
-    my @si = split('!', $ex);
-    my @sii = split('@', $si[1]);
-    
+
+    my @si = split m/[!]/xsm, $ex;
+    my @sii = split m/[@]/xsm, $si[1];
+
     return (
     	nick  => $si[0],
     	user => $sii[0],
@@ -211,19 +211,19 @@ sub usrc {
 # Match two IRC masks.
 sub match_mask {
     my ($mu, $mh) = @_;
-    
+
     # Prepare the regex.
-    $mh =~ s/\./\\\./g;
-    $mh =~ s/\?/\./g;
-    $mh =~ s/\*/\.\*/g;
-    $mh = '^'.$mh.'$';
-    
+    $mh =~ s/\./\\\./gxsm;
+    $mh =~ s/\?/\./gxsm;
+    $mh =~ s/\*/\.\*/gxsm;
+    $mh = q{^}.$mh.q{$};
+
     # Let's grep the user's mask.
-    if (grep(/$mh/, $mu)) {
+    if ($mu =~ m/$mh/xsm) {
     	return 1;
     }
-    
-    return 0;
+
+    return;
 }
 
 
