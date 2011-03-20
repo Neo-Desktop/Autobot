@@ -769,12 +769,16 @@ sub _fmtcard {
     my $fmt;
     my ($color, $val) = split m/[:]/, $card;
     if ($color eq 'W' or $color eq 'WD4' or $color eq 'WAH' or $color eq 'WHF') { $val = $color }
+    
+    # Determine if we should state the color in the output.
+    my $code = '[';
+    if (conf_get('uno:english')) { if ((conf_get('uno:english'))[0][0] == 1) { $code = '[%s ' } }
 
     given ($color) {
-        when ('R') { $fmt = "\00301,04[$val]\003" }
-        when ('B') { $fmt = "\00300,12[$val]\003" }
-        when ('G') { $fmt = "\00300,03[$val]\003" }
-        when ('Y') { $fmt = "\00301,08[$val]\003" }
+        when ('R') { $fmt = sprintf "\00301,04$code$val]\003", $_ }
+        when ('B') { $fmt = sprintf "\00300,12$code$val]\003", $_ }
+        when ('G') { $fmt = sprintf "\00300,03$code$val]\003", $_ }
+        when ('Y') { $fmt = sprintf "\00301,08$code$val]\003", $_ }
         default { $fmt = "\002\00300,01[$val]\003\002" }
     }
 
@@ -1346,7 +1350,7 @@ sub sendmsg {
 }
 
 # Start initialization.
-API::Std::mod_init('UNO', 'Xelhua', '1.06', '3.0.0a8', __PACKAGE__);
+API::Std::mod_init('UNO', 'Xelhua', '1.07', '3.0.0a8', __PACKAGE__);
 # build: perl=5.010000
 
 __END__
@@ -1357,7 +1361,7 @@ UNO - Three editions of the UNO card game
 
 =head1 VERSION
 
- 1.06
+ 1.07
 
 =head1 SYNOPSIS
 
@@ -1430,6 +1434,14 @@ You may also add the reschan option to the block, like so:
 
 This will restrict use of UNO to the specified channel. Often useful since only
 one channel at a time may use UNO.
+
+You may also add the english option to the block, like so:
+
+ english 1;
+
+This will make cards display as [<R|G|B|Y> <card>], rather than [<card>] with
+IRC color. Useful if players are color blind or their clients do not support
+colors.
 
 =head1 DIFFERENCES BETWEEN EDITIONS
 

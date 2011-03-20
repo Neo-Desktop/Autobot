@@ -20,6 +20,7 @@ In this alpha8 release, we have added:
 * EightBall rewritten to be much nicer.
 * A module to translate English into LOLCAT (LOLCAT).
 * Command aliasing via aliases blocks in the config.
+* Added optional uno:english and required uno:msg options. See documentation for UNO.
 
 Bug fixes:
 
