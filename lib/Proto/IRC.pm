@@ -71,29 +71,29 @@ sub ircparse
 
     # Make sure there is enough data.
     if (defined $ex[0] and defined $ex[1]) {
-    	# If it's a ping...
-    	if ($ex[0] eq 'PING') {
-    		# send a PONG.
-    		Auto::socksnd($svr, "PONG $ex[1]");
-    	}
-    	# If it's AUTHENTICATE
-    	elsif ($ex[0] eq 'AUTHENTICATE') {
-    		if (API::Std::mod_exists('SASLAuth')) {
+        # If it's a ping...
+        if ($ex[0] eq 'PING') {
+            # send a PONG.
+            Auto::socksnd($svr, "PONG $ex[1]");
+        }
+        # If it's AUTHENTICATE
+        elsif ($ex[0] eq 'AUTHENTICATE') {
+            if (API::Std::mod_exists('SASLAuth')) {
                 M::SASLAuth::handle_authenticate($svr, @ex);
-    		}
-    	}
+            }
+        }
         # Check if it's handled by core.
         elsif (defined $RAWC{$ex[1]}) {
             &{ $RAWC{$ex[1]} }($svr, @ex);
         }
-    	else {
-    		# otherwise, check for a raw hook.
-    		if (defined $API::Std::RAWHOOKS{$ex[1]}) {
-    			foreach (keys %{$API::Std::RAWHOOKS{$ex[1]}}) {
+        else {
+            # otherwise, check for a raw hook.
+            if (defined $API::Std::RAWHOOKS{$ex[1]}) {
+                foreach (keys %{$API::Std::RAWHOOKS{$ex[1]}}) {
                     &{ $API::Std::RAWHOOKS{$ex[1]}{$_} }($svr, @ex);
                 }
-    		}
-    	}
+            }
+        }
     }
 
     return 1;
@@ -112,8 +112,8 @@ sub num001 {
 
     # In case we don't get NICK from the server.
     if (!defined $botinfo{$svr}{nick}) {
-    	$botinfo{$svr}{nick} = $botinfo{$svr}{newnick};
-    	delete $botinfo{$svr}{newnick};
+        $botinfo{$svr}{nick} = $botinfo{$svr}{newnick};
+        delete $botinfo{$svr}{newnick};
     }
 
     # Log.
@@ -194,11 +194,11 @@ sub num432 {
     my ($svr, undef) = @_;
 
     if ($got_001{$svr}) {
-    	err(3, "Got error from server[$svr]: Erroneous nickname.", 0);
+        err(3, "Got error from server[$svr]: Erroneous nickname.", 0);
     }
     else {
-    	err(2, "Got error from server[$svr] before connection complete: Erroneous nickname. Closing connection.", 0);
-    	API::IRC::quit($svr, 'An error occurred.');
+        err(2, "Got error from server[$svr] before connection complete: Erroneous nickname. Closing connection.", 0);
+        API::IRC::quit($svr, 'An error occurred.');
     }
 
     if (defined $botinfo{$svr}{newnick}) { delete $botinfo{$svr}{newnick} }
@@ -212,7 +212,7 @@ sub num433 {
     my ($svr, undef) = @_;
 
     if (defined $botinfo{$svr}{newnick}) {
-    	API::IRC::nick($svr, $botinfo{$svr}{newnick}.'_');
+        API::IRC::nick($svr, $botinfo{$svr}{newnick}.'_');
     }
 
     return 1;
@@ -224,10 +224,10 @@ sub num438 {
     my ($svr, @ex) = @_;
 
     if (defined $botinfo{$svr}{newnick}) {
-    	API::Std::timer_add('num438_'.$botinfo{$svr}{newnick}, 1, $ex[11], sub {
-    		API::IRC::nick($Proto::IRC::botinfo{$svr}{newnick});
-    		if (defined $botinfo{$svr}{newnick}) { delete $botinfo{$svr}{newnick} }
-    	 });
+        API::Std::timer_add('num438_'.$botinfo{$svr}{newnick}, 1, $ex[11], sub {
+            API::IRC::nick($Proto::IRC::botinfo{$svr}{newnick});
+            if (defined $botinfo{$svr}{newnick}) { delete $botinfo{$svr}{newnick} }
+         });
     }
 
     return 1;
@@ -353,14 +353,14 @@ sub cjoin {
     
     # Check if this is coming from ourselves.
     if ($src{nick} eq $botinfo{$svr}{nick}) {
-    	$botchans{$svr}{lc $chan} = 1;
-    	API::Std::event_run("on_ucjoin", ($svr, $chan));
+        $botchans{$svr}{lc $chan} = 1;
+        API::Std::event_run("on_ucjoin", ($svr, $chan));
     }
     else {
-    	# It isn't. Update chanusers and trigger on_rcjoin.
+        # It isn't. Update chanusers and trigger on_rcjoin.
         $State::IRC::chanusers{$svr}{lc $chan}{$src{nick}} = 1;
         $src{svr} = $svr;
-    	API::Std::event_run("on_rcjoin", (\%src, $chan));
+        API::Std::event_run("on_rcjoin", (\%src, $chan));
     }
     
     return 1;
@@ -520,22 +520,22 @@ sub nick {
  
     # Check if this is coming from ourselves.
     if ($src{nick} eq $botinfo{$svr}{nick}) {
-    	# It is. Update bot nick hash.
-    	$botinfo{$svr}{nick} = $nex;
-    	delete $botinfo{$svr}{newnick} if (defined $botinfo{$svr}{newnick});
+        # It is. Update bot nick hash.
+        $botinfo{$svr}{nick} = $nex;
+        delete $botinfo{$svr}{newnick} if (defined $botinfo{$svr}{newnick});
     }
     else {
-    	# It isn't. Update chanusers and trigger on_nick.
+        # It isn't. Update chanusers and trigger on_nick.
         foreach my $chk (keys %{ $State::IRC::chanusers{$svr} }) {
             if (defined $State::IRC::chanusers{$svr}{$chk}{$src{nick}}) {
                 $State::IRC::chanusers{$svr}{$chk}{$nex} = $State::IRC::chanusers{$svr}{$chk}{$src{nick}};
                 delete $State::IRC::chanusers{$svr}{$chk}{$src{nick}};
             }
         }
-    	API::Std::event_run("on_nick", (\%src, $nex));
+        API::Std::event_run("on_nick", (\%src, $nex));
     }
     
-    return 1;	
+    return 1;    
 }
 
 # Parse: NOTICE
@@ -611,25 +611,25 @@ sub privmsg {
 
     my @argv;
     for (my $i = 4; $i < scalar(@ex); $i++) {
-    	push(@argv, $ex[$i]);
+        push(@argv, $ex[$i]);
     }
     $data{svr} = $svr;
     
     my ($cmd, $cprefix, $rprefix);
     # Check if it's to a channel or to us.
     if (lc($ex[2]) eq lc($botinfo{$svr}{nick})) {
-    	# It is coming to us in a private message.
+        # It is coming to us in a private message.
         
         # Ensure it's a valid length.
         if (length($ex[3]) > 1) {
-    	    $cmd = uc(substr($ex[3], 1));
-    	    if (defined $API::Std::CMDS{$cmd}) {
+            $cmd = uc(substr($ex[3], 1));
+            if (defined $API::Std::CMDS{$cmd}) {
                 # If this is indeed a command, continue.
-    		    if ($API::Std::CMDS{$cmd}{lvl} == 1 or $API::Std::CMDS{$cmd}{lvl} == 2) {
+                if ($API::Std::CMDS{$cmd}{lvl} == 1 or $API::Std::CMDS{$cmd}{lvl} == 2) {
                     # Ensure the level is private or all.
                     if (API::Std::ratelimit_check(%data)) {
                         # Continue if the user has not passed the ratelimit amount.
-    			        if ($API::Std::CMDS{$cmd}{priv}) {
+                        if ($API::Std::CMDS{$cmd}{priv}) {
                             # If this command requires a privilege...
                             if (API::Std::has_priv(API::Std::match_user(%data), $API::Std::CMDS{$cmd}{priv})) {
                                 # Make sure they have it.
@@ -649,26 +649,26 @@ sub privmsg {
                         # Send them a notice about their bad deed.
                         API::IRC::notice($data{svr}, $data{nick}, trans('Rate limit exceeded').q{.});
                     }
-    		    }
-    	    }
+                }
+            }
         }
 
-    	# Trigger event on_uprivmsg.
+        # Trigger event on_uprivmsg.
         shift @ex; shift @ex; shift @ex;
         $ex[0] = substr $ex[0], 1;
-    	API::Std::event_run("on_uprivmsg", (\%data, @ex));
+        API::Std::event_run("on_uprivmsg", (\%data, @ex));
     }
     else {
-    	# It is coming to us in a channel message.
-    	$data{chan} = $ex[2];
+        # It is coming to us in a channel message.
+        $data{chan} = $ex[2];
         # Ensure it's a valid length before continuing.
-    	if (length($ex[3]) > 1) {
+        if (length($ex[3]) > 1) {
             $cprefix = (conf_get("fantasy_pf"))[0][0];
-    	    $rprefix = substr($ex[3], 1, 1);
-    	    $cmd = uc(substr($ex[3], 2));
-    	    if (defined $API::Std::CMDS{$cmd} and $rprefix eq $cprefix) {
+            $rprefix = substr($ex[3], 1, 1);
+            $cmd = uc(substr($ex[3], 2));
+            if (defined $API::Std::CMDS{$cmd} and $rprefix eq $cprefix) {
                 # If this is indeed a command, continue.
-    		    if ($API::Std::CMDS{$cmd}{lvl} == 0 or $API::Std::CMDS{$cmd}{lvl} == 2) {
+                if ($API::Std::CMDS{$cmd}{lvl} == 0 or $API::Std::CMDS{$cmd}{lvl} == 2) {
                     # Ensure the level is public or all.
                     if (API::Std::ratelimit_check(%data)) {
                         # Continue if the user has not passed the ratelimit amount.
@@ -715,14 +715,14 @@ sub privmsg {
                         }
                     }
                 }
-    	    }
+            }
         }
 
-    	# Trigger event on_cprivmsg.
+        # Trigger event on_cprivmsg.
         my $target = $ex[2]; delete $data{chan};
         shift @ex; shift @ex; shift @ex;
         $ex[0] = substr $ex[0], 1;
-    	API::Std::event_run("on_cprivmsg", (\%data, $target, @ex));
+        API::Std::event_run("on_cprivmsg", (\%data, $target, @ex));
     }
     
     return 1;
