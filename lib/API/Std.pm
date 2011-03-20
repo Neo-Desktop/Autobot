@@ -53,6 +53,8 @@ sub mod_init {
         API::Log::dbug('MODULES: Failed to load '.$name.q{.});
         API::Log::alog('MODULES: Failed to load '.$name.q{.});
         if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to load '.$name.q{.}) }
+        # Just in case.
+        Class::Unload->unload($pkg);
 
         return;
     }
