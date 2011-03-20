@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Fixed a bug in UNO that allowed users to join more than once.
     * Added optional uno:english option. See documentation for UNO.
     * UNO has a new config option, uno:msg, for setting what method the bot
       uses for private messages.

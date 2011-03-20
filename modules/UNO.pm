@@ -158,6 +158,12 @@ sub cmd_uno {
                 }
             }
 
+            # Ensure the user is not already playing.
+            if (defined $PLAYERS{lc $src->{nick}}) {
+                sendmsg($src->{svr}, $src->{nick}, 'You\'re already playing.');
+                return;
+            }
+
             # Update variables.
             $PLAYERS{lc $src->{nick}} = []; 
             $NICKS{lc $src->{nick}} = $src->{nick};
@@ -1350,7 +1356,7 @@ sub sendmsg {
 }
 
 # Start initialization.
-API::Std::mod_init('UNO', 'Xelhua', '1.07', '3.0.0a8', __PACKAGE__);
+API::Std::mod_init('UNO', 'Xelhua', '1.08', '3.0.0a8', __PACKAGE__);
 # build: perl=5.010000
 
 __END__
@@ -1361,7 +1367,7 @@ UNO - Three editions of the UNO card game
 
 =head1 VERSION
 
- 1.07
+ 1.08
 
 =head1 SYNOPSIS
 
