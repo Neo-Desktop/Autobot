@@ -1322,7 +1322,7 @@ sub on_rehash {
 
 
 # Start initialization.
-API::Std::mod_init('UNO', 'Xelhua', '1.05', '3.0.0a8', __PACKAGE__);
+API::Std::mod_init('UNO', 'Xelhua', '2.00d', '3.0.0a8', __PACKAGE__);
 # build: perl=5.010000
 
 __END__
@@ -1333,7 +1333,7 @@ UNO - Three editions of the UNO card game
 
 =head1 VERSION
 
- 1.05
+ 2.00d
 
 =head1 SYNOPSIS
 
