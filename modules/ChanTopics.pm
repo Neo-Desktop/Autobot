@@ -11,7 +11,7 @@ use API::IRC qw(notice topic);
 sub _init
 {
     # PostgreSQL is not supported.
-    if ($Auto::ENFEAT =~ /pgsql/) { err(3, 'Unable to load ChanTopics: PostgreSQL is not supported.', 0); return; }
+    if ($Auto::ENFEAT =~ /pgsql/) { err(3, 'Unable to load ChanTopics: PostgreSQL is not supported.', 0); return }
     
     # Create database table if it's missing.
     $Auto::DB->do('CREATE TABLE IF NOT EXISTS topics (net TEXT, chan TEXT, topic TEXT, divider TEXT, owner TEXT, verb TEXT, status TEXT, other TEXT, static TEXT)') or print "$!\n" and return;

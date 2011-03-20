@@ -15,7 +15,7 @@ sub _init
     cmd_add('QDB', 0, 0, \%M::QDB::HELP_QDB, \&M::QDB::cmd_qdb) or return;
     
     # Check the database format. Fail to load if it's PostgreSQL.
-    if ($Auto::ENFEAT =~ /pgsql/) { err(2, 'Unable to load QDB: PostgreSQL is not supported.', 0); return; }
+    if ($Auto::ENFEAT =~ /pgsql/) { err(2, 'Unable to load QDB: PostgreSQL is not supported.', 0); return }
 
     # Check for database table.
     $Auto::DB->do('CREATE TABLE IF NOT EXISTS qdb (quoteid INTEGER PRIMARY KEY, creator TEXT, time INTEGER, quote TEXT)') or return;
@@ -82,7 +82,7 @@ sub cmd_qdb
             my @data = $dbq->fetchrow_array;
 
             # Check for an unusual issue.
-            if (!defined $data[1]) { notice($src->{svr}, $src->{nick}, trans('An error occurred').'. Quote might not exist.'); return; }
+            if (!defined $data[1]) { notice($src->{svr}, $src->{nick}, trans('An error occurred').'. Quote might not exist.'); return }
 
             # Send it back.
             privmsg($src->{svr}, $src->{chan}, "\002Submitted by\002 $data[1] \002on\002 ".POSIX::strftime('%F', localtime($data[2]))." \002at\002 ".POSIX::strftime('%I:%M %p', localtime($data[2])));
@@ -103,7 +103,7 @@ sub cmd_qdb
 
             # Random number.
             my $rand = int(rand($count));
-            if ($rand == 0) { $rand = $count; }
+            if ($rand == 0) { $rand = $count }
 
             # Get quote.
             my $dbq = $Auto::DB->prepare('SELECT * FROM qdb WHERE quoteid = ?') or
@@ -157,7 +157,7 @@ sub cmd_qdb
             privmsg($src->{svr}, $src->{chan}, "\2".scalar @BUFFER."\2 results for \2$expr\2:");
             my $i = 0;
             my $si = 3;
-            if (conf_get('qdb_search_resnum')) { $si = (conf_get('qdb_search_resnum'))[0][0] - 1; }
+            if (conf_get('qdb_search_resnum')) { $si = (conf_get('qdb_search_resnum'))[0][0] - 1 }
             while ($i <= $si) {
                 if (!defined $BUFFER[0]) {
                     last;
@@ -177,7 +177,7 @@ sub cmd_qdb
             # Return four quotes.
             my $i = 0;
             my $si = 3;
-            if (conf_get('qdb_search_resnum')) { $si = (conf_get('qdb_search_resnum'))[0][0] - 1; }
+            if (conf_get('qdb_search_resnum')) { $si = (conf_get('qdb_search_resnum'))[0][0] - 1 }
             while ($i <= $si) {
                 if (!defined $BUFFER[0]) {
                     last;
@@ -204,7 +204,7 @@ sub cmd_qdb
 
             notice($src->{svr}, $src->{nick}, (($dbq) ? 'Done.' : trans('An error occurred').q{.}));
         }
-        default { notice($src->{svr}, $src->{nick}, "Unknown action \002".uc($argv[0])."\002. \002Syntax:\002 QDB (ADD|VIEW|COUNT|RAND|DEL) [quote]"); return; }
+        default { notice($src->{svr}, $src->{nick}, "Unknown action \002".uc($argv[0])."\002. \002Syntax:\002 QDB (ADD|VIEW|COUNT|RAND|DEL) [quote]"); return }
     }
 
     return 1;

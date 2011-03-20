@@ -79,7 +79,7 @@ hook_add('on_kick', 'ircusers.onkick', sub {
         my $ri = 0;
         foreach my $chan (keys %{$State::IRC::chanusers{$src->{svr}}}) {
             if ($chan ne $kchan) {
-                if (defined $State::IRC::chanusers{$src->{svr}}{$chan}{lc $user}) { $ri++; last; }
+                if (defined $State::IRC::chanusers{$src->{svr}}{$chan}{lc $user}) { $ri++; last }
             }
         }
         if (!$ri) {
@@ -102,7 +102,7 @@ hook_add('on_part', 'ircusers.onpart', sub {
         my $ri = 0;
         foreach my $chan (keys %{$State::IRC::chanusers{$src->{svr}}}) {
             if ($chan ne $pchan) {
-                if (defined $State::IRC::chanusers{$src->{svr}}{$chan}{lc $src->{nick}}) { $ri++; last; }
+                if (defined $State::IRC::chanusers{$src->{svr}}{$chan}{lc $src->{nick}}) { $ri++; last }
             }
         }
         if (!$ri) {

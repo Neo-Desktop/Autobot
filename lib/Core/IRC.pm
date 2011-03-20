@@ -33,7 +33,7 @@ hook_add("on_quit", "quit_update_chanusers", sub {
 
     # Delete the user from all channels.
     foreach my $ccu (keys %{ $State::IRC::chanusers{$src{svr}}}) {
-        if (defined $State::IRC::chanusers{$src{svr}}{$ccu}{$src{nick}}) { delete $State::IRC::chanusers{$src{svr}}{$ccu}{$src{nick}}; }
+        if (defined $State::IRC::chanusers{$src{svr}}{$ccu}{$src{nick}}) { delete $State::IRC::chanusers{$src{svr}}{$ccu}{$src{nick}} }
     }
 
     return 1;
@@ -158,13 +158,13 @@ hook_add('on_isupport', 'core.prefixchanmode.getdata', sub {
             # Found CHANMODES.
             my ($mtl, $mtp, $mtpp, $mts) = split m/[,]/xsm, substr($ex, 10);
             # List modes.
-            foreach (split(//, $mtl)) { $Proto::IRC::chanmodes{$svr}{$_} = 1; }
+            foreach (split(//, $mtl)) { $Proto::IRC::chanmodes{$svr}{$_} = 1 }
             # Modes with parameter.
-            foreach (split(//, $mtp)) { $Proto::IRC::chanmodes{$svr}{$_} = 2; }
+            foreach (split(//, $mtp)) { $Proto::IRC::chanmodes{$svr}{$_} = 2 }
             # Modes with parameter when +.
-            foreach (split(//, $mtpp)) { $Proto::IRC::chanmodes{$svr}{$_} = 3; }
+            foreach (split(//, $mtpp)) { $Proto::IRC::chanmodes{$svr}{$_} = 3 }
             # Modes without parameter.
-            foreach (split(//, $mts)) { $Proto::IRC::chanmodes{$svr}{$_} = 4; }
+            foreach (split(//, $mts)) { $Proto::IRC::chanmodes{$svr}{$_} = 4 }
         }
     }
 

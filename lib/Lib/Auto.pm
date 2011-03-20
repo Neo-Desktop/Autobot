@@ -123,7 +123,7 @@ sub rehash
     if (conf_get('module')) {
         alog '* Loading modules...';
         foreach (@{ (conf_get('module'))[0] }) {
-            if (!API::Std::mod_exists($_)) { Auto::mod_load($_); }
+            if (!API::Std::mod_exists($_)) { Auto::mod_load($_) }
         }
     }
 
@@ -166,15 +166,15 @@ sub ircsock {
     # Set IPv6/SSL data.
     my $use6 = 0;
     my $usessl = 0;
-    if (defined $cdata->{'ipv6'}[0]) { $use6 = $cdata->{'ipv6'}[0]; }
-    if (defined $cdata->{'ssl'}[0]) { $usessl = $cdata->{'ssl'}[0]; }
+    if (defined $cdata->{'ipv6'}[0]) { $use6 = $cdata->{'ipv6'}[0] }
+    if (defined $cdata->{'ssl'}[0]) { $usessl = $cdata->{'ssl'}[0] }
 
     # Check for appropriate build data.
     if ($usessl) {
-        if ($Auto::ENFEAT !~ m/ssl/ixsm) { err(2, '** Auto not built with SSL support: Aborting connection to '.$svrname, 0); return; }
+        if ($Auto::ENFEAT !~ m/ssl/ixsm) { err(2, '** Auto not built with SSL support: Aborting connection to '.$svrname, 0); return }
     }
     if ($use6) {
-        if ($Auto::ENFEAT !~ m/ipv6/ixsm) { err(2, '** Auto not built with IPv6 support: Aborting connection to '.$svrname, 0); return; }
+        if ($Auto::ENFEAT !~ m/ipv6/ixsm) { err(2, '** Auto not built with IPv6 support: Aborting connection to '.$svrname, 0); return }
     }
 
     # CertFP.
@@ -189,7 +189,7 @@ sub ircsock {
                     $conndata{'SSL_key_file'} = "$Auto::bin{etc}/certs/".$cdata->{'certfp_key'}[0];
                 }
                 if (defined $cdata->{'certfp_pass'}[0]) {
-                    $conndata{'SSL_passwd_cb'} = sub { return $cdata->{'certfp_pass'}[0]; };
+                    $conndata{'SSL_passwd_cb'} = sub { return $cdata->{'certfp_pass'}[0] };
                 }
             }
         }
@@ -238,9 +238,9 @@ sub ircsock {
 
 # Shutdown.
 hook_add('on_shutdown', 'shutdown.core_cleanup', sub {
-    if (defined $Auto::DB) { $Auto::DB->disconnect; }
-    if ($Auto::UPREFIX) { if (-e "$Auto::bin{cwd}/auto.pid") { unlink "$Auto::bin{cwd}/auto.pid"; } }
-    else { if (-e "$Auto::Bin/auto.pid") { unlink "$Auto::Bin/auto.pid"; } }
+    if (defined $Auto::DB) { $Auto::DB->disconnect }
+    if ($Auto::UPREFIX) { if (-e "$Auto::bin{cwd}/auto.pid") { unlink "$Auto::bin{cwd}/auto.pid" } }
+    else { if (-e "$Auto::Bin/auto.pid") { unlink "$Auto::Bin/auto.pid" } }
     return 1;
 });
 
@@ -253,7 +253,7 @@ sub signal_term
 {
     API::Std::event_run('on_sigterm');
     API::Std::event_run('on_shutdown');
-    foreach (keys %Auto::SOCKET) { API::IRC::quit($_, 'Caught SIGTERM'); }
+    foreach (keys %Auto::SOCKET) { API::IRC::quit($_, 'Caught SIGTERM') }
     dbug '!!! Caught SIGTERM; terminating...';
     alog '!!! Caught SIGTERM; terminating...';
     sleep 1;
@@ -265,7 +265,7 @@ sub signal_int
 {
     API::Std::event_run('on_sigint');
     API::Std::event_run('on_shutdown');
-    foreach (keys %Auto::SOCKET) { API::IRC::quit($_, 'Caught SIGINT'); }
+    foreach (keys %Auto::SOCKET) { API::IRC::quit($_, 'Caught SIGINT') }
     dbug '!!! Caught SIGINT; terminating...';
     alog '!!! Caught SIGINT; terminating...';
     sleep 1;
@@ -288,7 +288,7 @@ sub signal_perlwarn
     my ($warnmsg) = @_;
     $warnmsg =~ s/(\n|\r)//xsmg;
     alog 'Perl Warning: '.$warnmsg;
-    if ($Auto::DEBUG) { say 'Perl Warning: '.$warnmsg; }
+    if ($Auto::DEBUG) { say 'Perl Warning: '.$warnmsg }
     return 1;
 }
 
@@ -300,7 +300,7 @@ sub signal_perldie
 
     return if $EXCEPTIONS_BEING_CAUGHT;
     alog 'Perl Fatal: '.$diemsg.' -- Terminating program!';
-    foreach (keys %Auto::SOCKET) { API::IRC::quit($_, 'A fatal error occurred!'); }
+    foreach (keys %Auto::SOCKET) { API::IRC::quit($_, 'A fatal error occurred!') }
     API::Std::event_run('on_shutdown');
     sleep 1;
     say 'FATAL: '.$diemsg;

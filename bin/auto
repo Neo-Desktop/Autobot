@@ -218,13 +218,13 @@ our ($APID, %TIMERS);
 Lib::Auto::checkver();
 
 # Include IPv6 if Auto was built for it.
-if ($ENFEAT =~ /ipv6/) { require IO::Socket::INET6; }
+if ($ENFEAT =~ /ipv6/) { require IO::Socket::INET6 }
 # Include SSL if Auto was built for it.
-if ($ENFEAT =~ /ssl/) { require IO::Socket::SSL; }
+if ($ENFEAT =~ /ssl/) { require IO::Socket::SSL }
 
 # Parse configuration file.
 my $configfile = 'auto.conf';
-if ($USECONFIG) { $configfile = $USECONFIG; }
+if ($USECONFIG) { $configfile = $USECONFIG }
 say "* Parsing configuration file $configfile...";
 our $CONF = Parser::Config->new($configfile) or err(1, 'Failed to parse configuration file!', 1);
 our %SETTINGS = $CONF->parse or err(1, 'Failed to parse configuration file!', 1);
@@ -269,8 +269,8 @@ our $DB;
 given (lc((conf_get('database:format'))[0][0])) {
     when ('sqlite') {
         # SQLite.
-        if ($ENFEAT !~ /sqlite/) { err(2, 'Auto not built with SQLite support. Aborting.', 1); }
-        if (!conf_get('database:filename')) { err(2, 'Missing required configuration value database:filename. Aborting.', 1); }
+        if ($ENFEAT !~ /sqlite/) { err(2, 'Auto not built with SQLite support. Aborting.', 1) }
+        if (!conf_get('database:filename')) { err(2, 'Missing required configuration value database:filename. Aborting.', 1) }
 
         # Import DBD::SQLite.
         require DBD::SQLite;
@@ -286,9 +286,9 @@ given (lc((conf_get('database:format'))[0][0])) {
     }
     when ('mysql') {
         # MySQL.
-        if ($ENFEAT !~ /mysql/) { err(2, 'Auto not built with MySQL support. Aborting.', 1); }
+        if ($ENFEAT !~ /mysql/) { err(2, 'Auto not built with MySQL support. Aborting.', 1) }
         my @reqcval = qw(database:host database:name database:username database:password);
-        foreach (@reqcval) { if (!conf_get($_)) { err(2, "Missing required configuration value $_. Aborting.", 1); } }
+        foreach (@reqcval) { if (!conf_get($_)) { err(2, "Missing required configuration value $_. Aborting.", 1) } }
         undef @reqcval;
 
         # Import DBD::mysql.
@@ -309,8 +309,8 @@ given (lc((conf_get('database:format'))[0][0])) {
     # CSV no work. :(
     #when ('csv') {
     #    # CSV.
-    #    if ($ENFEAT !~ /csv/) { err(2, 'Auto not built with CSV support.', 1); }
-    #    if (!conf_get('database:dir')) { err(2, 'Missing required configuration value database:dir. Aborting.', 1); }
+    #    if ($ENFEAT !~ /csv/) { err(2, 'Auto not built with CSV support.', 1) }
+    #    if (!conf_get('database:dir')) { err(2, 'Missing required configuration value database:dir. Aborting.', 1) }
     #
     #    # Import DBD::CSV.
     #    require DBD::CSV;
@@ -320,9 +320,9 @@ given (lc((conf_get('database:format'))[0][0])) {
     #}
     when ('pgsql') {
         # PostgreSQL.
-        if ($ENFEAT !~ /pgsql/) { err(2, 'Auto not built with PostgreSQL support. Aborting.', 1); }
+        if ($ENFEAT !~ /pgsql/) { err(2, 'Auto not built with PostgreSQL support. Aborting.', 1) }
         my @reqcval = qw(database:name database:host database:username database:password);
-        foreach (@reqcval) { if (!conf_get($_)) { err(2, "Missing required configuration value $_. Aborting.", 1); } }
+        foreach (@reqcval) { if (!conf_get($_)) { err(2, "Missing required configuration value $_. Aborting.", 1) } }
         undef @reqcval;
 
         # Import DBD::Pg.
@@ -341,7 +341,7 @@ given (lc((conf_get('database:format'))[0][0])) {
         }
     }
     # Unknown database format.
-    default { err(2, 'Unknown database format \''.lc((conf_get('database:format'))[0][0]).'\'. Aborting.', 1); }
+    default { err(2, 'Unknown database format \''.lc((conf_get('database:format'))[0][0]).'\'. Aborting.', 1) }
 }
 
 
@@ -509,7 +509,7 @@ while (1) {
     	# Figure out what network is sending us data.
     	my $sockid;
     	foreach (keys %SOCKET) {
-    		if ($SOCKET{$_} eq $sock) { $sockid = $_; }
+    		if ($SOCKET{$_} eq $sock) { $sockid = $_ }
     	}
     	# Read the data.
     	my $idata;

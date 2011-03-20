@@ -44,7 +44,7 @@ sub cmd_eval {
     # Evaluate the expression and return the result.
     my $expr = join ' ', @argv;
     my $result = eval($expr);
-    if (!defined $result) { $result = 'None'; }
+    if (!defined $result) { $result = 'None' }
     if ($EVAL_ERROR) {
         $result = $EVAL_ERROR;
         $result =~ s/(\r|\n)//gxsm;

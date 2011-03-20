@@ -47,10 +47,10 @@ sub stats {
     # Get uptime data.
     my $uptime = time - $Auto::STARTTIME;
     my $days = my $hours = my $mins = my $secs = 0;
-    while ($uptime >= 86_400) { $days++; $uptime -= 86_400; }
-    while ($uptime >= 3_600) { $hours++; $uptime -= 3_600; }
-    while ($uptime >= 60) { $mins++; $uptime -= 60; }
-    while ($uptime >= 1) { $secs++; $uptime--; }
+    while ($uptime >= 86_400) { $days++; $uptime -= 86_400 }
+    while ($uptime >= 3_600) { $hours++; $uptime -= 3_600 }
+    while ($uptime >= 60) { $mins++; $uptime -= 60 }
+    while ($uptime >= 1) { $secs++; $uptime-- }
 
     # Return it.
     privmsg($src->{svr}, $target, "I have been running for \2$days\2 days, \2$hours\2 hours, \2$mins\2 minutes, and \2$secs\2 seconds.");
@@ -62,7 +62,7 @@ sub stats {
     my $nets = keys %Auto::SOCKET;
     my $chans;
     foreach my $net (keys %Auto::SOCKET) {
-        foreach (keys %{$Proto::IRC::botchans{$net}}) { $chans++; }
+        foreach (keys %{$Proto::IRC::botchans{$net}}) { $chans++ }
     }
 
     # Return network/channel data.

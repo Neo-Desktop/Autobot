@@ -22,13 +22,13 @@ sub mod_init {
     # Log/debug.
     API::Log::dbug('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...');
     API::Log::alog('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...');
-    if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...'); }
+    if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...') }
 
     # Check if this module is compatible with this version of Auto.
     if ($autover !~ m/^3\.0\.0a(7|8)$/xsm) {
         API::Log::dbug('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.');
         API::Log::alog('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.');
-        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.'); }
+        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to load '.$name.': Incompatible with your version of Auto.') }
         return;
     }
 
@@ -44,7 +44,7 @@ sub mod_init {
 
         API::Log::dbug('MODULES: '.$name.' successfully loaded.');
         API::Log::alog('MODULES: '.$name.' successfully loaded.');
-        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: '.$name.' successfully loaded.'); }
+        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: '.$name.' successfully loaded.') }
 
         return 1;
     }
@@ -52,7 +52,7 @@ sub mod_init {
         # Otherwise, return a failed to load message.
         API::Log::dbug('MODULES: Failed to load '.$name.q{.});
         API::Log::alog('MODULES: Failed to load '.$name.q{.});
-        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to load '.$name.q{.}); }
+        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to load '.$name.q{.}) }
 
         return;
     }
@@ -62,7 +62,7 @@ sub mod_init {
 sub mod_exists {
     my ($name) = @_;
 
-    if (defined $API::Std::MODULE{$name}) { return 1; }
+    if (defined $API::Std::MODULE{$name}) { return 1 }
 
     return;
 }
@@ -74,13 +74,13 @@ sub mod_void {
     # Log/debug.
     API::Log::dbug('MODULES: Attempting to unload module: '.$module.'...');
     API::Log::alog('MODULES: Attempting to unload module: '.$module.'...');
-    if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Attempting to unload module: '.$module.'...'); }
+    if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Attempting to unload module: '.$module.'...') }
 
     # Check if this module exists.
     if (!defined $MODULE{$module}) {
         API::Log::dbug('MODULES: Failed to unload '.$module.'. No such module?');
         API::Log::alog('MODULES: Failed to unload '.$module.'. No such module?');
-        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to unload '.$module.'. No such module?'); }
+        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to unload '.$module.'. No such module?') }
         return;
     }
 
@@ -93,14 +93,14 @@ sub mod_void {
         delete $MODULE{$module};
         API::Log::dbug('MODULES: Successfully unloaded '.$module.q{.});
         API::Log::alog('MODULES: Successfully unloaded '.$module.q{.});
-        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Successfully unloaded '.$module.q{.}); }
+        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Successfully unloaded '.$module.q{.}) }
         return 1;
     }
     else {
         # Otherwise, return a failed to unload message.
         API::Log::dbug('MODULES: Failed to unload '.$module.q{.});
         API::Log::alog('MODULES: Failed to unload '.$module.q{.});
-        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to unload '.$module.q{.}); }
+        if (keys %Auto::SOCKET) { API::Log::slog('MODULES: Failed to unload '.$module.q{.}) }
         return;
     }
 }
@@ -110,8 +110,8 @@ sub cmd_add {
     my ($cmd, $lvl, $priv, $help, $sub) = @_;
     $cmd = uc $cmd;
 
-    if (defined $API::Std::CMDS{$cmd}) { return; }
-    if ($lvl =~ m/[^0-3]/sm) { return; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+    if (defined $API::Std::CMDS{$cmd}) { return }
+    if ($lvl =~ m/[^0-3]/sm) { return } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
 
     $API::Std::CMDS{$cmd}{lvl}   = $lvl;
     $API::Std::CMDS{$cmd}{help}  = $help;
@@ -173,7 +173,7 @@ sub event_run {
     if (defined $EVENTS{lc $event} and defined $HOOKS{lc $event}) {
         foreach my $hk (keys %{ $HOOKS{lc $event} }) {
             my $ri = &{ $HOOKS{lc $event}{$hk} }(@args);
-            if ($ri == -1) { last; }
+            if ($ri == -1) { last }
         }
     }
 
@@ -227,7 +227,7 @@ sub timer_add {
     if (!defined $Auto::TIMERS{$name}) {
         $Auto::TIMERS{$name}{type} = $type;
         $Auto::TIMERS{$name}{time} = time + $time;
-        if ($type == 2) { $Auto::TIMERS{$name}{secs} = $time; }
+        if ($type == 2) { $Auto::TIMERS{$name}{secs} = $time }
         $Auto::TIMERS{$name}{sub}  = $sub;
         return 1;
     }
@@ -345,7 +345,7 @@ sub match_user {
     my (%user) = @_;
 
     # Get data from config.
-    if (!conf_get('user')) { return; }
+    if (!conf_get('user')) { return }
     my %uhp = conf_get('user');
 
     foreach my $userkey (keys %uhp) {
@@ -376,14 +376,14 @@ sub match_user {
                 if (defined $Auto::SOCKET{$svr}) {
                     if ($ccnm eq 'CURRENT' and defined $user{chan}) {
                         if (defined $State::IRC::chanusers{$svr}{$user{chan}}{$user{nick}}) {
-                            if ($State::IRC::chanusers{$svr}{$user{chan}}{$user{nick}} =~ m/($ccst)/sm) { return $userkey; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+                            if ($State::IRC::chanusers{$svr}{$user{chan}}{$user{nick}} =~ m/($ccst)/sm) { return $userkey } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
                         }
                     }
                     else {
                         foreach my $bcj (keys %{ $Proto::IRC::botchans{$svr} }) {
                             if (API::IRC::match_mask($bcj, $ccnm)) {
                                 if (defined $State::IRC::chanusers{$svr}{$bcj}{$user{nick}}) {
-                                    if ($State::IRC::chanusers{$svr}{$bcj}{$user{nick}} =~ m/($ccst)/sm) { return $userkey; } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
+                                    if ($State::IRC::chanusers{$svr}{$bcj}{$user{nick}} =~ m/($ccst)/sm) { return $userkey } ## no critic qw(RegularExpressions::RequireExtendedFormatting)
                                 }
                             }
                         }
@@ -405,7 +405,7 @@ sub has_priv {
 
         if (defined $Auto::PRIVILEGES{$cups}) {
             foreach (@{ $Auto::PRIVILEGES{$cups} }) {
-                if ($_ eq $cpriv or $_ eq 'ALL') { return 1; }
+                if ($_ eq $cpriv or $_ eq 'ALL') { return 1 }
             }
         }
     }
@@ -508,8 +508,8 @@ sub awarn {
 sub fpfmt {
     my ($path) = @_;
 
-    if ($path =~ m/\s/xsm) { return "\"$path\""; }
-    else { return $path; }
+    if ($path =~ m/\s/xsm) { return "\"$path\"" }
+    else { return $path }
 }
 
 

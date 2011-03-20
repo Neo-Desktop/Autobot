@@ -32,10 +32,10 @@ sub _init {
     }
 
     # If it's Any, set ANYEDITION.
-    if ($EDITION eq 'Any') { $ANYEDITION = 1; }
+    if ($EDITION eq 'Any') { $ANYEDITION = 1 }
 
     # PostgreSQL is not supported, yet.
-    if ($Auto::ENFEAT =~ /pgsql/) { err(3, 'Unable to load UNO: PostgreSQL is not supported.', 0); return; }
+    if ($Auto::ENFEAT =~ /pgsql/) { err(3, 'Unable to load UNO: PostgreSQL is not supported.', 0); return }
 
     # Create `unoscores` table.
     $Auto::DB->do('CREATE TABLE IF NOT EXISTS unoscores (player TEXT, score INTEGER)') or return;
@@ -158,7 +158,7 @@ sub cmd_uno {
             $NICKS{lc $src->{nick}} = $src->{nick};
             if ($UNO) {
                 $ORDER .= ' '.lc $src->{nick};
-                for (my $i = 1; $i <= 7; $i++) { _givecard(lc $src->{nick}); }
+                for (my $i = 1; $i <= 7; $i++) { _givecard(lc $src->{nick}) }
             }
 
             privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 has joined the game.");
@@ -206,7 +206,7 @@ sub cmd_uno {
 
             # Deal the cards.
             foreach (keys %PLAYERS) {
-                for (my $i = 1; $i <= 7; $i++) { _givecard($_); }
+                for (my $i = 1; $i <= 7; $i++) { _givecard($_) }
                 my $cards;
                 foreach my $card (@{$PLAYERS{$_}}) {
                     $cards .= ' '._fmtcard($card);
@@ -323,7 +323,7 @@ sub cmd_uno {
             
             # Delete the card from the player's hand.
             my $delres = _delcard(lc $src->{nick}, uc $argv[1].':'.uc $argv[2]);
-            if ($delres == -1) { return 1; }
+            if ($delres == -1) { return 1 }
 
             # Play the card.
             if (defined $argv[3]) {
@@ -378,7 +378,7 @@ sub cmd_uno {
                 my $amnt = int rand 11;
                 if ($amnt > 0) {
                     my @dcards;
-                    for (my $i = $amnt; $i > 0; $i--) { push @dcards, _fmtcard(_givecard(lc $src->{nick})); }
+                    for (my $i = $amnt; $i > 0; $i--) { push @dcards, _fmtcard(_givecard(lc $src->{nick})) }
                     notice($src->{svr}, $src->{nick}, 'You drew: '.join(' ', @dcards));
                 }
                 my ($net, $chan) = split '/', $UNOCHAN;
@@ -448,7 +448,7 @@ sub cmd_uno {
          
             # Tell them their cards.
             my $cards;
-            foreach (@{$PLAYERS{lc $src->{nick}}}) { $cards .= ' '._fmtcard($_); }
+            foreach (@{$PLAYERS{lc $src->{nick}}}) { $cards .= ' '._fmtcard($_) }
             $cards = substr $cards, 1;
             notice($src->{svr}, $src->{nick}, "Your cards are: $cards");
         }
@@ -611,7 +611,7 @@ sub cmd_uno {
                 my $str;
                 my $i = 0;
                 foreach (sort {$data->{$b}->{score} <=> $data->{$a}->{score}} keys %$data) {
-                    if ($i > 10) { last; }
+                    if ($i > 10) { last }
                     $str .= ", \2$_:".$data->{$_}->{score}."\2";
                     $i++;
                 }
@@ -643,7 +643,7 @@ sub cmd_uno {
                 notice($src->{svr}, $src->{nick}, trans('No data available').q{.});
             }
         }
-        default { notice($src->{svr}, $src->{nick}, trans('Unknown action', uc $argv[0]).q{.}); }
+        default { notice($src->{svr}, $src->{nick}, trans('Unknown action', uc $argv[0]).q{.}) }
     }
 
     return 1;
@@ -655,103 +655,103 @@ sub _givecard {
 
     # Make sure the player exists.
     if (defined $player) {
-        if (!defined $PLAYERS{$player}) { return; }
+        if (!defined $PLAYERS{$player}) { return }
     }
     
     # Get a random number for the appropriate edition.
     my $rci;
     given ($EDITION) {
-        when ('Original') { $rci = int rand 53; }
-        when ('Super') { $rci = int rand 64; }
-        when ('Advanced') { $rci = int rand 72; }
+        when ('Original') { $rci = int rand 53 }
+        when ('Super') { $rci = int rand 64 }
+        when ('Advanced') { $rci = int rand 72 }
     }
 
     # Now figure out what card we have here.
     my $card;
     given ($rci) {
-        when (0) { $card = 'R:1'; }
-        when (1) { $card = 'R:2'; }
-        when (2) { $card = 'R:3'; }
-        when (3) { $card = 'R:4'; }
-        when (4) { $card = 'R:5'; }
-        when (5) { $card = 'R:6'; }
-        when (6) { $card = 'R:7'; }
-        when (7) { $card = 'R:8'; }
-        when (8) { $card = 'R:9'; }
-        when (9) { $card = 'B:1'; }
-        when (10) { $card = 'B:2'; }
-        when (11) { $card = 'B:3'; }
-        when (12) { $card = 'B:4'; }
-        when (13) { $card = 'B:5'; }
-        when (14) { $card = 'B:6'; }
-        when (15) { $card = 'B:7'; }
-        when (16) { $card = 'B:8'; }
-        when (17) { $card = 'B:9'; }
-        when (18) { $card = 'Y:1'; }
-        when (19) { $card = 'Y:2'; }
-        when (20) { $card = 'Y:3'; }
-        when (21) { $card = 'Y:4'; }
-        when (22) { $card = 'Y:5'; }
-        when (23) { $card = 'Y:6'; }
-        when (24) { $card = 'Y:7'; }
-        when (25) { $card = 'Y:8'; }
-        when (26) { $card = 'Y:9'; }
-        when (27) { $card = 'G:1'; }
-        when (28) { $card = 'G:2'; }
-        when (29) { $card = 'G:3'; }
-        when (30) { $card = 'G:4'; }
-        when (31) { $card = 'G:5'; }
-        when (32) { $card = 'G:6'; }
-        when (33) { $card = 'G:7'; }
-        when (34) { $card = 'G:8'; }
-        when (35) { $card = 'G:9'; }
-        when (36) { $card = 'W:0'; }
-        when (37) { $card = 'W:0'; }
-        when (38) { $card = 'W:0'; }
+        when (0) { $card = 'R:1' }
+        when (1) { $card = 'R:2' }
+        when (2) { $card = 'R:3' }
+        when (3) { $card = 'R:4' }
+        when (4) { $card = 'R:5' }
+        when (5) { $card = 'R:6' }
+        when (6) { $card = 'R:7' }
+        when (7) { $card = 'R:8' }
+        when (8) { $card = 'R:9' }
+        when (9) { $card = 'B:1' }
+        when (10) { $card = 'B:2' }
+        when (11) { $card = 'B:3' }
+        when (12) { $card = 'B:4' }
+        when (13) { $card = 'B:5' }
+        when (14) { $card = 'B:6' }
+        when (15) { $card = 'B:7' }
+        when (16) { $card = 'B:8' }
+        when (17) { $card = 'B:9' }
+        when (18) { $card = 'Y:1' }
+        when (19) { $card = 'Y:2' }
+        when (20) { $card = 'Y:3' }
+        when (21) { $card = 'Y:4' }
+        when (22) { $card = 'Y:5' }
+        when (23) { $card = 'Y:6' }
+        when (24) { $card = 'Y:7' }
+        when (25) { $card = 'Y:8' }
+        when (26) { $card = 'Y:9' }
+        when (27) { $card = 'G:1' }
+        when (28) { $card = 'G:2' }
+        when (29) { $card = 'G:3' }
+        when (30) { $card = 'G:4' }
+        when (31) { $card = 'G:5' }
+        when (32) { $card = 'G:6' }
+        when (33) { $card = 'G:7' }
+        when (34) { $card = 'G:8' }
+        when (35) { $card = 'G:9' }
+        when (36) { $card = 'W:0' }
+        when (37) { $card = 'W:0' }
+        when (38) { $card = 'W:0' }
         when (39) {
-            if ($EDITION eq 'Original') { $card = 'WD4:0'; }
-            else { $card = 'WHF:0'; }
+            if ($EDITION eq 'Original') { $card = 'WD4:0' }
+            else { $card = 'WHF:0' }
         }
         when (40) {
-            if ($EDITION eq 'Original') { $card = 'WD4:0'; }
-            else { $card = 'WHF:0'; }
+            if ($EDITION eq 'Original') { $card = 'WD4:0' }
+            else { $card = 'WHF:0' }
         }
-        when (41) { $card = 'R:R'; }
-        when (42) { $card = 'B:R'; }
-        when (43) { $card = 'Y:R'; }
-        when (44) { $card = 'G:R'; }
-        when (45) { $card = 'R:S'; }
-        when (46) { $card = 'B:S'; }
-        when (47) { $card = 'Y:S'; }
-        when (48) { $card = 'G:S'; }
-        when (49) { $card = 'R:D2'; }
-        when (50) { $card = 'B:D2'; }
-        when (51) { $card = 'Y:D2'; }
-        when (52) { $card = 'G:D2'; }
-        when (53) { $card = 'WAH:0'; }
-        when (54) { $card = 'WAH:0'; }
-        when (55) { $card = 'WAH:0'; }
-        when (56) { $card = 'R:T'; }
-        when (57) { $card = 'B:T'; }
-        when (58) { $card = 'G:T'; }
-        when (59) { $card = 'Y:T'; }
-        when (60) { $card = 'R:X'; }
-        when (61) { $card = 'B:X'; }
-        when (62) { $card = 'G:X'; }
-        when (63) { $card = 'Y:X'; }
-        when (64) { $card = 'R:W'; }
-        when (65) { $card = 'B:W'; }
-        when (66) { $card = 'G:W'; }
-        when (67) { $card = 'Y:W'; }
-        when (68) { $card = 'R:B'; }
-        when (69) { $card = 'B:B'; }
-        when (70) { $card = 'G:B'; }
-        when (71) { $card = 'Y:B'; }
-        default { $card = 'W:0'; }
+        when (41) { $card = 'R:R' }
+        when (42) { $card = 'B:R' }
+        when (43) { $card = 'Y:R' }
+        when (44) { $card = 'G:R' }
+        when (45) { $card = 'R:S' }
+        when (46) { $card = 'B:S' }
+        when (47) { $card = 'Y:S' }
+        when (48) { $card = 'G:S' }
+        when (49) { $card = 'R:D2' }
+        when (50) { $card = 'B:D2' }
+        when (51) { $card = 'Y:D2' }
+        when (52) { $card = 'G:D2' }
+        when (53) { $card = 'WAH:0' }
+        when (54) { $card = 'WAH:0' }
+        when (55) { $card = 'WAH:0' }
+        when (56) { $card = 'R:T' }
+        when (57) { $card = 'B:T' }
+        when (58) { $card = 'G:T' }
+        when (59) { $card = 'Y:T' }
+        when (60) { $card = 'R:X' }
+        when (61) { $card = 'B:X' }
+        when (62) { $card = 'G:X' }
+        when (63) { $card = 'Y:X' }
+        when (64) { $card = 'R:W' }
+        when (65) { $card = 'B:W' }
+        when (66) { $card = 'G:W' }
+        when (67) { $card = 'Y:W' }
+        when (68) { $card = 'R:B' }
+        when (69) { $card = 'B:B' }
+        when (70) { $card = 'G:B' }
+        when (71) { $card = 'Y:B' }
+        default { $card = 'W:0' }
     }
 
     # Add the card to the player's arrayref.
-    if (defined $player) { push @{$PLAYERS{$player}}, $card; }
+    if (defined $player) { push @{$PLAYERS{$player}}, $card }
 
     # Return the card.
     return $card;
@@ -763,14 +763,14 @@ sub _fmtcard {
 
     my $fmt;
     my ($color, $val) = split m/[:]/, $card;
-    if ($color eq 'W' or $color eq 'WD4' or $color eq 'WAH' or $color eq 'WHF') { $val = $color; }
+    if ($color eq 'W' or $color eq 'WD4' or $color eq 'WAH' or $color eq 'WHF') { $val = $color }
 
     given ($color) {
-        when ('R') { $fmt = "\00301,04[$val]\003"; }
-        when ('B') { $fmt = "\00300,12[$val]\003"; }
-        when ('G') { $fmt = "\00300,03[$val]\003"; }
-        when ('Y') { $fmt = "\00301,08[$val]\003"; }
-        default { $fmt = "\002\00300,01[$val]\003\002"; }
+        when ('R') { $fmt = "\00301,04[$val]\003" }
+        when ('B') { $fmt = "\00300,12[$val]\003" }
+        when ('G') { $fmt = "\00300,03[$val]\003" }
+        when ('Y') { $fmt = "\00301,08[$val]\003" }
+        default { $fmt = "\002\00300,01[$val]\003\002" }
     }
 
     return $fmt;
@@ -802,17 +802,17 @@ sub _nextturn {
         # Mind, this should never happen, but must be the next person in order.
         $nplayer = $order[0];
     }
-    if ($skip eq 2) { return $nplayer; }
+    if ($skip eq 2) { return $nplayer }
 
     my ($net, $chan) = split '/', $UNOCHAN;
     $CURRTURN = $nplayer;
     privmsg($net, $chan, "\2".$NICKS{$nplayer}."'s\2 turn. Top Card: "._fmtcard($TOPCARD));
     my $cards;
-    foreach (@{$PLAYERS{$nplayer}}) { $cards .= ' '._fmtcard($_); }
+    foreach (@{$PLAYERS{$nplayer}}) { $cards .= ' '._fmtcard($_) }
     $cards = substr $cards, 1;
     notice($net, $NICKS{$nplayer}, "Your cards are: $cards");
 
-    if ($skip) { return $skip; }
+    if ($skip) { return $skip }
     return 1;
 }
 
@@ -820,7 +820,7 @@ sub _nextturn {
 sub _runcard {
     my ($card, $spec, @vals) = @_;
     my ($ccol, $cval) = split m/[:]/, $card;
-    if (!defined $spec) { $spec = 0; }
+    if (!defined $spec) { $spec = 0 }
     my ($net, $chan) = split '/', $UNOCHAN;
     if ($ccol ne 'R' && $ccol ne 'B' && $ccol ne 'G' && $ccol ne 'Y') {
         $TOPCARD = $cval.':0';
@@ -833,7 +833,7 @@ sub _runcard {
         when (/(R|B|G|Y)/) {
             given ($cval) {
                 when (/^[1-9]$/) {
-                    if ($spec) { return; }
+                    if ($spec) { return }
                     _nextturn(0);
                 }
                 when ('R') {
@@ -860,12 +860,12 @@ sub _runcard {
                         }
                         # Set new order.
                         $ORDER = 0;
-                        for (my $i = $#nop; $i >= 0; $i--) { $ORDER .= ' '.$nop[$i]; }
+                        for (my $i = $#nop; $i >= 0; $i--) { $ORDER .= ' '.$nop[$i] }
                         $ORDER = substr $ORDER, 1;
                     }
                     privmsg($net, $chan, 'Game play has been reversed!');
-                    if (keys %PLAYERS > 2) { _nextturn(0); }
-                    else { _nextturn(1); }
+                    if (keys %PLAYERS > 2) { _nextturn(0) }
+                    else { _nextturn(1) }
                 }
                 when ('S') {
                     if ($spec) {
@@ -887,7 +887,7 @@ sub _runcard {
                         else {
                             my $amnt = int rand 11;
                             if ($amnt > 0) {
-                                for (my $i = $amnt; $i > 0; $i--) { _fmtcard(_givecard($CURRTURN)); }
+                                for (my $i = $amnt; $i > 0; $i--) { _fmtcard(_givecard($CURRTURN)) }
                             }
                             privmsg($net, $chan, "\2".$NICKS{$CURRTURN}."\2 draws \2$amnt\2 cards and is skipped!");
                         }
@@ -903,7 +903,7 @@ sub _runcard {
                         else {
                             my $amnt = int rand 11;
                             if ($amnt > 0) {
-                                for (my $i = $amnt; $i > 0; $i--) { _fmtcard(_givecard($victim)); }
+                                for (my $i = $amnt; $i > 0; $i--) { _fmtcard(_givecard($victim)) }
                             }
                             privmsg($net, $chan, "\2".$NICKS{$victim}."\2 draws \2$amnt\2 cards and is skipped!");
                         }
@@ -915,30 +915,30 @@ sub _runcard {
                     my @xcards;
                     foreach my $ucard (@{$PLAYERS{$CURRTURN}}) {
                         my ($xhcol, undef) = split m/[:]/, $ucard;
-                        if ($xhcol eq $ccol) { push @xcards, $ucard; }
+                        if ($xhcol eq $ccol) { push @xcards, $ucard }
                     }
                     # Get a more human-readable version of the color.
                     my $tcol;
                     given ($ccol) {
-                        when ('R') { $tcol = "\00304red\003"; }
-                        when ('B') { $tcol = "\00312blue\003"; }
-                        when ('G') { $tcol = "\00303green\003"; }
-                        when ('Y') { $tcol = "\00308yellow\003"; }
+                        when ('R') { $tcol = "\00304red\003" }
+                        when ('B') { $tcol = "\00312blue\003" }
+                        when ('G') { $tcol = "\00303green\003" }
+                        when ('Y') { $tcol = "\00308yellow\003" }
                     }
                     privmsg($net, $chan, "\2".$NICKS{$CURRTURN}."\2 is discarding all his/her cards of color \2$tcol\2.");
                     # Delete all the cards.
                     my $delres;
-                    foreach (@xcards) { $delres = _delcard($CURRTURN, $_); }
+                    foreach (@xcards) { $delres = _delcard($CURRTURN, $_) }
                     if (defined $delres) {
                         my $str;
-                        for (my $i = $#xcards; $i >= 0; $i--) { $str .= ' '._fmtcard($xcards[$i]); }
+                        for (my $i = $#xcards; $i >= 0; $i--) { $str .= ' '._fmtcard($xcards[$i]) }
                         $str = substr $str, 1;
                         if ($delres != -1) { 
                             notice($net, $NICKS{$CURRTURN}, "You discarded: $str");
                             _nextturn(0); 
                         }
                     }
-                    else { _nextturn(0); }
+                    else { _nextturn(0) }
                 }
                 when ('T') {
                     # Get cards.
@@ -948,8 +948,8 @@ sub _runcard {
                     $PLAYERS{$CURRTURN} = [];
                     $PLAYERS{lc $vals[0]} = [];
                     # Set new cards.
-                    foreach (@ucards) { push @{$PLAYERS{lc $vals[0]}}, $_; }
-                    foreach (@rcards) { push @{$PLAYERS{$CURRTURN}}, $_; }
+                    foreach (@ucards) { push @{$PLAYERS{lc $vals[0]}}, $_ }
+                    foreach (@rcards) { push @{$PLAYERS{$CURRTURN}}, $_ }
                     # The deed, is done.
                     privmsg($net, $chan, "\2".$NICKS{$CURRTURN}."\2 has traded hands with \2".$NICKS{lc $vals[0]}."\2!");
                     _nextturn(0);
@@ -959,7 +959,7 @@ sub _runcard {
                     foreach my $vplyr (keys %PLAYERS) {
                         # Make sure it isn't the player.
                         if ($vplyr ne $CURRTURN) {
-                            for (my $i = 1; $i <= 7; $i++) { _givecard($vplyr); }
+                            for (my $i = 1; $i <= 7; $i++) { _givecard($vplyr) }
                         }
                     }
                     # Finished.
@@ -972,12 +972,12 @@ sub _runcard {
                     # Select a random player.
                     my $rand = int rand scalar @plyrs;
                     # Make sure the player isn't the victim.
-                    while ($plyrs[$rand] eq $CURRTURN) { $rand = int rand scalar @plyrs; }
+                    while ($plyrs[$rand] eq $CURRTURN) { $rand = int rand scalar @plyrs }
                     # Set victim.
                     my $victim = $plyrs[$rand];
                     # Get the cards of the victim.
                     my $cards;
-                    foreach (@{$PLAYERS{$victim}}) { $cards .= ' '._fmtcard($_); }
+                    foreach (@{$PLAYERS{$victim}}) { $cards .= ' '._fmtcard($_) }
                     $cards = substr $cards, 1;
                     # Give the victim two cards.
                     _givecard($victim); _givecard($victim);
@@ -994,10 +994,10 @@ sub _runcard {
                 when ('W') {
                     my $tcol;
                     given ($cval) {
-                        when ('R') { $tcol = "\00304red\003"; }
-                        when ('B') { $tcol = "\00312blue\003"; }
-                        when ('G') { $tcol = "\00303green\003"; }
-                        when ('Y') { $tcol = "\00308yellow\003"; }
+                        when ('R') { $tcol = "\00304red\003" }
+                        when ('B') { $tcol = "\00312blue\003" }
+                        when ('G') { $tcol = "\00303green\003" }
+                        when ('Y') { $tcol = "\00308yellow\003" }
                     }
                     privmsg($net, $chan, "\2".$NICKS{$CURRTURN}."\2 changes color to \2$tcol\2.");
                     _nextturn(0);
@@ -1005,13 +1005,13 @@ sub _runcard {
                 when ('WD4') {
                     my $tcol;
                     given ($cval) {
-                        when ('R') { $tcol = "\00304red\003"; }
-                        when ('B') { $tcol = "\00312blue\003"; }
-                        when ('G') { $tcol = "\00303green\003"; }
-                        when ('Y') { $tcol = "\00308yellow\003"; }
+                        when ('R') { $tcol = "\00304red\003" }
+                        when ('B') { $tcol = "\00312blue\003" }
+                        when ('G') { $tcol = "\00303green\003" }
+                        when ('Y') { $tcol = "\00308yellow\003" }
                     }
                     my $victim = _nextturn(2);
-                    for (my $i = 1; $i <= 4; $i++) { _givecard($victim); }
+                    for (my $i = 1; $i <= 4; $i++) { _givecard($victim) }
                     privmsg($net, $chan, "\2".$NICKS{$CURRTURN}."\2 changes color to \2$tcol\2. \2".$NICKS{$victim}."\2 draws 4 cards and is skipped!");
                     _nextturn(1);
                 }
@@ -1019,16 +1019,16 @@ sub _runcard {
                     # Get more human-readable version of the color.
                     my $tcol;
                     given ($cval) {
-                        when ('R') { $tcol = "\00304red\003"; }
-                        when ('B') { $tcol = "\00312blue\003"; }
-                        when ('G') { $tcol = "\00303green\003"; }
-                        when ('Y') { $tcol = "\00308yellow\003"; }
+                        when ('R') { $tcol = "\00304red\003" }
+                        when ('B') { $tcol = "\00312blue\003" }
+                        when ('G') { $tcol = "\00303green\003" }
+                        when ('Y') { $tcol = "\00308yellow\003" }
                     }
                     # Give the next player a random amount of cards.
                     my $victim = _nextturn(2);
                     my $amnt = int rand 11;
-                    while ($amnt == 0) { $amnt = int rand 11; }
-                    for (my $i = 1; $i <= $amnt; $i++) { _givecard($victim); }
+                    while ($amnt == 0) { $amnt = int rand 11 }
+                    for (my $i = 1; $i <= $amnt; $i++) { _givecard($victim) }
                     # All done.
                     privmsg($net, $chan, "\2".$NICKS{$CURRTURN}."\2 changes color to \2$tcol\2. \2".$NICKS{$victim}."\2 draws \2$amnt\2 cards and is skipped!");
                     _nextturn(1);
@@ -1037,17 +1037,17 @@ sub _runcard {
                     # Get more human-readable version of the color.
                     my $tcol;
                     given ($cval) {
-                        when ('R') { $tcol = "\00304red\003"; }
-                        when ('B') { $tcol = "\00312blue\003"; }
-                        when ('G') { $tcol = "\00303green\003"; }
-                        when ('Y') { $tcol = "\00308yellow\003"; }
+                        when ('R') { $tcol = "\00304red\003" }
+                        when ('B') { $tcol = "\00312blue\003" }
+                        when ('G') { $tcol = "\00303green\003" }
+                        when ('Y') { $tcol = "\00308yellow\003" }
                     }
                     # Iterate through all players.
                     foreach my $vplyr (keys %PLAYERS) {
                         # Make sure it isn't the player.
                         if ($vplyr ne $CURRTURN) {
                             my $amnt = int rand 11;
-                            for (my $i = 1; $i <= $amnt; $i++) { _givecard($vplyr); }
+                            for (my $i = 1; $i <= $amnt; $i++) { _givecard($vplyr) }
                         }
                     }
                     # Finished.
@@ -1066,15 +1066,15 @@ sub _hascard {
     my ($player, $card) = @_;
 
     # Check for the player arrayref.
-    if (!defined $PLAYERS{$player}) { return; }
+    if (!defined $PLAYERS{$player}) { return }
 
     # Iterate through his/her cards.
     foreach my $pc (@{$PLAYERS{$player}}) {
-        if ($pc eq $card) { return 1; }
+        if ($pc eq $card) { return 1 }
         my ($pcol, undef) = split m/[:]/, $card;
         if ($pcol ne 'R' && $pcol ne 'B' && $pcol ne 'G' && $pcol ne 'Y') {
             my ($hcol, undef) = split m/[:]/, $pc;
-            if ($pcol eq $hcol) { return 1; }
+            if ($pcol eq $hcol) { return 1 }
         }
     }
 
@@ -1086,7 +1086,7 @@ sub _delcard {
     my ($player, $card) = @_;
 
     # Check for the player arrayref.
-    if (!defined $PLAYERS{$player}) { return; }
+    if (!defined $PLAYERS{$player}) { return }
 
     # Iterate through his/her cards and delete the correct card.
     for (my $i = 0; $i < scalar @{$PLAYERS{$player}}; $i++) {
@@ -1098,7 +1098,7 @@ sub _delcard {
             my ($pcol, undef) = split m/[:]/, $card;
             if ($pcol !~ m/^(R|B|G|Y)$/xsm) {
                 my ($hcol, undef) = split m/[:]/, $PLAYERS{$player}[$i];
-                if ($pcol eq $hcol) { undef $PLAYERS{$player}[$i]; last; }
+                if ($pcol eq $hcol) { undef $PLAYERS{$player}[$i]; last }
             }
         }
     }
@@ -1106,11 +1106,11 @@ sub _delcard {
     # Rebuild his/her hand.
     my @cards = [];
     foreach my $hc (@{$PLAYERS{$player}}) {
-        if (defined $hc) { push @cards, $hc; } 
+        if (defined $hc) { push @cards, $hc } 
     }
     delete $PLAYERS{$player};
     $PLAYERS{$player} = [];
-    if (ref $cards[0] eq 'ARRAY') { shift @cards; }
+    if (ref $cards[0] eq 'ARRAY') { shift @cards }
     if (!scalar @cards) {
         _gameover($player);
         return -1;
@@ -1119,7 +1119,7 @@ sub _delcard {
         my ($net, $chan) = split '/', $UNOCHAN;
         privmsg($net, $chan, "\2".$NICKS{$player}."\2 has \2\00303U\003\00304N\003\00312O\003\2!");
     }
-    foreach (@cards) { push @{$PLAYERS{$player}}, $_; }
+    foreach (@cards) { push @{$PLAYERS{$player}}, $_ }
 
     return 1;
 }
@@ -1129,7 +1129,7 @@ sub _delplyr {
     my ($player) = @_;
 
     # Check if the player exists.
-    if (!defined $PLAYERS{$player}) { return; }
+    if (!defined $PLAYERS{$player}) { return }
     my ($net, $chan) = split '/', $UNOCHAN;
     
     # Delete their player data.
@@ -1148,17 +1148,17 @@ sub _delplyr {
     # Update state data.
     if ($UNO) {
         if ($DEALER eq $player) {
-            if ($CURRTURN eq $player) { $DEALER = _nextturn(2); }
-            else { $DEALER = $CURRTURN; }
+            if ($CURRTURN eq $player) { $DEALER = _nextturn(2) }
+            else { $DEALER = $CURRTURN }
         }
-        if ($CURRTURN eq $player) { _nextturn(0); }
+        if ($CURRTURN eq $player) { _nextturn(0) }
     }
     
     # Update order.
     if ($UNO) {
         my @order;
         foreach (split ' ', $ORDER) {
-            if ($_ ne $player) { push @order, $_; }
+            if ($_ ne $player) { push @order, $_ }
         }
         $ORDER = join ' ', @order;
     }
@@ -1223,8 +1223,8 @@ sub on_nick {
                 }
                 $ORDER = join ' ', @order;
             }
-            if ($UNO) { if ($CURRTURN eq lc $src->{nick}) { $CURRTURN = lc $newnick; } }
-            if ($DEALER eq lc $src->{nick}) { $DEALER = lc $newnick; }
+            if ($UNO) { if ($CURRTURN eq lc $src->{nick}) { $CURRTURN = lc $newnick } }
+            if ($DEALER eq lc $src->{nick}) { $DEALER = lc $newnick }
             # Delete garbage.
             delete $PLAYERS{lc $src->{nick}};
             delete $NICKS{lc $src->{nick}};
@@ -1298,7 +1298,7 @@ sub on_kick {
 # Subroutine for when a rehash occurs.
 sub on_rehash {
     # Ensure a game isn't running right now.
-    if ($UNO or $UNOW) { awarn(3, 'on_rehash: Unable to update UNO edition: A game is currently running.'); return; }
+    if ($UNO or $UNOW) { awarn(3, 'on_rehash: Unable to update UNO edition: A game is currently running.'); return }
 
     # Check if the edition is specified.
     if (conf_get('uno:edition')) {

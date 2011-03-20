@@ -12,7 +12,7 @@ use API::IRC qw(privmsg notice);
 sub _init
 {
     # Not compatible with PostgreSQL.
-    if ($Auto::ENFEAT =~ /pgsql/) { err(2, 'Unable to load Greet: PostgreSQL is not supported.', 0); return; }
+    if ($Auto::ENFEAT =~ /pgsql/) { err(2, 'Unable to load Greet: PostgreSQL is not supported.', 0); return }
 
     # Create the `greets` table.
     $Auto::DB->do('CREATE TABLE IF NOT EXISTS greets (nick TEXT, greet TEXT)') or return;
@@ -100,7 +100,7 @@ sub cmd_greet
             $Auto::DB->do('DELETE FROM greets WHERE nick = "'.$nick.'"') or notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
             notice($src->{svr}, $src->{nick}, "Greet for \002$nick\002 successfully deleted.");
         }
-        default { notice($src->{svr}, $src->{nick}, "Unknown action \002$argv[0]\002. \002Syntax:\002 GREET (ADD|DEL)"); return; }
+        default { notice($src->{svr}, $src->{nick}, "Unknown action \002$argv[0]\002. \002Syntax:\002 GREET (ADD|DEL)"); return }
     }
 
     return 1;

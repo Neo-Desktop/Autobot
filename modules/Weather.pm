@@ -60,7 +60,7 @@ sub weather
     # And send to channel
     	if (!ref($d->{observation_location}->{country})) {
     		my $windc = $d->{wind_string};
-    		if (substr($windc, length($windc) - 1, 1) eq " ") { $windc = substr($windc, 0, length($windc) - 1); }
+    		if (substr($windc, length($windc) - 1, 1) eq " ") { $windc = substr($windc, 0, length($windc) - 1) }
     		privmsg($src->{svr}, $src->{chan}, "Results for \2".$d->{observation_location}->{full}."\2 - \2Temperature:\2 ".$d->{temperature_string}." \2Wind Conditions:\2 ".$windc." \2Conditions:\2 ".$d->{weather});
     		privmsg($src->{svr}, $src->{chan}, "\2Heat index:\2 ".$d->{heat_index_string}." \2Humidity:\2 ".$d->{relative_humidity}." \2Pressure:\2 ".$d->{pressure_string}." - ".$d->{observation_time});
     	}

@@ -8,9 +8,52 @@ use strict;
 use warnings;
 use English qw(-no_match_vars);
 use FindBin qw($Bin);
+use Cwd;
 use Pod::Html;
 use Pod::Man;
 our $Bin = $Bin;
+
+my ($UPREFIX, %bin);
+$bin{cwd} = getcwd;
+if (!-e "$Bin/../build/syswide") {
+    # Must be a custom PREFIX install.
+    $bin{etc} = "$bin{cwd}/etc";
+    $bin{var} = "$bin{cwd}/var";
+    if (!-e "$Bin/lib/Lib/Auto.pm") {
+        # Must be a system wide install.
+        $bin{lib} = "$Bin/../lib/autobot/3.0.0";    
+        $bin{bld} = "$bin{lib}/build";
+        $bin{lng} = "$bin{lib}/lang";
+        $bin{mod} = "$bin{lib}/modules";
+    }
+    else {
+        # Or not.
+        $bin{lib} = "$Bin/../lib";
+        $bin{bld} = "$Bin/../build";
+        $bin{lng} = "$Bin/../lang";
+        $bin{mod} = "$Bin/../modules";
+    }
+    $UPREFIX = 1;
+}
+else {
+    # Must be a standard install.
+    $bin{etc} = "$Bin/../etc";
+    $bin{var} = "$Bin/../var";
+    $bin{lib} = "$Bin/../lib";
+    $bin{bld} = "$Bin/../build";
+    $bin{lng} = "$Bin/../lang";
+    $bin{mod} = "$Bin/../modules";
+    $UPREFIX = 0;
+}
+
+# Get the name of the network this cert is for.
+print 'Network Name: ';
+my $net = <STDIN>;
+$net =~ s/(\r|\n)//gxsm;
+say q{};
+
+# Make sure etc/certs/ exists.
+if (!-d "$bin{etc}") { mkdir "$bin{etc}", 0755 }
 
 our $VERSION = 1.00;
 
@@ -95,17 +138,17 @@ foreach (@pars) {
             foreach my $cpanmod (@vals) {
                 $res = eval('require '.$cpanmod.'; 1;');
                 say '    '.$cpanmod.': '.(($res) ? 'Found' : 'Not Found');
-                if (!$res) { $die = 1; }
+                if (!$res) { $die = 1 }
             }
             print $RS;
             
-            if ($die) { say 'Failed to build '.$module.'.'; exit; }
+            if ($die) { say 'Failed to build '.$module.'.'; exit }
         }
         when ('perl') {
             print 'Checking Perl version..... '.$PERL_VERSION.' - ';
-            if ($] < $val) { $die = 1; }
+            if ($] < $val) { $die = 1 }
             say (($die) ? 'Not OK' : 'OK');
-            if ($die) { say 'Failed to build '.$module.'.'; exit; }
+            if ($die) { say 'Failed to build '.$module.'.'; exit }
         }
     }
 }
@@ -119,7 +162,7 @@ close $FMPH;
 say 'Generating documentation.....';
 my $podbuf;
 foreach my $line (@MPBUF) {
-    if (!defined $line) { $line = ' '; }
+    if (!defined $line) { $line = ' ' }
     $line =~ s/(\r|\n)//g;
 
     if ($line eq '__END__') {

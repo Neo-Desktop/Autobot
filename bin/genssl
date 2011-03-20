@@ -53,8 +53,8 @@ $net =~ s/(\r|\n)//gxsm;
 say q{};
 
 # Make sure etc/certs/ exists.
-if (!-d "$bin{etc}") { mkdir "$bin{etc}", 0755; }
-if (!-d "$bin{etc}/certs") { mkdir "$bin{etc}/certs", 0755; }
+if (!-d "$bin{etc}") { mkdir "$bin{etc}", 0755 }
+if (!-d "$bin{etc}/certs") { mkdir "$bin{etc}/certs", 0755 }
 
 # Generate key and cert.
 system "openssl req -nodes -newkey rsa:2048 -keyout $bin{etc}/certs/$net.key -x509 -days 3650 -out $bin{etc}/certs/$net.cert";

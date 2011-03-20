@@ -318,7 +318,7 @@ sub cap {
             }
             
             # Send CAP REQ/CAP END based on what both we and the server support.
-            if (!$capout) { Auto::socksnd($svr, 'CAP END'); }
+            if (!$capout) { Auto::socksnd($svr, 'CAP END') }
             else {
                 $capout = substr $capout, 1;
                 Auto::socksnd($svr, "CAP REQ :$capout");
@@ -406,7 +406,7 @@ sub kick {
     }
     else {
         # We weren't. Update chanusers and trigger on_kick.
-        if (defined $State::IRC::chanusers{$svr}{$ex[2]}{$ex[3]}) { delete $State::IRC::chanusers{$svr}{$ex[2]}{$ex[3]}; }
+        if (defined $State::IRC::chanusers{$svr}{$ex[2]}{$ex[3]}) { delete $State::IRC::chanusers{$svr}{$ex[2]}{$ex[3]} }
         API::Std::event_run("on_kick", (\%src, $ex[2], $ex[3], $msg));
     }
 
@@ -490,9 +490,9 @@ sub mode {
                     else {
                         # It is not. Lets adjust arguments accordingly.
                         if (defined $chanmodes{$svr}{$maf}) {
-                            if ($chanmodes{$svr}{$maf} == 1 || $chanmodes{$svr}{$maf} == 2) { shift @ex; }
+                            if ($chanmodes{$svr}{$maf} == 1 || $chanmodes{$svr}{$maf} == 2) { shift @ex }
                             if ($chanmodes{$svr}{$maf} == 3) { 
-                                if ($op == 1) { shift @ex; }
+                                if ($op == 1) { shift @ex }
                             }
                         }
                     }
@@ -543,7 +543,7 @@ sub notice {
     my ($svr, @ex) = @_;
 
     # Ensure this is coming from a user rather than a server.
-    if ($ex[0] !~ m/!/xsm) { return; }
+    if ($ex[0] !~ m/!/xsm) { return }
 
     # Prepare all the data.
     my %src = API::IRC::usrc(substr $ex[0], 1);
@@ -568,7 +568,7 @@ sub part {
     # Check if it's from us or someone else.
     if ($src{nick} eq $botinfo{$svr}{nick}) {
         # Delete this channel from botchans.
-        if ($botchans{$svr}{$ex[2]}) { delete $botchans{$svr}{$ex[2]}; }
+        if ($botchans{$svr}{$ex[2]}) { delete $botchans{$svr}{$ex[2]} }
         # Trigger on_upart.
         API::Std::event_run('on_upart', ($svr, $ex[2]));
     }

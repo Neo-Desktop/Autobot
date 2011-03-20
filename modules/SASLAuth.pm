@@ -14,11 +14,11 @@ use API::IRC qw(privmsg);
 sub _init
 {
     # Check if this Auto was built with SASL support.
-    if ($Auto::ENFEAT !~ m/sasl/xsm) { err(2, 'Auto was not built with SASL support. Aborting SASLAuth.', 0) and return; }
+    if ($Auto::ENFEAT !~ m/sasl/xsm) { err(2, 'Auto was not built with SASL support. Aborting SASLAuth.', 0) and return }
     # Add sasl to supported CAP for servers configured with SASL.
     my %servers = conf_get('server');
     foreach my $svr (keys %servers) {
-        if (conf_get("server:$svr:sasl_username") and conf_get("server:$svr:sasl_password") and conf_get("server:$svr:sasl_timeout")) { $Proto::IRC::cap{$svr} .= ' sasl'; }
+        if (conf_get("server:$svr:sasl_username") and conf_get("server:$svr:sasl_password") and conf_get("server:$svr:sasl_timeout")) { $Proto::IRC::cap{$svr} .= ' sasl' }
     }
     # Hook for when CAP ACK sasl is received.
     hook_add('on_capack', 'sasl.cap', \&M::SASLAuth::handle_capack) or return;
@@ -47,7 +47,7 @@ sub handle_capack {
  
     if ($sacap eq 'sasl') {
         Auto::socksnd($svr, 'AUTHENTICATE PLAIN');
-        timer_add('auth_timeout_'.$svr, 1, (conf_get("server:$svr:sasl_timeout"))[0][0], sub { Auto::socksnd($svr, 'CAP END'); });
+        timer_add('auth_timeout_'.$svr, 1, (conf_get("server:$svr:sasl_timeout"))[0][0], sub { Auto::socksnd($svr, 'CAP END') });
     }
     
     return 1;

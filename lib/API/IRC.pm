@@ -22,10 +22,10 @@ sub ban {
     # Prepare the mask we're going to ban.
     my $mask;
     given ($cbt) {
-        when (1) { $mask = '*!*@'.$user->{host}; }
-        when (2) { $mask = $user->{nick}.'!*@*'; }
-        when (3) { $mask = q{*!}.$user->{user}.q{@}.$user->{host}; }
-        when (4) { $mask = $user->{nick}.q{!*}.$user->{user}.q{@}.$user->{host}; }
+        when (1) { $mask = '*!*@'.$user->{host} }
+        when (2) { $mask = $user->{nick}.'!*@*' }
+        when (3) { $mask = q{*!}.$user->{user}.q{@}.$user->{host} }
+        when (4) { $mask = $user->{nick}.q{!*}.$user->{user}.q{@}.$user->{host} }
         when (5) {
             my @hd = split m/[\.]/, $user->{host};
             shift @hd;
