@@ -18,7 +18,7 @@ my $ANYEDITION = 0;
 # Initialization subroutine.
 sub _init {
     # Check for required configuration values.
-    if (!conf_get('uno:edition')) {
+    if (!conf_get('uno:edition') or !conf_get('uno:msg')) {
         err(3, 'Unable to load UNO: Missing required configuration values.', 0);
         return;
     }
@@ -28,6 +28,11 @@ sub _init {
     # Check if the edition is valid.
     if ($EDITION !~ m/^(Original|Super|Advanced|Any)$/xsm) {
         err(3, "Unable to load UNO: Invalid edition: $EDITION", 0);
+        return;
+    }
+    # Check if the message method is valid.
+    if ((conf_get('uno:msg'))[0][0] !~ m/^(notice|msg)$/xsmi) {
+        err(3, 'Unable to load UNO: Invalid message method: '.(conf_get('uno:msg'))[0][0], 0);
         return;
     }
 
@@ -89,7 +94,7 @@ sub cmd_uno {
 
     # Check for action parameter.
     if (!defined $argv[0]) {
-        notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
+        sendmsg($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
         return;
     }
 
@@ -100,7 +105,7 @@ sub cmd_uno {
             
             # Ensure there is not a game already running.
             if ($UNO or $UNOW) {
-                notice($src->{svr}, $src->{nick}, "There is already a game of UNO running in \2$UNOCHAN\2.");
+                sendmsg($src->{svr}, $src->{nick}, "There is already a game of UNO running in \2$UNOCHAN\2.");
                 return;
             }
 
@@ -116,11 +121,11 @@ sub cmd_uno {
             if ($ANYEDITION) {
                 # Require the second parameter.
                 if (!defined $argv[1]) {
-                    notice($src->{svr}, $src->{nick}, "This Auto is configured with Any Edition. You must specify the edition to play with as a second parameter. \2Syntax:\2 UNO START <edition>");
+                    sendmsg($src->{svr}, $src->{nick}, "This Auto is configured with Any Edition. You must specify the edition to play with as a second parameter. \2Syntax:\2 UNO START <edition>");
                     return;
                 }
                 if ($argv[1] !~ m/^(original|super|advanced)$/ixsm) {
-                    notice($src->{svr}, $src->{nick}, "Invalid edition \2$argv[1]\2. Must be original, super or advanced.");
+                    sendmsg($src->{svr}, $src->{nick}, "Invalid edition \2$argv[1]\2. Must be original, super or advanced.");
                     return;
                 }
                 # Set the edition.
@@ -143,12 +148,12 @@ sub cmd_uno {
 
             # Ensure a game is running.
             if (!$UNO and !$UNOW) {
-                notice($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
+                sendmsg($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
                 return;
             }
             else {
                 if ($src->{svr}.'/'.lc $src->{chan} ne $UNOCHAN) {
-                    notice($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
+                    sendmsg($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
                     return;
                 }
             }
@@ -168,7 +173,7 @@ sub cmd_uno {
                     $cards .= ' '._fmtcard($_);
                 }
                 $cards = substr $cards, 1;
-                notice($src->{svr}, $src->{nick}, "Your cards are: $cards");
+                sendmsg($src->{svr}, $src->{nick}, "Your cards are: $cards");
             }
         }
         when ('DEAL') {
@@ -176,31 +181,31 @@ sub cmd_uno {
             
             # Ensure a game is running.
             if (!$UNO and !$UNOW) {
-                notice($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
+                sendmsg($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
                 return;
             }
             else {
                 if ($src->{svr}.'/'.lc $src->{chan} ne $UNOCHAN) {
-                    notice($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
+                    sendmsg($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
                     return;
                 }
             }
 
             # Check if cards have already been dealt.
             if ($UNO) {
-                notice($src->{svr}, $src->{nick}, 'Cards have already been dealt. Game is in progress.');
+                sendmsg($src->{svr}, $src->{nick}, 'Cards have already been dealt. Game is in progress.');
                 return;
             }
             
             # Ensure this is the dealer.
             if (lc $src->{nick} ne $DEALER) {
-                notice($src->{svr}, $src->{nick}, 'Only the dealer may deal the cards.');
+                sendmsg($src->{svr}, $src->{nick}, 'Only the dealer may deal the cards.');
                 return;
             }
 
             # Check for at least two players.
             if (keys %PLAYERS < 2) {
-                notice($src->{svr}, $src->{nick}, 'Two players are required to play.');
+                sendmsg($src->{svr}, $src->{nick}, 'Two players are required to play.');
                 return;
             }
 
@@ -212,7 +217,7 @@ sub cmd_uno {
                     $cards .= ' '._fmtcard($card);
                 }
                 $cards = substr $cards, 1;
-                notice($src->{svr}, $_, "Your cards are: $cards");
+                sendmsg($src->{svr}, $_, "Your cards are: $cards");
                 $ORDER .= " $_";
             }
             $ORDER = substr $ORDER, 1;
@@ -238,31 +243,31 @@ sub cmd_uno {
             
             # Check for required parameters.
             if (!defined $argv[2]) {
-                notice($src->{svr}, $src->{nick}, trans('Not enough parameters').". \2Syntax:\2 UNO PLAY <color> <card>");
+                sendmsg($src->{svr}, $src->{nick}, trans('Not enough parameters').". \2Syntax:\2 UNO PLAY <color> <card>");
                 return;
             }
             
             # Ensure a game is running.
             if (!$UNO) {
-                notice($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
+                sendmsg($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
                 return;
             }
             else {
                 if ($src->{svr}.'/'.lc $src->{chan} ne $UNOCHAN) {
-                    notice($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
+                    sendmsg($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
                     return;
                 }
             }
 
             # Check if they're playing.
             if (!defined $PLAYERS{lc $src->{nick}}) {
-                notice($src->{svr}, $src->{nick}, 'You\'re not currently playing.');
+                sendmsg($src->{svr}, $src->{nick}, 'You\'re not currently playing.');
                 return;
             }
 
             # Check if it's his/her turn.
             if (lc $src->{nick} ne $CURRTURN) {
-                notice($src->{svr}, $src->{nick}, 'It is not your turn.');
+                sendmsg($src->{svr}, $src->{nick}, 'It is not your turn.');
                 return;
             }
 
@@ -278,7 +283,7 @@ sub cmd_uno {
 
             # Check if they have this card.
             if (!_hascard(lc $src->{nick}, uc $argv[1].':'.uc $argv[2])) {
-                notice($src->{svr}, $src->{nick}, 'You don\'t have that card.');
+                sendmsg($src->{svr}, $src->{nick}, 'You don\'t have that card.');
                 return;
             }
 
@@ -286,7 +291,7 @@ sub cmd_uno {
             my ($tcc, $tcv) = split m/[:]/, $TOPCARD;
             if (uc $argv[1] eq 'R' || uc $argv[1] eq 'B' || uc $argv[1] eq 'G' || uc $argv[1] eq 'Y') {
                 if (uc $argv[1] ne $tcc and uc $argv[2] ne $tcv) {
-                    notice($src->{svr}, $src->{nick}, 'That card cannot be played.');
+                    sendmsg($src->{svr}, $src->{nick}, 'That card cannot be played.');
                     return;
                 }
             }
@@ -295,17 +300,17 @@ sub cmd_uno {
             if (uc $argv[2] eq 'T') {
                 # Ensure it has the extra argument.
                 if (!defined $argv[3]) {
-                    notice($src->{svr}, $src->{nick}, "The Trade Hands card requires the <player> argument. \2Syntax:\2 UNO PLAY <color> T <player>");
+                    sendmsg($src->{svr}, $src->{nick}, "The Trade Hands card requires the <player> argument. \2Syntax:\2 UNO PLAY <color> T <player>");
                     return;
                 }
                 # Ensure they're not trading hands with themselves.
                 if (lc $argv[3] eq $CURRTURN) {
-                    notice($src->{svr}, $src->{nick}, 'You may not trade with yourself.');
+                    sendmsg($src->{svr}, $src->{nick}, 'You may not trade with yourself.');
                     return;
                 }
                 # Ensure the player they're trading with is playing.
                 if (!defined $PLAYERS{lc $argv[3]}) {
-                    notice($src->{svr}, $src->{nick}, "No such user \2$argv[3]\2 is playing.");
+                    sendmsg($src->{svr}, $src->{nick}, "No such user \2$argv[3]\2 is playing.");
                     return;
                 }
             }
@@ -314,7 +319,7 @@ sub cmd_uno {
             if ($argv[1] =~ m/^W/ixsm) {
                 # Ensure the third argument is a valid color.
                 if ($argv[2] !~ m/^(R|B|G|Y)$/ixsm) {
-                    notice($src->{svr}, $src->{nick}, "Invalid color \2$argv[2]\2.");
+                    sendmsg($src->{svr}, $src->{nick}, "Invalid color \2$argv[2]\2.");
                     return;
                 }
             }
@@ -340,37 +345,37 @@ sub cmd_uno {
             
             # Ensure a game is running.
             if (!$UNO) {
-                notice($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
+                sendmsg($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
                 return;
             }
             else {
                 if ($src->{svr}.'/'.lc $src->{chan} ne $UNOCHAN) {
-                    notice($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
+                    sendmsg($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
                     return;
                 }
             }
 
             # Check if they're playing.
             if (!defined $PLAYERS{lc $src->{nick}}) {
-                notice($src->{svr}, $src->{nick}, 'You\'re not currently playing.');
+                sendmsg($src->{svr}, $src->{nick}, 'You\'re not currently playing.');
                 return;
             }
 
             # Check if it's his/her turn.
             if (lc $src->{nick} ne $CURRTURN) {
-                notice($src->{svr}, $src->{nick}, 'It is not your turn.');
+                sendmsg($src->{svr}, $src->{nick}, 'It is not your turn.');
                 return;
             }
 
             # Don't allow them to draw more than one card.
             if ($DRAWN eq lc $src->{nick}) {
-                notice($src->{svr}, $src->{nick}, 'You may only draw once per turn. Use UNO PASS to pass.');
+                sendmsg($src->{svr}, $src->{nick}, 'You may only draw once per turn. Use UNO PASS to pass.');
                 return;
             }
 
             # Now draw card(s) depending on the edition.
             if ($EDITION eq 'Original') {
-                notice($src->{svr}, $src->{nick}, 'You drew: '._fmtcard(_givecard(lc $src->{nick})));
+                sendmsg($src->{svr}, $src->{nick}, 'You drew: '._fmtcard(_givecard(lc $src->{nick})));
                 my ($net, $chan) = split '/', $UNOCHAN;
                 privmsg($net, $chan, "\2$src->{nick}\2 drew a card.");
             }
@@ -379,7 +384,7 @@ sub cmd_uno {
                 if ($amnt > 0) {
                     my @dcards;
                     for (my $i = $amnt; $i > 0; $i--) { push @dcards, _fmtcard(_givecard(lc $src->{nick})) }
-                    notice($src->{svr}, $src->{nick}, 'You drew: '.join(' ', @dcards));
+                    sendmsg($src->{svr}, $src->{nick}, 'You drew: '.join(' ', @dcards));
                 }
                 my ($net, $chan) = split '/', $UNOCHAN;
                 privmsg($net, $chan, "\2$src->{nick}\2 drew \2$amnt\2 cards.");
@@ -391,31 +396,31 @@ sub cmd_uno {
             
             # Ensure a game is running.
             if (!$UNO) {
-                notice($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
+                sendmsg($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
                 return;
             }
             else {
                 if ($src->{svr}.'/'.lc $src->{chan} ne $UNOCHAN) {
-                    notice($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
+                    sendmsg($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
                     return;
                 }
             }
 
             # Check if they're playing.
             if (!defined $PLAYERS{lc $src->{nick}}) {
-                notice($src->{svr}, $src->{nick}, 'You\'re not currently playing.');
+                sendmsg($src->{svr}, $src->{nick}, 'You\'re not currently playing.');
                 return;
             }
 
             # Check if it's his/her turn.
             if (lc $src->{nick} ne $CURRTURN) {
-                notice($src->{svr}, $src->{nick}, 'It is not your turn.');
+                sendmsg($src->{svr}, $src->{nick}, 'It is not your turn.');
                 return;
             }
 
             # Make sure they've drawn at least once.
             if ($DRAWN ne lc $src->{nick}) {
-                notice($src->{svr}, $src->{nick}, 'You must draw once before passing.');
+                sendmsg($src->{svr}, $src->{nick}, 'You must draw once before passing.');
                 return;
             }
 
@@ -430,19 +435,19 @@ sub cmd_uno {
             
             # Ensure a game is running.
             if (!$UNO) {
-                notice($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
+                sendmsg($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
                 return;
             }
             else {
                 if ($src->{svr}.'/'.lc $src->{chan} ne $UNOCHAN) {
-                    notice($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
+                    sendmsg($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
                     return;
                 }
             }
 
             # Check if they're playing.
             if (!defined $PLAYERS{lc $src->{nick}}) {
-                notice($src->{svr}, $src->{nick}, 'You\'re not currently playing.');
+                sendmsg($src->{svr}, $src->{nick}, 'You\'re not currently playing.');
                 return;
             }
          
@@ -450,62 +455,62 @@ sub cmd_uno {
             my $cards;
             foreach (@{$PLAYERS{lc $src->{nick}}}) { $cards .= ' '._fmtcard($_) }
             $cards = substr $cards, 1;
-            notice($src->{svr}, $src->{nick}, "Your cards are: $cards");
+            sendmsg($src->{svr}, $src->{nick}, "Your cards are: $cards");
         }
         when (/^(TOPCARD|TC)$/) {
             # UNO TOPCARD
             
             # Ensure a game is running.
             if (!$UNO) {
-                notice($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
+                sendmsg($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
                 return;
             }
             else {
                 if ($src->{svr}.'/'.lc $src->{chan} ne $UNOCHAN) {
-                    notice($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
+                    sendmsg($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
                     return;
                 }
             }
 
             # Check if they're playing.
             if (!defined $PLAYERS{lc $src->{nick}}) {
-                notice($src->{svr}, $src->{nick}, 'You\'re not currently playing.');
+                sendmsg($src->{svr}, $src->{nick}, 'You\'re not currently playing.');
                 return;
             }
 
             # Return the top card.
-            notice($src->{svr}, $src->{nick}, 'Top card: '._fmtcard($TOPCARD));
+            sendmsg($src->{svr}, $src->{nick}, 'Top card: '._fmtcard($TOPCARD));
         }
         when (/^(KICK|K)$/) {
             # UNO KICK
 
             # Second parameter required.
             if (!defined $argv[1]) {
-                notice($src->{svr}, $src->{nick}, trans('Not enough parameters').". \2Syntax:\2 UNO KICK <player>");
+                sendmsg($src->{svr}, $src->{nick}, trans('Not enough parameters').". \2Syntax:\2 UNO KICK <player>");
                 return;
             }
 
             # Ensure a game is running.
             if (!$UNO and !$UNOW) {
-                notice($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
+                sendmsg($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
                 return;
             }
             else {
                 if ($src->{svr}.'/'.lc $src->{chan} ne $UNOCHAN) {
-                    notice($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
+                    sendmsg($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
                     return;
                 }
             }
 
             # Ensure they have permission to perform this action.
             if (lc $src->{nick} ne $DEALER && !has_priv(match_user(%$src), 'uno.override')) {
-                notice($src->{svr}, $src->{nick}, trans('Permission denied').q{.});
+                sendmsg($src->{svr}, $src->{nick}, trans('Permission denied').q{.});
                 return;
             }
             
             # Check if the player is in the game.
             if (!defined $PLAYERS{lc $argv[1]}) {
-                notice($src->{svr}, $src->{nick}, "No such user \2$argv[1]\ is playing.");
+                sendmsg($src->{svr}, $src->{nick}, "No such user \2$argv[1]\ is playing.");
                 return;
             }
 
@@ -519,25 +524,25 @@ sub cmd_uno {
 
             # Ensure a game is running.
             if (!$UNO and !$UNOW) {
-                notice($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
+                sendmsg($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
                 return;
             }
             else {
                 if ($src->{svr}.'/'.lc $src->{chan} ne $UNOCHAN) {
-                    notice($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
+                    sendmsg($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
                     return;
                 }
             }
 
             # Check if they're playing.
             if (!defined $PLAYERS{lc $src->{nick}}) {
-                notice($src->{svr}, $src->{nick}, 'You\'re not currently playing.');
+                sendmsg($src->{svr}, $src->{nick}, 'You\'re not currently playing.');
                 return;
             }
 
             # Check if it's his/her turn.
             if (lc $src->{nick} ne $CURRTURN) {
-                notice($src->{svr}, $src->{nick}, 'It is not your turn.');
+                sendmsg($src->{svr}, $src->{nick}, 'It is not your turn.');
                 return;
             }
 
@@ -551,19 +556,19 @@ sub cmd_uno {
 
             # Ensure a game is running.
             if (!$UNO and !$UNOW) {
-                notice($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
+                sendmsg($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
                 return;
             }
             else {
                 if ($src->{svr}.'/'.lc $src->{chan} ne $UNOCHAN) {
-                    notice($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
+                    sendmsg($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
                     return;
                 }
             }
 
             # Ensure they have permission to perform this action.
             if (lc $src->{nick} ne $DEALER && !has_priv(match_user(%$src), 'uno.override')) {
-                notice($src->{svr}, $src->{nick}, trans('Permission denied').q{.});
+                sendmsg($src->{svr}, $src->{nick}, trans('Permission denied').q{.});
                 return;
             }
 
@@ -579,12 +584,12 @@ sub cmd_uno {
 
             # Ensure a game is running.
             if (!$UNO) {
-                notice($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
+                sendmsg($src->{svr}, $src->{nick}, 'There is currently no game of UNO running. UNO START to start a game.');
                 return;
             }
             else {
                 if ($src->{svr}.'/'.lc $src->{chan} ne $UNOCHAN) {
-                    notice($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
+                    sendmsg($src->{svr}, $src->{nick}, "UNO is currently running in \2$UNOCHAN\2.");
                     return;
                 }
             }
@@ -597,15 +602,15 @@ sub cmd_uno {
             $str = substr $str, 1;
             
             # Return count.
-            notice($src->{svr}, $src->{nick}, "Card count: $str");
+            sendmsg($src->{svr}, $src->{nick}, "Card count: $str");
         }
         when (/^(TOPTEN|T10|TOP10)$/) {
             # UNO TOPTEN
 
             # Get data.
-            my $dbq = $Auto::DB->prepare('SELECT * FROM unoscores') or notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
-            $dbq->execute or notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
-            my $data = $dbq->fetchall_hashref('player') or notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
+            my $dbq = $Auto::DB->prepare('SELECT * FROM unoscores') or sendmsg($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
+            $dbq->execute or sendmsg($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
+            my $data = $dbq->fetchall_hashref('player') or sendmsg($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
             # Check if there's any scores.
             if (keys %$data) {
                 my $str;
@@ -616,10 +621,10 @@ sub cmd_uno {
                     $i++;
                 }
                 $str = substr $str, 2;
-                notice($src->{svr}, $src->{nick}, "Top Ten: $str");
+                sendmsg($src->{svr}, $src->{nick}, "Top Ten: $str");
             }
             else {
-                notice($src->{svr}, $src->{nick}, trans('No data available').q{.});
+                sendmsg($src->{svr}, $src->{nick}, trans('No data available').q{.});
             }
         }
         when ('SCORE') {
@@ -627,7 +632,7 @@ sub cmd_uno {
 
             # Second parameter needed.
             if (!defined $argv[1]) {
-                notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
+                sendmsg($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
                 return;
             }
             my $target = lc $argv[1];
@@ -635,15 +640,15 @@ sub cmd_uno {
             if ($Auto::DB->selectrow_array('SELECT score FROM unoscores WHERE player = "'.$target.'"')) {
                 # Get score.
                 my $score = $Auto::DB->selectrow_array('SELECT score FROM unoscores WHERE player = "'.$target.'"') or
-                    notice($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
+                    sendmsg($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
                 # Return it.
-                notice($src->{svr}, $src->{nick}, "Score for \2$argv[1]\2: $score");
+                sendmsg($src->{svr}, $src->{nick}, "Score for \2$argv[1]\2: $score");
             }
             else {
-                notice($src->{svr}, $src->{nick}, trans('No data available').q{.});
+                sendmsg($src->{svr}, $src->{nick}, trans('No data available').q{.});
             }
         }
-        default { notice($src->{svr}, $src->{nick}, trans('Unknown action', uc $argv[0]).q{.}) }
+        default { sendmsg($src->{svr}, $src->{nick}, trans('Unknown action', uc $argv[0]).q{.}) }
     }
 
     return 1;
@@ -810,7 +815,7 @@ sub _nextturn {
     my $cards;
     foreach (@{$PLAYERS{$nplayer}}) { $cards .= ' '._fmtcard($_) }
     $cards = substr $cards, 1;
-    notice($net, $NICKS{$nplayer}, "Your cards are: $cards");
+    sendmsg($net, $NICKS{$nplayer}, "Your cards are: $cards");
 
     if ($skip) { return $skip }
     return 1;
@@ -934,7 +939,7 @@ sub _runcard {
                         for (my $i = $#xcards; $i >= 0; $i--) { $str .= ' '._fmtcard($xcards[$i]) }
                         $str = substr $str, 1;
                         if ($delres != -1) { 
-                            notice($net, $NICKS{$CURRTURN}, "You discarded: $str");
+                            sendmsg($net, $NICKS{$CURRTURN}, "You discarded: $str");
                             _nextturn(0); 
                         }
                     }
@@ -982,7 +987,7 @@ sub _runcard {
                     # Give the victim two cards.
                     _givecard($victim); _givecard($victim);
                     # Reveal the cards to the player.
-                    notice($net, $NICKS{$CURRTURN}, "\2".$NICKS{$victim}."'s\2 cards are: $cards");
+                    sendmsg($net, $NICKS{$CURRTURN}, "\2".$NICKS{$victim}."'s\2 cards are: $cards");
                     # Finished.
                     privmsg($net, $chan, "The magical UNO wizard has revealed \2".$NICKS{$victim}."'s\2 hand to \2".$NICKS{$CURRTURN}."\2! \2".$NICKS{$victim}."\2 gains two cards!");
                     _nextturn(0);
@@ -1309,6 +1314,13 @@ sub on_rehash {
             awarn(3, 'on_rehash: Unable to update UNO edition: Invalid edition \''.$ce.'\'');
             return;
         }
+    
+        # Check if the message method is valid.
+        if ((conf_get('uno:msg'))[0][0] !~ m/^(notice|msg)$/xsmi) {
+            err(3, 'From UNO: Invalid message method: '.(conf_get('uno:msg'))[0][0].' -- Unloading module!', 0);
+            API::Std::mod_void('UNO');
+            return;
+        }
         
         # Set new edition.
         $ce = uc(substr $ce, 0, 1).substr $ce, 1;
@@ -1320,9 +1332,21 @@ sub on_rehash {
     return 1;
 }
 
+# Subroutine for sending a private message.
+sub sendmsg {
+    my ($svr, $target, $msg) = @_;
+
+    # Parse uno:msg.
+    given (lc((conf_get('uno:msg'))[0][0])) {
+        when ('notice') { notice($svr, $target, $msg) }
+        when ('msg') { privmsg($svr, $target, $msg) }
+    }
+
+    return 1;
+}
 
 # Start initialization.
-API::Std::mod_init('UNO', 'Xelhua', '1.05', '3.0.0a8', __PACKAGE__);
+API::Std::mod_init('UNO', 'Xelhua', '1.06', '3.0.0a8', __PACKAGE__);
 # build: perl=5.010000
 
 __END__
@@ -1333,7 +1357,7 @@ UNO - Three editions of the UNO card game
 
 =head1 VERSION
 
- 1.05
+ 1.06
 
 =head1 SYNOPSIS
 
@@ -1389,9 +1413,13 @@ You must add the following to your configuration file:
 
  uno {
      edition "edition here";
+     msg "notice";
  }
 
 Edition can be "original", "super", "advanced" or "any".
+
+msg is what method we will use for sending private messages. Can be "notice"
+for using notices, or "msg" for using private messages.
 
 If any, edition must be specified per-game in START.
 
