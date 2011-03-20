@@ -30,7 +30,7 @@ Bug fixes:
 
 Incompatibilities:
 
-None
+* UNO has a uno:msg config option. See documentation for UNO.
 
 We thank you for choosing Auto. Please remember that he is coming to late
 development stages soon, and testers are needed! But we hope we've piqued
