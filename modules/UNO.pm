@@ -1364,6 +1364,7 @@ UNO - Three editions of the UNO card game
  # config block
  uno {
      edition "original";
+     msg "notice";
  }
 
  <starcoder> !uno start
