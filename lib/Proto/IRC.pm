@@ -49,6 +49,7 @@ API::Std::event_add('on_rcjoin');
 API::Std::event_add('on_ucjoin');
 API::Std::event_add('on_isupport');
 API::Std::event_add('on_kick');
+API::Std::event_add('on_selfkick');
 API::Std::event_add('on_myinfo');
 API::Std::event_add('on_namesreply');
 API::Std::event_add('on_nick');
@@ -403,6 +404,9 @@ sub kick {
                 API::IRC::cjoin($svr, $ex[2]);
             }
         }
+
+        # Trigger on_selfkick.
+        API::Std::event_run('on_selfkick', (\%src, $ex[2], $msg));
     }
     else {
         # We weren't. Update chanusers and trigger on_kick.
