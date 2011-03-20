@@ -483,6 +483,16 @@ API::Std::cmd_add('SHUTDOWN', 2, 'cmd.shutdown', \%Core::Cmd::HELP_SHUTDOWN, \&C
 API::Std::cmd_add('RESTART', 2, 'cmd.restart', \%Core::Cmd::HELP_RESTART, \&Core::Cmd::cmd_restart);
 API::Std::cmd_add('REHASH', 2, 'cmd.rehash', \%Core::Cmd::HELP_REHASH, \&Core::Cmd::cmd_rehash);
 API::Std::cmd_add('HELP', 2, 0, \%Core::Cmd::HELP_HELP, \&Core::Cmd::cmd_help);
+# Aliases, if any.
+if (conf_get('aliases:alias')) {
+    my $aliases = (conf_get('aliases:alias'))[0];
+    foreach (@{$aliases}) {
+        if ($_ =~ m/\s/xsm) {
+            my @data = split /\s/xsm, $_;
+            API::Std::cmd_alias($data[0], join ' ', @data[1..$#data]);
+        }
+    }
+}
 
 # Infinite while loop.
 while (1) {

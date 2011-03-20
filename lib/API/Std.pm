@@ -9,7 +9,7 @@ use Exporter;
 use base qw(Exporter);
 
 
-our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS, %RAWHOOKS);
+our (%LANGE, %MODULE, %EVENTS, %HOOKS, %CMDS, %ALIASES, %RAWHOOKS);
 our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add 
                     cmd_del hook_add hook_del rchook_add rchook_del match_user
                     has_priv mod_exists ratelimit_check fpfmt);
@@ -123,6 +123,19 @@ sub cmd_add {
     return 1;
 }
 
+# Alias a command to another.
+sub cmd_alias {
+    my ($alias, $cmd) = @_;
+    
+    # Prepare data.
+    $alias = uc $alias;
+    $cmd = uc $cmd;
+    
+    # Create alias.
+    $ALIASES{$alias} = $cmd;
+
+    return 1;
+}
 
 # Delete a command from Auto.
 sub cmd_del {

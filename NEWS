@@ -19,6 +19,7 @@ In this alpha8 release, we have added:
 * The `wizard` utility, for creating local Auto config directories.
 * EightBall rewritten to be much nicer.
 * A module to translate English into LOLCAT (LOLCAT).
+* Command aliasing via aliases blocks in the config.
 
 Bug fixes:
 

@@ -26,6 +26,41 @@ hook_add("on_uprivmsg", "ctcp_version_reply", sub {
     return 1;
 });
 
+# Command alias parsing.
+hook_add('on_cprivmsg', 'irc.commands.aliases', sub {
+    my (($src, $chan, ($cmd, @args))) = @_;
+
+    # Check for valid length.
+    if (length $cmd >= 2) {
+        my $ipref = substr $cmd, 0, 1, q{};
+        my $upref = (conf_get('fantasy_pf'))[0][0];
+        # Check if the prefix is valid.
+        if ($upref eq $ipref) {
+            # It is, check for an alias.
+            if (defined $API::Std::ALIASES{uc $cmd}) {
+                # Get aliased command.
+                my @actual;
+                if ($API::Std::ALIASES{uc $cmd} =~ m/ /xsm) { @actual = split /\s/xsm, $API::Std::ALIASES{uc $cmd} }
+                else { @actual = ($API::Std::ALIASES{uc $cmd}) }
+                # Prepare data.
+                my @msg = (
+                        q{:}.$src->{nick}.q{!}.$src->{user}.q{@}.$src->{host},
+                        'PRIVMSG',
+                        $chan,
+                        q{:}.$upref.$actual[0],
+                );
+                # Rest of the data.
+                if (scalar @actual > 1) { for (1..$#actual) { push @msg, $actual[$_] } }
+                if (defined $args[0]) { foreach (@args) { push @msg, $_ } }
+                # Simulate a PRIVMSG.
+                Proto::IRC::privmsg($src->{svr}, @msg);
+            }
+        }
+    }
+
+    return 1;
+});
+                        
 # QUIT hook; delete user from chanusers.
 hook_add("on_quit", "quit_update_chanusers", sub {
     my (($src, undef)) = @_;
@@ -55,7 +90,7 @@ hook_add("on_connect", "on_connect_modes", sub {
 hook_add('on_connect', 'on_connect_selfwho', sub {
     my ($svr) = @_;
 
-    API::IRC::who($svr, $Proto::IRC::botinfo{$svr}{nick});
+    API::IRC::who($svr, $State::IRC::botinfo{$svr}{nick});
 
     return 1;
 });
@@ -128,10 +163,10 @@ hook_add('on_whoreply', 'selfwho.getdata', sub {
     my (($svr, $nick, undef, $user, $mask, undef, undef, undef, undef)) = @_;
 
     # Check if it's for us.
-    if ($nick eq $Proto::IRC::botinfo{$svr}{nick}) {
+    if ($nick eq $State::IRC::botinfo{$svr}{nick}) {
         # It is. Set data.
-        $Proto::IRC::botinfo{$svr}{user} = $user;
-        $Proto::IRC::botinfo{$svr}{mask} = $mask;
+        $State::IRC::botinfo{$svr}{user} = $user;
+        $State::IRC::botinfo{$svr}{mask} = $mask;
     }
 
     return 1;
@@ -194,7 +229,7 @@ hook_add('on_disconnect', 'core.irc.deldata', sub {
 
     # Delete all data related to the server.
     if (defined $Proto::IRC::got_001{$svr}) { delete $Proto::IRC::got_001{$svr} }
-    if (defined $Proto::IRC::botinfo{$svr}) { delete $Proto::IRC::botinfo{$svr} }
+    if (defined $State::IRC::botinfo{$svr}) { delete $State::IRC::botinfo{$svr} }
     if (defined $Proto::IRC::botchans{$svr}) { delete $Proto::IRC::botchans{$svr} }
     if (defined $State::IRC::chanusers{$svr}) { delete $State::IRC::chanusers{$svr} }
     if (defined $Proto::IRC::csprefix{$svr}) { delete $Proto::IRC::csprefix{$svr} }
@@ -223,10 +258,10 @@ hook_add('on_umode', 'core.irc.state.umode', sub {
         else {
             # Adjust our modes.
             if ($op) {
-                $Proto::IRC::botinfo{$svr}{modes} .= $_;
+                $State::IRC::botinfo{$svr}{modes} .= $_;
             }
             else {
-                $Proto::IRC::botinfo{$svr}{modes} =~ s/($_)//xsm;
+                $State::IRC::botinfo{$svr}{modes} =~ s/($_)//xsm;
             }
         }
     }
