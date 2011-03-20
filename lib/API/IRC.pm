@@ -82,7 +82,7 @@ sub cmode {
 sub umode {
     my ($svr, $modes) = @_;
 
-    Auto::socksnd($svr, 'MODE '.$Proto::IRC::botinfo{$svr}{nick}." $modes");
+    Auto::socksnd($svr, 'MODE '.$State::IRC::botinfo{$svr}{nick}." $modes");
 
     return 1;
 }
@@ -92,7 +92,7 @@ sub privmsg {
     my ($svr, $target, $message) = @_;
 
     # Get maximum length.
-    my $maxlen = 510 - length q{:}.$Proto::IRC::botinfo{$svr}{nick}.q{!}.$Proto::IRC::botinfo{$svr}{user}.q{@}.$Proto::IRC::botinfo{$svr}{mask}." PRIVMSG $target :";
+    my $maxlen = 510 - length q{:}.$State::IRC::botinfo{$svr}{nick}.q{!}.$State::IRC::botinfo{$svr}{user}.q{@}.$State::IRC::botinfo{$svr}{mask}." PRIVMSG $target :";
 
     # Divide message if it surpasses the maximum length.
     while (length $message >= $maxlen) {
@@ -109,7 +109,7 @@ sub notice {
     my ($svr, $target, $message) = @_;
 
     # Get maximum length.
-    my $maxlen = 510 - length q{:}.$Proto::IRC::botinfo{$svr}{nick}.q{!}.$Proto::IRC::botinfo{$svr}{user}.q{@}.$Proto::IRC::botinfo{$svr}{mask}." NOTICE $target :";
+    my $maxlen = 510 - length q{:}.$State::IRC::botinfo{$svr}{nick}.q{!}.$State::IRC::botinfo{$svr}{user}.q{@}.$State::IRC::botinfo{$svr}{mask}." NOTICE $target :";
 
     # Divide message if it surpasses the maximum length.
     while (length $message >= $maxlen) {
@@ -136,7 +136,7 @@ sub nick {
 
     Auto::socksnd($svr, "NICK $newnick");
 
-    $Proto::IRC::botinfo{$svr}{newnick} = $newnick;
+    $State::IRC::botinfo{$svr}{newnick} = $newnick;
 
     return 1;
 }

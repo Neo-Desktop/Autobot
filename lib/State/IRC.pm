@@ -5,7 +5,7 @@ package State::IRC;
 use strict;
 use warnings;
 use API::Std qw(hook_add);
-our (%chanusers);
+our (%chanusers, %botinfo);
 
 # Create on_namesreply hook.
 hook_add('on_namesreply', 'state.irc.names', sub {

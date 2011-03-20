@@ -38,7 +38,7 @@ our %RAWC = (
 );
 
 # Variables for various functions.
-our (%got_001, %botinfo, %botchans, %csprefix, %chanmodes, %cap);
+our (%got_001, %botchans, %csprefix, %chanmodes, %cap);
 
 # Events.
 API::Std::event_add('on_capack');
@@ -112,14 +112,14 @@ sub num001 {
     $got_001{$svr} = 1;
 
     # In case we don't get NICK from the server.
-    if (!defined $botinfo{$svr}{nick}) {
-        $botinfo{$svr}{nick} = $botinfo{$svr}{newnick};
-        delete $botinfo{$svr}{newnick};
+    if (!defined $State::IRC::botinfo{$svr}{nick}) {
+        $State::IRC::botinfo{$svr}{nick} = $State::IRC::botinfo{$svr}{newnick};
+        delete $State::IRC::botinfo{$svr}{newnick};
     }
 
     # Log.
-    API::Log::alog "! Successfully connected to $svr as $botinfo{$svr}{nick}";
-    API::Log::dbug "! Successfully connected to $svr as $botinfo{$svr}{nick}";
+    API::Log::alog "! Successfully connected to $svr as $State::IRC::botinfo{$svr}{nick}";
+    API::Log::dbug "! Successfully connected to $svr as $State::IRC::botinfo{$svr}{nick}";
 
     # Trigger on_connect.
     API::Std::event_run('on_connect', $svr);
@@ -184,7 +184,7 @@ sub num396 {
     my ($svr, @ex) = @_;
 
     # Update our mask.
-    $botinfo{$svr}{mask} = $ex[3];
+    $State::IRC::botinfo{$svr}{mask} = $ex[3];
 
     return 1;
 }
@@ -202,7 +202,7 @@ sub num432 {
         API::IRC::quit($svr, 'An error occurred.');
     }
 
-    if (defined $botinfo{$svr}{newnick}) { delete $botinfo{$svr}{newnick} }
+    if (defined $State::IRC::botinfo{$svr}{newnick}) { delete $State::IRC::botinfo{$svr}{newnick} }
 
     return 1;
 }
@@ -212,8 +212,8 @@ sub num432 {
 sub num433 {
     my ($svr, undef) = @_;
 
-    if (defined $botinfo{$svr}{newnick}) {
-        API::IRC::nick($svr, $botinfo{$svr}{newnick}.'_');
+    if (defined $State::IRC::botinfo{$svr}{newnick}) {
+        API::IRC::nick($svr, $State::IRC::botinfo{$svr}{newnick}.'_');
     }
 
     return 1;
@@ -224,10 +224,10 @@ sub num433 {
 sub num438 {
     my ($svr, @ex) = @_;
 
-    if (defined $botinfo{$svr}{newnick}) {
-        API::Std::timer_add('num438_'.$botinfo{$svr}{newnick}, 1, $ex[11], sub {
-            API::IRC::nick($Proto::IRC::botinfo{$svr}{newnick});
-            if (defined $botinfo{$svr}{newnick}) { delete $botinfo{$svr}{newnick} }
+    if (defined $State::IRC::botinfo{$svr}{newnick}) {
+        API::Std::timer_add('num438_'.$State::IRC::botinfo{$svr}{newnick}, 1, $ex[11], sub {
+            API::IRC::nick($State::IRC::botinfo{$svr}{newnick});
+            if (defined $State::IRC::botinfo{$svr}{newnick}) { delete $State::IRC::botinfo{$svr}{newnick} }
          });
     }
 
@@ -353,7 +353,7 @@ sub cjoin {
     $chan =~ s/^://gxsm;
     
     # Check if this is coming from ourselves.
-    if ($src{nick} eq $botinfo{$svr}{nick}) {
+    if ($src{nick} eq $State::IRC::botinfo{$svr}{nick}) {
         $botchans{$svr}{lc $chan} = 1;
         API::Std::event_run("on_ucjoin", ($svr, $chan));
     }
@@ -389,7 +389,7 @@ sub kick {
     }
 
     # Check if we were the ones kicked.
-    if (lc($ex[3]) eq lc($botinfo{$svr}{nick})) {
+    if (lc($ex[3]) eq lc($State::IRC::botinfo{$svr}{nick})) {
         # We were kicked!
 
         # Delete channel from botchans.
@@ -421,7 +421,7 @@ sub kick {
 sub mode {
     my ($svr, @ex) = @_;
 
-    if ($ex[2] ne $botinfo{$svr}{nick}) {
+    if ($ex[2] ne $State::IRC::botinfo{$svr}{nick}) {
         # Set data we'll need later.
         my $chan = $ex[2];
         $ex[3] =~ s/^://xsm;
@@ -523,10 +523,10 @@ sub nick {
     $src{svr} = $svr;
  
     # Check if this is coming from ourselves.
-    if ($src{nick} eq $botinfo{$svr}{nick}) {
+    if ($src{nick} eq $State::IRC::botinfo{$svr}{nick}) {
         # It is. Update bot nick hash.
-        $botinfo{$svr}{nick} = $nex;
-        delete $botinfo{$svr}{newnick} if (defined $botinfo{$svr}{newnick});
+        $State::IRC::botinfo{$svr}{nick} = $nex;
+        delete $State::IRC::botinfo{$svr}{newnick} if (defined $State::IRC::botinfo{$svr}{newnick});
     }
     else {
         # It isn't. Update chanusers and trigger on_nick.
@@ -570,7 +570,7 @@ sub part {
     $src{svr} = $svr;
     
     # Check if it's from us or someone else.
-    if ($src{nick} eq $botinfo{$svr}{nick}) {
+    if ($src{nick} eq $State::IRC::botinfo{$svr}{nick}) {
         # Delete this channel from botchans.
         if ($botchans{$svr}{$ex[2]}) { delete $botchans{$svr}{$ex[2]} }
         # Trigger on_upart.
@@ -621,7 +621,7 @@ sub privmsg {
     
     my ($cmd, $cprefix, $rprefix);
     # Check if it's to a channel or to us.
-    if (lc($ex[2]) eq lc($botinfo{$svr}{nick})) {
+    if (lc($ex[2]) eq lc($State::IRC::botinfo{$svr}{nick})) {
         # It is coming to us in a private message.
         
         # Ensure it's a valid length.

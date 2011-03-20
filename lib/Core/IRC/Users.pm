@@ -45,7 +45,7 @@ hook_add('on_whoreply', 'ircusers.who', sub {
     my ($svr, $nick, undef) = @_;
 
     # Ensure it is not us.
-    if (lc $nick ne lc $Proto::IRC::botinfo{$svr}{nick}) {
+    if (lc $nick ne lc $State::IRC::botinfo{$svr}{nick}) {
         # It is not. Check if they're already in the users hash.
         if (!$users{$svr}{lc $nick}) {
             # They are not; add them.

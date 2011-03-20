@@ -55,9 +55,9 @@ sub on_num491 {
 sub is_opered {
     my ($svr) = @_;
     # Auto is not opered.
-    return if $Proto::IRC::botinfo{$svr}{modes} !~ m/o/xsm;
+    return if $State::IRC::botinfo{$svr}{modes} !~ m/o/xsm;
     # Auto is opered.
-    return 1 if $Proto::IRC::botinfo{$svr}{modes} =~ m/o/xsm;
+    return 1 if $State::IRC::botinfo{$svr}{modes} =~ m/o/xsm;
     return;
 }
 
