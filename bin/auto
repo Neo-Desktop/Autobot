@@ -235,8 +235,8 @@ undef $USECONFIG;
 if (conf_get('die')) {
     if ((conf_get('die'))[0][0] == 1) {
         say '!!! You didn\'t read the whole config.';
-    	say '!!! Insert new user then try again.';
-    	exit;
+        say '!!! Insert new user then try again.';
+        exit;
     }
 }
 
@@ -244,11 +244,11 @@ if (conf_get('die')) {
 my @REQCVALS = qw(locale expire_logs server fantasy_pf ratelimit database:format bantype);
 foreach my $REQCVAL (@REQCVALS) {
     if (!conf_get($REQCVAL)) {
-    	my $err = 2;
-    	if ($REQCVAL eq 'expire_logs') {
-    		$err = 1;
-    	}
-    	err($err, "Missing required configuration value: $REQCVAL", 1);
+        my $err = 2;
+        if ($REQCVAL eq 'expire_logs') {
+            $err = 1;
+        }
+        err($err, "Missing required configuration value: $REQCVAL", 1);
     }
 }
 undef @REQCVALS;
@@ -356,44 +356,44 @@ if (conf_get('privset')) {
     my %tcprivs = conf_get('privset');
 
     foreach my $tckpriv (keys %tcprivs) {
-    	# For each privset, get the inner values.
-    	my %mcprivs = conf_get("privset:$tckpriv");
+        # For each privset, get the inner values.
+        my %mcprivs = conf_get("privset:$tckpriv");
 
         # Iterate through them.
-    	foreach my $mckpriv (keys %mcprivs) {
-    		# Switch statement for the values.
-    		given ($mckpriv) {
-    			# If it's 'priv', save it as a privilege.
-    			when ('priv') {
-    				if (defined $PRIVILEGES{$tckpriv}) {
-    					# If this privset exists, push to it.
-    					push @{ $PRIVILEGES{$tckpriv} }, ($mcprivs{$mckpriv})[0][0];
-    				}
-    				else {
-    					# Otherwise, create it.
-    					@{ $PRIVILEGES{$tckpriv} } = (($mcprivs{$mckpriv})[0][0]);
-    				}
-    			}
-    			# If it's 'inherit', inherit the privileges of another privset.
-    			when ('inherit') {
-    				# If the privset we're inheriting exists, continue.
-    				if (defined $PRIVILEGES{($mcprivs{$mckpriv})[0][0]}) {
-    					# Iterate through each privilege.
-    					foreach (@{ $PRIVILEGES{($mcprivs{$mckpriv})[0][0]} }) {
-    						# And save them to the privset inheriting them
-    						if (defined $PRIVILEGES{$tckpriv}) {
-    							# If this privset exists, push to it.
-    							push @{ $PRIVILEGES{$tckpriv} }, $_;
-    						}
-    						else {
-    							# Otherwise, create it.
-    							@{ $PRIVILEGES{$tckpriv} } = ($_);
-    						}
-    					}
-    				}
-    			}
-    		}
-    	}
+        foreach my $mckpriv (keys %mcprivs) {
+            # Switch statement for the values.
+            given ($mckpriv) {
+                # If it's 'priv', save it as a privilege.
+                when ('priv') {
+                    if (defined $PRIVILEGES{$tckpriv}) {
+                        # If this privset exists, push to it.
+                        push @{ $PRIVILEGES{$tckpriv} }, ($mcprivs{$mckpriv})[0][0];
+                    }
+                    else {
+                        # Otherwise, create it.
+                        @{ $PRIVILEGES{$tckpriv} } = (($mcprivs{$mckpriv})[0][0]);
+                    }
+                }
+                # If it's 'inherit', inherit the privileges of another privset.
+                when ('inherit') {
+                    # If the privset we're inheriting exists, continue.
+                    if (defined $PRIVILEGES{($mcprivs{$mckpriv})[0][0]}) {
+                        # Iterate through each privilege.
+                        foreach (@{ $PRIVILEGES{($mcprivs{$mckpriv})[0][0]} }) {
+                            # And save them to the privset inheriting them
+                            if (defined $PRIVILEGES{$tckpriv}) {
+                                # If this privset exists, push to it.
+                                push @{ $PRIVILEGES{$tckpriv} }, $_;
+                            }
+                            else {
+                                # Otherwise, create it.
+                                @{ $PRIVILEGES{$tckpriv} } = ($_);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -423,9 +423,9 @@ if (!$DEBUG) {
         my $pidfile;
         if ($UPREFIX) { $pidfile = "$bin{cwd}/auto.pid" }
         else { $pidfile = "$Bin/auto.pid" }
-    	open my $FPID, '>', $pidfile or exit;
-    	print {$FPID} "$APID\n" or exit;
-    	close $FPID or exit;
+        open my $FPID, '>', $pidfile or exit;
+        print {$FPID} "$APID\n" or exit;
+        close $FPID or exit;
         exit;
     }
     POSIX::setsid() or err(2, "Can't start a new session: $ERRNO", 1);
@@ -448,7 +448,7 @@ if (conf_get('module')) {
     alog '* Loading modules...';
     dbug '* Loading modules...';
     foreach (@{ (conf_get('module'))[0] }) {
-    	mod_load($_);
+        mod_load($_);
     }
 }
 
@@ -498,38 +498,38 @@ if (conf_get('aliases:alias')) {
 while (1) {
     # Timer check.
     foreach my $tk (keys %TIMERS) {
-    	if ($TIMERS{$tk}{time} <= time) {
-    		&{ $TIMERS{$tk}{sub} }();
-    		if ($TIMERS{$tk}{type} == 1) {
-    			# If it's type 1, delete from memory.
-    			delete $TIMERS{$tk};
-    		}
-    		elsif ($TIMERS{$tk}{type} == 2) {
-    			# If it's type 2, reset timer.
-    			$TIMERS{$tk}{time} = time + $TIMERS{$tk}{secs};
-    		}
-    		else {
-    			# This should never happen.
-    			delete $TIMERS{$tk};
-    		}
-    	}
+        if ($TIMERS{$tk}{time} <= time) {
+            &{ $TIMERS{$tk}{sub} }();
+            if ($TIMERS{$tk}{type} == 1) {
+                # If it's type 1, delete from memory.
+                delete $TIMERS{$tk};
+            }
+            elsif ($TIMERS{$tk}{type} == 2) {
+                # If it's type 2, reset timer.
+                $TIMERS{$tk}{time} = time + $TIMERS{$tk}{secs};
+            }
+            else {
+                # This should never happen.
+                delete $TIMERS{$tk};
+            }
+        }
     }
     # Socket check.
     foreach my $sock ($SELECT->can_read(1)) {
-    	# Figure out what network is sending us data.
-    	my $sockid;
-    	foreach (keys %SOCKET) {
-    		if ($SOCKET{$_} eq $sock) { $sockid = $_ }
-    	}
-    	# Read the data.
-    	my $idata;
-    	sysread $sock, $idata, POSIX::BUFSIZ, 0;
+        # Figure out what network is sending us data.
+        my $sockid;
+        foreach (keys %SOCKET) {
+            if ($SOCKET{$_} eq $sock) { $sockid = $_ }
+        }
+        # Read the data.
+        my $idata;
+        sysread $sock, $idata, POSIX::BUFSIZ, 0;
 
-    	# Check for the data.
-    	if (!defined $idata || length($idata) == 0) {
-    		# Got EOF, close socket
-    		err(2, "Lost connection to $sockid!", 0);
-    		$SELECT->remove($sock);
+        # Check for the data.
+        if (!defined $idata || length($idata) == 0) {
+            # Got EOF, close socket
+            err(2, "Lost connection to $sockid!", 0);
+            $SELECT->remove($sock);
             delete $SOCKET{$sockid};
             API::Std::event_run('on_disconnect', $sockid);
             if (!keys %SOCKET) {
@@ -541,21 +541,21 @@ while (1) {
                 exit;
             }
             next;
-    	}
+        }
 
         # Read the buffer.
-    	my $data .= $idata;
-    	while ($data =~ s/(.*\n)//) {
-    		my $line = $1;
+        my $data .= $idata;
+        while ($data =~ s/(.*\n)//) {
+            my $line = $1;
 
             # Remove the newlines.
-    		chomp $line;
-    		# Debug.
-    		dbug $sockid.' >> '.$line;
+            chomp $line;
+            # Debug.
+            dbug $sockid.' >> '.$line;
 
             # Parse data.
-    		Proto::IRC::ircparse($sockid, $line);
-    	}
+            Proto::IRC::ircparse($sockid, $line);
+        }
     }
 }
 
@@ -568,12 +568,12 @@ sub socksnd {
     my ($svr, $data) = @_;
 
     if (defined $SOCKET{$svr}) {
-    	syswrite $SOCKET{$svr}, $data."\r\n", POSIX::BUFSIZ, 0;
-    	dbug "$svr << $data";
-    	return 1;
+        syswrite $SOCKET{$svr}, $data."\r\n", POSIX::BUFSIZ, 0;
+        dbug "$svr << $data";
+        return 1;
     }
     else {
-    	return;
+        return;
     }
 }
 
