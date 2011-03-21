@@ -58,20 +58,20 @@ sub calc
 
     if ($response->is_success) {
         # If successful, decode the content.
-    	my $d = $json->allow_nonref->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($response->decoded_content);
+        my $d = $json->allow_nonref->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->decode($response->decoded_content);
 
-    	if ($d->{error} eq "" or $d->{error} == 0) {
+        if ($d->{error} eq "" or $d->{error} == 0) {
             # And send to channel
             privmsg($src->{svr}, $src->{chan}, "Result: ".$d->{lhs}." = ".$d->{rhs});
-    	}
-    	else {
+        }
+        else {
             # Otherwise, send an error message.
-    		privmsg($src->{svr}, $src->{chan}, "Google Calculator sent an error.");
-    	}
+            privmsg($src->{svr}, $src->{chan}, "Google Calculator sent an error.");
+        }
     }
     else {
         # Otherwise, send an error message.
-    	privmsg($src->{svr}, $src->{chan}, "An error occurred while sending your expression to Google Calculator.");
+        privmsg($src->{svr}, $src->{chan}, "An error occurred while sending your expression to Google Calculator.");
     }
 
     return 1;

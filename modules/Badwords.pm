@@ -13,8 +13,8 @@ sub _init
 {
     # Check for required configuration values.
     if (!conf_get('badwords')) {
-    	err(2, 'Please verify that you have a badwords block with word entries defined in your configuration file.', 0);
-    	return;
+        err(2, 'Please verify that you have a badwords block with word entries defined in your configuration file.', 0);
+        return;
     }
     # Create the act_on_badword hook.
     hook_add('on_cprivmsg', 'act_on_badword', \&M::Badwords::actonbadword) or return;

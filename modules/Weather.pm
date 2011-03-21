@@ -45,8 +45,8 @@ sub weather
     $ua->timeout(2);
     # Put together the call to the Wunderground API. 
     if (!defined $args[0]) {
-    	notice($src->{svr}, $src->{nick}, trans('Not enough parameters').".");
-    	return;
+        notice($src->{svr}, $src->{nick}, trans('Not enough parameters').".");
+        return;
     }
     my $loc = join(' ', @args);
     $loc =~ s/ /%20/g;
@@ -56,22 +56,22 @@ sub weather
 
     if ($response->is_success) {
     # If successful, decode the content.
-    	my $d = XMLin($response->decoded_content);
+        my $d = XMLin($response->decoded_content);
     # And send to channel
-    	if (!ref($d->{observation_location}->{country})) {
-    		my $windc = $d->{wind_string};
-    		if (substr($windc, length($windc) - 1, 1) eq " ") { $windc = substr($windc, 0, length($windc) - 1) }
-    		privmsg($src->{svr}, $src->{chan}, "Results for \2".$d->{observation_location}->{full}."\2 - \2Temperature:\2 ".$d->{temperature_string}." \2Wind Conditions:\2 ".$windc." \2Conditions:\2 ".$d->{weather});
-    		privmsg($src->{svr}, $src->{chan}, "\2Heat index:\2 ".$d->{heat_index_string}." \2Humidity:\2 ".$d->{relative_humidity}." \2Pressure:\2 ".$d->{pressure_string}." - ".$d->{observation_time});
-    	}
-    	else {
-    	# Otherwise, send an error message.
-    		privmsg($src->{svr}, $src->{chan}, 'Location not found.');
-    	}
+        if (!ref($d->{observation_location}->{country})) {
+            my $windc = $d->{wind_string};
+            if (substr($windc, length($windc) - 1, 1) eq " ") { $windc = substr($windc, 0, length($windc) - 1) }
+            privmsg($src->{svr}, $src->{chan}, "Results for \2".$d->{observation_location}->{full}."\2 - \2Temperature:\2 ".$d->{temperature_string}." \2Wind Conditions:\2 ".$windc." \2Conditions:\2 ".$d->{weather});
+            privmsg($src->{svr}, $src->{chan}, "\2Heat index:\2 ".$d->{heat_index_string}." \2Humidity:\2 ".$d->{relative_humidity}." \2Pressure:\2 ".$d->{pressure_string}." - ".$d->{observation_time});
+        }
+        else {
+        # Otherwise, send an error message.
+            privmsg($src->{svr}, $src->{chan}, 'Location not found.');
+        }
     }
     else {
     # Otherwise, send an error message.
-    	privmsg($src->{svr}, $src->{chan}, 'An error occurred while retrieving your weather.');
+        privmsg($src->{svr}, $src->{chan}, 'An error occurred while retrieving your weather.');
     }
 
     return 1;

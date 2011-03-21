@@ -200,8 +200,8 @@ sub cmd_uno {
 
             # Check for at least two players.
             if (keys %PLAYERS < 2) {
-                notice($src->{svr}, $src->{nick}, 'Two players are required to play.');
-                return;
+                # Not found, join the bot.
+                _botjoin();
             }
 
             # Deal the cards.
@@ -1164,6 +1164,12 @@ sub _delplyr {
     }
 
     return 1;
+}
+
+# Join the bot to a game.
+sub _botjoin {
+    $PLAYERS{lc $src->{nick}} = []; 
+    $NICKS{lc $src->{nick}} = $src->{nick};
 }
 
 # For when a player has won.

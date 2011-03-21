@@ -44,25 +44,25 @@ sub check
     $ua->timeout(2);
     # Do we have enough parameters?
     if (!defined $argv[0]) {
-    	notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
-    	return;
+        notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
+        return;
     }
     my $curl = $argv[0];
     # Does the URL start with http(s)?
     if ($curl !~ m/^http/) {
-    	$curl = 'http://'.$curl;
+        $curl = 'http://'.$curl;
     }
 
     # Get the response via HTTP.
     my $response = $ua->get($curl);
 
     if ($response->is_success) {
-    	# If successful, it's up.
-    	privmsg($src->{svr}, $src->{chan}, $curl.' appears to be up from here.');
+        # If successful, it's up.
+        privmsg($src->{svr}, $src->{chan}, $curl.' appears to be up from here.');
     }
     else {
-    	# Otherwise, it's down.
-    	privmsg($src->{svr}, $src->{chan}, $curl.' appears to be down from here.');
+        # Otherwise, it's down.
+        privmsg($src->{svr}, $src->{chan}, $curl.' appears to be down from here.');
     }
 
     return 1;

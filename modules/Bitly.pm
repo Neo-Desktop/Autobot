@@ -14,8 +14,8 @@ sub _init
 {
     # Check for required configuration values.
     if (!(conf_get('bitly:user'))[0][0] or !(conf_get('bitly:key'))[0][0]) {
-    	err(2, 'Please verify that you have bitly_user and bitly_key defined in your configuration file.', 0);
-    	return;
+        err(2, 'Please verify that you have bitly_user and bitly_key defined in your configuration file.', 0);
+        return;
     }
     # Create the SHORTEN and REVERSE commands.
     cmd_add('SHORTEN', 0, 0, \%M::Bitly::HELP_SHORTEN, \&M::Bitly::shorten) or return;
@@ -68,9 +68,9 @@ sub shorten
     if ($response->is_success) {
         # If successful, decode the content.
         my $d = $response->decoded_content;
-    	chomp $d;
+        chomp $d;
         # And send to channel.
-    	privmsg($src->{svr}, $src->{chan}, "URL: ".$d);
+        privmsg($src->{svr}, $src->{chan}, "URL: ".$d);
     }
     else {
         # Otherwise, send an error message.
@@ -104,13 +104,13 @@ sub reverse
     if ($response->is_success) {
         # If successful, decode the content.
         my $d = $response->decoded_content;
-    	chomp $d;
+        chomp $d;
         # And send it to channel.
         privmsg($src->{svr}, $src->{chan}, "URL: ".$d);
     }
     else {
         # Otherwise, send an error message.
-    	privmsg($src->{svr}, $src->{chan}, 'An error occurred while reversing your URL.');
+        privmsg($src->{svr}, $src->{chan}, 'An error occurred while reversing your URL.');
     }
 
     return 1;

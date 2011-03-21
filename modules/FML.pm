@@ -49,14 +49,14 @@ sub fml
     if ($rp->is_success) {
         # If successful, decode the content.
         my $d = $rp->decoded_content;
-    	$d =~ s/(\n|\r)//g;
+        $d =~ s/(\n|\r)//g;
 
         # Get the FML.
         my (undef, $dfa) = split('Text: ', $d);
         my ($fml, undef) = split('Agree:', $dfa);
 
         # And send to channel.
-    	privmsg($src->{svr}, $src->{chan}, "\002Random FML:\002 ".$fml);
+        privmsg($src->{svr}, $src->{chan}, "\002Random FML:\002 ".$fml);
     }
     else {
         # Otherwise, send an error message.
