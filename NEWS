@@ -34,6 +34,7 @@ Bug fixes:
 Incompatibilities:
 
 * UNO has a uno:msg config option. See documentation for UNO.
+* Must be re-installed, run ./install [options]
 
 We thank you for choosing Auto. Please remember that he is coming to late
 development stages soon, and testers are needed! But we hope we've piqued

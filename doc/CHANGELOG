@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Full support for custom PREFIX installs (including global installs) has
+      been completed.
     * Added fastest/slowest game, most cards and most players records to UNO.
     * Fixed a bug in UNO that allowed users to join more than once.
     * Added optional uno:english option. See documentation for UNO.
