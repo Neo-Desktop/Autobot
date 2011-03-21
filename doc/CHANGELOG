@@ -3,6 +3,10 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+
+
+3.0 Alpha 8
+===============================================================================
     * Full support for custom PREFIX installs (including global installs) has
       been completed.
     * Added fastest/slowest game, most cards and most players records to UNO.
