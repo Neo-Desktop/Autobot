@@ -12,6 +12,7 @@ use Cwd;
 use Pod::Html;
 use Pod::Man;
 our $Bin = $Bin;
+our $VERSION = 1.00;
 
 my ($UPREFIX, %bin);
 $bin{cwd} = getcwd;
@@ -46,17 +47,6 @@ else {
     $UPREFIX = 0;
 }
 
-# Get the name of the network this cert is for.
-print 'Network Name: ';
-my $net = <STDIN>;
-$net =~ s/(\r|\n)//gxsm;
-say q{};
-
-# Make sure etc/certs/ exists.
-if (!-d "$bin{etc}") { mkdir "$bin{etc}", 0755 }
-
-our $VERSION = 1.00;
-
 # Get module parameter.
 if (!defined $ARGV[0]) {
     say 'Not enough parameters. Usage: buildmod <module>';
@@ -67,13 +57,13 @@ my $module = $ARGV[0];
 # Set full path.
 my $type = 0;
 my $modulep;
-if (-e "$Bin/../modules/$module.pm") {
-    $modulep = "$Bin/../modules/$module.pm";
+if (-e "$bin{mod}/$module.pm") {
+    $modulep = "$bin{mod}/$module.pm";
     $type = 1;
 }
 else {
-    if (-e "$Bin/../modules/$module/Buildfile") {
-        $modulep = "$Bin/../modules/$module/Buildfile";
+    if (-e "$bin{mod}/$module/Buildfile") {
+        $modulep = "$bin{mod}/$module/Buildfile";
         $type = 2;
     }
     else {
@@ -175,20 +165,26 @@ foreach my $line (@MPBUF) {
 }
 
 # Create the autodoc/ dir if it doesn't exist.
-if (!-d "$Bin/../autodoc") {
-    mkdir "$Bin/../autodoc";
+my $docdir;
+if ($UPREFIX) {
+    $docdir = "$ENV{HOME}/autodoc";
+    if (!-d "$ENV{HOME}/autodoc") { mkdir "$ENV{HOME}/autodoc" }
+}
+else {
+    $docdir = "$Bin/../autodoc";
+    if (!-d "$Bin/../autodoc") { mkdir "$Bin/../autodoc" }
 }
 
 # Save to POD file in autodoc/
-open my $FMPNH, '>', "$Bin/../autodoc/$module.pod";
+open my $FMPNH, '>', "$docdir/$module.pod";
 print {$FMPNH} $podbuf;
 close $FMPNH;
 
 # Create HTML.
-pod2html("--infile=$Bin/../autodoc/$module.pod", "--outfile=$Bin/../autodoc/$module.html");
+pod2html("--infile=$docdir/$module.pod", "--outfile=$docdir/$module.html");
 # Create *roff.
 my $manifier = Pod::Man->new();
-$manifier->parse_from_file("$Bin/../autodoc/$module.pod", "$Bin/../autodoc/$module.1");
+$manifier->parse_from_file("$docdir/$module.pod", "$docdir/$module.1");
 
 print $RS;
 say 'Done.';
