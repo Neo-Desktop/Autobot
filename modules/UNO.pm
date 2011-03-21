@@ -44,6 +44,8 @@ sub _init {
 
     # Create `unoscores` table.
     $Auto::DB->do('CREATE TABLE IF NOT EXISTS unoscores (player TEXT, score INTEGER)') or return;
+    # Create `unorecords` table.
+    $Auto::DB->do('CREATE TABLE IF NOT EXISTS unorecords (name TEXT, value TEXT, winner TEXT)') or return;
 
     # Create UNO command.
     cmd_add('UNO', 0, 0, \%M::UNO::HELP_UNO, \&M::UNO::cmd_uno) or return;
@@ -85,7 +87,7 @@ sub _void {
 
 # Help hash for UNO command. Spanish, German and French translations needed.
 our %HELP_UNO = (
-    'en' => "This command allows you to take various actions in a game of UNO. \2Syntax:\2 UNO (START|JOIN|DEAL|PLAY|DRAW|PASS|CARDS|TOPCARD|STATS|KICK|QUIT|STOP|TOPTEN|SCORE) [parameters]",
+    'en' => "This command allows you to take various actions in a game of UNO. \2Syntax:\2 UNO (START|JOIN|DEAL|PLAY|DRAW|PASS|CARDS|TOPCARD|STATS|KICK|QUIT|STOP|TOPTEN|RECORDS|SCORE) [parameters]",
 );
 
 # Callback for UNO command.
@@ -631,6 +633,62 @@ sub cmd_uno {
             }
             else {
                 sendmsg($src->{svr}, $src->{nick}, trans('No data available').q{.});
+            }
+        }
+        when (/^(RECORDS|R)$/) {
+            # UNO RECORDS
+            
+            # Get data.
+            my $dbq = $Auto::DB->prepare('SELECT * FROM unorecords') or sendmsg($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
+            $dbq->execute or sendmsg($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
+            my $data = $dbq->fetchall_hashref('name') or sendmsg($src->{svr}, $src->{nick}, trans('An error occurred').q{.}) and return;
+
+            # Prepare message.
+            my $msg;
+            # Check for fastest game.
+            if ($data->{fast}) {
+                if ($data->{fast}->{value}) {
+                    my $durtime = $data->{fast}->{value};
+                    my $hours = my $mins = my $secs = 0;
+                    while ($durtime >= 3600) { $hours++; $durtime -= 3600 }
+                    while ($durtime >= 60) { $mins++; $durtime -= 60 }
+                    while ($durtime >= 1) { $secs++; $durtime -= 1 }
+                    $msg .= " The fastest game ever lasted \2$hours:$mins:$secs\2; the winner was \2$data->{fast}->{winner}\2.";
+                }
+            }
+            # Check for slowest game.
+            if ($data->{slow}) {
+                if ($data->{slow}->{value}) {
+                    my $durtime = $data->{slow}->{value};
+                    my $hours = my $mins = my $secs = 0;
+                    while ($durtime >= 3600) { $hours++; $durtime -= 3600 }
+                    while ($durtime >= 60) { $mins++; $durtime -= 60 }
+                    while ($durtime >= 1) { $secs++; $durtime -= 1 }
+                    $msg .= " The slowest game ever lasted \2$hours:$mins:$secs\2; the winner was \2$data->{slow}->{winner}\2.";
+                }
+            }
+            # Check for most cards played in a game.
+            if ($data->{cards}) {
+                if ($data->{cards}->{value}) {
+                    $msg .= " The most cards ever played was \2$data->{cards}->{value}\2; the winner was \2$data->{cards}->{winner}\2.";
+                }
+            }
+            # Check for most players in a game.
+            if ($data->{players}) {
+                if ($data->{players}->{value}) {
+                    $msg .= " The most players ever was \2$data->{players}->{value}\2; the winner was \2$data->{players}->{winner}\2.";
+                }
+            }
+
+            # Check if there was any data.
+            if (!$msg) {
+                # Nope.
+                sendmsg($src->{svr}, $src->{nick}, trans('No data available').q{.});
+            }
+            else {
+                # Strip leading space.
+                $msg =~ s/^\s//xsm;
+                sendmsg($src->{svr}, $src->{nick}, "Records: $msg");
             }
         }
         when ('SCORE') {
@@ -1185,7 +1243,7 @@ sub _delplyr {
 sub _gameover {
     my ($player) = @_;
 
-    # Update database.
+    # Update player's score in the database.
     my $score;
     if (!$Auto::DB->selectrow_array('SELECT * FROM unoscores WHERE player = "'.$player.'"')) {
         $Auto::DB->do('INSERT INTO unoscores (player, score) VALUES ("'.$player.'", "0")') or err(3, "Unable to update UNO score for $player!", 0);
@@ -1196,6 +1254,20 @@ sub _gameover {
     }
     $score++;
     $Auto::DB->do('UPDATE unoscores SET score = "'.$score.'" WHERE player = "'.$player.'"') or err(3, "Unable to update UNO score for $player!", 0);
+    # Check for records in database.
+    my ($fastest, $slowest, $mostcards, $mostplayers);
+    $fastest = $Auto::DB->selectrow_array('SELECT value FROM unorecords WHERE name = "fast"') or
+        $Auto::DB->do('INSERT INTO unorecords (name, value, winner) VALUES ("fast", "0", "NULL")');
+    $slowest = $Auto::DB->selectrow_array('SELECT value FROM unorecords WHERE name = "slow"') or
+        $Auto::DB->do('INSERT INTO unorecords (name, value, winner) VALUES ("slow", "0", "NULL")');
+    $mostcards = $Auto::DB->selectrow_array('SELECT value FROM unorecords WHERE name = "cards"') or
+        $Auto::DB->do('INSERT INTO unorecords (name, value, winner) VALUES ("cards", "0", "NULL")');
+    $mostplayers = $Auto::DB->selectrow_array('SELECT value FROM unorecords WHERE name = "players"') or
+        $Auto::DB->do('INSERT INTO unorecords (name, value, winner) VALUES ("players", "0", "NULL")');
+    if (!defined $fastest) { $fastest = 0 }
+    if (!defined $slowest) { $slowest = 0 }
+    if (!defined $mostcards) { $mostcards = 0 }
+    if (!defined $mostplayers) { $mostplayers = 0 }
 
     # Declare their victory.
     my ($net, $chan) = split '/', $UNOCHAN;
@@ -1203,6 +1275,16 @@ sub _gameover {
     my ($hours, $mins, $secs);
     $hours = $mins = $secs = 0;
     my $durtime = time - $UNOTIME;
+    # Update records.
+    if (!$fastest || $durtime < $fastest) { $Auto::DB->do('UPDATE unorecords SET value = "'.$durtime.'", winner = "'.$NICKS{$player}.'" WHERE name = "fast"') or
+                                                err(3, 'Unable to update UNO record for fastest game!', 0); }
+    if (!$slowest || $durtime > $slowest) { $Auto::DB->do('UPDATE unorecords SET value = "'.$durtime.'", winner = "'.$NICKS{$player}.'" WHERE name = "slow"') or
+                                                err(3, 'Unable to update UNO record for slowest game!', 0); }
+    if (!$mostcards || $UNOGCC > $mostcards) { $Auto::DB->do('UPDATE unorecords SET value = "'.$UNOGCC.'", winner = "'.$NICKS{$player}.'" WHERE name = "cards"') or
+                                                    err(3, 'Unable to update UNO record for most cards played!', 0); }
+    if (!$mostplayers || keys %PLAYERS > $mostplayers) { $Auto::DB->do('UPDATE unorecords SET value = "'.keys(%PLAYERS).'", winner = "'.$NICKS{$player}.'" WHERE name = "players"') or
+                                                    err(3, 'Unable to update UNO record for most players in a game!', 0); }
+    # Return data.
     while ($durtime >= 3600) { $hours++; $durtime -= 3600 }
     while ($durtime >= 60) { $mins++; $durtime -= 60 }
     while ($durtime >= 1) { $secs++; $durtime -= 1 }
@@ -1356,7 +1438,7 @@ sub sendmsg {
 }
 
 # Start initialization.
-API::Std::mod_init('UNO', 'Xelhua', '1.08', '3.0.0a8', __PACKAGE__);
+API::Std::mod_init('UNO', 'Xelhua', '1.09', '3.0.0a8', __PACKAGE__);
 # build: perl=5.010000
 
 __END__
@@ -1367,7 +1449,7 @@ UNO - Three editions of the UNO card game
 
 =head1 VERSION
 
- 1.08
+ 1.09
 
 =head1 SYNOPSIS
 
@@ -1412,6 +1494,7 @@ The commands this adds are:
  UNO QUIT|Q
  UNO STOP
  UNO TOPTEN|TOP10|T10
+ UNO RECORDS|R
  UNO SCORE <user>
 
 All of which describe themselves quite well with just the name.

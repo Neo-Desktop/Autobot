@@ -21,6 +21,7 @@ In this alpha8 release, we have added:
 * A module to translate English into LOLCAT (LOLCAT).
 * Command aliasing via aliases blocks in the config.
 * Added optional uno:english and required uno:msg options. See documentation for UNO.
+* Added fastest/slowest game, most cards and most players records to UNO.
 
 Bug fixes:
 
