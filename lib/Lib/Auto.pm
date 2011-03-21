@@ -157,10 +157,10 @@ sub ircsock {
 
     # Prepare socket data.
     my %conndata = (
-    	Proto => 'tcp',
+        Proto => 'tcp',
         LocalAddr => $cdata->{'bind'}[0],
-    	PeerAddr  => $cdata->{'host'}[0],
-    	PeerPort  => $cdata->{'port'}[0],
+        PeerAddr  => $cdata->{'host'}[0],
+        PeerPort  => $cdata->{'port'}[0],
         Timeout   => 20,
     );
     # Set IPv6/SSL data.

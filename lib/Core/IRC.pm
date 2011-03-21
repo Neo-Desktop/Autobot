@@ -79,8 +79,8 @@ hook_add("on_connect", "on_connect_modes", sub {
     my ($svr) = @_;
 
     if (conf_get("server:$svr:modes")) {
-    	my $connmodes = (conf_get("server:$svr:modes"))[0][0];
-    	API::IRC::umode($svr, $connmodes);
+        my $connmodes = (conf_get("server:$svr:modes"))[0][0];
+        API::IRC::umode($svr, $connmodes);
     }
 
     return 1;
@@ -100,8 +100,8 @@ hook_add("on_connect", "plaintext_auth", sub {
     my ($svr) = @_;
     
     if (conf_get("server:$svr:idstr")) {
-    	my $idstr = (conf_get("server:$svr:idstr"))[0][0];
-    	Auto::socksnd($svr, $idstr);
+        my $idstr = (conf_get("server:$svr:idstr"))[0][0];
+        Auto::socksnd($svr, $idstr);
     }
 
     return 1;
@@ -116,9 +116,9 @@ hook_add("on_connect", "autojoin", sub {
     
     # Join the channels.
     if (!defined $cajoin[1]) {
-    	# For single-line ajoins.
-    	my @sajoin = split(',', $cajoin[0]);
-    	
+        # For single-line ajoins.
+        my @sajoin = split(',', $cajoin[0]);
+        
         foreach (@sajoin) {
             # Check if a key was specified.
             if ($_ =~ m/\s/xsm) {
@@ -128,13 +128,13 @@ hook_add("on_connect", "autojoin", sub {
             }
             else {
                 # Else join without one.
-    	        API::IRC::cjoin($svr, $_);
+                API::IRC::cjoin($svr, $_);
             }
         }
     }
     else {
-    	# For multi-line ajoins.
-    	foreach (@cajoin) {
+        # For multi-line ajoins.
+        foreach (@cajoin) {
             # Check if a key was specified.
             if ($_ =~ m/\s/xsm) {
                 # There was, join with it.
@@ -178,17 +178,17 @@ hook_add('on_isupport', 'core.prefixchanmode.getdata', sub {
 
     # Find PREFIX and CHANMODES.
     foreach my $ex (@ex) {
-    	if ($ex =~ m/^PREFIX/xsm) {
-    		# Found PREFIX.
-    		my $rpx = substr($ex, 8);
-    		my ($pm, $pp) = split('\)', $rpx);
-    		my @apm = split(//, $pm);
-    		my @app = split(//, $pp);
-    		foreach my $ppm (@apm) {
-    			# Store data.
-    			$Proto::IRC::csprefix{$svr}{$ppm} = shift(@app);
-    		}
-    	}
+        if ($ex =~ m/^PREFIX/xsm) {
+            # Found PREFIX.
+            my $rpx = substr($ex, 8);
+            my ($pm, $pp) = split('\)', $rpx);
+            my @apm = split(//, $pm);
+            my @app = split(//, $pp);
+            foreach my $ppm (@apm) {
+                # Store data.
+                $Proto::IRC::csprefix{$svr}{$ppm} = shift(@app);
+            }
+        }
         elsif ($ex =~ m/^CHANMODES/xsm) {
             # Found CHANMODES.
             my ($mtl, $mtp, $mtpp, $mts) = split m/[,]/xsm, substr($ex, 10);
