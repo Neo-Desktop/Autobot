@@ -653,6 +653,8 @@ sub cmd_uno {
                     while ($durtime >= 3600) { $hours++; $durtime -= 3600 }
                     while ($durtime >= 60) { $mins++; $durtime -= 60 }
                     while ($durtime >= 1) { $secs++; $durtime -= 1 }
+                    if (length $mins < 2) { $mins = "0$mins" }
+                    if (length $secs < 2) { $secs = "0$secs" }
                     $msg .= " The fastest game ever lasted \2$hours:$mins:$secs\2; the winner was \2$data->{fast}->{winner}\2.";
                 }
             }
@@ -664,6 +666,8 @@ sub cmd_uno {
                     while ($durtime >= 3600) { $hours++; $durtime -= 3600 }
                     while ($durtime >= 60) { $mins++; $durtime -= 60 }
                     while ($durtime >= 1) { $secs++; $durtime -= 1 }
+                    if (length $mins < 2) { $mins = "0$mins" }
+                    if (length $secs < 2) { $secs = "0$secs" }
                     $msg .= " The slowest game ever lasted \2$hours:$mins:$secs\2; the winner was \2$data->{slow}->{winner}\2.";
                 }
             }
@@ -1288,6 +1292,8 @@ sub _gameover {
     while ($durtime >= 3600) { $hours++; $durtime -= 3600 }
     while ($durtime >= 60) { $mins++; $durtime -= 60 }
     while ($durtime >= 1) { $secs++; $durtime -= 1 }
+    if (length $mins < 2) { $mins = "0$mins" }
+    if (length $secs < 2) { $secs = "0$secs" }
     privmsg($net, $chan, "Game lasted $hours:$mins:$secs; $UNOGCC cards were played.");
 
     # Reset variables.
@@ -1438,7 +1444,7 @@ sub sendmsg {
 }
 
 # Start initialization.
-API::Std::mod_init('UNO', 'Xelhua', '1.09', '3.0.0a8', __PACKAGE__);
+API::Std::mod_init('UNO', 'Xelhua', '1.10', '3.0.0a9', __PACKAGE__);
 # build: perl=5.010000
 
 __END__
@@ -1449,7 +1455,7 @@ UNO - Three editions of the UNO card game
 
 =head1 VERSION
 
- 1.09
+ 1.10
 
 =head1 SYNOPSIS
 
@@ -1499,7 +1505,7 @@ The commands this adds are:
 
 All of which describe themselves quite well with just the name.
 
-This module is compatible with Auto v3.0.0a8+.
+This module is compatible with Auto v3.0.0a9+.
 
 =head1 INSTALL
 

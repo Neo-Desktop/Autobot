@@ -11,30 +11,17 @@
 The future of IRC bots is here! Xelhua gives to you, Auto 3.0, a new version of
 the popular Auto IRC bot.
 
-In this alpha8 release, we have added:
+In this alpha9 release, we have added:
 
-* A module to get information on a package in AUR (AUR).
-* Support for installs to custom locations.
-* Support for system-wide installs. (/usr or /usr/local)
-* The `wizard` utility, for creating local Auto config directories.
-* EightBall rewritten to be much nicer.
-* A module to translate English into LOLCAT (LOLCAT).
-* Command aliasing via aliases blocks in the config.
-* Added optional uno:english and required uno:msg options. See documentation for UNO.
-* Added fastest/slowest game, most cards and most players records to UNO.
+None
 
 Bug fixes:
 
-* Fixed an issue in auto --help that incorrectly displayed the binary name.
-* Fixed an exploit in QDB that allowed users to use services fantasy commands
-  with the bot's account.
-* Fixed a bug in LinkTitle that caused multi-line <title>'s to display wrong.
-* Fixed a bug in UNO that allowed users to join more than once.
+* UNO: Fixed a formatting issue in duration.
 
 Incompatibilities:
 
-* UNO has a uno:msg config option. See documentation for UNO.
-* Must be re-installed, run ./install [options]
+None
 
 We thank you for choosing Auto. Please remember that he is coming to late
 development stages soon, and testers are needed! But we hope we've piqued
@@ -44,4 +31,4 @@ created by anyone and uploaded there for everyone to use.
 Auto's goal is to create an efficient, stable and highly customizable IRC bot
 in Perl. To offer an alternative to other platforms.
 
-Enjoy Auto 3.0.0 Alpha 8!
+Enjoy Auto 3.0.0 Alpha 9!
