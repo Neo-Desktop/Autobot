@@ -18,6 +18,7 @@ None
 Bug fixes:
 
 * UNO: Fixed a formatting issue in duration.
+* QDB: Fixed an exploit in QDB VIEW.
 
 Incompatibilities:
 
