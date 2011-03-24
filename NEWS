@@ -11,14 +11,13 @@
 The future of IRC bots is here! Xelhua gives to you, Auto 3.0, a new version of
 the popular Auto IRC bot.
 
-In this alpha9 release, we have added:
+In this alpha10 release, we have added:
 
 None
 
 Bug fixes:
 
-* UNO: Fixed a formatting issue in duration.
-* QDB: Fixed an exploit in QDB RAND.
+None
 
 Incompatibilities:
 
@@ -32,4 +31,4 @@ created by anyone and uploaded there for everyone to use.
 Auto's goal is to create an efficient, stable and highly customizable IRC bot
 in Perl. To offer an alternative to other platforms.
 
-Enjoy Auto 3.0.0 Alpha 9!
+Enjoy Auto 3.0.0 Alpha 10!
