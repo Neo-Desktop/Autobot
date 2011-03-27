@@ -26,9 +26,10 @@ sub _void {
 }
 
 
-# Help hash for AUR. Spanish, French and German translations needed.
+# Help hash for AUR. Spanish and French translations needed.
 our %HELP_AUR = (
-    'en' => "This command allows you to lookup a module in the Arch Linux AUR. \002Syntax:\002 AUR <module>",
+    en => "This command allows you to lookup a module in the Arch Linux AUR. \2Syntax:\2 AUR <module>",
+    de => "Dieser Befehl ermoeglicht du Nachschlagst ein Modul in der Arch Linux AUR. \2Syntax:\2 AUR <module>",
 );
 
 # Callback for AUR command.
