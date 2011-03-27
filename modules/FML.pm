@@ -30,7 +30,8 @@ sub _void
 
 # Help hash.
 our %HELP_FML = (
-    'en' => "This command will return a random FML quote. \002Syntax:\002 FML",
+    en => "This command will return a random FML quote. \2Syntax:\2 FML",
+    de => "Dieser Befehl liefert eine zufaellige Zitat von FML. \2Syntax:\2 FML",
 );
 
 # Callback for FML command.
@@ -98,7 +99,7 @@ have my hand back?" FML
 
 =over
 
-* Add Spanish, French and German translations for the help hash.
+* Add Spanish and French translations for the help hash.
 
 =back
 

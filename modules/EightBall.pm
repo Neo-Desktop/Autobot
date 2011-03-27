@@ -45,10 +45,12 @@ sub _void {
 
 # Help hashes.
 our %HELP_8BALL = (
-    'en' => "This command will ask the magic 8-Ball your question. \002Syntax:\002 8BALL <question>",
+    en => "This command will ask the magic 8-Ball your question. \2Syntax:\2 8BALL <question>",
+    de => "Dieser Befehl fragt die magische 8-Kugel eine Frage. \2Syntax:\2 8BALL <question>",
 );
 our %HELP_RIGBALL = (
-    'en' => "This command will \"rig\" (set) the answer of the next 8-Ball question. \002Syntax:\002 RIGBALL <answer>",
+    en => "This command will \"rig\" (set) the answer of the next 8-Ball question. \2Syntax:\2 RIGBALL <answer>",
+    de => "Dieser Befehl wird festgelegt die Antwort der naechsten 8-Kugel Frage. \2Syntax:\2 RIGBALL <answer>",
 );
 
 # Callback for 8BALL command.

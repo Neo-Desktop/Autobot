@@ -37,9 +37,10 @@ sub _void
     return 1;
 }
 
-# Help hash for GREET. Spanish, French and German translation needed.
+# Help hash for GREET. Spanish and French translation needed.
 our %HELP_GREET = (
-    'en' => "This command allows management of greets. \002Syntax:\002 GREET (ADD|DEL) [nick] [greet]",
+    en => "This command allows management of greets. \2Syntax:\2 GREET (ADD|DEL) [nick] [greet]",
+    de => "Dieser Befehl ermoeglicht die Verwaltung von Gruesse. \2Syntax:\2 GREET (ADD|DEL) [nick] [greet]",
 );
 # Callback for GREET.
 sub cmd_greet
@@ -145,7 +146,7 @@ user that has a greet in the database joins a channel the bot is in.
 
 =over
 
-* Add Spanish, French and German translations for the help hash.
+* Add Spanish and French translations for the help hash.
 
 =back
 

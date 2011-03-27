@@ -3,6 +3,10 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Added German translation to Greet help hash. - nridley
+    * Added German translation to FML help hash. - nridley
+    * Added German translation to Eval help hash. - nridley
+    * Added German translation to EightBall help hash. - nridley
     * Added German translation to Dictionary help hash. - nridley
     * Added German translation to Calc help hash. - nridley
     * Added German translation to Bitly help hash. - nridley
