@@ -38,10 +38,12 @@ sub _void
 
 # Help hashes.
 our %HELP_SHORTEN = (
-    'en' => "This command will shorten an URL using Bit.ly. \002Syntax:\002 SHORTEN <url>",
+    en => "This command will shorten an URL using Bit.ly. \2Syntax:\2 SHORTEN <url>",
+    de => "Dieser Befehl wird eine URL verkuerzen. \2Syntax:\2 SHORTEN <url>",
 );
 our %HELP_REVERSE = (
-    'en' => "This command will expand a Bit.ly URL. \002Syntax:\002 REVERSE <url>",
+    en => "This command will expand a Bit.ly URL. \2Syntax:\2 REVERSE <url>",
+    de => "Dieser Befehl wird eine URL erweitern. \2Syntax:\2 REVERSE <url>",
 );
 
 # Callback for SHORTEN command.
@@ -167,7 +169,7 @@ Add Bitly to module auto-load and the following to your configuration file:
 
 =over
 
-* Add Spanish, French and German translations for the help hashes.
+* Add Spanish and German translations for the help hashes.
 
 =back
 

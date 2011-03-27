@@ -32,7 +32,8 @@ sub _void
 
 # Help hash.
 our %FHELP_CALC = (
-    'en' => "This command will calculate an expression using Google Calculator. \002Syntax:\002 CALC <expression>",
+    en => "This command will calculate an expression using Google Calculator. \2Syntax:\2 CALC <expression>",
+    de => "Dieser Befehl berechnet einen Ausdruck mit den Google Rechner. \2Syntax:\2 CALC <expression>",
 );
 
 # Callback for CALC command.
@@ -107,7 +108,7 @@ Google Calculator.
 
 =over
 
-* Add Spanish, French and German translations for the help hash.
+* Add Spanish and French translations for the help hash.
 
 =back
 
