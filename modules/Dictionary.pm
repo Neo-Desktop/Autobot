@@ -31,7 +31,8 @@ sub _void
 
 # Help hash for DICT. Spanish, French and German translations needed.
 our %HELP_DICT = (
-    'en' => "This command allows you to lookup a word through Dict.org. \002Syntax:\002 DICT <word>",
+    en => "This command allows you to lookup a word through Dict.org. \2Syntax:\2 DICT <word>",
+    de => "Dieser Befehl ermoeglicht du auf nachschlagst ein Wort durch Dict.org. \2Syntax:\2 DICT <word>",
 );
 
 # Callback for DICT command.
