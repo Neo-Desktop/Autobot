@@ -42,18 +42,18 @@ Legend:
 
  [!] Features
      [X] Weather module
-     [!] Urban Dictionary module
+     [ ] Urban Dictionary module
      [X] UNO module
      [ ] Google Search module
      [ ] IRC Relay module
      [ ] (Google?) News module
      [X] QDB module
-     [ ] Tumblr module
+     [!] Tumblr module
      [X] Google Calculator module
      [ ] YouTube Search module
      [ ] Twitter module
      [X] Advanced Topics module
-     [ ] Custom Triggers module
+     [!] Custom Triggers module
      [X] Shorten URL (bit.ly?) module
      [?] Bot Talk module
      [O] Minecraft<->IRC module
