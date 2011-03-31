@@ -9,7 +9,6 @@ use strict;
 use warnings;
 no feature qw(state);
 use POSIX;
-use locale;
 use English qw(-no_match_vars);
 use Sys::Hostname;
 use IO::Socket;
@@ -147,15 +146,11 @@ API::Std::event_add('on_sighup');
 our ($DEBUG, $NUC);
 my ($opt_help, $opt_version, $USECONFIG);
 GetOptions(
-    'nuc'      => \$NUC,
-    'c=s'      => \$USECONFIG,
-    'config=s' => \$USECONFIG,
-    'h'        => \$opt_help,
-    'help'     => \$opt_help,
-    'd'        => \$DEBUG,
-    'debug'    => \$DEBUG,
-    'v'        => \$opt_version,
-    'version'  => \$opt_version
+    'nuc'        => \$NUC,
+    'config|c=s' => \$USECONFIG,
+    'h|help'     => \$opt_help,
+    'debug|d'    => \$DEBUG,
+    'version|v'  => \$opt_version,
 );
 
 # If we were passed -h, print help.
@@ -306,18 +301,6 @@ given (lc((conf_get('database:format'))[0][0])) {
                 (conf_get('database:username'))[0][0], (conf_get('database:password'))[0][0]) or err(2, 'Failed to connect to database!', 1);;
         }
     }
-    # CSV no work. :(
-    #when ('csv') {
-    #    # CSV.
-    #    if ($ENFEAT !~ /csv/) { err(2, 'Auto not built with CSV support.', 1) }
-    #    if (!conf_get('database:dir')) { err(2, 'Missing required configuration value database:dir. Aborting.', 1) }
-    #
-    #    # Import DBD::CSV.
-    #    require DBD::CSV;
-    #
-    #    # Connect to database.
-    #    $DB = DBI->connect("dbi:CSV:f_dir=$bin{etc}/".(conf_get('database:dir'))[0][0]) or err(2, 'Failed to connect to database!', 1);
-    #}
     when ('pgsql') {
         # PostgreSQL.
         if ($ENFEAT !~ /pgsql/) { err(2, 'Auto not built with PostgreSQL support. Aborting.', 1) }
@@ -568,7 +551,7 @@ sub socksnd {
     my ($svr, $data) = @_;
 
     if (defined $SOCKET{$svr}) {
-        syswrite $SOCKET{$svr}, $data."\r\n", POSIX::BUFSIZ, 0;
+        syswrite $SOCKET{$svr}, "$data\r\n", POSIX::BUFSIZ, 0;
         dbug "$svr << $data";
         return 1;
     }
