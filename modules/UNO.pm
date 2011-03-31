@@ -4,6 +4,7 @@
 package M::UNO;
 use strict;
 use warnings;
+use less 'memory';
 use feature qw(switch);
 use API::Std qw(cmd_add cmd_del hook_add hook_del trans conf_get err has_priv match_user awarn);
 use API::IRC qw(notice privmsg);
@@ -23,7 +24,7 @@ sub _init {
         return;
     }
     $EDITION = (conf_get('uno:edition'))[0][0];
-    $EDITION = uc(substr $EDITION, 0, 1).substr $EDITION, 1;
+    $EDITION = ucfirst $EDITION;
 
     # Check if the edition is valid.
     if ($EDITION !~ m/^(Original|Super|Advanced|Any)$/xsm) {
