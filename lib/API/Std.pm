@@ -17,7 +17,8 @@ our @EXPORT_OK = qw(conf_get trans err awarn timer_add timer_del cmd_add
 
 # Initialize a module.
 sub mod_init {
-    my ($name, $author, $version, $autover, $pkg) = @_;
+    my ($name, $author, $version, $autover) = @_;
+    my $pkg = caller 0;
 
     # Log/debug.
     API::Log::dbug('MODULES: Attempting to load '.$name.' (version '.$version.') by '.$author.'...');

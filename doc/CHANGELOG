@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Syntax for mod_init() changed. Package name is no longer required.
     * Added German translation to Greet help hash. - nridley
     * Added German translation to FML help hash. - nridley
     * Added German translation to Eval help hash. - nridley
