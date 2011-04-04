@@ -113,6 +113,9 @@ sub slog
     if (conf_get('logchan')) {
         # It is, continue.
 
+        # Don't even bother with continuing if there are *NO* connections.
+        if (!keys %Auto::SOCKET) { return }
+
         # Split the network and channel.
         my ($net, $chan) = split m/[\/]/xsm, (conf_get('logchan'))[0][0];
         $chan = lc $chan;
