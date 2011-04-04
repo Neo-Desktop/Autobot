@@ -79,7 +79,7 @@ sub calc
 }
 
 # Start initialization.
-API::Std::mod_init('Calc', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
+API::Std::mod_init('Calc', 'Xelhua', '1.00', '3.0.0a10');
 # build: cpan=LWP::UserAgent,URI::Escape,JSON,JSON::PP perl=5.010000
 
 __END__
@@ -119,7 +119,7 @@ Google Calculator.
 This module requires LWP::UserAgent, URI::Escape and JSON/JSON::PP. 
 All are obtainable from the CPAN <http://www.cpan.org>.
 
-This module is compatible with Auto version 3.0.0a7+.
+This module is compatible with Auto version 3.0.0a10+.
 
 =back
 

@@ -78,7 +78,7 @@ sub weather
 }
 
 # Start initialization.
-API::Std::mod_init('Weather', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
+API::Std::mod_init('Weather', 'Xelhua', '1.00', '3.0.0a10');
 # build: cpan=LWP::UserAgent,XML::Simple perl=5.010000
 
 __END__
@@ -120,7 +120,7 @@ From the NE at 9 MPH Gusting to 22 MPH Conditions: Overcast
 This module requires LWP::UserAgent and XML::Simple. Both are 
 obtainable from CPAN <http://www.cpan.org>.
 
-This module is compatible with Auto version 3.0.0a7+.
+This module is compatible with Auto version 3.0.0a10+.
 
 =back
 

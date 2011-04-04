@@ -64,7 +64,7 @@ sub cmd_eval {
 
 
 # Start initialization.
-API::Std::mod_init('Eval', 'Xelhua', '1.01', '3.0.0a7', __PACKAGE__);
+API::Std::mod_init('Eval', 'Xelhua', '1.01', '3.0.0a10');
 # build: perl=5.010000
 
 __END__
@@ -89,7 +89,7 @@ IRC, returning the output via notice.
 
 This command requires the cmd.eval privilege.
 
-This module is compatible with Auto v3.0.0a7+.
+This module is compatible with Auto v3.0.0a10+.
 
 =head1 AUTHOR
 

@@ -46,7 +46,7 @@ sub cmd_lolcat {
 }
 
 # Start initialization.
-API::Std::mod_init('LOLCAT', 'Xelhua', '1.00', '3.0.0a8', __PACKAGE__);
+API::Std::mod_init('LOLCAT', 'Xelhua', '1.00', '3.0.0a10');
 # build: perl=5.010000 cpan=Acme::LOLCAT
 
 __END__

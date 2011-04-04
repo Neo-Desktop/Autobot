@@ -71,7 +71,7 @@ sub oper {
 }
 
 # Start initialization.
-API::Std::mod_init('Oper', 'Xelhua', '1.01', '3.0.0a7', __PACKAGE__);
+API::Std::mod_init('Oper', 'Xelhua', '1.01', '3.0.0a10');
 # build: perl=5.010000
 
 __END__

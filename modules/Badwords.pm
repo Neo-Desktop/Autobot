@@ -70,7 +70,7 @@ sub actonbadword
 }
 
 
-API::Std::mod_init('Badwords', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
+API::Std::mod_init('Badwords', 'Xelhua', '1.00', '3.0.0a10');
 # build: perl=5.010000
 
 __END__
@@ -121,7 +121,7 @@ Changing the obvious to your wish.
 
 =over
 
-This module is compatible with Auto version 3.0.0a7+.
+This module is compatible with Auto version 3.0.0a10+.
 
 =back
 

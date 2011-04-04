@@ -211,7 +211,7 @@ sub cmd_qdb
 }
 
 
-API::Std::mod_init('QDB', 'Xelhua', '1.04', '3.0.0a9', __PACKAGE__);
+API::Std::mod_init('QDB', 'Xelhua', '1.04', '3.0.0a10');
 # build: perl=5.010000
 
 __END__

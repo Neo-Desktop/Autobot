@@ -69,7 +69,7 @@ sub gettitle
 }
 
 # Start initialization.
-API::Std::mod_init('LinkTitle', 'Xelhua', '1.01', '3.0.0a8', __PACKAGE__);
+API::Std::mod_init('LinkTitle', 'Xelhua', '1.01', '3.0.0a10');
 # build: cpan=LWP::UserAgent,HTML::Entities perl=5.010000
 
 __END__

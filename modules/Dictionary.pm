@@ -76,7 +76,7 @@ sub cmd_dict
 
 
 # Start initialization.
-API::Std::mod_init('Dictionary', 'Xelhua', '1.00', '3.0.0a7', __PACKAGE__);
+API::Std::mod_init('Dictionary', 'Xelhua', '1.00', '3.0.0a10');
 # build: cpan=Net::Dict perl=5.010000
 
 __END__
@@ -99,7 +99,7 @@ DICT command.
 This module adds an extra dependency: Net::Dict. You can get it from the CPAN
 <http://www.cpan.org>.
 
-This module is compatible with Auto v3.0.0a7+.
+This module is compatible with Auto v3.0.0a10+.
 
 =back
 

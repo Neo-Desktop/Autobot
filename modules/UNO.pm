@@ -1444,7 +1444,7 @@ sub sendmsg {
 }
 
 # Start initialization.
-API::Std::mod_init('UNO', 'Xelhua', '1.10', '3.0.0a9', __PACKAGE__);
+API::Std::mod_init('UNO', 'Xelhua', '1.10', '3.0.0a10');
 # build: perl=5.010000
 
 __END__
@@ -1505,7 +1505,7 @@ The commands this adds are:
 
 All of which describe themselves quite well with just the name.
 
-This module is compatible with Auto v3.0.0a9+.
+This module is compatible with Auto v3.0.0a10+.
 
 =head1 INSTALL
 
