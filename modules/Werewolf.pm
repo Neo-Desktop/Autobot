@@ -1294,6 +1294,10 @@ sub _player_del {
         while ((undef, $_) = each %PLAYERS) { if ($_ =~ m/(v|s|g|h|d)/xsm) { $villagers++ } }
         if ($villagers <= $wolves) { _gameover('w'); return }
     }
+    else {
+        # Check if there's any more players.
+        if (!keys %PLAYERS) { _gameover('n') }
+    }
 
     return 1;
 }
@@ -1309,13 +1313,19 @@ sub _gameover {
     elsif ($winner eq 'w') { # The wolves won!
         privmsg($gsvr, $gchan, 'Game over! There is the same amount of wolves as villagers. The wolves eat everyone, and win.');
     }
-    my $smsg = "The wolves were $STATIC[0]. The seer was $STATIC[1].";
-    if ($STATIC[2]) { $smsg .= " The harlot was $STATIC[2]." }
-    if ($STATIC[3]) { $smsg .= " The guardian angel was $STATIC[3]." }
-    if ($STATIC[4]) { $smsg .= " The traitor was $STATIC[4]." }
-    if ($STATIC[5]) { $smsg .= " The detective was $STATIC[5]." }
-    privmsg($gsvr, $gchan, $smsg);
-    
+    else { # No players.
+        privmsg($gsvr, $gchan, 'No more players remaining. Game ended.');
+    }
+
+    if ($GAME) {
+        my $smsg = "The wolves were $STATIC[0]. The seer was $STATIC[1].";
+        if ($STATIC[2]) { $smsg .= " The harlot was $STATIC[2]." }
+        if ($STATIC[3]) { $smsg .= " The guardian angel was $STATIC[3]." }
+        if ($STATIC[4]) { $smsg .= " The traitor was $STATIC[4]." }
+        if ($STATIC[5]) { $smsg .= " The detective was $STATIC[5]." }
+        privmsg($gsvr, $gchan, $smsg);
+    }
+
     # Set -m, unless explicitly told not to in config.
     if (!conf_get('werewolf:always-m')) { cmode($gsvr, $gchan, '-m') }
 
@@ -1330,7 +1340,7 @@ sub _gameover {
     foreach (@gu) { cmode($gsvr, $gchan, "-vvvv$_") }
 
     # Clear all variables.
-    if ($PHASE eq 'n') { timer_del('werewolf.goto_daytime') }
+    if ($PHASE) { if ($PHASE eq 'n') { timer_del('werewolf.goto_daytime') } }
     $GAME = $PGAME = $GAMECHAN = $GAMETIME = $WAIT = $PHASE = $SEEN = $VISIT = $GUARD = $LVOTEN = $SHOT = $DETECTED = 0;
     %PLAYERS = ();
     %NICKS = ();
