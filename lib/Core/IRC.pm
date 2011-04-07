@@ -26,7 +26,7 @@ hook_add("on_uprivmsg", "ctcp_version_reply", sub {
     return 1;
 });
 
-# Command alias parsing.
+# Command alias parsing for channel messages.
 hook_add('on_cprivmsg', 'irc.commands.aliases', sub {
     my (($src, $chan, ($cmd, @args))) = @_;
 
@@ -56,6 +56,33 @@ hook_add('on_cprivmsg', 'irc.commands.aliases', sub {
                 Proto::IRC::privmsg($src->{svr}, @msg);
             }
         }
+    }
+
+    return 1;
+});
+                        
+# Command alias parsing for private messages.
+hook_add('on_uprivmsg', 'irc.commands.aliases', sub {
+    my (($src, ($cmd, @args))) = @_;
+
+    # Check for an alias.
+    if (defined $API::Std::ALIASES{uc $cmd}) {
+        # Get aliased command.
+        my @actual;
+        if ($API::Std::ALIASES{uc $cmd} =~ m/ /xsm) { @actual = split /\s/xsm, $API::Std::ALIASES{uc $cmd} }
+        else { @actual = ($API::Std::ALIASES{uc $cmd}) }
+        # Prepare data.
+        my @msg = (
+            q{:}.$src->{nick}.q{!}.$src->{user}.q{@}.$src->{host},
+            'PRIVMSG',
+            $State::IRC::botinfo{$src->{svr}}{nick},
+            q{:}.$actual[0],
+        );
+        # Rest of the data.
+        if (scalar @actual > 1) { for (1..$#actual) { push @msg, $actual[$_] } }
+        if (defined $args[0]) { foreach (@args) { push @msg, $_ } }
+        # Simulate a PRIVMSG.
+        Proto::IRC::privmsg($src->{svr}, @msg);
     }
 
     return 1;

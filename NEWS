@@ -22,6 +22,7 @@ In this alpha10 release, we have added:
 * German translation for FML command help.
 * German translation for Greet command help.
 * Werewolf module for the Werewolf party game.
+* Aliases now work in PM's to the bot too.
 
 Bug fixes:
 
