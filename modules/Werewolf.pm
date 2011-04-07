@@ -1245,7 +1245,7 @@ sub _getrole {
         elsif ($PLAYERS{$plyr} =~ m/h/xsm) { $role = 'harlot' }
         elsif ($PLAYERS{$plyr} =~ m/g/xsm) { $role = 'guardian angel' }
         elsif ($PLAYERS{$plyr} =~ m/d/xsm) { $role = 'detective' }
-        else { $role = 'villager' }
+        elsif ($PLAYERS{$plyr} =~ m/v/xsm) { $role = 'villager' }
     }
     elsif ($lev == 2) {
         if ($PLAYERS{$plyr} =~ m/w/xsm) { $role = 'wolf' }
@@ -1254,7 +1254,7 @@ sub _getrole {
         elsif ($PLAYERS{$plyr} =~ m/g/xsm) { $role = 'guardian angel' }
         elsif ($PLAYERS{$plyr} =~ m/d/xsm) { $role = 'detective' }
         elsif ($PLAYERS{$plyr} =~ m/t/xsm) { $role = 'traitor' }
-        else { $role = 'villager' }
+        elsif ($PLAYERS{$plyr} =~ m/v/xsm) { $role = 'villager' }
     }
     if (!$role) { $role = 'person' }
     
@@ -1286,12 +1286,14 @@ sub _player_del {
     if ($SEEN) { if ($SEEN eq $player) { $SEEN = 0 } }
 
     # Check for winning conditions.
-    my $wolves;
-    while ((undef, $_) = each %PLAYERS) { if ($_ =~ m/(w|t)/xsm) { $wolves++ } }
-    if (!$wolves) { _gameover('v'); return }
-    my $villagers;
-    while ((undef, $_) = each %PLAYERS) { if ($_ =~ m/(v|s|g|h|d)/xsm) { $villagers++ } }
-    if ($villagers <= $wolves) { _gameover('w'); return }
+    if (!$PGAME) {
+        my $wolves;
+        while ((undef, $_) = each %PLAYERS) { if ($_ =~ m/(w|t)/xsm) { $wolves++ } }
+        if (!$wolves) { _gameover('v'); return }
+        my $villagers;
+        while ((undef, $_) = each %PLAYERS) { if ($_ =~ m/(v|s|g|h|d)/xsm) { $villagers++ } }
+        if ($villagers <= $wolves) { _gameover('w'); return }
+    }
 
     return 1;
 }

@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Werewolf: Fixed a leave before game begin bug.
     * Aliases now work in PM's to the bot too.
     * Added an epic, Werewolf module.
     * Made slog() saner.
