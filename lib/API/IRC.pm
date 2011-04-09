@@ -216,9 +216,10 @@ sub match_mask {
     $mh =~ s/\./\\\./gxsm;
     $mh =~ s/\?/\./gxsm;
     $mh =~ s/\*/\.\*/gxsm;
+    $mh =~ s/\//\\\//gxsm;
     $mh = q{^}.$mh.q{$};
 
-    # Let's grep the user's mask.
+    # Let's match the user's mask.
     if ($mu =~ m/$mh/xsm) {
         return 1;
     }
