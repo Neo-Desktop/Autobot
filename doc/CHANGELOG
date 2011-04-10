@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Fixed two major bugs in Werewolf that messed up game play.
     * Fixed several bugs and changed around JOIN/START/BEGIN in Werewolf.
     * Fixed parsing of host masks with / in them. (if it was broken)
     * Werewolf: Fixed a leave before game begin bug.

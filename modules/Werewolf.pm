@@ -95,7 +95,7 @@ sub cmd_wolf {
                 # WOLF JOIN
 
                 # Check if a game is running.
-                if (!$PGAME) {
+                if (!$PGAME and !$GAME) {
                     # Check if this is the game channel.
                     if (conf_get('werewolf:chan')) {
                         if ($src->{svr}.'/'.$src->{chan} ne (conf_get('werewolf:chan'))[0][0]) {
@@ -1327,6 +1327,7 @@ sub _gameover {
 
     # Clear all variables.
     if ($PHASE) { if ($PHASE eq 'n') { timer_del('werewolf.goto_daytime') } }
+    if ($PGAME) { timer_del('werewolf.join_wait') }
     $GAME = $PGAME = $GAMECHAN = $GAMETIME = $WAIT = $PHASE = $SEEN = $VISIT = $GUARD = $LVOTEN = $SHOT = $DETECTED = 0;
     %PLAYERS = ();
     %NICKS = ();
