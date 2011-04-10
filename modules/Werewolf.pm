@@ -384,14 +384,15 @@ sub cmd_wolf {
                 }
 
                 # Delete their vote.
-                my $hvi;
+                my ($hvi, $target);
                 foreach my $plyr (keys %LYNCH) {
-                    if (exists $LYNCH{$plyr}{lc $src->{nick}}) { $hvi = 1; delete $LYNCH{$plyr}{lc $src->{nick}} }
+                    if (exists $LYNCH{$plyr}{lc $src->{nick}}) { $hvi = 1; delete $LYNCH{$plyr}{lc $src->{nick}}; $target = $plyr }
                 }
 
                 # Done.
                 if ($hvi) {
                     privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 retracted his/her vote.");
+                    if (!keys %{$LYNCH{$target}}) { delete $LYNCH{$target} }
                 }
                 else {
                     notice($src->{svr}, $src->{nick}, 'You haven\'t voted yet.');
