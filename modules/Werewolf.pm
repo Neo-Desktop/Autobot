@@ -62,7 +62,7 @@ sub _void {
 # Commands hash.
 my %COMMANDS = (
     'join'  => 'wolf join',
-    'begin' => 'wolf begin',
+    'start' => 'wolf start',
     'see'   => 'wolf see <nick>',
     'visit' => 'wolf visit <nick>',
     'guard' => 'wolf guard <nick>',
@@ -74,7 +74,7 @@ my %COMMANDS = (
 
 # Help hash for the WOLF command.
 our %HELP_WOLF = (
-    en => "This command allows you to perform various actions in a game of Werewolf (A.K.A. Mafia). \2Syntax:\2 WOLF (START|JOIN|BEGIN|LYNCH|RETRACT|SHOOT|QUIT|KICK|VOTES|STATS / SEE|ID|VISIT|GUARD|KILL) [parameters]",
+    en => "This command allows you to perform various actions in a game of Werewolf (A.K.A. Mafia). \2Syntax:\2 WOLF (JOIN|START|LYNCH|RETRACT|SHOOT|QUIT|KICK|VOTES|STATS / SEE|ID|VISIT|GUARD|KILL) [parameters]",
 );
 
 # Callback for the WOLF command.
@@ -91,83 +91,69 @@ sub cmd_wolf {
     if (exists $src->{chan}) {
         # Iterate the parameter.
         given (uc $argv[0]) {
-            when ('START') {
-                # WOLF START
-
-                # Check if this is the game channel.
-                if (conf_get('werewolf:chan')) {
-                    if ($src->{svr}.'/'.$src->{chan} ne (conf_get('werewolf:chan'))[0][0]) {
-                        notice($src->{svr}, $src->{nick}, "This is not a valid Werewolf channel. Please join \2".(conf_get('werewolf:chan'))[0][0]."\2 instead.");
-                        return;
-                    }
-                }
-
-                # Make sure a game is not already running.
-                if ($GAME or $PGAME) {
-                    notice($src->{svr}, $src->{nick}, "A game is already running in \2$GAMECHAN\2.");
-                    return;
-                }
-
-                # Set variables.
-                $PGAME = 1;
-                $GAME = 0;
-                $GAMECHAN = $src->{svr}.'/'.$src->{chan};
-                $PLAYERS{lc $src->{nick}} = 0;
-                $NICKS{lc $src->{nick}} = $src->{nick};
-                $GAMETIME = time;
-                
-                # Set waiting time.
-                $WAIT = 1;
-                timer_add('werewolf.join_wait', 1, 60, sub { $M::Werewolf::WAIT = 0 });
-
-                # Game started.
-                cmode($src->{svr}, $src->{chan}, "+v $src->{nick}");
-                privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 has started a game of Werewolf. Type \"".$FCHAR.$COMMANDS{'join'}.'" to join. Type "'.$FCHAR.$COMMANDS{begin}.'" to begin the game.');
-            }
             when (/^(JOIN|J)$/) {
                 # WOLF JOIN
 
                 # Check if a game is running.
                 if (!$PGAME) {
-                    if (!$GAME) {
-                        notice($src->{svr}, $src->{nick}, 'No game is currently running.');
+                    # Check if this is the game channel.
+                    if (conf_get('werewolf:chan')) {
+                        if ($src->{svr}.'/'.$src->{chan} ne (conf_get('werewolf:chan'))[0][0]) {
+                            notice($src->{svr}, $src->{nick}, "This is not a valid Werewolf channel. Please join \2".(conf_get('werewolf:chan'))[0][0]."\2 instead.");
+                            return;
+                        }
+                    }
+                
+                    # Set variables.
+                    $PGAME = 1;
+                    $GAME = 0;
+                    $GAMECHAN = $src->{svr}.'/'.$src->{chan};
+                    $PLAYERS{lc $src->{nick}} = 0;
+                    $NICKS{lc $src->{nick}} = $src->{nick};
+                    $GAMETIME = time;
+                
+                    # Set waiting time.
+                    $WAIT = 1;
+                    timer_add('werewolf.join_wait', 1, 60, sub { $M::Werewolf::WAIT = 0 });
+                
+                    # Game started.
+                    cmode($src->{svr}, $src->{chan}, "+v $src->{nick}");
+                    privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 has started a game of Werewolf. Type \"".$FCHAR.$COMMANDS{'join'}.'" to join. Type "'.$FCHAR.$COMMANDS{start}.'" to start the game.');
+                }
+                elsif ($GAME) {
+                    notice($src->{svr}, $src->{nick}, 'Sorry, but the game is already running. Try again next time.');
+                }
+                else {
+                    # Check if this is the game channel.
+                    if ($src->{svr}.'/'.$src->{chan} ne $GAMECHAN) {
+                        notice($src->{svr}, $src->{nick}, "Werewolf is currently running in \2$GAMECHAN\2.");
                         return;
                     }
-                    else {
-                        notice($src->{svr}, $src->{nick}, 'A game is already in play, try again next time.');
+
+                    # Make sure they're not already playing.
+                    if (defined $PLAYERS{lc $src->{nick}}) {
+                        notice($src->{svr}, $src->{nick}, 'You\'re already playing!');
                         return;
                     }
+
+                    # Maximum amount of players is 30.
+                    if (keys %PLAYERS >= 30) {
+                        notice($src->{svr}, $src->{nick}, 'Too many players! Try again next time.');
+                        return;
+                    }
+
+                    # Set variables.
+                    $PLAYERS{lc $src->{nick}} = 0;
+                    $NICKS{lc $src->{nick}} = $src->{nick};
+
+                    # Send message.
+                    my ($gsvr, $gchan) = split '/', $GAMECHAN;
+                    cmode($gsvr, $gchan, "+v $src->{nick}");
+                    privmsg($gsvr, $gchan, "\2$src->{nick}\2 joined the game.");
                 }
-
-                # Check if this is the game channel.
-                if ($src->{svr}.'/'.$src->{chan} ne $GAMECHAN) {
-                    notice($src->{svr}, $src->{nick}, "Werewolf is currently running in \2$GAMECHAN\2.");
-                    return;
-                }
-
-                # Make sure they're not already playing.
-                if (defined $PLAYERS{lc $src->{nick}}) {
-                    notice($src->{svr}, $src->{nick}, 'You\'re already playing!');
-                    return;
-                }
-
-                # Maximum amount of players is 30.
-                if (keys %PLAYERS >= 30) {
-                    notice($src->{svr}, $src->{nick}, 'Too many players! Try again next time.');
-                    return;
-                }
-
-                # Set variables.
-                $PLAYERS{lc $src->{nick}} = 0;
-                $NICKS{lc $src->{nick}} = $src->{nick};
-
-                # Send message.
-                my ($gsvr, $gchan) = split '/', $GAMECHAN;
-                cmode($gsvr, $gchan, "+v $src->{nick}");
-                privmsg($gsvr, $gchan, "\2$src->{nick}\2 joined the game.");
             }
-            when (/^(BEGIN|B)$/) {
-                # WOLF BEGIN
+            when ('START') {
+                # WOLF START
 
                 # Check if a game is running.
                 if (!$PGAME) {
@@ -361,6 +347,8 @@ sub cmd_wolf {
 
                 # If the accused has enough votes for lynching, call judgment.
                 if (keys %{$LYNCH{lc $argv[1]}} >= $LVOTEN) { _judgment(lc $argv[1]) }
+                # Perhaps they have no votes at all?
+                elsif (!keys %{$LYNCH{lc $argv[1]}}) { delete $LYNCH{lc $argv[1]} }
             }
             when (/^(RETRACT|R)$/) {
                 # WOLF RETRACT
@@ -510,7 +498,6 @@ sub cmd_wolf {
                         if ($PLAYERS{lc $argv[1]} =~ m/w/xsm) { # Wolf.
                             privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a wolf, and is dying from the silver bullet.");
                             _player_del(lc $argv[1]);
-                            $LVOTEN--;
                         }
                         else { # Villager.
                             # So, there's a 1/5 chance of a villager dying.
@@ -523,7 +510,6 @@ sub cmd_wolf {
                                     foreach my $plyr (keys %LYNCH) {
                                         if (exists $LYNCH{$plyr}{lc $real}) { delete $LYNCH{$plyr}{lc $real} }
                                     }
-                                    # Decrement LVOTEN by 1.
                                     $LVOTEN--;
                                 }
                                 when (5) { # Killed.
@@ -531,8 +517,6 @@ sub cmd_wolf {
                                     if (_getrole(lc $real, 2) ne 'villager') { privmsg($src->{svr}, $src->{chan}, "Appears s(he) was a \2"._getrole(lc $real, 2)."\2."); }
                                     # Kill them.
                                     _player_del(lc $real);
-                                    # Decrement LVOTEN by 1.
-                                    $LVOTEN--;
                                 }
                             }
                         }
@@ -544,7 +528,6 @@ sub cmd_wolf {
                         privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 should clean his/her weapons more often. The gun exploded and killed him/her!");
                         if (_getrole(lc $src->{nick}, 2) ne 'villager') { privmsg($src->{svr}, $src->{chan}, "Appears s(he) was a \2"._getrole(lc $src->{nick}, 2)."\2."); }
                         _player_del(lc $src->{nick});
-                        $LVOTEN--;
                         return 1;
                     }
                 }
@@ -1284,6 +1267,9 @@ sub _player_del {
     if ($GUARD) { if ($GUARD eq $player) { $GUARD = 0 } }
     if ($SHOT) { if ($SHOT eq $player) { $SHOT = 0 } }
     if ($SEEN) { if ($SEEN eq $player) { $SEEN = 0 } }
+    
+    # Update LVOTEN.
+    if ($LVOTEN) { $LVOTEN-- }
 
     # Check for winning conditions.
     if (!$PGAME) {
@@ -1520,7 +1506,7 @@ sub on_rehash {
 }
 
 # Start initialization.
-API::Std::mod_init('Werewolf', 'Xelhua', '1.00', '3.0.0a10');
+API::Std::mod_init('Werewolf', 'Xelhua', '1.01', '3.0.0a10');
 # build: perl=5.010000
 
 __END__
@@ -1531,13 +1517,13 @@ Werewolf - IRC version of the Werewolf detective/social party game
 
 =head1 VERSION
 
- 1.00
+ 1.01
 
 =head1 SYNOPSIS
 
- <starcoder> !wolf start
+ <starcoder> !wolf join
  * blue gives voice to starcoder
- <blue> starcoder has started a game of Werewolf. Type "!wolf join" to join. Type "!wolf begin" to begin the game.
+ <blue> starcoder has started a game of Werewolf. Type "!wolf join" to join. Type "!wolf start" to start the game.
  <starcoder--> !wolf j
  * blue gives voice to starcoder--
  <blue> starcoder-- joined the game.
@@ -1586,9 +1572,8 @@ and use aliases.
 
 Here is a list of channel commands:
 
- WOLF START - Start a game.
- WOLF JOIN|J - Join a game.
- WOLF BEGIN|B - Begin the game.
+ WOLF JOIN|J - Start/Join a game.
+ WOLF START - Start the game play.
  WOLF LYNCH|L - Cast vote for who to lynch.
  WOLF RETRACT|R - Retract lynch vote.
  WOLF VOTES|V - Return current votes.
@@ -1621,10 +1606,11 @@ Minimum amount of players is four. Maximum amount of players is thirty.
 In all games, there will be at least one wolf, one seer, and two villagers.
 Roles are again, explained more thoroughly in ROLES.
 
-Typing "!wolf start" in a channel starts a game, and a 60 second timer. Others
-can join the game with "!wolf join". "!wolf begin" begins play.
+Typing "!wolf join" in a channel starts a game, and a 60 second timer. Others
+can join the game with "!wolf join". "!wolf start" starts play.
 
-BEGIN will fail if the 60 second timer has not stopped and there is less than
+START will fail if the 60 second timer has not stopped and there is less than
+
 the maximum amount of players.
 
 The bot moderates the channel (it voices all players).
