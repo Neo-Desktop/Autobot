@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Werewolf: Fixed a typo that broke the gun on occasion.
     * Fixed a minor retract bug in Werewolf.
     * Fixed two major bugs in Werewolf that messed up game play.
     * Fixed several bugs and changed around JOIN/START/BEGIN in Werewolf.

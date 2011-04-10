@@ -490,7 +490,7 @@ sub cmd_wolf {
                 my $real = $NICKS{lc $argv[1]};
 
                 # Massive randomizing here. 5 = 3-kill, 1-miss, 1-suicide
-                my $myr = int rand 7;
+                my $myr = int rand 6;
                 given ($myr) {
                     when (/^[1-3]$/) { # It's a hit.
                         privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 shot \2$real\2 with a silver bullet!");
