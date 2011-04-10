@@ -345,10 +345,8 @@ sub cmd_wolf {
                 $LYNCH{lc $argv[1]}{lc $src->{nick}} = 1;
                 privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 votes for \2$argv[1]\2.");
 
-                # If the accused has enough votes for lynching, call judgment.
-                if (keys %{$LYNCH{lc $argv[1]}} >= $LVOTEN) { _judgment(lc $argv[1]) }
-                # Perhaps they have no votes at all?
-                elsif (!keys %{$LYNCH{lc $argv[1]}}) { delete $LYNCH{lc $argv[1]} }
+                # Pass this thing onto lynch management.
+                _lynchmng();
             }
             when (/^(RETRACT|R)$/) {
                 # WOLF RETRACT
@@ -392,11 +390,12 @@ sub cmd_wolf {
                 # Done.
                 if ($hvi) {
                     privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 retracted his/her vote.");
-                    if (!keys %{$LYNCH{$target}}) { delete $LYNCH{$target} }
                 }
                 else {
                     notice($src->{svr}, $src->{nick}, 'You haven\'t voted yet.');
                 }
+                # Call lynch management.
+                _lynchmng();
             }
             when (/^(VOTES|V)$/) {
                 # WOLF VOTES
@@ -1229,7 +1228,7 @@ sub _getrole {
         elsif ($PLAYERS{$plyr} =~ m/h/xsm) { $role = 'harlot' }
         elsif ($PLAYERS{$plyr} =~ m/g/xsm) { $role = 'guardian angel' }
         elsif ($PLAYERS{$plyr} =~ m/d/xsm) { $role = 'detective' }
-        elsif ($PLAYERS{$plyr} =~ m/v/xsm) { $role = 'villager' }
+        elsif ($PLAYERS{$plyr} =~ m/(v|t)/xsm) { $role = 'villager' }
     }
     elsif ($lev == 2) {
         if ($PLAYERS{$plyr} =~ m/w/xsm) { $role = 'wolf' }
@@ -1271,11 +1270,13 @@ sub _player_del {
     
     # Update LVOTEN.
     if ($LVOTEN) { $LVOTEN-- }
+    # Call lynch management.
+    if ($PHASE) { if ($PHASE eq 'd') { _lynchmng() } }
 
     # Check for winning conditions.
     if (!$PGAME) {
         my $wolves;
-        while ((undef, $_) = each %PLAYERS) { if ($_ =~ m/(w|t)/xsm) { $wolves++ } }
+        while ((undef, $_) = each %PLAYERS) { if ($_ =~ m/w/xsm) { $wolves++ } }
         if (!$wolves) { _gameover('v'); return }
         my $villagers;
         while ((undef, $_) = each %PLAYERS) { if ($_ =~ m/(v|s|g|h|d)/xsm) { $villagers++ } }
@@ -1284,6 +1285,24 @@ sub _player_del {
     else {
         # Check if there's any more players.
         if (!keys %PLAYERS) { _gameover('n') }
+    }
+
+    return 1;
+}
+
+# Subroutine for managing/cleaning lynch votes.
+sub _lynchmng {
+    # Iterate through all the votes.
+    foreach my $acc (keys %LYNCH) {
+        if (!keys %{$LYNCH{$acc}}) {
+            # Unclean vote. Delete it.
+            delete $LYNCH{$acc};
+        }
+    }
+
+    # Now check if we have anyone who has enough votes for judgment.
+    foreach my $acc (keys %LYNCH) {
+        if (keys %{$LYNCH{$acc}} >= $LVOTEN) { _judgment($acc) }
     }
 
     return 1;
