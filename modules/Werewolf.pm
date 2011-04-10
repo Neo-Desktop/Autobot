@@ -685,7 +685,7 @@ sub cmd_wolf {
                 }
 
                 # All good, proceed.
-                privmsg($src->{svr}, $src->{nick}, "You have a vision, in this vision, you see that \2$argv[1]\2 is a... \2"._getrole(lc $argv[1], 1)."\2!");
+                privmsg($src->{svr}, $src->{nick}, "You have a vision; in this vision, you see that \2$argv[1]\2 is a... \2"._getrole(lc $argv[1], 1)."\2!");
                 $SEEN = 1;
                 # Run nighttime force end check.
                 _chknight();

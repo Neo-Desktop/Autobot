@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Werewolf: Fixed a grammatical error. Thanks TAD!
     * Werewolf: Fixed a bug that occasionally caused a person to get wolf
       twice in the same game.
     * Werewolf: Fixed a typo that broke the gun on occasion.
