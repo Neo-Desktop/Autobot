@@ -217,7 +217,7 @@ sub cmd_wolf {
                 # Set wolves.
                 while ($cwolves > 0) {
                     my $rpi = $plyrs[int rand scalar @plyrs];
-                    if ($PLAYERS{$rpi} !~ m/^(s|g|h|d|t)$/xsm) {
+                    if ($PLAYERS{$rpi} !~ m/^(w|s|g|h|d|t)$/xsm) {
                         $PLAYERS{$rpi} = 'w';
                         $cwolves--;
                         $STATIC[0] .= ", \2$NICKS{$rpi}\2";
