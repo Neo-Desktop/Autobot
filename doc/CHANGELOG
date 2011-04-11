@@ -3,6 +3,8 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Werewolf: Handful of bugs fixed, timeouts rewritten, wolf assignment
+      rewritten. (see ROLES:Werewolf)
     * Werewolf: Fixed an annoyance in VOTES.
     * Werewolf: Fixed another round of bugs.
     * Werewolf: Fixed a grammatical error. Thanks TAD!

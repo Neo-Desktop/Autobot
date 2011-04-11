@@ -7,8 +7,7 @@ use warnings;
 use feature qw(switch);
 use API::Std qw(cmd_add cmd_del trans hook_add hook_del timer_add timer_del trans conf_get has_priv match_user);
 use API::IRC qw(privmsg notice cmode);
-my ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEEN, $VISIT, $GUARD, %KILL, %WKILL, %LYNCH, %BED, $LVOTEN, $SHOT, $DETECTED);
-our $WAIT;
+my ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEEN, $VISIT, $GUARD, %KILL, %WKILL, %LYNCH, %SPOKE, $LVOTEN, $SHOT, $DETECTED);
 my $FCHAR = (conf_get('fantasy_pf'))[0][0];
 
 # Initialization subroutine.
@@ -54,6 +53,9 @@ sub _void {
     hook_del('on_quit', 'werewolf.updatedata.quit') or return;
     # Delete the on_rehash hook.
     hook_del('on_rehash', 'werewolf.rehash') or return;
+
+    # If a game is running, end it!
+    if ($GAME or $PGAME) { _gameover('n') }
 
     # Success.
     return 1;
@@ -111,10 +113,6 @@ sub cmd_wolf {
                     $PLAYERS{lc $src->{nick}} = 0;
                     $NICKS{lc $src->{nick}} = $src->{nick};
                     $GAMETIME = time;
-                
-                    # Set waiting time.
-                    $WAIT = 1;
-                    timer_add('werewolf.join_wait', 1, 60, sub { $M::Werewolf::WAIT = 0 });
                 
                     # Game started.
                     cmode($src->{svr}, $src->{chan}, "+v $src->{nick}");
@@ -180,7 +178,7 @@ sub cmd_wolf {
                 }
 
                 # Check join timeout.
-                if ($WAIT and keys %PLAYERS != 30) {
+                if ((time - $GAMETIME) < 60) {
                     my $time = time - $GAMETIME;
                     $time = 60 - $time;
                     privmsg($src->{svr}, $src->{chan}, "$src->{nick}: Please wait at least \2$time\2 more seconds.");
@@ -194,13 +192,7 @@ sub cmd_wolf {
                 }
 
                 # First, determine how many players to declare a wolf.
-                my $cwolves;
-                if (keys %PLAYERS >= 4) { $cwolves++ }
-                if (keys %PLAYERS >= 9) { $cwolves++ }
-                if (keys %PLAYERS >= 15) { $cwolves++ }
-                if (keys %PLAYERS >= 21) { $cwolves++ }
-                if (keys %PLAYERS >= 25) { $cwolves++ }
-                if (keys %PLAYERS == 30) { $cwolves++ }
+                my $cwolves = POSIX::ceil(keys(%PLAYERS) * .15);
                 # Only one seer, harlot, guardian angel, traitor and detective.
                 my $cseers = 1;
                 my $charlots = my $cangels = my $ctraitors = my $cdetectives = 0;
@@ -281,13 +273,15 @@ sub cmd_wolf {
                 $GAME = 1;
                 $PGAME = 0;
 
-                # Set bed variables.
-                foreach (keys %PLAYERS) { $BED{$_} = 0 }
+                # Set spoke variables.
+                foreach (keys %PLAYERS) { $SPOKE{$_} = time }
 
                 # All players have their role, so lets begin the game!
                 my ($gsvr, $gchan) = split '/', $GAMECHAN;
                 privmsg($gsvr, $gchan, 'Game is now starting.');
                 cmode($gsvr, $gchan, '+m');
+                # Start timer for bed checking.
+                timer_add('werewolf.chkbed', 2, 5, \&M::Werewolf::_chkbed);
                 # Initialize the nighttime.
                 _init_night();
             }
@@ -428,11 +422,12 @@ sub cmd_wolf {
                 if (keys %LYNCH) {
                     my $str;
                     foreach my $key (sort {keys %{$LYNCH{$b}} <=> keys %{$LYNCH{$a}}} keys %LYNCH) {
-                        my $voters = 0;
+                        my $voters;
                         if (keys %{$LYNCH{$key}}) {
                             foreach (keys %{$LYNCH{$key}}) { $voters .= " $NICKS{$_}" }
                         }
-                        $voters =~ s/^\s//xsm;
+                        if ($voters) { $voters =~ s/^\s//xsm }
+                        else { $voters = 0 }
                         $str .= ", $NICKS{$key}: ".keys(%{$LYNCH{$key}})." ($voters)";
                     }
                     $str = substr $str, 2;
@@ -496,7 +491,16 @@ sub cmd_wolf {
                 # Massive randomizing here. 5 = 3-kill, 1-miss, 1-suicide
                 my $myr = int rand 6;
                 given ($myr) {
-                    when (/^[1-3]$/) { # It's a hit.
+                    when (4) { # It's a miss.
+                        privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 is a lousy shooter. He/She missed!");
+                    }
+                    when (5) { # Gun explodes = suicide.
+                        privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 should clean his/her weapons more often. The gun exploded and killed him/her!");
+                        if (_getrole(lc $src->{nick}, 2) ne 'villager') { privmsg($src->{svr}, $src->{chan}, "Appears s(he) was a \2"._getrole(lc $src->{nick}, 2)."\2."); }
+                        _player_del(lc $src->{nick});
+                        return 1;
+                    }
+                    default { # It's a hit.
                         privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 shot \2$real\2 with a silver bullet!");
                         
                         # Check if the target is a wolf or a villager.
@@ -508,7 +512,13 @@ sub cmd_wolf {
                             # So, there's a 1/5 chance of a villager dying.
                             my $rint = int rand 6;
                             given ($rint) {
-                                when (/^[1-4]$/) { # Only hurt.
+                                when (5) { # Killed.
+                                    privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a villager, but \2$src->{nick}\2 accidentally shot them in the head and they are now dying.");
+                                    if (_getrole(lc $real, 2) ne 'villager') { privmsg($src->{svr}, $src->{chan}, "Appears s(he) was a \2"._getrole(lc $real, 2)."\2."); }
+                                    # Kill them.
+                                    _player_del(lc $real);
+                                }
+                                default { # Only hurt.
                                     privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a villager, and is hurt but will have a full recovery.");
                                     $SHOT = lc $real;
                                     # Delete any votes they might've made today.
@@ -517,23 +527,8 @@ sub cmd_wolf {
                                     }
                                     $LVOTEN--;
                                 }
-                                when (5) { # Killed.
-                                    privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a villager, but \2$src->{nick}\2 accidentally shot them in the head and they are now dying.");
-                                    if (_getrole(lc $real, 2) ne 'villager') { privmsg($src->{svr}, $src->{chan}, "Appears s(he) was a \2"._getrole(lc $real, 2)."\2."); }
-                                    # Kill them.
-                                    _player_del(lc $real);
-                                }
                             }
                         }
-                    }
-                    when (4) { # It's a miss.
-                        privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 is a lousy shooter. He/She missed!");
-                    }
-                    when (5) { # Gun explodes = suicide.
-                        privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 should clean his/her weapons more often. The gun exploded and killed him/her!");
-                        if (_getrole(lc $src->{nick}, 2) ne 'villager') { privmsg($src->{svr}, $src->{chan}, "Appears s(he) was a \2"._getrole(lc $src->{nick}, 2)."\2."); }
-                        _player_del(lc $src->{nick});
-                        return 1;
                     }
                 }
                 # Remove the gun from them.
@@ -1090,6 +1085,7 @@ sub _init_day {
     }
 
     # Cool, all data should be ready for shipment. Lets go!
+    my $continue = 1;
     my $msg = 'It is now daytime. The villagers awake, thankful for surviving the night, and search the village...';
     if (!$victim) { privmsg($gsvr, $gchan, "$msg The body of a young penguin pet is found. All villagers however, have survived.") }
     elsif ($victim eq 1) {
@@ -1097,13 +1093,13 @@ sub _init_day {
     }
     else {
         privmsg($gsvr, $gchan, "$msg The dead body of \2$NICKS{$victim}\2, a \2"._getrole($victim, 2)."\2, is found. Those remaining mourn his/her death.");
-        _player_del($victim);
+        $continue = _player_del($victim);
         if ($harlotd == 1) {
             my $harlot;
             while (my ($cuser, $crole) = each %PLAYERS) { if ($crole =~ m/h/xsm) { $harlot = $cuser } }
             if ($harlot) { # Unusual cases call for this.
                 privmsg($gsvr, $gchan, "\2$NICKS{$harlot}\2, the village harlot, made the unfortunate mistake of visiting the victim last night, and is now dead.");
-                _player_del($harlot);
+                $continue = _player_del($harlot);
             }
         }
     }
@@ -1113,7 +1109,7 @@ sub _init_day {
         while (my ($cuser, $crole) = each %PLAYERS) { if ($crole =~ m/h/xsm) { $harlot = $cuser } }
         if ($harlot) { # Unusual cases call for this.
             privmsg($gsvr, $gchan, "\2$NICKS{$harlot}\2, the village harlot, made the unfortunate mistake of visiting a wolf last night, and is now dead.");
-            _player_del($harlot);
+            $continue = _player_del($harlot);
         }
     }
     # Check if the angel guarded a wolf.
@@ -1122,9 +1118,12 @@ sub _init_day {
         while (my ($cuser, $crole) = each %PLAYERS) { if ($crole =~ m/g/xsm) { $angel = $cuser } }
         if ($angel) { # Unusual cases call for this.
             privmsg($gsvr, $gchan, "\2$NICKS{$angel}\2, the guardian angel, made the unfortunate mistake of guarding a wolf last night, attempted to escape, but failed and is now dead.");
-            _player_del($angel);
+            $continue = _player_del($angel);
         }
     }
+
+    # If there was a winning condition, don't initialize daytime.
+    if (!$continue) { return 1 }
 
     # Set number of votes required to lynch.
     $LVOTEN = int(scalar(keys(%PLAYERS)) / 2);
@@ -1190,34 +1189,36 @@ sub _judgment {
     privmsg($gsvr, $gchan, "The villagers, after much debate, finally decide on lynching \2$NICKS{$nick}\2, who turned out to be... a \2"._getrole($nick, 2)."\2.");
     my $ri = _player_del($nick);
 
-    if ($ri) {
-        my @warn;
-        # Check if any players failed to vote.
-        foreach my $plyr (keys %PLAYERS) {
-            my $bi;
-            foreach my $acpl (keys %LYNCH) {
-                if (exists $LYNCH{$acpl}{$plyr}) { $bi = 1 }
-            }
-            if (!$bi) { 
-                # This player in particular didn't vote today, increase their bed variable.
-                # Also check if they should be kicked from the game (2 days without voting).
-                if (++$BED{$plyr} >= 2) {
-                    privmsg($gsvr, $gchan, "\2$NICKS{$plyr}\2 didn't get out of bed for two days. He/She is declared dead. Appears (s)he was a \2"._getrole($plyr, 2)."\2.");
-                    $ri = _player_del($plyr);
-                    last unless $ri;
-                }
-                else { # They didn't vote for today only. Just give them a friendly warning.
-                    push @warn, $NICKS{$plyr};
-                }
-            }
+    # Initialize nighttime.
+    if ($ri) { _init_night() }
+
+    return 1;
+}
+
+# Subroutine for checking who is in bed and who is not.
+sub _chkbed {
+    my ($gsvr, $gchan) = split '/', $GAMECHAN, 2;
+    # Array for warnings.
+    my @warn;
+    # Iterate through all SPOKE players.
+    while (my ($plyr, $time) = each %SPOKE) {
+        my $since = time - $time;
+        # Check if they should be kicked right now.
+        if ($since >= 300) {
+            privmsg($gsvr, $gchan, "\2$NICKS{$plyr}\2 didn't get out of bed for a very long time. He/She is declared dead. Appears (s)he was a \2"._getrole($plyr, 2)."\2.");
+            my $ri = _player_del($plyr);
+            if (!$ri) { last }
         }
-        if ($ri and scalar @warn) { 
-            privmsg($gsvr, , join(' ', @warn).': You didn\'t vote today. Please remember to say something in the channel soon or you might be declared dead.') 
+        # Perhaps they should just get a warning.
+        elsif ($since >= 180) {
+            push @warn, $plyr;
         }
     }
 
-    # Initialize nighttime.
-    if ($ri) { _init_night() }
+    # Send out any warnings.
+    if (scalar @warn) {
+        privmsg($gsvr, $gchan, join(' ', @warn).': You have been idling for a while. Please remember to say something soon or you might be declared dead.') 
+    }
 
     return 1;
 }
@@ -1260,7 +1261,7 @@ sub _player_del {
     # Delete variables.
     delete $PLAYERS{$player};
     delete $NICKS{$player};
-    delete $BED{$player};
+    delete $SPOKE{$player};
     if (exists $KILL{$player}) { delete $KILL{$player} }
     foreach my $acpl (keys %LYNCH) {
         if (exists $LYNCH{$acpl}{$player}) { delete $LYNCH{$acpl}{$player} }
@@ -1352,14 +1353,14 @@ sub _gameover {
 
     # Clear all variables.
     if ($PHASE) { if ($PHASE eq 'n') { timer_del('werewolf.goto_daytime') } }
-    if ($PGAME) { timer_del('werewolf.join_wait') }
-    $GAME = $PGAME = $GAMECHAN = $GAMETIME = $WAIT = $PHASE = $SEEN = $VISIT = $GUARD = $LVOTEN = $SHOT = $DETECTED = 0;
+    timer_del('werewolf.chkbed');
+    $GAME = $PGAME = $GAMECHAN = $GAMETIME = $PHASE = $SEEN = $VISIT = $GUARD = $LVOTEN = $SHOT = $DETECTED = 0;
     %PLAYERS = ();
     %NICKS = ();
     %KILL = ();
     %WKILL = ();
     %LYNCH = ();
-    %BED = ();
+    %SPOKE = ();
     @STATIC = ();
 
     return 1;
@@ -1375,8 +1376,8 @@ sub on_cprivmsg {
         if (lc $src->{svr}.'/'.$chan eq lc $GAMECHAN) {
             # Check if this person is playing.
             if (exists $PLAYERS{lc $src->{nick}}) {
-                # Reset their bed variable to 0.
-                $BED{lc $src->{nick}} = 0;
+                # Set their spoke variable to current time.
+                $SPOKE{lc $src->{nick}} = time;
             }
         }
     }
@@ -1428,10 +1429,10 @@ sub on_nick {
             # Hopefully this will work right, but if it doesn't, someone please make a bug report.
             $PLAYERS{$new} = $PLAYERS{lc $src->{nick}};
             $NICKS{$new} = $newnick;
-            $BED{$new} = $BED{lc $src->{nick}};
+            $SPOKE{$new} = $SPOKE{lc $src->{nick}};
             delete $PLAYERS{lc $src->{nick}};
             delete $NICKS{lc $src->{nick}};
-            delete $BED{lc $src->{nick}};
+            delete $SPOKE{lc $src->{nick}};
             if ($SHOT) { if ($SHOT eq lc $src->{nick}) { $SHOT = $new } }
             if ($GUARD) { if ($GUARD eq lc $src->{nick}) { $GUARD = $new } }
             if ($VISIT) { if ($VISIT eq lc $src->{nick}) { $VISIT = $new } }
@@ -1532,7 +1533,7 @@ sub on_rehash {
 }
 
 # Start initialization.
-API::Std::mod_init('Werewolf', 'Xelhua', '1.01', '3.0.0a10');
+API::Std::mod_init('Werewolf', 'Xelhua', '1.02', '3.0.0a10');
 # build: perl=5.010000
 
 __END__
@@ -1543,7 +1544,7 @@ Werewolf - IRC version of the Werewolf detective/social party game
 
 =head1 VERSION
 
- 1.01
+ 1.02
 
 =head1 SYNOPSIS
 
@@ -1759,14 +1760,8 @@ During the day, the wolves at all costs (even if it means ratting out their own)
 make the villagers believe they are innocent. You need to be clever in order to
 survive.
 
-Werewolves are assigned as follows:
-
- 4-8 players     One werewolf.
- 9-14 players    Two werewolves.
- 15-20 players   Three werewolves.
- 21-24 players   Four werewolves.
- 25-29 players   Five werewolves.
- 30 players      Six werewolves.
+This is the math formula of the werewolf count: <PLAYER COUNT> * .15 rounded
+off UP, not normal mathematical rounding.
 
 =item Villager (gun holder)
 
