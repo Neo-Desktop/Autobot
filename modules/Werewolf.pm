@@ -1299,6 +1299,9 @@ sub _player_del {
         if (!keys %PLAYERS) { _gameover('n') }
     }
 
+    # Check if nighttime should end, given we are night.
+    if ($PHASE) { if ($PHASE eq 'n') { _chknight() } }
+
     return 1;
 }
 
