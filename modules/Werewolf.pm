@@ -7,7 +7,7 @@ use warnings;
 use feature qw(switch);
 use API::Std qw(cmd_add cmd_del trans hook_add hook_del timer_add timer_del trans conf_get has_priv match_user);
 use API::IRC qw(privmsg notice cmode);
-my ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEEN, $VISIT, $GUARD, %KILL, %WKILL, %LYNCH, %SPOKE, $LVOTEN, $SHOT, $DETECTED);
+my ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEEN, $VISIT, $GUARD, %KILL, %WKILL, %LYNCH, %SPOKE, %WARN, $LVOTEN, $SHOT, $DETECTED);
 my $FCHAR = (conf_get('fantasy_pf'))[0][0];
 
 # Initialization subroutine.
@@ -1211,7 +1211,10 @@ sub _chkbed {
         }
         # Perhaps they should just get a warning.
         elsif ($since >= 180) {
-            push @warn, $plyr;
+            if (!exists $WARN{$plyr}) {
+                push @warn, $plyr;
+                $WARN{$plyr} = 1;
+            }
         }
     }
 
@@ -1264,6 +1267,7 @@ sub _player_del {
     delete $PLAYERS{$player};
     delete $NICKS{$player};
     delete $SPOKE{$player};
+    if (exists $WARN{$player}) { delete $WARN{$player} }
     if (exists $KILL{$player}) { delete $KILL{$player} }
     foreach my $acpl (keys %LYNCH) {
         if (exists $LYNCH{$acpl}{$player}) { delete $LYNCH{$acpl}{$player} }
@@ -1333,6 +1337,7 @@ sub _gameover {
 
     if ($GAME) {
         my $smsg = "The wolves were $STATIC[0]. The seer was $STATIC[1].";
+        if ($STATIC[0] !~ m/,/xsm) { $smsg =~ s/wolves were/wolf was/xsm }
         if ($STATIC[2]) { $smsg .= " The harlot was $STATIC[2]." }
         if ($STATIC[3]) { $smsg .= " The guardian angel was $STATIC[3]." }
         if ($STATIC[4]) { $smsg .= " The traitor was $STATIC[4]." }
@@ -1363,6 +1368,7 @@ sub _gameover {
     %WKILL = ();
     %LYNCH = ();
     %SPOKE = ();
+    %WARN = ();
     @STATIC = ();
 
     return 1;
@@ -1432,9 +1438,11 @@ sub on_nick {
             $PLAYERS{$new} = $PLAYERS{lc $src->{nick}};
             $NICKS{$new} = $newnick;
             $SPOKE{$new} = $SPOKE{lc $src->{nick}};
+            $WARN{$new} = $WARN{lc $src->{nick}};
             delete $PLAYERS{lc $src->{nick}};
             delete $NICKS{lc $src->{nick}};
             delete $SPOKE{lc $src->{nick}};
+            delete $WARN{lc $src->{nick}};
             if ($SHOT) { if ($SHOT eq lc $src->{nick}) { $SHOT = $new } }
             if ($GUARD) { if ($GUARD eq lc $src->{nick}) { $GUARD = $new } }
             if ($VISIT) { if ($VISIT eq lc $src->{nick}) { $VISIT = $new } }
