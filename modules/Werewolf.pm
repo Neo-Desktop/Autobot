@@ -1228,22 +1228,24 @@ sub _getrole {
     my ($plyr, $lev) = @_;
 
     my $role;
-    if ($lev == 1) {
-        if ($PLAYERS{$plyr} =~ m/w/xsm) { $role = 'wolf' }
-        elsif ($PLAYERS{$plyr} =~ m/s/xsm) { $role = 'seer' }
-        elsif ($PLAYERS{$plyr} =~ m/h/xsm) { $role = 'harlot' }
-        elsif ($PLAYERS{$plyr} =~ m/g/xsm) { $role = 'guardian angel' }
-        elsif ($PLAYERS{$plyr} =~ m/d/xsm) { $role = 'detective' }
-        elsif ($PLAYERS{$plyr} =~ m/(v|t)/xsm) { $role = 'villager' }
-    }
-    elsif ($lev == 2) {
-        if ($PLAYERS{$plyr} =~ m/w/xsm) { $role = 'wolf' }
-        elsif ($PLAYERS{$plyr} =~ m/s/xsm) { $role = 'seer' }
-        elsif ($PLAYERS{$plyr} =~ m/h/xsm) { $role = 'harlot' }
-        elsif ($PLAYERS{$plyr} =~ m/g/xsm) { $role = 'guardian angel' }
-        elsif ($PLAYERS{$plyr} =~ m/d/xsm) { $role = 'detective' }
-        elsif ($PLAYERS{$plyr} =~ m/t/xsm) { $role = 'traitor' }
-        elsif ($PLAYERS{$plyr} =~ m/v/xsm) { $role = 'villager' }
+    if (exists $PLAYERS{$plyr}) {
+        if ($lev == 1) {
+            if ($PLAYERS{$plyr} =~ m/w/xsm) { $role = 'wolf' }
+            elsif ($PLAYERS{$plyr} =~ m/s/xsm) { $role = 'seer' }
+            elsif ($PLAYERS{$plyr} =~ m/h/xsm) { $role = 'harlot' }
+            elsif ($PLAYERS{$plyr} =~ m/g/xsm) { $role = 'guardian angel' }
+            elsif ($PLAYERS{$plyr} =~ m/d/xsm) { $role = 'detective' }
+            elsif ($PLAYERS{$plyr} =~ m/(v|t)/xsm) { $role = 'villager' }
+        }
+        elsif ($lev == 2) {
+            if ($PLAYERS{$plyr} =~ m/w/xsm) { $role = 'wolf' }
+            elsif ($PLAYERS{$plyr} =~ m/s/xsm) { $role = 'seer' }
+            elsif ($PLAYERS{$plyr} =~ m/h/xsm) { $role = 'harlot' }
+            elsif ($PLAYERS{$plyr} =~ m/g/xsm) { $role = 'guardian angel' }
+            elsif ($PLAYERS{$plyr} =~ m/d/xsm) { $role = 'detective' }
+            elsif ($PLAYERS{$plyr} =~ m/t/xsm) { $role = 'traitor' }
+            elsif ($PLAYERS{$plyr} =~ m/v/xsm) { $role = 'villager' }
+        }
     }
     if (!$role) { $role = 'person' }
     
