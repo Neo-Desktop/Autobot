@@ -1212,7 +1212,7 @@ sub _chkbed {
         # Perhaps they should just get a warning.
         elsif ($since >= 180) {
             if (!exists $WARN{$plyr}) {
-                push @warn, $plyr;
+                push @warn, $NICKS{$plyr};
                 $WARN{$plyr} = 1;
             }
         }
