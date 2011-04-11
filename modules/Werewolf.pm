@@ -11,6 +11,11 @@ my ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEE
 our $WAIT;
 my $FCHAR = (conf_get('fantasy_pf'))[0][0];
 
+use constant MAX_PLAYERS = 25;
+use constant GUN_PLAYERS = 7;
+
+
+
 # Initialization subroutine.
 sub _init {
     # Create the WOLF command.
@@ -136,8 +141,8 @@ sub cmd_wolf {
                         return;
                     }
 
-                    # Maximum amount of players is 30.
-                    if (keys %PLAYERS >= 30) {
+                    # Are we over the max number of -players?
+                    if (keys %PLAYERS >= MAX_PLAYERS) {
                         notice($src->{svr}, $src->{nick}, 'Too many players! Try again next time.');
                         return;
                     }
@@ -271,7 +276,7 @@ sub cmd_wolf {
                 }
 
                 # If there's 6 or more players, give one of them a gun.
-                if (keys %PLAYERS >= 6) {
+                if (keys %PLAYERS >= GUN_PLAYERS) {
                     my $rpi = $plyrs[int rand scalar @plyrs];
                     while ($PLAYERS{$rpi} =~ m/w/xsm || $PLAYERS{$rpi} =~ m/t/xsm) { $rpi = $plyrs[int rand scalar @plyrs] }
                     $PLAYERS{$rpi} .= 'b';

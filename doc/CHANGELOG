@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Werewolf: Use constants for maximum/gun player counts.
     * Werewolf: Fixed an annoyance in VOTES.
     * Werewolf: Fixed another round of bugs.
     * Werewolf: Fixed a grammatical error. Thanks TAD!
