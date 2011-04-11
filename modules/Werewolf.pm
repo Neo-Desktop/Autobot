@@ -1386,6 +1386,7 @@ sub on_cprivmsg {
             if (exists $PLAYERS{lc $src->{nick}}) {
                 # Set their spoke variable to current time.
                 $SPOKE{lc $src->{nick}} = time;
+                if (exists $WARN{lc $src->{nick}}) { delete $WARN{lc $src->{nick}} }
             }
         }
     }
