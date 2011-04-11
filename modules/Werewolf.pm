@@ -428,7 +428,12 @@ sub cmd_wolf {
                 if (keys %LYNCH) {
                     my $str;
                     foreach my $key (sort {keys %{$LYNCH{$b}} <=> keys %{$LYNCH{$a}}} keys %LYNCH) {
-                        $str .= ", $NICKS{$key}: ".keys(%{$LYNCH{$key}}).' ('.join(' ', keys %{$LYNCH{$key}}).')';
+                        my $voters = 0;
+                        if (keys %{$LYNCH{$key}}) {
+                            foreach (keys %{$LYNCH{$key}}) { $voters .= " $NICKS{$_}" }
+                        }
+                        $voters =~ s/^\s//xsm;
+                        $str .= ", $NICKS{$key}: ".keys(%{$LYNCH{$key}})." ($voters)";
                     }
                     $str = substr $str, 2;
                     privmsg($src->{svr}, $src->{chan}, "$src->{nick}: $str");
