@@ -11,10 +11,10 @@ my ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEE
 our $WAIT;
 my $FCHAR = (conf_get('fantasy_pf'))[0][0];
 
-use constant MAX_PLAYERS = 25;
-use constant GUN_PLAYERS = 7;
-
-
+use constant {
+    MAX_PLAYERS => 30,
+    GUN_PLAYERS => 7,
+};
 
 # Initialization subroutine.
 sub _init {
