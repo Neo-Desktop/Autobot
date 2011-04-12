@@ -265,7 +265,7 @@ sub cmd_help
         # Help for a specific command was requested. Lets get it.
         my $rcm = uc($argv[0]);
 
-        if (defined $API::Std::CMDS{$rcm}{help}) {
+        if (exists $API::Std::CMDS{$rcm}{help}) {
             # If there is help for this command.
             
             # Check for necessary privileges.
@@ -282,13 +282,13 @@ sub cmd_help
                 # Get the language.
                 my ($lang, undef) = split('_', $Auto::LOCALE);
 
-                if (defined ${ $API::Std::CMDS{$rcm}{help} }{$lang}) {
+                if (exists ${ $API::Std::CMDS{$rcm}{help} }{$lang}) {
                     # If help for this command is available in the configured language.
                     notice($src->{svr}, $src->{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{help} }{$lang});
                 }
                 else {
                     # If it isn't, default to English.
-                    if (defined ${ $API::Std::CMDS{$rcm}{help} }{en}) {
+                    if (exists ${ $API::Std::CMDS{$rcm}{help} }{en}) {
                         # If help for this command is available in English.
                         notice($src->{svr}, $src->{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{help} }{en});
                     }
