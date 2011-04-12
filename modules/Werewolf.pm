@@ -7,7 +7,7 @@ use warnings;
 use feature qw(switch);
 use API::Std qw(cmd_add cmd_del trans hook_add hook_del timer_add timer_del trans conf_get has_priv match_user);
 use API::IRC qw(privmsg notice cmode);
-my ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEEN, $VISIT, $GUARD, %KILL, %WKILL, %LYNCH, %SPOKE, %WARN, $LVOTEN, $SHOT, $DETECTED);
+my ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEEN, $VISIT, $GUARD, %KILL, %WKILL, %LYNCH, %SPOKE, %WARN, $LVOTEN, $SHOT, $BULLETS, $DETECTED);
 my $FCHAR = (conf_get('fantasy_pf'))[0][0];
 
 # Initialization subroutine.
@@ -267,6 +267,9 @@ sub cmd_wolf {
                     my $rpi = $plyrs[int rand scalar @plyrs];
                     while ($PLAYERS{$rpi} =~ m/w/xsm || $PLAYERS{$rpi} =~ m/t/xsm) { $rpi = $plyrs[int rand scalar @plyrs] }
                     $PLAYERS{$rpi} .= 'b';
+
+                    # And give them PLAYER COUNT * .12 bullets rounded up.
+                    $BULLETS = POSIX::ceil(keys(%PLAYERS) * .12);
                 }
 
                 # Set variables.
@@ -472,6 +475,12 @@ sub cmd_wolf {
                     privmsg($src->{svr}, $src->{chan}, "$src->{nick}: You don't have the gun.");
                     return;
                 }
+
+                # They must have at least one bullet.
+                if (!$BULLETS) {
+                    privmsg($src->{svr}, $src->{chan}, "$src->{nick}: You don't have any more bullets.");
+                    return;
+                }
                 
                 # Requires an extra parameter.
                 if (!defined $argv[1]) {
@@ -531,8 +540,11 @@ sub cmd_wolf {
                         }
                     }
                 }
-                # Remove the gun from them.
-                $PLAYERS{lc $src->{nick}} =~ s/b//gxsm;
+
+                # Decrement bullet count.
+                $BULLETS--;
+                # Call lynch management.
+                _lynchmng();
             }
             when (/^(STATS|S)$/) {
                 # WOLF STATS
@@ -1004,8 +1016,8 @@ sub _init_night {
             if ($data[2]) { privmsg($gsvr, $NICKS{$plyr}, $data[2]) }
         }
         # Check if they have the gun.
-        if ($role =~ m/b/xsm) {
-            privmsg($gsvr, $NICKS{$plyr}, 'You hold a special gun. You may only use it during the day. If you shoot a wolf, (s)he will die instantly, if you shoot a villager, they will likely live. You only get one shot, so use it wisely.');
+        if ($role =~ m/b/xsm and $BULLETS) {
+            privmsg($gsvr, $NICKS{$plyr}, 'You hold a special gun. You may only use it during the day. If you shoot a wolf, (s)he will die instantly, if you shoot a villager, they will likely live. You get '.$BULLETS.' shot(s).');
             privmsg($gsvr, $NICKS{$plyr}, 'To shoot someone, type "'.$FCHAR.$COMMANDS{shoot}.'" in the channel during the day.');
         }
     }
@@ -1368,7 +1380,7 @@ sub _gameover {
     # Clear all variables.
     if ($PHASE) { if ($PHASE eq 'n') { timer_del('werewolf.goto_daytime') } }
     timer_del('werewolf.chkbed');
-    $GAME = $PGAME = $GAMECHAN = $GAMETIME = $PHASE = $SEEN = $VISIT = $GUARD = $LVOTEN = $SHOT = $DETECTED = 0;
+    $GAME = $PGAME = $GAMECHAN = $GAMETIME = $PHASE = $SEEN = $VISIT = $GUARD = $LVOTEN = $SHOT = $BULLETS = $DETECTED = 0;
     %PLAYERS = ();
     %NICKS = ();
     %KILL = ();
@@ -1551,7 +1563,7 @@ sub on_rehash {
 }
 
 # Start initialization.
-API::Std::mod_init('Werewolf', 'Xelhua', '1.02', '3.0.0a10');
+API::Std::mod_init('Werewolf', 'Xelhua', '1.03', '3.0.0a10');
 # build: perl=5.010000
 
 __END__
@@ -1562,7 +1574,7 @@ Werewolf - IRC version of the Werewolf detective/social party game
 
 =head1 VERSION
 
- 1.02
+ 1.03
 
 =head1 SYNOPSIS
 
@@ -1784,7 +1796,8 @@ off UP, not normal mathematical rounding.
 =item Villager (gun holder)
 
 If a game has 6+ players, one villager (can also be seer/harlot/etc., but not
-wolves or traitors.), will be given a gun with a single special silver bullet.
+wolves or traitors.), will be given a gun with a certain amount special silver
+bullets. To be exact, <PLAYER COUNT> * .12 rounded off UP.
 
 During the day, (s)he can use "!wolf shoot <nick>" to shoot someone with that
 gun, and the effect varies widely. Lets go over those.
