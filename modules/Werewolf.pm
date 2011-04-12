@@ -936,6 +936,7 @@ sub cmd_wolf {
 # Change time to night.
 sub _init_night {
     my ($gsvr, $gchan) = split '/', $GAMECHAN;
+    $PHASE = 'n';
 
     # Iterate through all players.
     foreach my $plyr (keys %PLAYERS) {
@@ -947,7 +948,9 @@ sub _init_night {
             if ($role =~ m/w/xsm) {
                 $erole = 'wolf';
                 $msg = "It is your job to kill all the villagers. Use \"$COMMANDS{kill}\" to kill a villager. Also, if you send a PM to me, it will be relayed to all other wolves.\n&pi&";
-                $msg .= "\nAlso, if there are other wolves, please consider using PM's or a channel to speak with them rather than my relay, to prevent from me lagging.";
+                my $cwolves = 0;
+                for (values %PLAYERS) { if (m/w/xsm) { $cwolves++ } }
+                if ($cwolves > 1) { $msg .= "\nAlso, please consider using PM's or a channel to speak with your fellow wolves rather than my relay, to prevent from me lagging." }
             }
             # For harlots.
             elsif ($role =~ m/h/xsm) {
@@ -1008,7 +1011,6 @@ sub _init_night {
     }
 
     # It is now nighttime.
-    $PHASE = 'n';
     %LYNCH = ();
     $DETECTED = 0;
     privmsg($gsvr, $gchan, 'It is now nighttime. All players check for PM\'s from me for instructions. If you did not receive one, simply sit back, relax, and wait patiently for morning.');
@@ -1084,6 +1086,9 @@ sub _init_day {
         $victim = 0;
     }
 
+    # Set phase to day.
+    $PHASE = 'd';
+    
     # Cool, all data should be ready for shipment. Lets go!
     my $continue = 1;
     my $msg = 'It is now daytime. The villagers awake, thankful for surviving the night, and search the village...';
@@ -1130,8 +1135,7 @@ sub _init_day {
     $LVOTEN++;
     privmsg($gsvr, $gchan, 'The villagers must now vote for who to lynch. Use "'.$FCHAR.$COMMANDS{lynch}.'" to cast your vote. '.$LVOTEN.' votes are required to lynch.');
     
-    # Set phase to day and clear variables.
-    $PHASE = 'd';
+    # Clear variables.
     $SEEN = $GUARD = $VISIT = $SHOT = 0;
     %KILL = ();
     %WKILL = ();
