@@ -192,7 +192,7 @@ sub cmd_wolf {
                 }
 
                 # First, determine how many players to declare a wolf.
-                my $cwolves = POSIX::ceil(keys(%PLAYERS) * .15);
+                my $cwolves = POSIX::ceil(keys(%PLAYERS) * .14);
                 # Only one seer, harlot, guardian angel, traitor and detective.
                 my $cseers = 1;
                 my $charlots = my $cangels = my $ctraitors = my $cdetectives = 0;
