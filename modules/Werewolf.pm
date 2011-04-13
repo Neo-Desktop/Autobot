@@ -1204,7 +1204,7 @@ sub _judgment {
     # Kill him/her!
     my ($gsvr, $gchan) = split '/', $GAMECHAN;
     privmsg($gsvr, $gchan, "The villagers, after much debate, finally decide on lynching \2$NICKS{$nick}\2, who turned out to be... a \2"._getrole($nick, 2)."\2.");
-    my $ri = _player_del($nick);
+    my $ri = _player_del($nick, 1);
 
     # Initialize nighttime.
     if ($ri) { _init_night() }
@@ -1276,7 +1276,7 @@ sub _getrole {
 
 # Delete a player.
 sub _player_del {
-    my ($player) = @_;
+    my ($player, $judgment) = @_;
     my ($gsvr, $gchan) = split '/', $GAMECHAN;
 
     # Devoice them.
@@ -1307,8 +1307,10 @@ sub _player_del {
     
     # Update LVOTEN.
     if ($LVOTEN) { $LVOTEN-- }
-    # Call lynch management.
-    if ($PHASE) { if ($PHASE eq 'd') { _lynchmng() } }
+    # Call lynch management IF judgment did not call us.
+    if ($PHASE and !$judgment) {
+        if ($PHASE eq 'd') { _lynchmng() }
+    }
 
     # Check for winning conditions.
     if (!$PGAME) {
