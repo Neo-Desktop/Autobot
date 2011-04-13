@@ -575,7 +575,7 @@ sub cmd_wolf {
                 # If all roles have been assigned, return the count of each.    
                 if ($GAME) {
                     my $cwolves = my $cseers = my $charlots = my $cangels = my $ctraitors = my $cdetectives = 0;
-                    while ((undef, my $flags) = each %PLAYERS) {
+                    foreach my $flags (values %PLAYERS) {
                         if ($flags =~ m/w/xsm) { $cwolves++ }
                         if ($flags =~ m/s/xsm) { $cseers++ }
                         if ($flags =~ m/h/xsm) { $charlots++ }
@@ -1037,7 +1037,7 @@ sub _init_day {
     
     # We need wolf count.
     my $wolves = 0;
-    while ((undef, $_) = each %PLAYERS) { if ($_ =~ m/w/xsm) { $wolves++ } }
+    for (values %PLAYERS) { if (m/w/xsm) { $wolves++ } }
     # For starters, lets determine if there's a victim to kill.
     my $victim;
     if (keys %KILL) {
@@ -1159,7 +1159,7 @@ sub _init_day {
 sub _chknight {
     # Get a current count of each role.
     my $cwolves = my $cseers = my $charlots = my $cangels = 0;
-    while ((undef, my $flags) = each %PLAYERS) {
+    foreach my $flags (values %PLAYERS) {
         if ($flags =~ m/w/xsm) { $cwolves++ }
         if ($flags =~ m/s/xsm) { $cseers++ }
         if ($flags =~ m/h/xsm) { $charlots++ }
@@ -1304,10 +1304,10 @@ sub _player_del {
     # Check for winning conditions.
     if (!$PGAME) {
         my $wolves;
-        while ((undef, $_) = each %PLAYERS) { if ($_ =~ m/w/xsm) { $wolves++ } }
+        for (values %PLAYERS) { if (m/w/xsm) { $wolves++ } }
         if (!$wolves) { _gameover('v'); return }
         my $villagers;
-        while ((undef, $_) = each %PLAYERS) { if ($_ =~ m/(v|s|g|h|d)/xsm) { $villagers++ } }
+        for (values %PLAYERS) { if (m/(v|s|g|h|d)/xsm) { $villagers++ } }
         if ($villagers <= $wolves) { _gameover('w'); return }
     }
     else {
@@ -1370,7 +1370,7 @@ sub _gameover {
     # Devoice all users.
     my ($gc, $gn, @gu);
     $gc = $gn = 0;
-    while ((undef, my $nick) = each %NICKS) {
+    foreach my $nick (values %NICKS) {
         $gu[$gc] .= " $nick";
         $gn++;
         if ($gn > 3) { $gn = 0; $gc++ }
@@ -1427,7 +1427,7 @@ sub on_uprivmsg {
                 if ($PLAYERS{lc $src->{nick}} =~ m/w/xsm or $PLAYERS{lc $src->{nick}} =~ m/t/xsm) {
                     # Get wolf count.
                     my $cwolves = 0;
-                    while ((undef, my $flags) = each %PLAYERS) { if ($flags =~ m/w/xsm) { $cwolves++ } }
+                    foreach my $flags (values %PLAYERS) { if ($flags =~ m/w/xsm) { $cwolves++ } }
                     # If there's more than one wolf, relay this message to the others.
                     if ($cwolves > 1) {
                         while ((my $plyr, my $flags) = each %PLAYERS) { 
