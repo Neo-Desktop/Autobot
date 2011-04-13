@@ -1356,7 +1356,7 @@ sub _gameover {
 
     if ($GAME) {
         my $smsg = "The wolves were $STATIC[0]. The seer was $STATIC[1].";
-        if ($STATIC[0] !~ m/,/xsm) { $smsg =~ s/wolves were/wolf was/xsm }
+        if ($STATIC[0] !~ m/,/xsm) { $smsg =~ s/wolves\swere/wolf was/xsm }
         if ($STATIC[2]) { $smsg .= " The harlot was $STATIC[2]." }
         if ($STATIC[3]) { $smsg .= " The guardian angel was $STATIC[3]." }
         if ($STATIC[4]) { $smsg .= " The traitor was $STATIC[4]." }
