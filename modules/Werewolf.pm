@@ -202,7 +202,7 @@ sub cmd_wolf {
                 if (keys %PLAYERS >= 16 and conf_get('werewolf:detectives')) { $cdetectives++ }
 
                 # Give all players a role.
-                while ((my $plyr, undef) = each %PLAYERS) { $PLAYERS{$plyr} = 'v' }
+                foreach my $plyr (keys %PLAYERS) { $PLAYERS{$plyr} = 'v' }
                 # Push players into a temporary array.
                 my @plyrs = keys %PLAYERS;
 
@@ -1006,7 +1006,7 @@ sub _init_night {
             $pi =~ s/^,\s//xsm;
             $data[1] =~ s/&pi&/Players: $pi/gxsm;
             my $ph;
-            while ((my $pnick, undef) = each %PLAYERS) { if ($pnick eq $plyr) { next }; $ph .= ", $NICKS{$pnick}" }
+            foreach my $pnick (keys %PLAYERS) { if ($pnick eq $plyr) { next }; $ph .= ", $NICKS{$pnick}" }
             $ph =~ s/^,\s//xsm;
             $data[1] =~ s/&ph&/Players: $ph/gxsm;
 
