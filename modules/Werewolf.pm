@@ -7,7 +7,7 @@ use warnings;
 use feature qw(switch);
 use API::Std qw(cmd_add cmd_del trans hook_add hook_del timer_add timer_del trans conf_get has_priv match_user);
 use API::IRC qw(privmsg notice cmode);
-my ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEEN, $VISIT, $GUARD, %KILL, %WKILL, %LYNCH, %SPOKE, %WARN, $LVOTEN, $SHOT, $BULLETS, $DETECTED);
+my ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEEN, $VISIT, $GUARD, %KILL, %WKILL, %LYNCH, %SPOKE, %WARN, $LVOTEN, @SHOT, $BULLETS, $DETECTED);
 my $FCHAR = (conf_get('fantasy_pf'))[0][0];
 
 # Initialization subroutine.
@@ -322,7 +322,7 @@ sub cmd_wolf {
                 }
 
                 # Check if they've been shot today.
-                if ($SHOT eq lc $src->{nick}) {
+                if (lc $src->{nick} ~~ @SHOT) {
                     notice($src->{svr}, $src->{nick}, 'You\'re wounded and resting, thus you are unable to vote for the day.');
                     return;
                 }
@@ -373,7 +373,7 @@ sub cmd_wolf {
                 }
                 
                 # Check if they've been shot today.
-                if ($SHOT eq lc $src->{nick}) {
+                if (lc $src->{nick} ~~ @SHOT) {
                     notice($src->{svr}, $src->{nick}, 'You\'re wounded and resting, thus you are unable to vote for the day.');
                     return;
                 }
@@ -440,7 +440,7 @@ sub cmd_wolf {
                     privmsg($src->{svr}, $src->{chan}, "$src->{nick}: No votes yet.");
                 }
                 my $plyru = keys %PLAYERS;
-                if ($SHOT) { $plyru-- }
+                if (scalar @SHOT) { for (0..$#SHOT) { $plyru-- } }
                 privmsg($src->{svr}, $src->{chan}, "$src->{nick}: \2".keys(%PLAYERS)."\2 players, \2$LVOTEN\2 votes required to lynch, \2$plyru\2 players available to vote.");
             }
             when ('SHOOT') {
@@ -529,7 +529,7 @@ sub cmd_wolf {
                                 }
                                 default { # Only hurt.
                                     privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a villager, and is hurt but will have a full recovery.");
-                                    $SHOT = lc $real;
+                                    push @SHOT, lc $real;
                                     # Delete any votes they might've made today.
                                     foreach my $plyr (keys %LYNCH) {
                                         if (exists $LYNCH{$plyr}{lc $real}) { delete $LYNCH{$plyr}{lc $real} }
@@ -1148,7 +1148,8 @@ sub _init_day {
     privmsg($gsvr, $gchan, 'The villagers must now vote for who to lynch. Use "'.$FCHAR.$COMMANDS{lynch}.'" to cast your vote. '.$LVOTEN.' votes are required to lynch.');
     
     # Clear variables.
-    $SEEN = $GUARD = $VISIT = $SHOT = 0;
+    $SEEN = $GUARD = $VISIT = 0;
+    @SHOT = ();
     %KILL = ();
     %WKILL = ();
 
@@ -1246,6 +1247,8 @@ sub _chkbed {
 sub _getrole {
     my ($plyr, $lev) = @_;
 
+    if (!$plyr) { return 'person' }
+
     my $role;
     if (exists $PLAYERS{$plyr}) {
         if ($lev == 1) {
@@ -1293,7 +1296,13 @@ sub _player_del {
     }
     if ($VISIT) { if ($VISIT eq $player) { $VISIT = 0 } }
     if ($GUARD) { if ($GUARD eq $player) { $GUARD = 0 } }
-    if ($SHOT) { if ($SHOT eq $player) { $SHOT = 0 } }
+    if (scalar @SHOT) {
+        for (0..$#SHOT) {
+            if ($SHOT[$_] eq lc $player) {
+                splice @SHOT, $_, 1;
+            }
+        }
+    }
     if ($SEEN) { if ($SEEN eq $player) { $SEEN = 0 } }
     
     # Update LVOTEN.
@@ -1333,7 +1342,7 @@ sub _lynchmng {
 
     # Now check if we have anyone who has enough votes for judgment.
     foreach my $acc (keys %LYNCH) {
-        if (keys %{$LYNCH{$acc}} >= $LVOTEN) { _judgment($acc) }
+        if (keys %{$LYNCH{$acc}} >= $LVOTEN) { _judgment($acc); last }
     }
 
     return 1;
@@ -1380,7 +1389,7 @@ sub _gameover {
     # Clear all variables.
     if ($PHASE) { if ($PHASE eq 'n') { timer_del('werewolf.goto_daytime') } }
     timer_del('werewolf.chkbed');
-    $GAME = $PGAME = $GAMECHAN = $GAMETIME = $PHASE = $SEEN = $VISIT = $GUARD = $LVOTEN = $SHOT = $BULLETS = $DETECTED = 0;
+    $GAME = $PGAME = $GAMECHAN = $GAMETIME = $PHASE = $SEEN = $VISIT = $GUARD = $LVOTEN = $BULLETS = $DETECTED = 0;
     %PLAYERS = ();
     %NICKS = ();
     %KILL = ();
@@ -1389,6 +1398,7 @@ sub _gameover {
     %SPOKE = ();
     %WARN = ();
     @STATIC = ();
+    @SHOT = ();
 
     return 1;
 }
@@ -1464,6 +1474,14 @@ sub on_nick {
             delete $SPOKE{lc $src->{nick}};
             delete $WARN{lc $src->{nick}};
             if ($SHOT) { if ($SHOT eq lc $src->{nick}) { $SHOT = $new } }
+            if (scalar @SHOT) {
+                for (0..$#SHOT) {
+                    if ($SHOT[$_] eq lc $src->{nick}) {
+                        splice @SHOT, $_, 1;
+                        push @SHOT, $new;
+                    }
+                }
+            }
             if ($GUARD) { if ($GUARD eq lc $src->{nick}) { $GUARD = $new } }
             if ($VISIT) { if ($VISIT eq lc $src->{nick}) { $VISIT = $new } }
             if (exists $KILL{lc $src->{nick}}) {
@@ -1480,7 +1498,7 @@ sub on_nick {
             }
             while (my ($accu, $ser) = each %LYNCH) {
                 if ($ser eq lc $src->{nick}) {
-                    $LYNCH{$accu}{$ser} = 1;
+                    $LYNCH{$accu}{$new} = 1;
                     delete $LYNCH{$accu}{lc $src->{nick}};
                 }
             }
