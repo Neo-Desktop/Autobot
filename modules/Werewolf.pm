@@ -528,7 +528,7 @@ sub cmd_wolf {
                                     _player_del(lc $real);
                                 }
                                 default { # Only hurt.
-                                    privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a villager, and is hurt but will have a full recovery.");
+                                    privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a villager, and is hurt but will have a full recovery. He/She will be resting for the day.");
                                     push @SHOT, lc $real;
                                     # Delete any votes they might've made today.
                                     foreach my $plyr (keys %LYNCH) {
@@ -1498,7 +1498,7 @@ sub on_nick {
             while (my ($accu, $ser) = each %LYNCH) {
                 if ($ser eq lc $src->{nick}) {
                     $LYNCH{$accu}{$new} = 1;
-                    delete $LYNCH{$accu}{lc $src->{nick}};
+                    delete $LYNCH{$accu}{$ser};
                 }
             }
             # That should be everything.
