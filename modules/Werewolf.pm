@@ -1473,7 +1473,6 @@ sub on_nick {
             delete $NICKS{lc $src->{nick}};
             delete $SPOKE{lc $src->{nick}};
             delete $WARN{lc $src->{nick}};
-            if ($SHOT) { if ($SHOT eq lc $src->{nick}) { $SHOT = $new } }
             if (scalar @SHOT) {
                 for (0..$#SHOT) {
                     if ($SHOT[$_] eq lc $src->{nick}) {
