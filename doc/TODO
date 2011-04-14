@@ -10,6 +10,7 @@ Legend:
 
  [ ] Cleanup
      [ ] Replace println with Perl 5.10's say.
+     [ ] Fix inconsistencies in official modules
 
  [X] Language
      [X] Create method of translation.
