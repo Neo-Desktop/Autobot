@@ -32,6 +32,7 @@ sub _void
 # Help hashes.
 our %HELP_WEATHER = (
     'en' => "This command will retrieve the weather via Wunderground for the specified location. \002Syntax:\002 WEATHER <location>",
+    'fr' => "Cette commande permet de récupérer la météo via Wunderground pour l'emplacement spécifié. \002Syntaxe:\002 WEATHER <emplacement>",
 );
 
 # Callback for Weather command.
