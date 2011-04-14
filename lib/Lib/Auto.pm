@@ -211,6 +211,7 @@ sub ircsock {
             $Auto::SOCKET{$svrname} = IO::Socket::INET->new(%conndata) or # Or error.
             err(2, 'Failed to connect to server ('.$ERRNO.'): '.$svrname.' ['.$cdata->{'host'}[0].q{:}.$cdata->{'port'}[0].']', 0)
             and delete $Auto::SOCKET{$svrname} and next;
+            binmode($Auto::SOCKET{$svrname}, ':encoding(UTF-8)');
         }
     }
 
