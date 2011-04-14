@@ -7,7 +7,6 @@
 
           3.0
 
-
 The future of IRC bots is here! Xelhua gives to you, Auto 3.0, a new version of
 the popular Auto IRC bot.
 
@@ -21,12 +20,13 @@ In this alpha10 release, we have added:
 * German translation for Eval command help.
 * German translation for FML command help.
 * German translation for Greet command help.
-* Werewolf module for the Werewolf party game.
 * Aliases now work in PM's to the bot too.
 
 Bug fixes:
 
 * Fixed parsing of host masks with a / in them.
+* Security exploit (causes fatal error) in the HELP command.
+* Security exploit (wide characters) in plaintext socket management.
 
 Incompatibilities:
 
