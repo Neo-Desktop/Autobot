@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Werewolf moved to unstable/ for exclusion from alpha10.
     * Werewolf: Fixed a bug causing double lynches occasionally.
     * Werewolf: One bug fix and multiple bullets.
     * Werewolf: Fixed timeout bug.
