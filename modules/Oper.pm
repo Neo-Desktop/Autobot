@@ -70,6 +70,15 @@ sub oper {
     return 1;
 }
 
+# Deopers Auto on the specified server.
+sub deoper {
+    my ($svr) = @_;
+    Auto::socksnd($svr, "MODE $State::IRC::botinfo{$svr}{nick} -o");
+    return 1;
+}
+
+# End of the API
+
 # Start initialization.
 API::Std::mod_init('Oper', 'Xelhua', '1.01', '3.0.0a10');
 # build: perl=5.010000

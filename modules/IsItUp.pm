@@ -31,6 +31,7 @@ sub _void
 # Help hashes.
 our %HELP_ISITUP = (
     'en' => "This command will check if a website appears up or down to the bot. \002Syntax:\002 ISITUP <url>",
+    'fr' => "Cette commande va vérifier si un site Web semble être vers le haut ou vers le bas pour le bot. \002Syntaxe:\002 ISITUP <url>",
 );
 
 # Callback for ISITUP command.

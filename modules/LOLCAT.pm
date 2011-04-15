@@ -27,6 +27,7 @@ sub _void {
 # Help for LOLCAT.
 our %HELP_LOLCAT = (
     en => "This command will translate English to LOLCAT speak. \2Syntax:\2 LOLCAT <text>",
+    fr => "Cette commande va traduire l'anglais vers LOLCAT parler. \2Syntaxe:\2 LOLCAT <texte",
 );
 
 # Callback for LOLCAT command.
