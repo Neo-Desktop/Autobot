@@ -265,41 +265,46 @@ sub cmd_help
         # Help for a specific command was requested. Lets get it.
         my $rcm = uc($argv[0]);
 
-        if (exists $API::Std::CMDS{$rcm}{help}) {
-            # If there is help for this command.
-            
-            # Check for necessary privileges.
-            if ($API::Std::CMDS{$rcm}{priv}) {
-                if (!has_priv(match_user(%$src), $API::Std::CMDS{$rcm}{priv})) {
-                    notice($src->{svr}, $src->{nick}, trans("Access denied").".");
-                    return;
+        # If there is help for this command.
+        if (exists $API::Std::CMDS{$rcm}) {
+            if (exists $API::Std::CMDS{$rcm}{help}) {
+                # Check for necessary privileges.
+                if ($API::Std::CMDS{$rcm}{priv}) {
+                    if (!has_priv(match_user(%$src), $API::Std::CMDS{$rcm}{priv})) {
+                        notice($src->{svr}, $src->{nick}, trans("Access denied").".");
+                        return;
+                    }
                 }
-            }
 
-            if ($API::Std::CMDS{$rcm}{help}) {
-                # If there is valid help for this command.
+                if ($API::Std::CMDS{$rcm}{help}) {
+                    # If there is valid help for this command.
                 
-                # Get the language.
-                my ($lang, undef) = split('_', $Auto::LOCALE);
+                    # Get the language.
+                    my ($lang, undef) = split('_', $Auto::LOCALE);
 
-                if (exists ${ $API::Std::CMDS{$rcm}{help} }{$lang}) {
-                    # If help for this command is available in the configured language.
-                    notice($src->{svr}, $src->{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{help} }{$lang});
-                }
-                else {
-                    # If it isn't, default to English.
-                    if (exists ${ $API::Std::CMDS{$rcm}{help} }{en}) {
-                        # If help for this command is available in English.
-                        notice($src->{svr}, $src->{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{help} }{en});
+                    if (exists ${ $API::Std::CMDS{$rcm}{help} }{$lang}) {
+                        # If help for this command is available in the configured language.
+                        notice($src->{svr}, $src->{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{help} }{$lang});
                     }
                     else {
-                        # If it isn't, no help.
-                        notice($src->{svr}, $src->{nick}, "No help for \002".$rcm."\002 available.");
+                        # If it isn't, default to English.
+                        if (exists ${ $API::Std::CMDS{$rcm}{help} }{en}) {
+                            # If help for this command is available in English.
+                            notice($src->{svr}, $src->{nick}, "Help for \002".$rcm."\002: ".${ $API::Std::CMDS{$rcm}{help} }{en});
+                        }
+                        else {
+                            # If it isn't, no help.
+                            notice($src->{svr}, $src->{nick}, "No help for \002".$rcm."\002 available.");
+                        }
                     }
+                }
+                else {
+                    # If it isn't valid, no help.
+                    notice($src->{svr}, $src->{nick}, "No help for \002".$rcm."\002 available.");
                 }
             }
             else {
-                # If it isn't valid, no help.
+                # If there is no help, don't give any.
                 notice($src->{svr}, $src->{nick}, "No help for \002".$rcm."\002 available.");
             }
         }
