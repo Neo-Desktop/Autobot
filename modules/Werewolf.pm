@@ -1237,7 +1237,7 @@ sub _chkbed {
 
     # Send out any warnings.
     if (scalar @warn) {
-        privmsg($gsvr, $gchan, join(', ', @warn).': You have been idling for a while. Please remember to say something soon or you might be declared dead.') 
+        privmsg($gsvr, $gchan, "\2".join(', ', @warn).": You have been idling for a while. Please remember to say something soon or you might be declared dead.\2") 
     }
 
     return 1;
@@ -1307,11 +1307,7 @@ sub _player_del {
     
     # Update LVOTEN.
     if ($LVOTEN) { $LVOTEN-- }
-    # Call lynch management IF judgment did not call us.
-    if ($PHASE and !$judgment) {
-        if ($PHASE eq 'd') { _lynchmng() }
-    }
-
+    
     # Check for winning conditions.
     if (!$PGAME) {
         my $wolves;
@@ -1324,6 +1320,11 @@ sub _player_del {
     else {
         # Check if there's any more players.
         if (!keys %PLAYERS) { _gameover('n') }
+    }
+    
+    # Call lynch management IF judgment did not call us.
+    if ($PHASE and !$judgment) {
+        if ($PHASE eq 'd') { _lynchmng() }
     }
 
     # Check if nighttime should end, given we are night.
