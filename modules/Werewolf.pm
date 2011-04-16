@@ -1499,7 +1499,7 @@ sub on_nick {
                 delete $LYNCH{lc $src->{nick}};
             }
             foreach my $accu (keys %LYNCH) {
-                %sers = %{$sers};
+                my %sers = %{$LYNCH{$accu}};
                 foreach my $ser (keys %sers) {
                     if ($ser eq lc $src->{nick}) {
                         $LYNCH{$accu}{$new} = 1;
