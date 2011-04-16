@@ -505,7 +505,7 @@ sub cmd_wolf {
                     }
                     when (5) { # Gun explodes = suicide.
                         privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 should clean his/her weapons more often. The gun exploded and killed him/her!");
-                        if (_getrole(lc $src->{nick}, 2) ne 'villager') { privmsg($src->{svr}, $src->{chan}, "Appears s(he) was a \2"._getrole(lc $src->{nick}, 2)."\2."); }
+                        if (_getrole(lc $src->{nick}, 2) ne 'villager') { privmsg($src->{svr}, $src->{chan}, "Appears (s)he was a \2"._getrole(lc $src->{nick}, 2)."\2."); }
                         _player_del(lc $src->{nick});
                         return 1;
                     }
@@ -523,7 +523,7 @@ sub cmd_wolf {
                             given ($rint) {
                                 when (5) { # Killed.
                                     privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a villager, but \2$src->{nick}\2 accidentally shot them in the head and they are now dying.");
-                                    if (_getrole(lc $real, 2) ne 'villager') { privmsg($src->{svr}, $src->{chan}, "Appears s(he) was a \2"._getrole(lc $real, 2)."\2."); }
+                                    if (_getrole(lc $real, 2) ne 'villager') { privmsg($src->{svr}, $src->{chan}, "Appears (s)he was a \2"._getrole(lc $real, 2)."\2."); }
                                     # Kill them.
                                     _player_del(lc $real);
                                 }
