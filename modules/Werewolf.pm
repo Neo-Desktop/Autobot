@@ -1237,7 +1237,7 @@ sub _chkbed {
 
     # Send out any warnings.
     if (scalar @warn) {
-        privmsg($gsvr, $gchan, "\2".join(', ', @warn).": You have been idling for a while. Please remember to say something soon or you might be declared dead.\2") 
+        privmsg($gsvr, $gchan, join(', ', @warn).": \2You have been idling for a while. Please remember to say something soon or you might be declared dead.\2") 
     }
 
     return 1;
