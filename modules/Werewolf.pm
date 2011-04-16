@@ -1498,10 +1498,13 @@ sub on_nick {
                 $LYNCH{$new} = $LYNCH{lc $src->{nick}};
                 delete $LYNCH{lc $src->{nick}};
             }
-            while (my ($accu, $ser) = each %LYNCH) {
-                if ($ser eq lc $src->{nick}) {
-                    $LYNCH{$accu}{$new} = 1;
-                    delete $LYNCH{$accu}{$ser};
+            foreach my $accu ($sers) {
+                %sers = %{$sers};
+                foreach my $ser (%sers) {
+                    if ($ser eq lc $src->{nick}) {
+                        $LYNCH{$accu}{$new} = 1;
+                        delete $LYNCH{$accu}{$ser};
+                    }
                 }
             }
             # That should be everything.
