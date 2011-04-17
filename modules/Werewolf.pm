@@ -974,7 +974,7 @@ sub _init_night {
     foreach my $plyr (keys %PLAYERS) {
         my $role = $PLAYERS{$plyr};
         # Check if they have a special role.
-        if ($role =~ m/(w|h|s|g|d|t|i)/xsm) {
+        if ($role =~ m/(w|h|s|g|d|t)/xsm) {
             my ($erole, $msg);
             # For wolves.
             if ($role =~ m/w/xsm) {
