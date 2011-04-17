@@ -1239,7 +1239,7 @@ sub _judgment {
 sub _calclvn {
     my $pc = keys %PLAYERS;
     $pc -= scalar @SHOT;
-    $LVOTEN = int(rand($pc+1) / 2 + 1);
+    $LVOTEN = int($pc + 1 / 2 + 1);
 
     return 1;
 }
