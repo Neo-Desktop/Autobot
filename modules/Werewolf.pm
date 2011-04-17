@@ -239,7 +239,7 @@ sub cmd_wolf {
                 while ($cdrunks > 0) {
                     my $rpi = $plyrs[int rand scalar @plyrs];
                     if ($PLAYERS{$rpi} =~ m/v/xsm) {
-                        $PLAYERS{$rpi} = 'i';
+                        $PLAYERS{$rpi} = 'vi';
                         $cdrunks--;
                     }
                 }
