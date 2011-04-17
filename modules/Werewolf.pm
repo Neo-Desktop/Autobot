@@ -498,7 +498,7 @@ sub cmd_wolf {
                 my $real = $NICKS{lc $argv[1]};
 
                 # Massive randomizing here. 5 = 3-kill, 1-miss, 1-suicide
-                my $myr = int rand 6;
+                my $myr = int rand 7;
                 given ($myr) {
                     when (4) { # It's a miss.
                         privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 is a lousy shooter. He/She missed!");
@@ -534,7 +534,8 @@ sub cmd_wolf {
                                     foreach my $plyr (keys %LYNCH) {
                                         if (exists $LYNCH{$plyr}{lc $real}) { delete $LYNCH{$plyr}{lc $real} }
                                     }
-                                    $LVOTEN--;
+                                    # Set number of votes required to lynch.
+                                    $LVOTEN = int(scalar(keys(%PLAYERS)) / 2 + 1);
                                 }
                             }
                         }
@@ -929,7 +930,9 @@ sub cmd_wolf {
                 }
 
                 # If they're changing their selection, reverse the old victim's data.
-                if ($WKILL{lc $src->{nick}}) { $KILL{lc $WKILL{lc $src->{nick}}}-- }
+                if ($WKILL{lc $src->{nick}}) {
+                    $KILL{lc $WKILL{lc $src->{nick}}}--;
+                }
 
                 # All good, proceed.
                 $KILL{lc $argv[1]}++;
@@ -1143,8 +1146,7 @@ sub _init_day {
     if (!$continue) { return 1 }
 
     # Set number of votes required to lynch.
-    $LVOTEN = int(scalar(keys(%PLAYERS)) / 2);
-    $LVOTEN++;
+    $LVOTEN = int(scalar(keys(%PLAYERS)) / 2 + 1);
     privmsg($gsvr, $gchan, 'The villagers must now vote for who to lynch. Use "'.$FCHAR.$COMMANDS{lynch}.'" to cast your vote. '.$LVOTEN.' votes are required to lynch.');
     
     # Clear variables.
@@ -1306,7 +1308,7 @@ sub _player_del {
     if ($SEEN) { if ($SEEN eq $player) { $SEEN = 0 } }
     
     # Update LVOTEN.
-    if ($LVOTEN) { $LVOTEN-- }
+    if ($LVOTEN) { $LVOTEN = int(scalar(keys(%PLAYERS)) / 2 + 1) }
     
     # Check for winning conditions.
     if (!$PGAME) {
@@ -1440,12 +1442,17 @@ sub on_uprivmsg {
                 if ($PLAYERS{lc $src->{nick}} =~ m/w/xsm or $PLAYERS{lc $src->{nick}} =~ m/t/xsm) {
                     # Get wolf count.
                     my $cwolves = 0;
-                    foreach my $flags (values %PLAYERS) { if ($flags =~ m/w/xsm) { $cwolves++ } }
+                    foreach my $flags (values %PLAYERS) { if ($flags =~ m/(w|t)/xsm) { $cwolves++ } }
                     # If there's more than one wolf, relay this message to the others.
                     if ($cwolves > 1) {
                         while ((my $plyr, my $flags) = each %PLAYERS) { 
                             if ($plyr ne lc $src->{nick} and $flags =~ m/w/xsm or $flags =~ m/t/xsm) {
-                                privmsg($src->{svr}, $NICKS{$plyr}, "\2$src->{nick}\2 says: ".join(q{ }, @msg))
+                                # Also, lets try to ignore simulations.
+                                if (uc(join(q{ }, @msg)) =~ m/^WOLF KILL/xsmi and
+                                    split(q{ }, $COMMANDS{kill}, 2) ne ('wolf', 'kill')) { return 1 }
+                                
+                                # All good.
+                                privmsg($src->{svr}, $NICKS{$plyr}, "\2$src->{nick}\2 says: ".join(q{ }, @msg));
                             }
                         }
                     }
