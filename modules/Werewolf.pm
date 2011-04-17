@@ -195,8 +195,9 @@ sub cmd_wolf {
                 my $cwolves = POSIX::ceil(keys(%PLAYERS) * .14);
                 # Only one seer, harlot, guardian angel, traitor and detective.
                 my $cseers = 1;
-                my $charlots = my $cangels = my $ctraitors = my $cdetectives = 0;
+                my $charlots = my $cdrunks = my $cangels = my $ctraitors = my $cdetectives = 0;
                 if (keys %PLAYERS >= 6) { $charlots++ unless conf_get('werewolf:rated-g') }
+                if (keys %PLAYERS >= 7) { $cdrunks++ unless conf_get('werewolf:rated-g') }
                 if (keys %PLAYERS >= 9) { $cangels++ unless conf_get('werewolf:no-angels') }
                 if (keys %PLAYERS >= 12 and conf_get('werewolf:traitors')) { $ctraitors++ }
                 if (keys %PLAYERS >= 16 and conf_get('werewolf:detectives')) { $cdetectives++ }
@@ -234,6 +235,14 @@ sub cmd_wolf {
                         $STATIC[2] = "\2$NICKS{$rpi}\2";
                     }
                 }
+                # Set drunks.
+                while ($cdrunks > 0) {
+                    my $rpi = $plyrs[int rand scalar @plyrs];
+                    if ($PLAYERS{$rpi} =~ m/v/xsm) {
+                        $PLAYERS{$rpi} = 'i';
+                        $cdrunks--;
+                    }
+                }
                 # Set guardian angels.
                 while ($cangels > 0) {
                     my $rpi = $plyrs[int rand scalar @plyrs];
@@ -262,14 +271,16 @@ sub cmd_wolf {
                     }
                 }
 
-                # If there's 6 or more players, give one of them a gun.
-                if (keys %PLAYERS >= 6) {
+                # If there's 8 or more players, give one of them a gun.
+                if (keys %PLAYERS >= 8) {
                     my $rpi = $plyrs[int rand scalar @plyrs];
                     while ($PLAYERS{$rpi} =~ m/w/xsm || $PLAYERS{$rpi} =~ m/t/xsm) { $rpi = $plyrs[int rand scalar @plyrs] }
                     $PLAYERS{$rpi} .= 'b';
 
                     # And give them PLAYER COUNT * .12 bullets rounded up.
                     $BULLETS = POSIX::ceil(keys(%PLAYERS) * .12);
+
+                    if ($PLAYERS{$rpi} =~ m/i/xsm) { $BULLETS = $BULLETS * 3 }
                 }
 
                 # Set variables.
@@ -510,32 +521,38 @@ sub cmd_wolf {
                         return 1;
                     }
                     default { # It's a hit.
-                        privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 shot \2$real\2 with a silver bullet!");
-                        
-                        # Check if the target is a wolf or a villager.
-                        if ($PLAYERS{lc $argv[1]} =~ m/w/xsm) { # Wolf.
-                            privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a wolf, and is dying from the silver bullet.");
-                            _player_del(lc $argv[1]);
+                        # Or not!
+                        if ($PLAYERS{lc $src->{nick}} =~ m/i/xsm and $_ =~ m/^[1-2]$/xsm) {
+                            privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 is a lousy shooter. He/She missed!");
                         }
-                        else { # Villager.
-                            # So, there's a 1/5 chance of a villager dying.
-                            my $rint = int rand 6;
-                            given ($rint) {
-                                when (5) { # Killed.
-                                    privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a villager, but \2$src->{nick}\2 accidentally shot them in the head and they are now dying.");
-                                    if (_getrole(lc $real, 2) ne 'villager') { privmsg($src->{svr}, $src->{chan}, "Appears (s)he was a \2"._getrole(lc $real, 2)."\2."); }
-                                    # Kill them.
-                                    _player_del(lc $real);
-                                }
-                                default { # Only hurt.
-                                    privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a villager, and is hurt but will have a full recovery. He/She will be resting for the day.");
-                                    push @SHOT, lc $real;
-                                    # Delete any votes they might've made today.
-                                    foreach my $plyr (keys %LYNCH) {
-                                        if (exists $LYNCH{$plyr}{lc $real}) { delete $LYNCH{$plyr}{lc $real} }
+                        else {
+                            privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 shot \2$real\2 with a silver bullet!");
+                        
+                            # Check if the target is a wolf or a villager.
+                            if ($PLAYERS{lc $argv[1]} =~ m/w/xsm) { # Wolf.
+                                privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a wolf, and is dying from the silver bullet.");
+                                _player_del(lc $argv[1]);
+                            }
+                            else { # Villager.
+                                # So, there's a 1/5 chance of a villager dying.
+                                my $rint = int rand 6;
+                                given ($rint) {
+                                    when (5) { # Killed.
+                                        privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a villager, but \2$src->{nick}\2 accidentally shot them in the head and they are now dying.");
+                                        if (_getrole(lc $real, 2) ne 'villager') { privmsg($src->{svr}, $src->{chan}, "Appears (s)he was a \2"._getrole(lc $real, 2)."\2."); }
+                                        # Kill them.
+                                        _player_del(lc $real);
                                     }
-                                    # Set number of votes required to lynch.
-                                    $LVOTEN = int(scalar(keys(%PLAYERS)) / 2 + 1);
+                                    default { # Only hurt.
+                                        privmsg($src->{svr}, $src->{chan}, "\2$real\2 is a villager, and is hurt but will have a full recovery. He/She will be resting for the day.");
+                                        push @SHOT, lc $real;
+                                        # Delete any votes they might've made today.
+                                        foreach my $plyr (keys %LYNCH) {
+                                            if (exists $LYNCH{$plyr}{lc $real}) { delete $LYNCH{$plyr}{lc $real} }
+                                        }
+                                        # Set number of votes required to lynch.
+                                        _calclvn();
+                                    }
                                 }
                             }
                         }
@@ -957,7 +974,7 @@ sub _init_night {
     foreach my $plyr (keys %PLAYERS) {
         my $role = $PLAYERS{$plyr};
         # Check if they have a special role.
-        if ($role =~ m/(w|h|s|g|d|t)/xsm) {
+        if ($role =~ m/(w|h|s|g|d|t|i)/xsm) {
             my ($erole, $msg);
             # For wolves.
             if ($role =~ m/w/xsm) {
@@ -1020,8 +1037,12 @@ sub _init_night {
         }
         # Check if they have the gun.
         if ($role =~ m/b/xsm and $BULLETS) {
-            privmsg($gsvr, $NICKS{$plyr}, 'You hold a special gun. You may only use it during the day. If you shoot a wolf, (s)he will die instantly, if you shoot a villager, they will likely live. You get '.$BULLETS.' shot(s).');
+            privmsg($gsvr, $NICKS{$plyr}, 'You hold a gun with special silver bullet(s). You may only use it during the day. If you shoot a wolf, (s)he will die instantly, if you shoot a villager, they will likely live. You get '.$BULLETS.' shot(s).');
             privmsg($gsvr, $NICKS{$plyr}, 'To shoot someone, type "'.$FCHAR.$COMMANDS{shoot}.'" in the channel during the day.');
+        }
+        # And for drunks.
+        if ($role =~ m/i/xsm) {
+            privmsg($gsvr, $NICKS{$plyr}, 'You have been drinking too much! You are the village drunk.');
         }
     }
 
@@ -1146,7 +1167,7 @@ sub _init_day {
     if (!$continue) { return 1 }
 
     # Set number of votes required to lynch.
-    $LVOTEN = int(scalar(keys(%PLAYERS)) / 2 + 1);
+    _calclvn();
     privmsg($gsvr, $gchan, 'The villagers must now vote for who to lynch. Use "'.$FCHAR.$COMMANDS{lynch}.'" to cast your vote. '.$LVOTEN.' votes are required to lynch.');
     
     # Clear variables.
@@ -1214,6 +1235,15 @@ sub _judgment {
     return 1;
 }
 
+# Subroutine for re-calculating LVOTEN.
+sub _calclvn {
+    my $pc = keys %PLAYERS;
+    $pc -= scalar @SHOT;
+    $LVOTEN = int(rand($pc+1) / 2 + 1);
+
+    return 1;
+}
+
 # Subroutine for checking who is in bed and who is not.
 sub _chkbed {
     my ($gsvr, $gchan) = split '/', $GAMECHAN, 2;
@@ -1259,6 +1289,8 @@ sub _getrole {
             elsif ($PLAYERS{$plyr} =~ m/h/xsm) { $role = 'harlot' }
             elsif ($PLAYERS{$plyr} =~ m/g/xsm) { $role = 'guardian angel' }
             elsif ($PLAYERS{$plyr} =~ m/d/xsm) { $role = 'detective' }
+            elsif ($PLAYERS{$plyr} =~ m/b/xsm) { $role = 'village gunner' }
+            elsif ($PLAYERS{$plyr} =~ m/i/xsm) { $role = 'village drunk' }
             elsif ($PLAYERS{$plyr} =~ m/(v|t)/xsm) { $role = 'villager' }
         }
         elsif ($lev == 2) {
@@ -1268,6 +1300,8 @@ sub _getrole {
             elsif ($PLAYERS{$plyr} =~ m/g/xsm) { $role = 'guardian angel' }
             elsif ($PLAYERS{$plyr} =~ m/d/xsm) { $role = 'detective' }
             elsif ($PLAYERS{$plyr} =~ m/t/xsm) { $role = 'traitor' }
+            elsif ($PLAYERS{$plyr} =~ m/b/xsm) { $role = 'village gunner' }
+            elsif ($PLAYERS{$plyr} =~ m/i/xsm) { $role = 'village drunk' }
             elsif ($PLAYERS{$plyr} =~ m/v/xsm) { $role = 'villager' }
         }
     }
@@ -1308,7 +1342,7 @@ sub _player_del {
     if ($SEEN) { if ($SEEN eq $player) { $SEEN = 0 } }
     
     # Update LVOTEN.
-    if ($LVOTEN) { $LVOTEN = int(scalar(keys(%PLAYERS)) / 2 + 1) }
+    if ($LVOTEN) { _calclvn() }
     
     # Check for winning conditions.
     if (!$PGAME) {
@@ -1593,7 +1627,7 @@ sub on_rehash {
 }
 
 # Start initialization.
-API::Std::mod_init('Werewolf', 'Xelhua', '1.03', '3.0.0a10');
+API::Std::mod_init('Werewolf', 'Xelhua', '1.04', '3.0.0a10');
 # build: perl=5.010000
 
 __END__
@@ -1604,7 +1638,7 @@ Werewolf - IRC version of the Werewolf detective/social party game
 
 =head1 VERSION
 
- 1.03
+ 1.04
 
 =head1 SYNOPSIS
 
@@ -1636,7 +1670,7 @@ Internet Relay Chat.
 It, obviously, is a complete module for Auto, and has absolutely no extra
 dependencies.
 
-It includes a whopping eight player roles, four of which are optional. See the
+It includes a whopping nine player roles, five of which are optional. See the
 ROLES section for more information on them.
 
 If you want the best out of Werewolf, please be sure to read over CONFIGURATION.
@@ -1825,7 +1859,7 @@ off UP, not normal mathematical rounding.
 
 =item Villager (gun holder)
 
-If a game has 6+ players, one villager (can also be seer/harlot/etc., but not
+If a game has 8+ players, one villager (can also be seer/harlot/etc., but not
 wolves or traitors.), will be given a gun with a certain amount special silver
 bullets. To be exact, <PLAYER COUNT> * .12 rounded off UP.
 
@@ -1843,6 +1877,19 @@ wolves and traitors don't get to have guns.
 
 So, obviously no matter what the case might be, the gun holder will always
 reveal the innocence of at least someone.
+
+=item Villager (drunk)
+
+ATTENTION: Xelhua does NOT endorse drinking, especially underage, thus the
+village drunk might be considered NSFW and can be disabled with
+werewolf:rated-g. See CONFIGURATION.
+
+If a game has 7+ players, one villager will be made the "drunk". Basically,
+this is mostly just a name. But, if they also get the gun, there's extras:
+
+* Person's bullet count gets tripled.
+
+* Higher chance of missing when shooting.
 
 =item Seer
 
@@ -2012,6 +2059,8 @@ required. Also, it is case-sensitive.
 
 *DEFINING* this configuration option will disable harlots (A.K.A. prostitutes),
 because you might consider them to be inappropriate for your target audience.
+
+It will also disable the village drunk, because they're also NSFW.
 
 NOTE: Defining it disables harlots, regardless of the actual value. Remove it
 to re-enable harlots.
