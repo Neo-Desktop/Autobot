@@ -1289,7 +1289,6 @@ sub _getrole {
             elsif ($PLAYERS{$plyr} =~ m/h/xsm) { $role = 'harlot' }
             elsif ($PLAYERS{$plyr} =~ m/g/xsm) { $role = 'guardian angel' }
             elsif ($PLAYERS{$plyr} =~ m/d/xsm) { $role = 'detective' }
-            elsif ($PLAYERS{$plyr} =~ m/b/xsm) { $role = 'village gunner' }
             elsif ($PLAYERS{$plyr} =~ m/i/xsm) { $role = 'village drunk' }
             elsif ($PLAYERS{$plyr} =~ m/(v|t)/xsm) { $role = 'villager' }
         }
@@ -1300,7 +1299,6 @@ sub _getrole {
             elsif ($PLAYERS{$plyr} =~ m/g/xsm) { $role = 'guardian angel' }
             elsif ($PLAYERS{$plyr} =~ m/d/xsm) { $role = 'detective' }
             elsif ($PLAYERS{$plyr} =~ m/t/xsm) { $role = 'traitor' }
-            elsif ($PLAYERS{$plyr} =~ m/b/xsm) { $role = 'village gunner' }
             elsif ($PLAYERS{$plyr} =~ m/i/xsm) { $role = 'village drunk' }
             elsif ($PLAYERS{$plyr} =~ m/v/xsm) { $role = 'villager' }
         }
