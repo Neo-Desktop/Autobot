@@ -497,7 +497,7 @@ sub cmd_wolf {
                 # All good, lets go!
                 my $real = $NICKS{lc $argv[1]};
 
-                # Massive randomizing here. 5 = 3-kill, 1-miss, 1-suicide
+                # Massive randomizing here. 6 = 4-kill, 1-miss, 1-suicide
                 my $myr = int rand 7;
                 given ($myr) {
                     when (4) { # It's a miss.
