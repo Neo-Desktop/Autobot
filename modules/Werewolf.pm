@@ -1832,12 +1832,12 @@ bullets. To be exact, <PLAYER COUNT> * .12 rounded off UP.
 During the day, (s)he can use "!wolf shoot <nick>" to shoot someone with that
 gun, and the effect varies widely. Lets go over those.
 
-* 1/5 chance - Miss. - Person misses. But at least they're confirmed safe, as
+* 1/6 chance - Miss. - Person misses. But at least they're confirmed safe, as
 wolves and traitors don't get to have guns.
 
-* 1/5 chance - Unclean gun. - Gun explodes, in turn killing the shooter. Bummer!
+* 1/6 chance - Unclean gun. - Gun explodes, in turn killing the shooter. Bummer!
 
-* 3/5 chance - Hit. - If it hits a wolf, they die instantly (and are revealed
+* 4/6 chance - Hit. - If it hits a wolf, they die instantly (and are revealed
   to be a wolf.). If it hits a villager, 4/5 chance it'll just wound them and
   make them unable to vote for the day. 1/5 chance it kills them. Oops!
 

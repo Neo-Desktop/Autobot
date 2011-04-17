@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Werewolf: Fixed various annoyances. Also raised chance of gun hitting.
     * Werewolf: Fixed a nasty lynch nick exploit.
     * Fixed an issue in HELP.
     * Added a Ping module.
