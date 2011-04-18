@@ -76,6 +76,21 @@ my %COMMANDS = (
     'id'    => 'wolf id <nick>',
 );
 
+# No villagers dead messages.
+my @NOVICTIM = (
+    'A pool of blood and wolf paw prints are found.',
+    'The body of a young penguin pet is found.',
+    'Wolf fur is found.',
+);
+
+# Lynch messages.
+my @LYNCHMSG = (
+    "The villagers, after much debate, finally decide on lynching %s, who turned out to be... a \2%s\2.",
+    "Under a lot of noise, the pitchfork-bearing villagers lynch %s, who turned out to be... a \2%s\2.",
+    "The mob drags a protesting %s to the hanging tree. He/She succumbs to the will of the horde, and is hanged. It is discovered (s)he was a \2%s\2.",
+    "Resigned to his/her fate, %s is led to the gallows. After death, it is discovered (s)he was a \2%s\2.",
+);
+
 # Help hash for the WOLF command.
 our %HELP_WOLF = (
     en => "This command allows you to perform various actions in a game of Werewolf (A.K.A. Mafia). \2Syntax:\2 WOLF (JOIN|WAIT|START|LYNCH|RETRACT|SHOOT|QUIT|KICK|VOTES|STATS / SEE|ID|VISIT|GUARD|KILL) [parameters]",
@@ -1185,7 +1200,7 @@ sub _init_day {
     # Cool, all data should be ready for shipment. Lets go!
     my $continue = 1;
     my $msg = 'It is now daytime. The villagers awake, thankful for surviving the night, and search the village...';
-    if (!$victim) { privmsg($gsvr, $gchan, "$msg The body of a young penguin pet is found. All villagers however, have survived.") }
+    if (!$victim) { privmsg($gsvr, $gchan, "$msg ".$NOVICTIM[int rand scalar @NOVICTIM]." All villagers however, have survived.") }
     elsif ($victim eq 1) {
         privmsg($gsvr, $gchan, "$msg \2$NICKS{$GUARD}\2 was attacked by the wolves last night, but luckily, the guardian angel protected them.");
     }
@@ -1283,7 +1298,7 @@ sub _judgment {
 
     # Kill him/her!
     my ($gsvr, $gchan) = split '/', $GAMECHAN;
-    privmsg($gsvr, $gchan, "The villagers, after much debate, finally decide on lynching \2$NICKS{$nick}\2, who turned out to be... a \2"._getrole($nick, 2)."\2.");
+    privmsg($gsvr, $gchan, sprintf($LYNCHMSG[int rand scalar @LYNCHMSG], $NICKS{$nick}, _getrole($nick, 2)));
     my $ri = _player_del($nick, 1);
 
     # Initialize nighttime.
