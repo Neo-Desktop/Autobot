@@ -7,7 +7,8 @@ use warnings;
 use feature qw(switch);
 use API::Std qw(cmd_add cmd_del trans hook_add hook_del timer_add timer_del trans conf_get has_priv match_user);
 use API::IRC qw(privmsg notice cmode);
-my ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEEN, $VISIT, $GUARD, %KILL, %WKILL, %LYNCH, %SPOKE, %WARN, $LVOTEN, @SHOT, $BULLETS, $DETECTED);
+our ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEEN, $VISIT, $GUARD, %KILL, %WKILL, %LYNCH, %SPOKE, %WARN, $LVOTEN, @SHOT, 
+     $BULLETS, $DETECTED, $WAIT);
 my $FCHAR = (conf_get('fantasy_pf'))[0][0];
 
 # Initialization subroutine.
@@ -64,6 +65,7 @@ sub _void {
 # Commands hash.
 my %COMMANDS = (
     'join'  => 'wolf join',
+    'wait'  => 'wolf wait',
     'start' => 'wolf start',
     'see'   => 'wolf see <nick>',
     'visit' => 'wolf visit <nick>',
@@ -76,7 +78,7 @@ my %COMMANDS = (
 
 # Help hash for the WOLF command.
 our %HELP_WOLF = (
-    en => "This command allows you to perform various actions in a game of Werewolf (A.K.A. Mafia). \2Syntax:\2 WOLF (JOIN|START|LYNCH|RETRACT|SHOOT|QUIT|KICK|VOTES|STATS / SEE|ID|VISIT|GUARD|KILL) [parameters]",
+    en => "This command allows you to perform various actions in a game of Werewolf (A.K.A. Mafia). \2Syntax:\2 WOLF (JOIN|WAIT|START|LYNCH|RETRACT|SHOOT|QUIT|KICK|VOTES|STATS / SEE|ID|VISIT|GUARD|KILL) [parameters]",
 );
 
 # Callback for the WOLF command.
@@ -113,10 +115,12 @@ sub cmd_wolf {
                     $PLAYERS{lc $src->{nick}} = 0;
                     $NICKS{lc $src->{nick}} = $src->{nick};
                     $GAMETIME = time;
+                    $WAIT = 0;
+
                 
                     # Game started.
                     cmode($src->{svr}, $src->{chan}, "+v $src->{nick}");
-                    privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 has started a game of Werewolf. Type \"".$FCHAR.$COMMANDS{'join'}.'" to join. Type "'.$FCHAR.$COMMANDS{start}.'" to start the game.');
+                    privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 has started a game of Werewolf. Type \"".$FCHAR.$COMMANDS{'join'}.'" to join. Type "'.$FCHAR.$COMMANDS{start}.'" to start the game. Type "'.$FCHAR.$COMMANDS{wait}.'" to increase join wait time.');
                 }
                 elsif ($GAME) {
                     notice($src->{svr}, $src->{nick}, 'Sorry, but the game is already running. Try again next time.');
@@ -150,6 +154,43 @@ sub cmd_wolf {
                     privmsg($gsvr, $gchan, "\2$src->{nick}\2 joined the game.");
                 }
             }
+            when (/^(WAIT|W)$/) {
+                # WOLF WAIT
+                
+                # Check if a game is running.
+                if (!$PGAME) {
+                    if (!$GAME) {
+                        notice($src->{svr}, $src->{nick}, 'No game is currently running.');
+                        return;
+                    }
+                    else {
+                        notice($src->{svr}, $src->{nick}, 'Werewolf is already in play.');
+                        return;
+                    }
+                }
+
+                # Check if this is the game channel.
+                if ($src->{svr}.'/'.$src->{chan} ne $GAMECHAN) {
+                    notice($src->{svr}, $src->{nick}, "Werewolf is currently running in \2$GAMECHAN\2.");
+                    return;
+                }
+
+                # Make sure they're playing.
+                if (!defined $PLAYERS{lc $src->{nick}}) {
+                    notice($src->{svr}, $src->{nick}, 'You\'re not currently playing.');
+                    return;
+                }
+
+                # Check if we're already waiting a while.
+                if ($WAIT >= 2) {
+                    privmsg($src->{svr}, $src->{chan}, "$src->{nick}: Already waiting 100 seconds.");
+                    return;
+                }
+
+                # Increment WAIT.
+                $WAIT++;
+                privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 increased join wait time by 20 seconds.");
+            }
             when ('START') {
                 # WOLF START
 
@@ -178,9 +219,11 @@ sub cmd_wolf {
                 }
 
                 # Check join timeout.
-                if ((time - $GAMETIME) < 60) {
+                my ($wait, $twait) = (60, $WAIT);
+                while ($twait) { $wait += 20; $twait-- }
+                if ((time - $GAMETIME) < $wait) {
                     my $time = time - $GAMETIME;
-                    $time = 60 - $time;
+                    $time = $wait - $time;
                     privmsg($src->{svr}, $src->{chan}, "$src->{nick}: Please wait at least \2$time\2 more seconds.");
                     return;
                 }
@@ -1440,7 +1483,7 @@ sub _gameover {
     # Clear all variables.
     if ($PHASE) { if ($PHASE eq 'n') { timer_del('werewolf.goto_daytime') } }
     timer_del('werewolf.chkbed');
-    $GAME = $PGAME = $GAMECHAN = $GAMETIME = $PHASE = $SEEN = $VISIT = $GUARD = $LVOTEN = $BULLETS = $DETECTED = 0;
+    $GAME = $PGAME = $GAMECHAN = $GAMETIME = $PHASE = $SEEN = $VISIT = $GUARD = $LVOTEN = $BULLETS = $DETECTED = $WAIT = 0;
     %PLAYERS = ();
     %NICKS = ();
     %KILL = ();
@@ -1639,7 +1682,7 @@ sub on_rehash {
 }
 
 # Start initialization.
-API::Std::mod_init('Werewolf', 'Xelhua', '1.04', '3.0.0a10');
+API::Std::mod_init('Werewolf', 'Xelhua', '1.05', '3.0.0a10');
 # build: perl=5.010000
 
 __END__
@@ -1650,7 +1693,7 @@ Werewolf - IRC version of the Werewolf detective/social party game
 
 =head1 VERSION
 
- 1.04
+ 1.05
 
 =head1 SYNOPSIS
 
@@ -1706,6 +1749,7 @@ and use aliases.
 Here is a list of channel commands:
 
  WOLF JOIN|J - Start/Join a game.
+ WOLF WAIT|W - Increases join wait time by 20 seconds.
  WOLF START - Start the game play.
  WOLF LYNCH|L - Cast vote for who to lynch.
  WOLF RETRACT|R - Retract lynch vote.
