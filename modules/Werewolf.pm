@@ -592,6 +592,7 @@ sub cmd_wolf {
                 privmsg($src->{svr}, $src->{chan}, "$src->{nick}: \2".keys(%PLAYERS)."\2 players: $str");
                 # If all roles have been assigned, return the count of each.    
                 if ($GAME) {
+                    # Get a count of all roles.
                     my $cwolves = my $cseers = my $charlots = my $cangels = my $ctraitors = my $cdetectives = 0;
                     foreach my $flags (values %PLAYERS) {
                         if ($flags =~ m/w/xsm) { $cwolves++ }
@@ -601,9 +602,22 @@ sub cmd_wolf {
                         if ($flags =~ m/t/xsm) { $ctraitors++ }
                         if ($flags =~ m/d/xsm) { $cdetectives++ }
                     }
-                    privmsg($src->{svr}, $src->{chan}, "$src->{nick}: There are \2$cwolves\2 wolves, \2$cseers\2 seers, ".
-                        "\2$charlots\2 ".((conf_get('werewolf:rated-g')) ? '<removed>' : 'harlots').", \2$ctraitors\2 traitors, \2$cdetectives\2 detectives, ".
-                        "and \2$cangels\2 guardian angels.");
+                    # Prepare an array of data.
+                    my @data;
+                    push @data, "\2$cwolves\2 wolves";
+                    push @data, "\2$cseers\2 seers";
+
+                    # Push extra roles.
+                    if (!conf_get('werewolf:rated-g')) { push @data, "\2$charlots\2 harlots" }
+                    if (!conf_get('werewolf:no-angels')) { push @data, "\2$cangels\2 guardian angels" }
+                    if (conf_get('werewolf:traitors')) { push @data, "\2$ctraitors\2 traitors" }
+                    if (conf_get('werewolf:detectives')) { push @data, "\2$cdetectives\2 detectives" }
+                    
+                    # Prepare message.
+                    my $msg = "$src->{nick}: There are ".join(', ', @data[0..$#data-1]);
+                    $msg .= ", and $data[$#data].";
+
+                    privmsg($src->{svr}, $src->{chan}, $msg);
                 }
             }
             when (/^(KICK|K)$/) {
