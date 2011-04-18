@@ -85,10 +85,10 @@ my @NOVICTIM = (
 
 # Lynch messages.
 my @LYNCHMSG = (
-    "The villagers, after much debate, finally decide on lynching %s, who turned out to be... a \2%s\2.",
-    "Under a lot of noise, the pitchfork-bearing villagers lynch %s, who turned out to be... a \2%s\2.",
-    "The mob drags a protesting %s to the hanging tree. He/She succumbs to the will of the horde, and is hanged. It is discovered (s)he was a \2%s\2.",
-    "Resigned to his/her fate, %s is led to the gallows. After death, it is discovered (s)he was a \2%s\2.",
+    "The villagers, after much debate, finally decide on lynching \2%s\2, who turned out to be... a \2%s\2.",
+    "Under a lot of noise, the pitchfork-bearing villagers lynch \2%s\2, who turned out to be... a \2%s\2.",
+    "The mob drags a protesting \2%s\2 to the hanging tree. He/She succumbs to the will of the horde, and is hanged. It is discovered (s)he was a \2%s\2.",
+    "Resigned to his/her fate, \2%s\2 is led to the gallows. After death, it is discovered (s)he was a \2%s\2.",
 );
 
 # Help hash for the WOLF command.
