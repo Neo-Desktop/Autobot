@@ -610,6 +610,9 @@ sub cmd_wolf {
                                         }
                                         # Set number of votes required to lynch.
                                         _calclvn();
+    
+                                        # Check for winning conditions.
+                                        _chkwin();
                                     }
                                 }
                             }
@@ -1415,19 +1418,8 @@ sub _player_del {
     if ($LVOTEN) { _calclvn() }
     
     # Check for winning conditions.
-    if (!$PGAME) {
-        my $wolves;
-        for (values %PLAYERS) { if (m/w/xsm) { $wolves++ } }
-        if (!$wolves) { _gameover('v'); return }
-        my $villagers;
-        for (values %PLAYERS) { if (m/(v|s|g|h|d)/xsm) { $villagers++ } }
-        if ($villagers <= $wolves) { _gameover('w'); return }
-    }
-    else {
-        # Check if there's any more players.
-        if (!keys %PLAYERS) { _gameover('n') }
-    }
-    
+    if (!_chkwin()) { return }
+
     # Call lynch management IF judgment did not call us.
     if ($PHASE and !$judgment) {
         if ($PHASE eq 'd') { _lynchmng() }
@@ -1452,6 +1444,25 @@ sub _lynchmng {
     # Now check if we have anyone who has enough votes for judgment.
     foreach my $acc (keys %LYNCH) {
         if (keys %{$LYNCH{$acc}} >= $LVOTEN) { _judgment($acc); last }
+    }
+
+    return 1;
+}
+
+# Subroutine for checking if we have a winner.
+sub _chkwin {
+    if (!$PGAME) {
+        my $wolves;
+        for (values %PLAYERS) { if (m/w/xsm) { $wolves++ } }
+        if (!$wolves) { _gameover('v'); return }
+        my $villagers;
+        for (values %PLAYERS) { if (m/(v|s|g|h|d)/xsm) { $villagers++ } }
+        $villagers -= scalar @SHOT;
+        if ($villagers <= $wolves) { _gameover('w'); return }
+    }
+    else {
+        # Check if there's any more players.
+        if (!keys %PLAYERS) { _gameover('n') }
     }
 
     return 1;
