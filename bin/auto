@@ -481,19 +481,21 @@ if (conf_get('aliases:alias')) {
 while (1) {
     # Timer check.
     foreach my $tk (keys %TIMERS) {
-        if ($TIMERS{$tk}{time} <= time) {
-            &{ $TIMERS{$tk}{sub} }();
-            if ($TIMERS{$tk}{type} == 1) {
-                # If it's type 1, delete from memory.
-                delete $TIMERS{$tk};
-            }
-            elsif ($TIMERS{$tk}{type} == 2) {
-                # If it's type 2, reset timer.
-                $TIMERS{$tk}{time} = time + $TIMERS{$tk}{secs};
-            }
-            else {
-                # This should never happen.
-                delete $TIMERS{$tk};
+        if (exists $TIMERS{$tk}) {
+            if ($TIMERS{$tk}{time} <= time) {
+                &{ $TIMERS{$tk}{sub} }();
+                if ($TIMERS{$tk}{type} == 1) {
+                    # If it's type 1, delete from memory.
+                    delete $TIMERS{$tk};
+                }
+                elsif ($TIMERS{$tk}{type} == 2) {
+                    # If it's type 2, reset timer.
+                    $TIMERS{$tk}{time} = time + $TIMERS{$tk}{secs};
+                }
+                else {
+                    # This should never happen.
+                    delete $TIMERS{$tk};
+                }
             }
         }
     }
