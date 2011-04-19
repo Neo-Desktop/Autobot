@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Werewolf: Rewrote WAIT to be more decent.
     * Werewolf: Wounded villagers are now excluded from winning villager count.
     * Werewolf: Dynamic lynch and no victim messages.
     * Werewolf 1.05: Added WAIT command.

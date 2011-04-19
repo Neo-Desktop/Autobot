@@ -8,7 +8,7 @@ use feature qw(switch);
 use API::Std qw(cmd_add cmd_del trans hook_add hook_del timer_add timer_del trans conf_get has_priv match_user);
 use API::IRC qw(privmsg notice cmode);
 our ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEEN, $VISIT, $GUARD, %KILL, %WKILL, %LYNCH, %SPOKE, %WARN, $LVOTEN, @SHOT, 
-     $BULLETS, $DETECTED, $WAIT);
+     $BULLETS, $DETECTED, $WAIT, $WAITED);
 my $FCHAR = (conf_get('fantasy_pf'))[0][0];
 
 # Initialization subroutine.
@@ -130,8 +130,12 @@ sub cmd_wolf {
                     $PLAYERS{lc $src->{nick}} = 0;
                     $NICKS{lc $src->{nick}} = $src->{nick};
                     $GAMETIME = time;
-                    $WAIT = 0;
-
+                    $WAIT = 60;
+                    $WAITED = 0;
+                    # Start wait timer.
+                    timer_add('werewolf.joinwait', 2, 1, sub {
+                        if ($M::Werewolf::WAIT) { $M::Werewolf::WAIT-- }
+                    });
                 
                     # Game started.
                     cmode($src->{svr}, $src->{chan}, "+v $src->{nick}");
@@ -197,13 +201,15 @@ sub cmd_wolf {
                 }
 
                 # Check if we're already waiting a while.
-                if ($WAIT >= 2) {
+                if ($WAITED >= 2) {
                     privmsg($src->{svr}, $src->{chan}, "$src->{nick}: Already waiting 100 seconds.");
                     return;
                 }
 
-                # Increment WAIT.
-                $WAIT++;
+                # Increase WAIT.
+                $WAIT += 20;
+                # And WAITED.
+                $WAITED++;
                 privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 increased join wait time by 20 seconds.");
             }
             when ('START') {
@@ -233,13 +239,9 @@ sub cmd_wolf {
                     return;
                 }
 
-                # Check join timeout.
-                my ($wait, $twait) = (60, $WAIT);
-                while ($twait) { $wait += 20; $twait-- }
-                if ((time - $GAMETIME) < $wait) {
-                    my $time = time - $GAMETIME;
-                    $time = $wait - $time;
-                    privmsg($src->{svr}, $src->{chan}, "$src->{nick}: Please wait at least \2$time\2 more seconds.");
+                # Check join wait time.
+                if ($WAIT) {
+                    privmsg($src->{svr}, $src->{chan}, "$src->{nick}: Please wait at least \2$WAIT\2 more seconds.");
                     return;
                 }
 
@@ -352,6 +354,8 @@ sub cmd_wolf {
                 my ($gsvr, $gchan) = split '/', $GAMECHAN;
                 privmsg($gsvr, $gchan, 'Game is now starting.');
                 cmode($gsvr, $gchan, '+m');
+                # Delete waiting timer.
+                timer_del('werewolf.joinwait');
                 # Start timer for bed checking.
                 timer_add('werewolf.chkbed', 2, 5, \&M::Werewolf::_chkbed);
                 # Initialize the nighttime.
@@ -1509,7 +1513,8 @@ sub _gameover {
     # Clear all variables.
     if ($PHASE) { if ($PHASE eq 'n') { timer_del('werewolf.goto_daytime') } }
     timer_del('werewolf.chkbed');
-    $GAME = $PGAME = $GAMECHAN = $GAMETIME = $PHASE = $SEEN = $VISIT = $GUARD = $LVOTEN = $BULLETS = $DETECTED = $WAIT = 0;
+    timer_del('werewolf.joinwait');
+    $GAME = $PGAME = $GAMECHAN = $GAMETIME = $PHASE = $SEEN = $VISIT = $GUARD = $LVOTEN = $BULLETS = $DETECTED = $WAIT = $WAITED = 0;
     %PLAYERS = ();
     %NICKS = ();
     %KILL = ();
