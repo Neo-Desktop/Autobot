@@ -8,7 +8,7 @@ use feature qw(switch);
 use API::Std qw(cmd_add cmd_del trans hook_add hook_del timer_add timer_del trans conf_get has_priv match_user);
 use API::IRC qw(privmsg notice cmode);
 our ($GAME, $PGAME, $GAMECHAN, $GAMETIME, %PLAYERS, %NICKS, @STATIC, $PHASE, $SEEN, $VISIT, $GUARD, %KILL, %WKILL, %LYNCH, %SPOKE, %WARN, $LVOTEN, @SHOT, 
-     $BULLETS, $DETECTED, $WAIT, $WAITED);
+     $BULLETS, $DETECTED, $WAIT, $WAITED, $FM);
 my $FCHAR = (conf_get('fantasy_pf'))[0][0];
 
 # Initialization subroutine.
@@ -887,7 +887,7 @@ sub cmd_wolf {
 
                 # They can only protect one person per round.
                 if ($GUARD) {
-                    privmsg($src->{svr}, $src->{nick}, "You are already protecting \2$NICKS{$VISIT}\2.");
+                    privmsg($src->{svr}, $src->{nick}, "You are already protecting \2$NICKS{$GUARD}\2.");
                     return;
                 }
 
@@ -945,7 +945,10 @@ sub cmd_wolf {
 
                 # They can only visit one person per round.
                 if ($VISIT) {
-                    privmsg($src->{svr}, $src->{nick}, "You are already spending the night with \2$NICKS{$VISIT}\2!");
+                    my $friend;
+                    if ($VISIT eq 1) { $friend = 'at home' }
+                    else { $friend = "with $NICKS{$VISIT}" }
+                    privmsg($src->{svr}, $src->{nick}, "You are already spending the night \2$friend\2!");
                     return;
                 }
 
@@ -961,10 +964,12 @@ sub cmd_wolf {
                     return;
                 }
 
-                # They can't sleep with themselves.
+                # Check if they've selected themselves.
                 if (lc $argv[1] eq lc $src->{nick}) {
-                    privmsg($src->{svr}, $src->{nick}, 'You cannot sleep with yourself!');
-                    return;
+                    privmsg($src->{svr}, $src->{nick}, 'You have chosen to stay home for the night.');
+                    $VISIT = 1;
+                    _chknight();
+                    return 1;
                 }
                 
                 # All good, set variables and stuff.
