@@ -4,7 +4,7 @@
 package M::Ping;
 use strict;
 use warnings;
-use API::Std qw(cmd_add cmd_del timer_add timer_del hook_add hook_del);
+use API::Std qw(cmd_add cmd_del hook_add hook_del rchook_add rchook_del);
 use API::IRC qw(privmsg notice who);
 my (@PING, $STATE);
 my $LAST = 0;
@@ -15,6 +15,8 @@ sub _init {
     cmd_add('PING', 0, 'cmd.ping', \%M::Ping::HELP_PING, \&M::Ping::cmd_ping) or return;
     # Create the on_whoreply hook.
     hook_add('on_whoreply', 'ping.who', \&M::Ping::on_whoreply) or return;
+    # Hook onto numeric 315.
+    rchook_add('315', 'ping.eow', \&M::Ping::ping) or return;
 
     # Success.
     return 1;
@@ -24,10 +26,10 @@ sub _init {
 sub _void {
     # Delete the PING command.
     cmd_del('PING') or return;
-    # Delete the ping.ping timer if it exists.
-    timer_del('ping.ping');
     # Delete the on_whoreply hook.
     hook_del('on_whoreply', 'ping.who') or return;
+    # Delete 315 hook.
+    rchook_del('315', 'ping.eow') or return;
 
     # Success.
     return 1;
@@ -56,9 +58,6 @@ sub cmd_ping {
     # Ship off a WHO.
     who($src->{svr}, $src->{chan});
 
-    # Set a timer for ping.
-    timer_add('ping.ping', 1, 3, \&M::Ping::ping);
-
     return 1;
 }
 
@@ -85,15 +84,18 @@ sub on_whoreply {
 
 # Ping!
 sub ping {
-    my ($svr, $chan) = split '::', $STATE, 2;
-    privmsg($svr, $chan, 'PING! '.join(' ', @PING));
-    @PING = ();
-    $STATE = 0;
+    if ($STATE) {
+        my ($svr, $chan) = split '::', $STATE, 2;
+        privmsg($svr, $chan, 'PING! '.join(' ', @PING));
+        @PING = ();
+        $STATE = 0;
+    }
+
     return 1;
 }
 
 # Start initialization.
-API::Std::mod_init('Ping', 'Xelhua', '1.00', '3.0.0a10');
+API::Std::mod_init('Ping', 'Xelhua', '1.01', '3.0.0a10');
 # build: perl=5.010000
 
 __END__
@@ -104,7 +106,7 @@ __END__
 
 =head1 VERSION
 
- 1.00
+ 1.01
 
 =head1 SYNOPSIS
 
