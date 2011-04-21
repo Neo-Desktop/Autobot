@@ -97,7 +97,7 @@ hook_add("on_quit", "quit_update_chanusers", sub {
 
     # Delete the user from all channels.
     foreach my $ccu (keys %{ $State::IRC::chanusers{$src{svr}}}) {
-        if (defined $State::IRC::chanusers{$src{svr}}{$ccu}{$src{nick}}) { delete $State::IRC::chanusers{$src{svr}}{$ccu}{$src{nick}} }
+        if (defined $State::IRC::chanusers{$src{svr}}{$ccu}{lc $src{nick}}) { delete $State::IRC::chanusers{$src{svr}}{$ccu}{lc $src{nick}} }
     }
 
     return 1;

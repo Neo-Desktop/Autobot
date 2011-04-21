@@ -410,7 +410,7 @@ sub kick {
     }
     else {
         # We weren't. Update chanusers and trigger on_kick.
-        if (defined $State::IRC::chanusers{$svr}{$ex[2]}{$ex[3]}) { delete $State::IRC::chanusers{$svr}{$ex[2]}{$ex[3]} }
+        if (defined $State::IRC::chanusers{$svr}{$ex[2]}{lc $ex[3]}) { delete $State::IRC::chanusers{$svr}{$ex[2]}{lc $ex[3]} }
         API::Std::event_run("on_kick", (\%src, $ex[2], $ex[3], $msg));
     }
 
@@ -578,7 +578,7 @@ sub part {
     }
     else {
         # Delete them from chanusers.
-        delete $State::IRC::chanusers{$svr}{$ex[2]}{$src{nick}} if defined $State::IRC::chanusers{$svr}{$ex[2]}{$src{nick}};
+        delete $State::IRC::chanusers{$svr}{$ex[2]}{lc $src{nick}} if defined $State::IRC::chanusers{$svr}{$ex[2]}{lc $src{nick}};
     
         # Set $msg to the part message.
         my $msg = 0;

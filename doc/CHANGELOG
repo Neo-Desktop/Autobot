@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Fixed significant state mismatched data bugs.
     * Added API::IRC::ison for checking if a user is on a channel.
     * Werewolf: Fixed a bug in harlot staying home.
     * Werewolf: Various bug fixes.

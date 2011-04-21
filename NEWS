@@ -18,7 +18,7 @@ In this alpha11 release, we have added:
 
 Bug fixes:
 
-None
+* Fixed significant state mismatched data bugs.
 
 Incompatibilities:
 
