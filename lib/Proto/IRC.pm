@@ -359,7 +359,7 @@ sub cjoin {
     }
     else {
         # It isn't. Update chanusers and trigger on_rcjoin.
-        $State::IRC::chanusers{$svr}{$chan}{lc $src{nick}} = 1;
+        $State::IRC::chanusers{$svr}{lc $chan}{lc $src{nick}} = 1;
         $src{svr} = $svr;
         API::Std::event_run("on_rcjoin", (\%src, $chan));
     }
@@ -373,9 +373,6 @@ sub kick {
 
     my %src = API::IRC::usrc(substr($ex[0], 1));
     $src{svr} = $svr;
-
-    # Update chanusers.
-    delete $State::IRC::chanusers{$svr}{$ex[2]}{$ex[3]} if defined $State::IRC::chanusers{$svr}{$ex[2]}{$ex[3]};
 
     # Set $msg to the kick message.
     my $msg = 0;
@@ -393,7 +390,7 @@ sub kick {
         # We were kicked!
 
         # Delete channel from botchans.
-        delete $botchans{$svr}{$ex[2]};
+        delete $botchans{$svr}{lc $ex[2]};
 
         # Log this horrible act.
         API::Log::alog("I was kicked from ".$svr."/".$ex[2]." by ".$src{nick}."! Reason: ".$msg);
@@ -410,7 +407,7 @@ sub kick {
     }
     else {
         # We weren't. Update chanusers and trigger on_kick.
-        if (defined $State::IRC::chanusers{$svr}{$ex[2]}{lc $ex[3]}) { delete $State::IRC::chanusers{$svr}{$ex[2]}{lc $ex[3]} }
+        if (defined $State::IRC::chanusers{$svr}{lc $ex[2]}{lc $ex[3]}) { delete $State::IRC::chanusers{$svr}{lc $ex[2]}{lc $ex[3]} }
         API::Std::event_run("on_kick", (\%src, $ex[2], $ex[3], $msg));
     }
 
@@ -423,7 +420,7 @@ sub mode {
 
     if ($ex[2] ne $State::IRC::botinfo{$svr}{nick}) {
         # Set data we'll need later.
-        my $chan = $ex[2];
+        my $chan = lc $ex[2];
         $ex[3] =~ s/^://xsm;
         my $modes = $ex[3];
         my $fmodes = join ' ', @ex[3..$#ex];
@@ -467,7 +464,7 @@ sub mode {
 
                     if ($nnt) {
                         # It is a status mode, lets parse changes.
-                        my $user = shift(@ex);
+                        my $user = lc shift @ex;
 
                         if (defined $State::IRC::chanusers{$svr}{$chan}{$user}) {
                             if ($op == 1) {
@@ -531,9 +528,9 @@ sub nick {
     else {
         # It isn't. Update chanusers and trigger on_nick.
         foreach my $chk (keys %{ $State::IRC::chanusers{$svr} }) {
-            if (defined $State::IRC::chanusers{$svr}{$chk}{$src{nick}}) {
-                $State::IRC::chanusers{$svr}{$chk}{$nex} = $State::IRC::chanusers{$svr}{$chk}{$src{nick}};
-                delete $State::IRC::chanusers{$svr}{$chk}{$src{nick}};
+            if (defined $State::IRC::chanusers{$svr}{$chk}{lc $src{nick}}) {
+                $State::IRC::chanusers{$svr}{$chk}{lc $nex} = $State::IRC::chanusers{$svr}{$chk}{lc $src{nick}};
+                delete $State::IRC::chanusers{$svr}{$chk}{lc $src{nick}};
             }
         }
         API::Std::event_run("on_nick", (\%src, $nex));
@@ -572,13 +569,13 @@ sub part {
     # Check if it's from us or someone else.
     if ($src{nick} eq $State::IRC::botinfo{$svr}{nick}) {
         # Delete this channel from botchans.
-        if ($botchans{$svr}{$ex[2]}) { delete $botchans{$svr}{$ex[2]} }
+        if ($botchans{$svr}{lc $ex[2]}) { delete $botchans{$svr}{lc $ex[2]} }
         # Trigger on_upart.
         API::Std::event_run('on_upart', ($svr, $ex[2]));
     }
     else {
         # Delete them from chanusers.
-        delete $State::IRC::chanusers{$svr}{$ex[2]}{lc $src{nick}} if defined $State::IRC::chanusers{$svr}{$ex[2]}{lc $src{nick}};
+        delete $State::IRC::chanusers{$svr}{lc $ex[2]}{lc $src{nick}} if defined $State::IRC::chanusers{$svr}{lc $ex[2]}{lc $src{nick}};
     
         # Set $msg to the part message.
         my $msg = 0;

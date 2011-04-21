@@ -10,6 +10,7 @@ our (%chanusers, %botinfo);
 # Create on_namesreply hook.
 hook_add('on_namesreply', 'state.irc.names', sub {
     my ($svr, $chan, @data) = @_;
+    $chan = lc $chan;
 
     # Delete the old chanusers hash if it exists.
     if (defined $chanusers{$svr}{$chan}) { delete $chanusers{$svr}{$chan} }
