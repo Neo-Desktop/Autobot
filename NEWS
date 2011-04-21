@@ -14,6 +14,7 @@ In this alpha11 release, we have added:
 
 * Ping: Speed improvements.
 * An advanced IRC version of the popular party game Werewolf (AKA Mafia).
+* Commands with prefixes now work in PM's too.
 
 Bug fixes:
 
