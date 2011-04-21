@@ -712,6 +712,12 @@ sub cmd_wolf {
                     return;
                 }
 
+                # Check if the target is playing.
+                if (!exists $PLAYERS{lc $argv[1]}) {
+                    notice($src->{svr}, $src->{nick}, "\2$argv[1]\2 is not currently playing.");
+                    return;
+                }
+
                 # Kill the target.
                 privmsg($src->{svr}, $src->{chan}, "\2$argv[1]\2 died of an unknown disease. He/She was a \2"._getrole(lc $argv[1], 2)."\2.");
                 _player_del(lc $argv[1]);
@@ -1592,7 +1598,14 @@ sub on_uprivmsg {
                                     $COMMANDS{kill} !~ m/^WOLF\sKILL/xsmi) { return 1 }
                                 
                                 # All good.
-                                privmsg($src->{svr}, $NICKS{$plyr}, "\2$src->{nick}\2 says: ".join(q{ }, @msg));
+                                if ($msg[0] =~ m/^\001ACTION/xsm) {
+                                    shift @msg;
+                                    $msg[$#msg] =~ s/\001$//xsm;
+                                    privmsg($src->{svr}, $NICKS{$plyr}, "* \2$src->{nick}\2 ".join(q{ }, @msg));
+                                }
+                                else {
+                                    privmsg($src->{svr}, $NICKS{$plyr}, "\2$src->{nick}\2 says: ".join(q{ }, @msg));
+                                }
                             }
                         }
                     }
