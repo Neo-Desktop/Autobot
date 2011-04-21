@@ -359,7 +359,7 @@ sub cjoin {
     }
     else {
         # It isn't. Update chanusers and trigger on_rcjoin.
-        $State::IRC::chanusers{$svr}{lc $chan}{$src{nick}} = 1;
+        $State::IRC::chanusers{$svr}{$chan}{lc $src{nick}} = 1;
         $src{svr} = $svr;
         API::Std::event_run("on_rcjoin", (\%src, $chan));
     }
