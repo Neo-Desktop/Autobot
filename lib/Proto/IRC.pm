@@ -630,7 +630,7 @@ sub privmsg {
         # Ensure it's a valid length.
         if (length($ex[3]) > 2) {
             $cmd = uc substr $ex[3], 1;
-            $cmd =~ s/^$cprefix//xsm;
+            if (substr($cmd, 0, 1) eq $cprefix) { $cmd = substr $cmd, 1 }
             if (defined $API::Std::CMDS{$cmd}) {
                 # If this is indeed a command, continue.
                 if ($API::Std::CMDS{$cmd}{lvl} == 1 or $API::Std::CMDS{$cmd}{lvl} == 2) {
