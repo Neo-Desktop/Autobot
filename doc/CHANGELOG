@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Werewolf: Fixed a bug in harlot staying home.
     * Werewolf: Various bug fixes.
     * Werewolf 1.06: Fixed an annoyance and added traitor transformation.
     * Commands now work with prefixes even in PM.
