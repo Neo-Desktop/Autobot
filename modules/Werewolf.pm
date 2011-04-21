@@ -1588,8 +1588,8 @@ sub on_uprivmsg {
                         while ((my $plyr, my $flags) = each %PLAYERS) { 
                             if ($plyr ne lc $src->{nick} and $flags =~ m/w/xsm or $flags =~ m/t/xsm) {
                                 # Also, lets try to ignore simulations.
-                                if (uc(join(q{ }, @msg)) =~ m/^WOLF KILL/xsmi and
-                                    $COMMANDS{kill} !~ m/^WOLF KILL/xsmi) { return 1 }
+                                if (uc(join(q{ }, @msg)) =~ m/^WOLF\sKILL/xsmi and
+                                    $COMMANDS{kill} !~ m/^WOLF\sKILL/xsmi) { return 1 }
                                 
                                 # All good.
                                 privmsg($src->{svr}, $NICKS{$plyr}, "\2$src->{nick}\2 says: ".join(q{ }, @msg));
