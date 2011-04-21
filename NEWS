@@ -10,23 +10,14 @@
 The future of IRC bots is here! Xelhua gives to you, Auto 3.0, a new version of
 the popular Auto IRC bot.
 
-In this alpha10 release, we have added:
+In this alpha11 release, we have added:
 
-* German translation for AUR command help.
-* German translation for Bitly command help.
-* German translation for Calc command help.
-* German translation for Dictionary command help.
-* German translation for EightBall command help.
-* German translation for Eval command help.
-* German translation for FML command help.
-* German translation for Greet command help.
-* Aliases now work in PM's to the bot too.
+* Ping: Speed improvements.
+* An advanced IRC version of the popular party game Werewolf (AKA Mafia).
 
 Bug fixes:
 
-* Fixed parsing of host masks with a / in them.
-* Security exploit (causes fatal error) in the HELP command.
-* Security exploit (wide characters) in plaintext socket management.
+None
 
 Incompatibilities:
 
@@ -40,4 +31,4 @@ created by anyone and uploaded there for everyone to use.
 Auto's goal is to create an efficient, stable and highly customizable IRC bot
 in Perl. To offer an alternative to other platforms.
 
-Enjoy Auto 3.0.0 Alpha 10!
+Enjoy Auto 3.0.0 Alpha 11!
