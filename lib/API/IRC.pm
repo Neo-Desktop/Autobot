@@ -9,7 +9,7 @@ use Exporter;
 use base qw(Exporter);
 
 our @EXPORT_OK = qw(ban cjoin cpart cmode umode kick privmsg notice quit nick names
-                    topic who usrc match_mask);
+                    topic who usrc match_mask ison);
 
 # Create the on_disconnect event.
 API::Std::event_add('on_disconnect');
@@ -126,6 +126,17 @@ sub act {
     my ($svr, $target, $message) = @_;
 
     Auto::socksnd($svr, "PRIVMSG $target :\001ACTION $message\001");
+
+    return 1;
+}
+
+# Check if a given nickname is on a channel.
+sub ison {
+    my ($svr, $chan, $nick) = @_;
+
+    if (!exists $State::IRC::chanusers{$svr}) { return }
+    if (!exists $State::IRC::chanusers{$svr}{$chan}) { return }
+    if (!exists $State::IRC::chanusers{$svr}{$chan}{lc $nick}) { return }
 
     return 1;
 }
