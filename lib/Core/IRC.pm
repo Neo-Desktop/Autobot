@@ -65,7 +65,7 @@ hook_add('on_cprivmsg', 'irc.commands.aliases', sub {
 hook_add('on_uprivmsg', 'irc.commands.aliases', sub {
     my (($src, ($cmd, @args))) = @_;
     my $cprefix = (conf_get('fantasy_pf'))[0][0];
-    $cmd =~ s/^$cprefix//xsm;
+    if (substr($cmd, 0, 1) eq $cprefix) { $cmd = substr $cmd, 1 }
 
     # Check for an alias.
     if (defined $API::Std::ALIASES{uc $cmd}) {
