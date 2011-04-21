@@ -1179,12 +1179,12 @@ sub _init_day {
         }
     }
     # Now check if the harlot spent the night with a wolf last night.
-    if (!$harlotd and $VISIT) {
+    if (!$harlotd and $VISIT) { if (exists $PLAYERS{$VISIT}) {
         if ($PLAYERS{$VISIT} =~ m/w/xsm) {
             # Ouch! He/She did, gotta kill them. :(
             $harlotd = 2;
         }
-    }
+    } }
 
     # Last check; lets find out if the guardian angel protected a wolf last night.
     my $angeld;
@@ -1422,6 +1422,21 @@ sub _player_del {
         }
     }
     if ($SEEN) { if ($SEEN eq $player) { $SEEN = 0 } }
+
+    # If there are no more wolves, check if we have a traitor.
+    my $cwolves;
+    for (values %PLAYERS) { if (m/w/xsm) { $cwolves++ } }
+    if (!$cwolves) {
+        my $traitor;
+        while (my ($tp, $tv) = each %PLAYERS) { if ($tv =~ m/t/xsm) { $traitor = $tp } }
+        # Now if we have a traitor...
+        if ($traitor) {
+            # Transform them into a wolf.
+            $PLAYERS{$traitor} = 'w';
+            privmsg($gsvr, $NICKS{$traitor}, 'HOOOOOOOOOWL. You have become... a wolf! It is up to you to avenge your fallen leaders!');
+            privmsg($gsvr, $gchan, 'The villagers, sleeping peacefully, are frightened as they hear a loud howl. The wolves are not gone!');
+        }
+    }
     
     # Update LVOTEN.
     if ($LVOTEN) { _calclvn() }
@@ -1574,7 +1589,7 @@ sub on_uprivmsg {
                             if ($plyr ne lc $src->{nick} and $flags =~ m/w/xsm or $flags =~ m/t/xsm) {
                                 # Also, lets try to ignore simulations.
                                 if (uc(join(q{ }, @msg)) =~ m/^WOLF KILL/xsmi and
-                                    split(q{ }, $COMMANDS{kill}, 2) ne ('wolf', 'kill')) { return 1 }
+                                    $COMMANDS{kill} !~ m/^WOLF KILL/xsmi)) { return 1 }
                                 
                                 # All good.
                                 privmsg($src->{svr}, $NICKS{$plyr}, "\2$src->{nick}\2 says: ".join(q{ }, @msg));
@@ -1718,7 +1733,7 @@ sub on_rehash {
 }
 
 # Start initialization.
-API::Std::mod_init('Werewolf', 'Xelhua', '1.05', '3.0.0a10');
+API::Std::mod_init('Werewolf', 'Xelhua', '1.06', '3.0.0a10');
 # build: perl=5.010000
 
 __END__
@@ -1729,7 +1744,7 @@ Werewolf - IRC version of the Werewolf detective/social party game
 
 =head1 VERSION
 
- 1.05
+ 1.06
 
 =head1 SYNOPSIS
 
@@ -2096,6 +2111,9 @@ But, BEWARE! TRAITORS ARE VERY DANGEROUS. VILLAGERS MUST IDENTIFY AND KILL THEM
 AS SOON AS POSSIBLE.
 
 A single traitor is assigned to a game if it has twelve or more players.
+
+Oh and one more thing, if all wolves die yet the traitor remains, the traitor
+is transformed into a wolf.
 
 =item Detective
 
