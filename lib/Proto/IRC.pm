@@ -624,9 +624,13 @@ sub privmsg {
     if (lc($ex[2]) eq lc($State::IRC::botinfo{$svr}{nick})) {
         # It is coming to us in a private message.
         
+        # Check for a prefix.
+        $cprefix = (conf_get('fantasy_pf'))[0][0];
+        
         # Ensure it's a valid length.
-        if (length($ex[3]) > 1) {
-            $cmd = uc(substr($ex[3], 1));
+        if (length($ex[3]) > 2) {
+            $cmd = uc substr $ex[3], 1;
+            $cmd =~ s/^$cprefix//xsm;
             if (defined $API::Std::CMDS{$cmd}) {
                 # If this is indeed a command, continue.
                 if ($API::Std::CMDS{$cmd}{lvl} == 1 or $API::Std::CMDS{$cmd}{lvl} == 2) {

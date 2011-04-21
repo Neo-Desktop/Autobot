@@ -64,6 +64,8 @@ hook_add('on_cprivmsg', 'irc.commands.aliases', sub {
 # Command alias parsing for private messages.
 hook_add('on_uprivmsg', 'irc.commands.aliases', sub {
     my (($src, ($cmd, @args))) = @_;
+    my $cprefix = (conf_get('fantasy_pf'))[0][0];
+    $cmd =~ s/^$cprefix//xsm;
 
     # Check for an alias.
     if (defined $API::Std::ALIASES{uc $cmd}) {
@@ -233,8 +235,7 @@ hook_add('on_isupport', 'core.prefixchanmode.getdata', sub {
     return 1;
 });
 
-sub clear_usercmd_timer 
-{
+sub clear_usercmd_timer {
     # If ratelimit is set to 1 in config, add this timer.
     if ((conf_get('ratelimit'))[0][0] eq 1) {
         # Clear usercmd hash every X seconds.
