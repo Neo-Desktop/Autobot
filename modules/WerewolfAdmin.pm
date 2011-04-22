@@ -28,7 +28,7 @@ sub _void {
 
 # Help hash for the WOLFA command.
 our %HELP_WOLFA = (
-    en => "This command allows you to perform various administrative actions in a game of Werewolf (A.K.A. Mafia). \2Syntax:\2 WOLFA (FJOIN|FWAIT|FSTART|KICK|FSTOP) [parameters]",
+    en => "This command allows you to perform various administrative actions in a game of Werewolf (A.K.A. Mafia). \2Syntax:\2 WOLFA (JOIN|WAIT|START|KICK|STOP) [parameters]",
 );
 
 # Callback for the WOLFA command.
@@ -335,6 +335,7 @@ Werewolf module.
 It provides the following commands:
 
  WOLFA JOIN|J - Force join.
+ WOLFA WAIT - Force wait.
  WOLFA START - Force start.
  WOLFA KICK|K - Kick a player.
  WOLFA STOP - Stop a game forcibly.
