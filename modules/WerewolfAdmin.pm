@@ -280,8 +280,8 @@ sub cmd_wolfa {
             }
 
             # Kill the target.
-            privmsg($src->{svr}, $src->{chan}, "\2$argv[1]\2 died of an unknown disease. He/She was a \2"._getrole(lc $argv[1], 2)."\2.");
-            _player_del(lc $argv[1]);
+            privmsg($src->{svr}, $src->{chan}, "\2$argv[1]\2 died of an unknown disease. He/She was a \2"._M::Werewolf::getrole(lc $argv[1], 2)."\2.");
+            M::Werewolf::_player_del(lc $argv[1]);
         }
         when ('STOP') {
             # WOLFA STOP
