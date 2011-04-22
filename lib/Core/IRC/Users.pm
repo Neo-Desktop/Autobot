@@ -28,14 +28,8 @@ hook_add('on_rcjoin', 'ircusers.onjoin', sub {
 hook_add('on_namesreply', 'ircusers.names', sub {
     my ($svr, $chan, undef) = @_;
 
-    # Iterate through the users for this channel.
-    foreach (keys %{$State::IRC::chanusers{$svr}{$chan}}) {
-        # Check if the user already exists.
-        if (!$users{$svr}{$_}) {
-            # They do not; WHO them.
-            API::IRC::who($svr, $_);
-        }
-    }
+    # WHO the channel.
+    API::IRC::who($svr, $chan);
 
     return 1;
 });
