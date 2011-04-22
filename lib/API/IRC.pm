@@ -133,6 +133,7 @@ sub act {
 # Check if a given nickname is on a channel.
 sub ison {
     my ($svr, $chan, $nick) = @_;
+    $chan = lc $chan;
 
     if (!exists $State::IRC::chanusers{$svr}) { return }
     if (!exists $State::IRC::chanusers{$svr}{$chan}) { return }
