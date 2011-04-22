@@ -1207,7 +1207,7 @@ sub _init_day {
     }
 
     # Finally, check if the harlot was targeted and wasn't home.
-    if (_getrole($victim, 2) eq 'harlot' and $VISIT) { if ($VISIT != 1) {
+    if (_getrole($victim, 2) eq 'harlot' and $VISIT) { if ($VISIT ne 1) {
         privmsg($gsvr, $gchan, 'The wolves attempted to attack the harlot last night, but (s)he wasn\'t home...');
         $victim = 0;
     } }
