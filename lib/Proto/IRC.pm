@@ -468,7 +468,7 @@ sub mode {
 
                         if (defined $State::IRC::chanusers{$svr}{$chan}{$user}) {
                             if ($op == 1) {
-                                return if $State::IRC::chanusers{$svr}{$chan}{$user} =~ m/($maf)/xsm;
+                                return if $State::IRC::chanusers{$svr}{$chan}{$user} =~ m/$maf/xsm;
                                 if ($State::IRC::chanusers{$svr}{$chan}{$user} eq 1) {
                                     $State::IRC::chanusers{$svr}{$chan}{$user} = $maf;
                                 }
