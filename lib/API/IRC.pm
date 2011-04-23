@@ -9,7 +9,7 @@ use Exporter;
 use base qw(Exporter);
 
 our @EXPORT_OK = qw(ban cjoin cpart cmode umode kick privmsg notice quit nick names
-                    topic who usrc match_mask ison);
+                    topic who whois usrc match_mask ison);
 
 # Create the on_disconnect event.
 API::Std::event_add('on_disconnect');
@@ -202,6 +202,15 @@ sub who {
     my ($svr, $nick) = @_;
 
     Auto::socksnd($svr, "WHO $nick");
+
+    return 1;
+}
+
+# Send a WHOIS.
+sub whois {
+    my ($svr, $nick) = @_;
+
+    Auto::socksnd($svr, "WHOIS $nick");
 
     return 1;
 }
