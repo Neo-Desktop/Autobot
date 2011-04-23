@@ -80,7 +80,7 @@ my %COMMANDS = (
 my @NOVICTIM = (
     'A pool of blood and wolf paw prints are found.',
     'The body of a young penguin pet is found.',
-    'Wolf fur is found.',
+    'Traces of wolf fur are found.',
 );
 
 # Lynch messages.
@@ -93,7 +93,7 @@ my @LYNCHMSG = (
 
 # Help hash for the WOLF command.
 our %HELP_WOLF = (
-    en => "This command allows you to perform various actions in a game of Werewolf (A.K.A. Mafia). \2Syntax:\2 WOLF (JOIN|WAIT|START|LYNCH|RETRACT|SHOOT|QUIT|KICK|VOTES|STATS / SEE|ID|VISIT|GUARD|KILL) [parameters]",
+    en => "This command allows you to perform various actions in a game of Werewolf (A.K.A. Mafia). \2Syntax:\2 WOLF (JOIN|WAIT|START|LYNCH|RETRACT|SHOOT|QUIT|VOTES|STATS / SEE|ID|VISIT|GUARD|KILL) [parameters]",
 );
 
 # Callback for the WOLF command.
@@ -570,8 +570,8 @@ sub cmd_wolf {
                 # All good, lets go!
                 my $real = $NICKS{lc $argv[1]};
 
-                # Massive randomizing here. 6 = 4-kill, 1-miss, 1-suicide
-                my $myr = int rand 7;
+                # Massive randomizing here. 7 = 5-hit, 1-miss, 1-suicide
+                my $myr = int rand 8;
                 given ($myr) {
                     when (4) { # It's a miss.
                         privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 is a lousy shooter. He/She missed!");
@@ -584,7 +584,7 @@ sub cmd_wolf {
                     }
                     default { # It's a hit.
                         # Or not!
-                        if ($PLAYERS{lc $src->{nick}} =~ m/i/xsm and $_ =~ m/^[1-2]$/xsm) {
+                        if ($PLAYERS{lc $src->{nick}} =~ m/i/xsm and $_ =~ m/^[1-3]$/xsm) {
                             privmsg($src->{svr}, $src->{chan}, "\2$src->{nick}\2 is a lousy shooter. He/She missed!");
                         }
                         else {
@@ -684,43 +684,6 @@ sub cmd_wolf {
 
                     privmsg($src->{svr}, $src->{chan}, $msg);
                 }
-            }
-            when (/^(KICK|K)$/) {
-                # WOLF KICK
-
-                # Check if a game is running.
-                if (!$GAME and !$PGAME) {
-                    notice($src->{svr}, $src->{nick}, 'No game is currently running.');
-                    return;
-                }
-                
-                # Check if this is the game channel.
-                if ($src->{svr}.'/'.$src->{chan} ne $GAMECHAN) {
-                    notice($src->{svr}, $src->{nick}, "Werewolf is currently running in \2$GAMECHAN\2.");
-                    return;
-                }
-
-                # Check for the werewolf.admin privilege.
-                if (!has_priv(match_user(%{$src}), 'werewolf.admin')) {
-                    notice($src->{svr}, $src->{nick}, trans('Permission denied').q{.});
-                    return;
-                }
-                
-                # Requires an extra parameter.
-                if (!defined $argv[1]) {
-                    notice($src->{svr}, $src->{nick}, trans('Not enough parameters').q{.});
-                    return;
-                }
-
-                # Check if the target is playing.
-                if (!exists $PLAYERS{lc $argv[1]}) {
-                    notice($src->{svr}, $src->{nick}, "\2$argv[1]\2 is not currently playing.");
-                    return;
-                }
-
-                # Kill the target.
-                privmsg($src->{svr}, $src->{chan}, "\2$argv[1]\2 died of an unknown disease. He/She was a \2"._getrole(lc $argv[1], 2)."\2.");
-                _player_del(lc $argv[1]);
             }
             when (/^(QUIT|Q)$/) {
                 # WOLF QUIT
@@ -1071,7 +1034,7 @@ sub _init_night {
                 $erole = 'wolf';
                 $msg = "It is your job to kill all the villagers. Use \"$COMMANDS{kill}\" to kill a villager. Also, if you send a PM to me, it will be relayed to all other wolves.\n&pi&";
                 my $cwolves = 0;
-                for (values %PLAYERS) { if (m/w/xsm) { $cwolves++ } }
+                for (values %PLAYERS) { if (m/(w|t)/xsm) { $cwolves++ } }
                 if ($cwolves > 1) { $msg .= "\nAlso, please consider using PM's or a channel to speak with your fellow wolves rather than my relay, to prevent from me lagging." }
             }
             # For harlots.
@@ -1131,8 +1094,9 @@ sub _init_night {
             privmsg($gsvr, $NICKS{$plyr}, 'To shoot someone, type "'.$FCHAR.$COMMANDS{shoot}.'" in the channel during the day.');
         }
         # And for drunks.
-        if ($role =~ m/i/xsm) {
+        if ($role =~ m/i/xsm and $role !~ m/a/xsm) {
             privmsg($gsvr, $NICKS{$plyr}, 'You have been drinking too much! You are the village drunk.');
+            $PLAYERS{$plyr} .= 'a';
         }
     }
 
@@ -1440,7 +1404,7 @@ sub _player_del {
             # Transform them into a wolf.
             $PLAYERS{$traitor} = 'w';
             privmsg($gsvr, $NICKS{$traitor}, 'HOOOOOOOOOWL. You have become... a wolf! It is up to you to avenge your fallen leaders!');
-            privmsg($gsvr, $gchan, 'The villagers, sleeping peacefully, are frightened as they hear a loud howl. The wolves are not gone!');
+            privmsg($gsvr, $gchan, "\2The villagers, during their celebrations, are frightened as they hear a loud howl. The wolves are not gone!\2");
         }
     }
     
@@ -1746,7 +1710,7 @@ sub on_rehash {
 }
 
 # Start initialization.
-API::Std::mod_init('Werewolf', 'Xelhua', '1.06', '3.0.0a10');
+API::Std::mod_init('Werewolf', 'Xelhua', '1.07', '3.0.0a11');
 # build: perl=5.010000
 
 __END__
@@ -1757,7 +1721,7 @@ Werewolf - IRC version of the Werewolf detective/social party game
 
 =head1 VERSION
 
- 1.06
+ 1.07
 
 =head1 SYNOPSIS
 
@@ -1820,7 +1784,6 @@ Here is a list of channel commands:
  WOLF VOTES|V - Return current votes.
  WOLF SHOOT - Shoot someone with the gun.
  WOLF STATS|S - Return current player statistics.
- WOLF KICK|K - Kick a player from the game.
  WOLF QUIT|Q - Leave the game.
 
 Here is a list of private commands:
@@ -1830,8 +1793,6 @@ Here is a list of private commands:
  WOLF VISIT - Visit a player.
  WOLF GUARD - Guard a player.
  WOLF ID - Investigate a player.
-
-The WOLF KICK command requires the werewolf.admin privilege.
 
 =head1 RULES
 
@@ -1851,7 +1812,6 @@ Typing "!wolf join" in a channel starts a game, and a 60 second timer. Others
 can join the game with "!wolf join". "!wolf start" starts play.
 
 START will fail if the 60 second timer has not stopped and there is less than
-
 the maximum amount of players.
 
 The bot moderates the channel (it voices all players).
@@ -1986,12 +1946,12 @@ bullets. To be exact, <PLAYER COUNT> * .12 rounded off UP.
 During the day, (s)he can use "!wolf shoot <nick>" to shoot someone with that
 gun, and the effect varies widely. Lets go over those.
 
-* 1/6 chance - Miss. - Person misses. But at least they're confirmed safe, as
+* 1/7 chance - Miss. - Person misses. But at least they're confirmed safe, as
 wolves and traitors don't get to have guns.
 
-* 1/6 chance - Unclean gun. - Gun explodes, in turn killing the shooter. Bummer!
+* 1/7 chance - Unclean gun. - Gun explodes, in turn killing the shooter. Bummer!
 
-* 4/6 chance - Hit. - If it hits a wolf, they die instantly (and are revealed
+* 5/7 chance - Hit. - If it hits a wolf, they die instantly (and are revealed
   to be a wolf.). If it hits a villager, 4/5 chance it'll just wound them and
   make them unable to vote for the day. 1/5 chance it kills them. Oops!
 

@@ -13,8 +13,8 @@ use URI::Escape;
 sub _init 
 {
     # Check for required configuration values.
-    if (!(conf_get('bitly:user'))[0][0] or !(conf_get('bitly:key'))[0][0]) {
-        err(2, 'Please verify that you have bitly_user and bitly_key defined in your configuration file.', 0);
+    if (!conf_get('bitly:user') or !conf_get('bitly:key')) {
+        err(2, 'Bitly: Please verify that you have bitly_user and bitly_key defined in your configuration file.', 0);
         return;
     }
     # Create the SHORTEN and REVERSE commands.

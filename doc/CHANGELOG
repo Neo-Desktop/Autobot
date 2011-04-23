@@ -3,6 +3,7 @@ Auto IRC Bot 3.0: Change Log
 
 3.0 Indev
 ===============================================================================
+    * Werewolf 1.07: Various improvements.
     * Updated Core::IRC::Users to be more efficient.
     * Added a WerewolfAdmin module for administering the Werewolf IRC game.
     * Fixed significant state mismatched data bugs.
