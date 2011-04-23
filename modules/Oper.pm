@@ -13,7 +13,7 @@ sub _init
     # Add a hook for when we join a channel.
     hook_add('on_connect', 'Oper.onconnect', \&M::Oper::on_connect) or return;
     # Add a hook for when we get numeric 491 (ERR_NOOPERHOST)
-    rchook_add('491', 'Oper.on381', \&M::Oper::on_num491) or return;
+    rchook_add('491', 'Oper.on491', \&M::Oper::on_num491) or return;
     return 1;
 }
 
